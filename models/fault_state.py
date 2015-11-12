@@ -8,3 +8,4 @@ class FaultState(Base):
   value = Column(Integer, nullable=False)
   name = Column(String, nullable=False)
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
+  allowed_classes = relationship("AllowedClass", backref='fault_state')

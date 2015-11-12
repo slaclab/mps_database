@@ -20,3 +20,6 @@ from device_input import DeviceInput
 from fault import Fault
 from fault_state import FaultState
 from fault_input import FaultInput
+from allowed_class import AllowedClass
+from mitigation_device import MitigationDevice
+from beam_class import BeamClass
