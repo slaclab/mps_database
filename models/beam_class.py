@@ -7,3 +7,4 @@ class BeamClass(Base):
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False, unique=True)
   name = Column(String, nullable=False)
+  allowed_classes = relationship("AllowedClass", backref='beam_class')
