@@ -40,14 +40,12 @@ for device in session.query(models.Device).all():
 #Evaluate faults
 fault_results = {}
 for fault in session.query(models.Fault).all():
-  fault_value = 0
-  for fault_input in fault.inputs:
-    bit_length = len(fault_input.device.inputs)
-    bit_position = fault_input.bit_position
-    input_value = device_states[fault_input.device_id]
-    fault_value = fault_value | (input_value << (bit_length*bit_position))
+  fault_value = fault.fault_value(device_states)
   print("Fault: {0}.  Value: {1}".format(fault.name, fault_value))
   fault_state = session.query(models.FaultState).filter(models.FaultState.fault_id==fault.id).filter(models.FaultState.value==fault_value).one()
   fault_results[fault.name] = fault_state.name
   print("State is: {0}".format(fault_state.name))
+  for md in session.query(models.MitigationDevice).all():
+    allowed_classes = session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id==fault_state.id).filter(models.AllowedClass.mitigation_device_id==md.id).all()
+    print("Allowed classes at {mitigation_device} this state are: {state_list}".format(mitigation_device=md.name, state_list=", ".join([c.beam_class.name for c in allowed_classes])))
 print fault_results

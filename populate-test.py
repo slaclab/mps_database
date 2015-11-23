@@ -1,11 +1,31 @@
 from mps_config import MPSConfig, models
-
+from sqlalchemy import MetaData
+#The MPSConfig object points to our database file.
 conf = MPSConfig()
+
+#Clear everything out of the database.
+conf.clear_all()
+
+#session is a connection to that database.
 session = conf.session
 
+#First lets define our mitigation devices.
+gun = models.MitigationDevice(name="Gun")
+hard_kicker = models.MitigationDevice(name="Hard Kicker")
+soft_kicker = models.MitigationDevice(name="Soft Kicker")
+session.add_all([gun, hard_kicker, soft_kicker])
+
+#Make some beam classes.
+class_1 = models.BeamClass(number=1,name="Class 1")
+class_2 = models.BeamClass(number=2,name="Class 2")
+class_3 = models.BeamClass(number=3,name="Class 3")
+session.add_all([class_1, class_2, class_3])
+
+#Make a link node.
 node = models.LinkNode(number=1)
 session.add(node)
 
+#Install a card in the link node.
 digital_io_type = models.LinkNodeCardType(name="Digital I/O", channel_count=32)
 session.add(digital_io_type)
 
@@ -14,6 +34,7 @@ card.link_node = node
 card.type = digital_io_type
 session.add(card)
 
+#Define some channels for the card.
 chans = []
 for i in [0,1,2,3]:
   chan = models.LinkNodeChannel(number=i)
@@ -21,11 +42,12 @@ for i in [0,1,2,3]:
   chans.append(chan)
   session.add(chan)
   
-#Add a device
+#Add a device - an OTR screen.
 otr_screen = models.Device(name="OTR")
 session.add(otr_screen)
 
-#Give the device some inputs
+#Give the device some inputs.  It has in and out limit switches.
+#Connect these limit switches to channels 0 and 1 of our link node card.
 otr_out_lim_sw = models.DeviceInput()
 otr_out_lim_sw.channel = chans[0]
 otr_out_lim_sw.bit_position = 0
@@ -37,7 +59,7 @@ otr_in_lim_sw.bit_position = 1
 otr_in_lim_sw.device = otr_screen
 session.add(otr_in_lim_sw)
 
-#Give the device some states
+#Define some states for the device.
 otr_screen_out = models.DeviceState(name="Out")
 otr_screen_out.device = otr_screen
 otr_screen_out.value = 1
@@ -83,6 +105,18 @@ otr_fault_broken = models.FaultState(name="Broken")
 otr_fault_broken.fault = otr_fault
 otr_fault_broken.value = 3
 session.add(otr_fault_broken)
+
+#Give the fault states allowed beam classes.
+otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=gun)
+otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=hard_kicker)
+otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
+
+otr_fault_in.add_allowed_class(beam_class=class_1, mitigation_device=gun)
+otr_fault_in.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=hard_kicker)
+otr_fault_in.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
+
+otr_fault_moving.allowed_classes = []
+otr_fault_broken.allowed_classes = []
 
 #Add a second device
 attenuator = models.Device(name="Attenuator")
@@ -147,6 +181,17 @@ no_atten = models.FaultState(name="OTR in without attenuation")
 no_atten.fault = otr_atten_fault
 no_atten.value = 6
 session.add(no_atten)
+
+#Add some allowed beam classes
+both_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=gun)
+both_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=hard_kicker)
+both_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
+
+both_in.add_allowed_class(beam_class=class_1, mitigation_device=gun)
+both_in.add_allowed_class(beam_class=class_1, mitigation_device=hard_kicker)
+both_in.add_allowed_class(beam_class=class_1, mitigation_device=soft_kicker)
+
+no_atten.allowed_classes = []
 
 #Save this stuff
 session.commit()
