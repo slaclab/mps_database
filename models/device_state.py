@@ -7,4 +7,4 @@ class DeviceState(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False)
   value = Column(Integer, nullable=False)
-  device_id = Column(Integer, ForeignKey('devices.id'), nullable=False)
+  device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)

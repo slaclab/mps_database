@@ -1,7 +1,7 @@
 from mps_config import MPSConfig, models
 
 #Use the database to make a machine state data structure.
-#Note that this is probably the single most inefficient way to do this.
+#This code is pretty inefficient.
 mps = MPSConfig()
 session = mps.session
 state = { "nodes": {} }
@@ -14,10 +14,10 @@ for node in session.query(models.LinkNode).all():
     new_node["cards"][card.number] = new_card
   state["nodes"][node.number] = new_node
 
-#Pretend these are the messages we get from link nodes
+#Pretend these are the messages we get from link nodes.
 messages = []
-messages.append({"node": 1, "card": 1, "channel": 0, "value": 1})
-messages.append({"node": 1, "card": 1, "channel": 1, "value": 0})
+messages.append({"node": 1, "card": 1, "channel": 0, "value": 0})
+messages.append({"node": 1, "card": 1, "channel": 1, "value": 1})
 messages.append({"node": 1, "card": 1, "channel": 2, "value": 1})
 messages.append({"node": 1, "card": 1, "channel": 3, "value": 0})
 
@@ -47,5 +47,5 @@ for fault in session.query(models.Fault).all():
   print("State is: {0}".format(fault_state.name))
   for md in session.query(models.MitigationDevice).all():
     allowed_classes = session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id==fault_state.id).filter(models.AllowedClass.mitigation_device_id==md.id).all()
-    print("Allowed classes at {mitigation_device} this state are: {state_list}".format(mitigation_device=md.name, state_list=", ".join([c.beam_class.name for c in allowed_classes])))
+    print("Allowed classes at {mitigation_device} for this state are: {state_list}".format(mitigation_device=md.name, state_list=", ".join([c.beam_class.name for c in allowed_classes])))
 print fault_results

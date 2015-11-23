@@ -14,6 +14,7 @@ from link_node import LinkNode
 from link_node_card_type import LinkNodeCardType
 from link_node_card import LinkNodeCard
 from link_node_channel import LinkNodeChannel
+from device_type import DeviceType
 from device import Device
 from device_state import DeviceState
 from device_input import DeviceInput

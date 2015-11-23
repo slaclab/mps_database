@@ -41,9 +41,33 @@ for i in [0,1,2,3]:
   chan.card = card
   chans.append(chan)
   session.add(chan)
+
+#Add a new device type - insertion device
+insertion_device_type = models.DeviceType(name="Insertion Device")
+session.add(insertion_device_type)
   
+#Define some states for the device type.
+otr_screen_out = models.DeviceState(name="Out")
+otr_screen_out.device_type = insertion_device_type
+otr_screen_out.value = 1
+
+otr_screen_in = models.DeviceState(name="In")
+otr_screen_in.device_type = insertion_device_type
+otr_screen_in.value = 2
+
+otr_screen_moving = models.DeviceState(name="Moving")
+otr_screen_moving.device_type = insertion_device_type
+otr_screen_moving.value = 0
+
+otr_screen_broken = models.DeviceState(name="Broken")
+otr_screen_broken.device_type = insertion_device_type
+otr_screen_broken.value = 3
+
+session.add_all([otr_screen_out, otr_screen_in, otr_screen_moving, otr_screen_broken])
+
 #Add a device - an OTR screen.
 otr_screen = models.Device(name="OTR")
+otr_screen.device_type = insertion_device_type
 session.add(otr_screen)
 
 #Give the device some inputs.  It has in and out limit switches.
@@ -58,24 +82,6 @@ otr_in_lim_sw.channel = chans[1]
 otr_in_lim_sw.bit_position = 1
 otr_in_lim_sw.device = otr_screen
 session.add(otr_in_lim_sw)
-
-#Define some states for the device.
-otr_screen_out = models.DeviceState(name="Out")
-otr_screen_out.device = otr_screen
-otr_screen_out.value = 1
-session.add(otr_screen_out)
-otr_screen_in = models.DeviceState(name="In")
-otr_screen_in.device = otr_screen
-otr_screen_in.value = 2
-session.add(otr_screen_in)
-otr_screen_moving = models.DeviceState(name="Moving")
-otr_screen_moving.device = otr_screen
-otr_screen_moving.value = 0
-session.add(otr_screen_moving)
-otr_screen_broken = models.DeviceState(name="Broken")
-otr_screen_broken.device = otr_screen
-otr_screen_broken.value = 3
-session.add(otr_screen_broken)
 
 #Configure a fault for the device
 otr_fault = models.Fault(name="OTR Fault")
@@ -120,6 +126,7 @@ otr_fault_broken.allowed_classes = []
 
 #Add a second device
 attenuator = models.Device(name="Attenuator")
+attenuator.device_type = insertion_device_type
 session.add(attenuator)
 
 #Give the attenuator some inputs
@@ -133,24 +140,6 @@ attenuator_in_lim_sw.channel = chans[3]
 attenuator_in_lim_sw.bit_position = 1
 attenuator_in_lim_sw.device = attenuator
 session.add(attenuator_in_lim_sw)
-
-#Give the attenuator some states
-attenuator_out = models.DeviceState(name="Out")
-attenuator_out.device = attenuator
-attenuator_out.value = 1
-session.add(attenuator_out)
-attenuator_in = models.DeviceState(name="In")
-attenuator_in.device = attenuator
-attenuator_in.value = 2
-session.add(attenuator_in)
-attenuator_moving = models.DeviceState(name="Moving")
-attenuator_moving.device = attenuator
-attenuator_moving.value = 0
-session.add(attenuator_moving)
-attenuator_broken = models.DeviceState(name="Broken")
-attenuator_broken.device = attenuator
-attenuator_broken.value = 3
-session.add(attenuator_broken)
 
 #Lets make a fault that uses both devices
 otr_atten_fault = models.Fault(name="OTR Attenuation Fault")

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from models import Base
 
@@ -8,6 +8,6 @@ class Device(Base):
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=True)
   z_position = Column(Float, nullable=True)
-  states = relationship("DeviceState", backref='device')
+  device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   inputs = relationship("DeviceInput", backref='device')
   fault_outputs = relationship("FaultInput", backref='device')
