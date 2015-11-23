@@ -7,4 +7,4 @@ class DeviceInput(Base):
   id = Column(Integer, primary_key=True)
   device_id = Column(Integer, ForeignKey('devices.id'), nullable=False)
   bit_position = Column(Integer, nullable=False)
-  channel_id = Column(Integer, ForeignKey('link_node_channels.id'), nullable=False)
+  channel_id = Column(Integer, ForeignKey('link_node_channels.id'), nullable=False, unique=True)
