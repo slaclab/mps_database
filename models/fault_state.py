@@ -6,9 +6,8 @@ from .allowed_class import AllowedClass
 class FaultState(Base):
   __tablename__ = 'fault_states'
   id = Column(Integer, primary_key=True)
-  value = Column(Integer, nullable=False)
-  name = Column(String, nullable=False)
-  fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
+  discriminator = Column('type', String(50))
+  __mapper_args__ = {'polymorphic_on': discriminator}
   allowed_classes = relationship("AllowedClass", backref='fault_state')
   
   def add_allowed_class(self, beam_class, mitigation_device):
@@ -23,4 +22,18 @@ class FaultState(Base):
     for c in beam_classes:
       acs.append(self.add_allowed_class(c, mitigation_device))
     return acs
-      
+
+class DigitalFaultState(FaultState):
+  __tablename__ = 'digital_fault_states'
+  __mapper_args__ = {'polymorphic_identity': 'digital_fault_state'}
+  id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
+  value = Column(Integer, nullable=False)
+  name = Column(String, nullable=False)
+  fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
+
+class ThresholdFaultState(FaultState):
+  __tablename__ = 'threshold_fault_states'
+  __mapper_args__ = {'polymorphic_identity': 'threshold_fault_state'}
+  id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
+  threshold = Column(Integer, nullable=False)
+  threshold_fault_id = Column(Integer, ForeignKey('threshold_faults.id'), nullable=False)

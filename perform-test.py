@@ -1,6 +1,6 @@
 from mps_config import MPSConfig, models
 
-#Use the database to make a machine state data structure.
+#Use the database to make an empty machine state data structure.
 #This code is pretty inefficient.
 mps = MPSConfig()
 session = mps.session
@@ -27,7 +27,7 @@ for message in messages:
 
 #Turn the raw machine state into device states
 device_states = {}
-for device in session.query(models.Device).all():
+for device in session.query(models.DigitalDevice).all():
   device_val = 0
   for device_input in device.inputs:
     channel = device_input.channel
@@ -42,7 +42,7 @@ fault_results = {}
 for fault in session.query(models.Fault).all():
   fault_value = fault.fault_value(device_states)
   print("Fault: {0}.  Value: {1}".format(fault.name, fault_value))
-  fault_state = session.query(models.FaultState).filter(models.FaultState.fault_id==fault.id).filter(models.FaultState.value==fault_value).one()
+  fault_state = session.query(models.DigitalFaultState).filter(models.DigitalFaultState.fault_id==fault.id).filter(models.DigitalFaultState.value==fault_value).one()
   fault_results[fault.name] = fault_state.name
   print("State is: {0}".format(fault_state.name))
   for md in session.query(models.MitigationDevice).all():

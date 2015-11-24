@@ -15,7 +15,9 @@ from link_node_card_type import LinkNodeCardType
 from link_node_card import LinkNodeCard
 from link_node_channel import LinkNodeChannel
 from device_type import DeviceType
-from device import Device
+from analog_device_type import AnalogDeviceType
+from device import Device, DigitalDevice, AnalogDevice
+from device import DigitalDevice
 from device_state import DeviceState
 from device_input import DeviceInput
 from fault import Fault
@@ -24,3 +26,8 @@ from fault_input import FaultInput
 from mitigation_device import MitigationDevice
 from beam_class import BeamClass
 from allowed_class import AllowedClass
+from fault_state import DigitalFaultState
+from fault_state import ThresholdFaultState
+from threshold_fault import ThresholdFault
+from threshold_value_map import ThresholdValueMap
+from threshold_value import ThresholdValue

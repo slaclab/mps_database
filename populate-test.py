@@ -66,7 +66,7 @@ otr_screen_broken.value = 3
 session.add_all([otr_screen_out, otr_screen_in, otr_screen_moving, otr_screen_broken])
 
 #Add a device - an OTR screen.
-otr_screen = models.Device(name="OTR")
+otr_screen = models.DigitalDevice(name="OTR")
 otr_screen.device_type = insertion_device_type
 session.add(otr_screen)
 
@@ -75,12 +75,12 @@ session.add(otr_screen)
 otr_out_lim_sw = models.DeviceInput()
 otr_out_lim_sw.channel = chans[0]
 otr_out_lim_sw.bit_position = 0
-otr_out_lim_sw.device = otr_screen
+otr_out_lim_sw.digital_device = otr_screen
 session.add(otr_out_lim_sw)
 otr_in_lim_sw = models.DeviceInput()
 otr_in_lim_sw.channel = chans[1]
 otr_in_lim_sw.bit_position = 1
-otr_in_lim_sw.device = otr_screen
+otr_in_lim_sw.digital_device = otr_screen
 session.add(otr_in_lim_sw)
 
 #Configure a fault for the device
@@ -95,19 +95,19 @@ otr_fault_input.fault = otr_fault
 session.add(otr_fault_input)
 
 #This fault's states match up exactly with the device states.
-otr_fault_out = models.FaultState(name="Out")
+otr_fault_out = models.DigitalFaultState(name="Out")
 otr_fault_out.fault = otr_fault
 otr_fault_out.value = 1
 session.add(otr_fault_out)
-otr_fault_in = models.FaultState(name="In")
+otr_fault_in = models.DigitalFaultState(name="In")
 otr_fault_in.fault = otr_fault
 otr_fault_in.value = 2
 session.add(otr_fault_in)
-otr_fault_moving = models.FaultState(name="Moving")
+otr_fault_moving = models.DigitalFaultState(name="Moving")
 otr_fault_moving.fault = otr_fault
 otr_fault_moving.value = 0
 session.add(otr_fault_moving)
-otr_fault_broken = models.FaultState(name="Broken")
+otr_fault_broken = models.DigitalFaultState(name="Broken")
 otr_fault_broken.fault = otr_fault
 otr_fault_broken.value = 3
 session.add(otr_fault_broken)
@@ -125,7 +125,7 @@ otr_fault_moving.allowed_classes = []
 otr_fault_broken.allowed_classes = []
 
 #Add a second device
-attenuator = models.Device(name="Attenuator")
+attenuator = models.DigitalDevice(name="Attenuator")
 attenuator.device_type = insertion_device_type
 session.add(attenuator)
 
@@ -133,12 +133,12 @@ session.add(attenuator)
 attenuator_out_lim_sw = models.DeviceInput()
 attenuator_out_lim_sw.channel = chans[2]
 attenuator_out_lim_sw.bit_position = 0
-attenuator_out_lim_sw.device = attenuator
+attenuator_out_lim_sw.digital_device = attenuator
 session.add(attenuator_out_lim_sw)
 attenuator_in_lim_sw = models.DeviceInput()
 attenuator_in_lim_sw.channel = chans[3]
 attenuator_in_lim_sw.bit_position = 1
-attenuator_in_lim_sw.device = attenuator
+attenuator_in_lim_sw.digital_device = attenuator
 session.add(attenuator_in_lim_sw)
 
 #Lets make a fault that uses both devices
@@ -158,15 +158,15 @@ att_input.fault = otr_atten_fault
 session.add(att_input)
 
 #Add some states to this fault.
-both_out = models.FaultState(name="Both out")
+both_out = models.DigitalFaultState(name="Both out")
 both_out.fault = otr_atten_fault
 both_out.value = 5
 session.add(both_out)
-both_in = models.FaultState(name="Both in")
+both_in = models.DigitalFaultState(name="Both in")
 both_in.fault = otr_atten_fault
 both_in.value = 10
 session.add(both_in)
-no_atten = models.FaultState(name="OTR in without attenuation")
+no_atten = models.DigitalFaultState(name="OTR in without attenuation")
 no_atten.fault = otr_atten_fault
 no_atten.value = 6
 session.add(no_atten)

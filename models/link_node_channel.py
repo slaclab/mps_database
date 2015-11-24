@@ -8,3 +8,4 @@ class LinkNodeChannel(Base):
   number = Column(Integer, nullable=False)
   card_id = Column(Integer, ForeignKey('link_node_cards.id'), nullable=False)
   device_input = relationship("DeviceInput", uselist=False, backref="channel")
+  analog_device = relationship("AnalogDevice", uselist=False, backref="channel")

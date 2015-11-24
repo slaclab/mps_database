@@ -9,7 +9,7 @@ class Fault(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=True)
-  states = relationship("FaultState", backref='fault')
+  states = relationship("DigitalFaultState", backref='fault')
   inputs = relationship("FaultInput", backref='fault')
   
   def fault_value(self, device_states):
