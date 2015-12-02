@@ -4,26 +4,35 @@ from mps_config import MPSConfig, models
 #This code is pretty inefficient.
 mps = MPSConfig()
 session = mps.session
-state = { "nodes": {} }
-for node in session.query(models.LinkNode).all():
-  new_node = { "cards": {} }
-  for card in node.cards:
-    new_card = { "channels": {} }
-    for channel in card.channels:
-      new_card["channels"][channel.number] = None
-    new_node["cards"][card.number] = new_card
-  state["nodes"][node.number] = new_node
 
+state = { "crates": {} }
+for crate in session.query(models.Crate).all():
+  crate_dict = { "slots": {} }
+  state["crates"][crate.number] = crate_dict
+  
 #Pretend these are the messages we get from link nodes.
 messages = []
-messages.append({"node": 1, "card": 1, "channel": 0, "value": 0})
-messages.append({"node": 1, "card": 1, "channel": 1, "value": 1})
-messages.append({"node": 1, "card": 1, "channel": 2, "value": 1})
-messages.append({"node": 1, "card": 1, "channel": 3, "value": 0})
+messages.append({"application_type": 0, "crate": 1, "slot": 1, "value": 0b0110})
+
+#Based on the database creatd by populate-test.py, this message should mean the following:
+#Bit number: 3 2 1 0
+#            -------
+#            0 1 1 0
+
+#Bit 0 = 0 means the OTR out limit switch is not engaged
+#Bit 1 = 1 means the OTR in limit switch is engaged
+#Bit 2 = 1 means the attenuator out limit switch is engaged
+#Bit 3 = 0 means the attenuator in limit switch is not engaged
+
+#In other words, the OTR is IN, and the attenuator is OUT.
 
 #Dump the info from the messages into the raw machine state data structure
 for message in messages:
-  state["nodes"][message["node"]]["cards"][message["card"]]["channels"][message["channel"]] = message["value"]
+  crate_num = message["crate"]
+  slot_num = message["slot"]
+  state["crates"][crate_num]["slots"][slot_num] = message["value"]
+
+#TODO: Iterate through the mesages and ensure the application type in the message matches what the databse tells us to expect for the crate and slot.
 
 #Turn the raw machine state into device states
 device_states = {}
@@ -32,12 +41,22 @@ for device in session.query(models.DigitalDevice).all():
   for device_input in device.inputs:
     channel = device_input.channel
     card = channel.card
-    node = card.link_node
-    bit_val = state["nodes"][node.number]["cards"][card.number]["channels"][channel.number]
+    crate = card.crate
+    slot = card.slot_number
+    # Extract the right bits from the message
+    message = state["crates"][crate.number]["slots"][card.slot_number]
+    mask = 1 << (card.type.channel_size - 1) #Something like 0100 if channel size was 3
+    mask = mask | (mask - 1) # Should give something like 0111.  If mask starts out as zero this will be all ones, which will be a bad bug.  Ensure mask > 0 before this step.
+    mask = mask << channel.number #Should give something like 1110 if the channel number was 1
+    masked_message = message & mask
+    bit_val = masked_message >> channel.number
+    #The next line only works for digital devices - it assumes that the channel size is 1.
     device_val = device_val | (bit_val << device_input.bit_position)
+  print("Device: {0} is in a state with a value of {1}".format(device.name, bin(device_val)))
   device_states[device.id] = device_val
 
-#Evaluate faults
+#Evaluate faults.  This script queries the database to find the right fault state, and the allowed classes.
+# In the real central node evaluation, this info all needs to be in look-up tables in memory.
 fault_results = {}
 for fault in session.query(models.Fault).all():
   fault_value = fault.fault_value(device_states)

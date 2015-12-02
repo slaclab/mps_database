@@ -21,23 +21,24 @@ class_2 = models.BeamClass(number=2,name="Class 2")
 class_3 = models.BeamClass(number=3,name="Class 3")
 session.add_all([class_1, class_2, class_3])
 
-#Make a link node.
-node = models.LinkNode(number=1)
-session.add(node)
+#Make a crate.
+crate = models.Crate(number=1, num_slots=6)
+session.add(crate)
 
 #Install a card in the link node.
-digital_io_type = models.LinkNodeCardType(name="Digital I/O", channel_count=32)
+digital_io_type = models.ApplicationCardType(name="Digital I/O", number=0, channel_count=32, channel_size=1)
 session.add(digital_io_type)
 
-card = models.LinkNodeCard(number=1)
-card.link_node = node
+card = models.ApplicationCard(number=1)
 card.type = digital_io_type
+card.slot_number = 1
+crate.cards.append(card)
 session.add(card)
 
 #Define some channels for the card.
 chans = []
-for i in [0,1,2,3]:
-  chan = models.LinkNodeChannel(number=i)
+for i in range(0,4):
+  chan = models.Channel(number=i)
   chan.card = card
   chans.append(chan)
   session.add(chan)

@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
 from models import Base
-class LinkNode(Base):
-  __tablename__ = 'link_nodes'
+
+class Crate(Base):
+  __tablename__ = 'crates'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, unique=True, nullable=False)
-  cards = relationship("LinkNodeCard", backref='link_node')
-  
+  num_slots = Column(Integer, nullable=False)
+  cards = relationship("ApplicationCard", backref='crate')

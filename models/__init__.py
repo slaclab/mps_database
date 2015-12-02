@@ -10,10 +10,10 @@ meta = MetaData(naming_convention={
         "pk": "pk_%(table_name)s"
       })
 
-from link_node import LinkNode
-from link_node_card_type import LinkNodeCardType
-from link_node_card import LinkNodeCard
-from link_node_channel import LinkNodeChannel
+from crate import Crate
+from application_card_type import ApplicationCardType
+from application_card import ApplicationCard
+from channel import Channel
 from device_type import DeviceType
 from analog_device_type import AnalogDeviceType
 from device import Device, DigitalDevice, AnalogDevice
