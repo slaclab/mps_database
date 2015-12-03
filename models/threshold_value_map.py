@@ -7,3 +7,4 @@ class ThresholdValueMap(Base):
   id = Column(Integer, primary_key=True)
   description = Column(String)
   values = relationship("ThresholdValue", backref='threshold_value_map')
+  device_types = relationship("AnalogDeviceType", backref='threshold_value_map')
