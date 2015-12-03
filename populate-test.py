@@ -25,10 +25,11 @@ session.add_all([class_1, class_2, class_3])
 crate = models.Crate(number=1, num_slots=6)
 session.add(crate)
 
-#Install a card in the link node.
+#Define a digital I/O card type.
 digital_io_type = models.ApplicationCardType(name="Digital I/O", number=0, channel_count=32, channel_size=1)
 session.add(digital_io_type)
 
+#Install a digital I/O card in the crate.
 card = models.ApplicationCard(number=1)
 card.type = digital_io_type
 card.slot_number = 1
@@ -182,6 +183,60 @@ both_in.add_allowed_class(beam_class=class_1, mitigation_device=hard_kicker)
 both_in.add_allowed_class(beam_class=class_1, mitigation_device=soft_kicker)
 
 no_atten.allowed_classes = []
+
+#Lets add an analog device, too.
+
+#Define a PIC card type.
+pic_card_type = models.ApplicationCardType(name="PIC", number=1, channel_count=1, channel_size=8)
+session.add(pic_card_type)
+
+#Install a PIC card in the crate.
+pic_card = models.ApplicationCard(number=2)
+pic_card.type = pic_card_type
+pic_card.slot_number = 2
+crate.cards.append(pic_card)
+session.add(pic_card)
+
+#This card only has one channel.
+pic_chan = models.Channel(number=0)
+pic_chan.card = pic_card
+session.add(pic_chan)
+
+#Define a PIC analog device type
+pic_device_type = models.AnalogDeviceType(name="PIC")
+session.add(pic_device_type)
+#All analog device types need a threshold map.
+pic_threshold_map = models.ThresholdValueMap(description="Map for generic PICs.")
+
+for i in range(0,5):
+  threshold = models.ThresholdValue(threshold=i, value=0.3*i)
+  pic_threshold_map.values.append(threshold)
+session.add(pic_threshold_map)
+
+pic_device_type.threshold_value_map = pic_threshold_map
+
+#Make a new PIC, hook it up to the card.
+pic = models.AnalogDevice(name="PIC 01")
+pic.analog_device_type = pic_device_type
+pic.channel = pic_chan
+
+#Add a fault for the PIC.
+pic_fault = models.ThresholdFault(name="PIC 01 Fault")
+pic_fault.analog_device = pic
+
+for i in range(0,5):
+  state = models.ThresholdFaultState(threshold=i)
+  pic_fault.threshold_fault_states.append(state)
+  allowed_classes_in_hxr = [class_1, class_2, class_3]
+  if i == 2:
+    allowed_classes_in_hxr = [class_1, class_2]
+  if i == 3:
+    allowed_classes_in_hxr = [class_1]
+  if i == 4:
+    allowed_classes_in_hxr = []
+  state.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=gun)
+  state.add_allowed_classes(beam_classes=allowed_classes_in_hxr, mitigation_device=hard_kicker)
+  state.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
 
 #Save this stuff
 session.commit()
