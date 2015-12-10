@@ -25,7 +25,8 @@ class Crate(Base):
     #Ensure the slot isn't taken
     if new_card.slot_number in [c.slot_number for c in self.cards]:
       raise ValueError("Slot is already taken by another card.")
-    return cards
+    
+    return new_card
   
   @validates('num_slots')
   def validate_num_slots(self, key, new_num_slots):
