@@ -4,10 +4,10 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 
 class MPSConfig:
-  def __init__(self):
-    self.engine = create_engine('sqlite:///mps_config.db')
-    Session = sessionmaker(bind=self.engine)
-    self.session = Session()
+  def __init__(self, filename='mps_config.db'):
+    self.engine = create_engine("sqlite:///{filename}".format(filename=filename))
+    self.Session = sessionmaker(bind=self.engine)
+    self.session = self.Session()
   
   def clear_all(self):
     print("Clearing database...")
