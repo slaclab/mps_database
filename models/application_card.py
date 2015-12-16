@@ -32,8 +32,8 @@ class ApplicationCard(Base):
   def validate_slot_number(self, key, new_slot):
     if self.crate and new_slot > self.crate.num_slots:
       raise ValueError("Slot number must be <= the number of slots in the crate ({count})".format(count=self.crate.num_slots))
-    
-    if self.crate and new_slot in [c.number for c in self.crate.cards]:
+
+    if self.crate and new_slot in [c.slot_number for c in self.crate.cards]: 
       raise ValueError("This slot is already taken by another card in the crate.")
     
-    return new_slots
+    return new_slot
