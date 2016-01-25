@@ -33,3 +33,4 @@ class ApplicationCardType(Base):
   def validate_channel_size(self, key, new_size):
     if new_size < 1:
       raise ValueError("Channel size must be >= 1.")
+    return new_size
