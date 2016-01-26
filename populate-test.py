@@ -22,7 +22,7 @@ class_3 = models.BeamClass(number=3,name="Class 3")
 session.add_all([class_1, class_2, class_3])
 
 #Make a crate.
-crate = models.Crate(number=1, num_slots=6)
+crate = models.Crate(number=1, shelf_number=1, num_slots=6)
 session.add(crate)
 
 #Define a digital I/O card type.
