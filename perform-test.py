@@ -24,8 +24,9 @@ messages.append({"application_type": 0, "crate": 1, "slot": 1, "value": 0b0110})
 #Bit 3 = 0 means the attenuator in limit switch is not engaged
 #In other words, the OTR is IN, and the attenuator is OUT.
 
-messages.append({"application_type": 1, "crate": 1, "slot": 2, "value": 3})
-#This one is way easier to understand.  The PIC has crossed threshold 3.
+messages.append({"application_type": 1, "crate": 1, "slot": 2, "value": 0x010303})
+#This is a PIC card message, it has three channels, each are 8 bits.
+#The first channel has crossed threshold 3, second crossed 2, first crossed 1.
 
 #Dump the info from the messages into the raw machine state data structure
 for message in messages:
@@ -44,9 +45,9 @@ def get_value_for_channel(channel):
   message = state["crates"][crate.number]["slots"][card.slot_number]
   mask = 1 << (card.type.channel_size - 1) #Something like 0100 if channel size was 3
   mask = mask | (mask - 1) # Should give something like 0111.  If mask starts out as zero this will be all ones, which will be a bad bug.  Ensure mask > 0 before this step.
-  mask = mask << channel.number #Should give something like 1110 if the channel number was 1
+  mask = mask << channel.number*card.type.channel_size #Should give something like 1110 if the channel number was 1
   masked_message = message & mask
-  bit_val = masked_message >> channel.number
+  bit_val = masked_message >> channel.number*card.type.channel_size
   return bit_val
   
 device_states = {}
@@ -61,7 +62,7 @@ for device in session.query(models.DigitalDevice).all():
   print("Device: {0} is in a state with a value of {1}".format(device.name, bin(device_val)))
   device_states[device.id] = device_val
 
-#Do the same thing for analog devices.  This is was easier, because there is only one channel per device.
+#Do the same thing for analog devices.
 for device in session.query(models.AnalogDevice).all():
   device_val = get_value_for_channel(device.channel)
   print("Device: {0} has crossed threshold {1}".format(device.name, device_val))
