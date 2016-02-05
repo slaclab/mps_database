@@ -187,7 +187,7 @@ no_atten.allowed_classes = []
 #Lets add an analog device, too.
 
 #Define a PIC card type.
-pic_card_type = models.ApplicationCardType(name="PIC", number=1, channel_count=1, channel_size=8)
+pic_card_type = models.ApplicationCardType(name="PIC", number=1, channel_count=3, channel_size=8)
 session.add(pic_card_type)
 
 #Install a PIC card in the crate.
@@ -197,10 +197,18 @@ pic_card.slot_number = 2
 crate.cards.append(pic_card)
 session.add(pic_card)
 
-#This card only has one channel.
-pic_chan = models.Channel(number=0)
-pic_chan.card = pic_card
-session.add(pic_chan)
+#This card has three channels.
+pic_chan_0 = models.Channel(number=0)
+pic_chan_0.card = pic_card
+session.add(pic_chan_0)
+
+pic_chan_1 = models.Channel(number=1)
+pic_chan_1.card = pic_card
+session.add(pic_chan_1)
+
+pic_chan_2 = models.Channel(number=2)
+pic_chan_2.card = pic_card
+session.add(pic_chan_2)
 
 #Define a PIC analog device type
 pic_device_type = models.AnalogDeviceType(name="PIC")
@@ -216,9 +224,19 @@ session.add(pic_threshold_map)
 pic_device_type.threshold_value_map = pic_threshold_map
 
 #Make a new PIC, hook it up to the card.
-pic = models.AnalogDevice(name="PIC 01")
+pic = models.AnalogDevice(name="PIC 01 Single Shot")
 pic.analog_device_type = pic_device_type
-pic.channel = pic_chan
+pic.channel = pic_chan_0
+
+#Make a new PIC, hook it up to the card.
+pic = models.AnalogDevice(name="PIC 01 Slow Integration")
+pic.analog_device_type = pic_device_type
+pic.channel = pic_chan_2
+
+#Make a new PIC, hook it up to the card.
+pic = models.AnalogDevice(name="PIC 01 Fast Integration")
+pic.analog_device_type = pic_device_type
+pic.channel = pic_chan_1
 
 #Add a fault for the PIC.
 pic_fault = models.ThresholdFault(name="PIC 01 Fault")
