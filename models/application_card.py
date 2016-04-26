@@ -9,23 +9,36 @@ class ApplicationCard(Base):
   slot_number = Column(Integer, nullable=False)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)
-  channels = relationship("Channel", backref='card')
+  digital_channels = relationship("DigitalChannel", backref='card')
+  analog_channels = relationship("AnalogChannel", backref='card')
   
-  @validates('channels')
-  def validate_channel(self, key, new_channel):
-    if self.type and len(self.channels)+1 > self.type.channel_count:
-      raise ValueError("Number of channels on this card cannot exceed the card type's channel count ({count})".format(count=self.type.channel_count))
+  @validates('digital_channels')
+  def validate_digital_channel(self, key, new_channel):
+    channel_list = self.digital_channels
+    channel_count = self.type.digital_channel_count
+    return self.validate_generic_channel(new_channel, channel_list, channel_count)
     
-    if self.type and new_channel.number >= self.type.channel_count:
-      raise ValueError("For this card's type, channel number must be < {count}".format(count=self.type.channel_count))
+  
+  @validates('analog_channels')
+  def validate_analog_channel(self, key, new_channel):
+    channel_list = self.analog_channels
+    channel_count = self.type.analog_channel_count
+    return self.validate_generic_channel(new_channel, channel_list, channel_count)
+  
+  
+  def validate_generic_channel(self, new_channel, channel_list, channel_count):
+    if self.type and len(channel_list)+1 > channel_count:
+      raise ValueError("Number of channels on this card cannot exceed the card type's channel count ({count})".format(count=channel_count))
+    
+    if self.type and new_channel.number >= channel_count:
+      raise ValueError("For this card's type, channel number must be < {count}".format(count=channel_count))
     
     if new_channel.number < 0:
       raise ValueError("Channel number must be positive.")
     
     #Ensure the channel isn't taken
-    if new_channel.number in [c.number for c in self.channels]:
+    if new_channel.number in [c.number for c in channel_list]:
       raise ValueError("Channel number {num} is already taken by an existing channel.".format(num=new_channel.number))
-    
     return new_channel
   
   @validates('slot_number')

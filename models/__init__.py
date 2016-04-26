@@ -13,7 +13,7 @@ meta = MetaData(naming_convention={
 from crate import Crate
 from application_card_type import ApplicationCardType
 from application_card import ApplicationCard
-from channel import Channel
+from channel import DigitalChannel, AnalogChannel
 from device_type import DeviceType
 from analog_device_type import AnalogDeviceType
 from device import Device, DigitalDevice, AnalogDevice

@@ -25,23 +25,30 @@ session.add_all([class_1, class_2, class_3])
 crate = models.Crate(number=1, shelf_number=1, num_slots=6)
 session.add(crate)
 
-#Define a digital I/O card type.
-digital_io_type = models.ApplicationCardType(name="Digital I/O", number=0, channel_count=32, channel_size=1)
-session.add(digital_io_type)
+#Define a mixed-mode link node (One digital AMC, one analog).
+mixed_link_node_type = models.ApplicationCardType(name="Mixed Mode Link Node", number=0, digital_channel_count=4, digital_channel_size=1, analog_channel_count=3, analog_channel_size=8)
 
-#Install a digital I/O card in the crate.
+#Define a digital link node (two digital AMCs).
+digital_link_node_type = models.ApplicationCardType(name="All-digital Link Node", number=1, digital_channel_count=96, digital_channel_size=1, analog_channel_count=0, analog_channel_size=8)
+
+#Define an analog link node (two analog AMCs).
+analog_link_node_type = models.ApplicationCardType(name="All-analog Link Node", number=2, digital_channel_count=32, digital_channel_size=1, analog_channel_count=6, analog_channel_size=8)
+
+session.add_all([mixed_link_node_type, digital_link_node_type, analog_link_node_type])
+
+#Install a mixed-mode link node card in the crate.
 card = models.ApplicationCard(number=1)
-card.type = digital_io_type
-card.slot_number = 1
+card.type = mixed_link_node_type
+card.slot_number = 2
 crate.cards.append(card)
 session.add(card)
 
 #Define some channels for the card.
-chans = []
+digital_chans = []
 for i in range(0,4):
-  chan = models.Channel(number=i)
+  chan = models.DigitalChannel(number=i)
   chan.card = card
-  chans.append(chan)
+  digital_chans.append(chan)
   session.add(chan)
 
 #Add a new device type - insertion device
@@ -75,12 +82,12 @@ session.add(otr_screen)
 #Give the device some inputs.  It has in and out limit switches.
 #Connect these limit switches to channels 0 and 1 of our link node card.
 otr_out_lim_sw = models.DeviceInput()
-otr_out_lim_sw.channel = chans[0]
+otr_out_lim_sw.channel = digital_chans[0]
 otr_out_lim_sw.bit_position = 0
 otr_out_lim_sw.digital_device = otr_screen
 session.add(otr_out_lim_sw)
 otr_in_lim_sw = models.DeviceInput()
-otr_in_lim_sw.channel = chans[1]
+otr_in_lim_sw.channel = digital_chans[1]
 otr_in_lim_sw.bit_position = 1
 otr_in_lim_sw.digital_device = otr_screen
 session.add(otr_in_lim_sw)
@@ -133,12 +140,12 @@ session.add(attenuator)
 
 #Give the attenuator some inputs
 attenuator_out_lim_sw = models.DeviceInput()
-attenuator_out_lim_sw.channel = chans[2]
+attenuator_out_lim_sw.channel = digital_chans[2]
 attenuator_out_lim_sw.bit_position = 0
 attenuator_out_lim_sw.digital_device = attenuator
 session.add(attenuator_out_lim_sw)
 attenuator_in_lim_sw = models.DeviceInput()
-attenuator_in_lim_sw.channel = chans[3]
+attenuator_in_lim_sw.channel = digital_chans[3]
 attenuator_in_lim_sw.bit_position = 1
 attenuator_in_lim_sw.digital_device = attenuator
 session.add(attenuator_in_lim_sw)
@@ -186,28 +193,17 @@ no_atten.allowed_classes = []
 
 #Lets add an analog device, too.
 
-#Define a PIC card type.
-pic_card_type = models.ApplicationCardType(name="PIC", number=1, channel_count=3, channel_size=8)
-session.add(pic_card_type)
-
-#Install a PIC card in the crate.
-pic_card = models.ApplicationCard(number=2)
-pic_card.type = pic_card_type
-pic_card.slot_number = 2
-crate.cards.append(pic_card)
-session.add(pic_card)
-
-#This card has three channels.
-pic_chan_0 = models.Channel(number=0)
-pic_chan_0.card = pic_card
+#This PIC has three channels.
+pic_chan_0 = models.AnalogChannel(number=0)
+pic_chan_0.card = card
 session.add(pic_chan_0)
 
-pic_chan_1 = models.Channel(number=1)
-pic_chan_1.card = pic_card
+pic_chan_1 = models.AnalogChannel(number=1)
+pic_chan_1.card = card
 session.add(pic_chan_1)
 
-pic_chan_2 = models.Channel(number=2)
-pic_chan_2.card = pic_card
+pic_chan_2 = models.AnalogChannel(number=2)
+pic_chan_2.card = card
 session.add(pic_chan_2)
 
 #Define a PIC analog device type
