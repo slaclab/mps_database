@@ -26,13 +26,13 @@ crate = models.Crate(number=1, shelf_number=1, num_slots=6)
 session.add(crate)
 
 #Define a mixed-mode link node (One digital AMC, one analog).
-mixed_link_node_type = models.ApplicationCardType(name="Mixed Mode Link Node", number=0, digital_channel_count=4, digital_channel_size=1, analog_channel_count=3, analog_channel_size=8)
+mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=4, digital_channel_size=1, analog_channel_count=3, analog_channel_size=8)
 
 #Define a digital link node (two digital AMCs).
-digital_link_node_type = models.ApplicationCardType(name="All-digital Link Node", number=1, digital_channel_count=96, digital_channel_size=1, analog_channel_count=0, analog_channel_size=8)
+digital_link_node_type = models.ApplicationType(name="All-digital Link Node", number=1, digital_channel_count=96, digital_channel_size=1, analog_channel_count=0, analog_channel_size=8)
 
 #Define an analog link node (two analog AMCs).
-analog_link_node_type = models.ApplicationCardType(name="All-analog Link Node", number=2, digital_channel_count=32, digital_channel_size=1, analog_channel_count=6, analog_channel_size=8)
+analog_link_node_type = models.ApplicationType(name="All-analog Link Node", number=2, digital_channel_count=32, digital_channel_size=1, analog_channel_count=6, analog_channel_size=8)
 
 session.add_all([mixed_link_node_type, digital_link_node_type, analog_link_node_type])
 

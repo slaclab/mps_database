@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql import func
 from models import Base
-class ApplicationCardType(Base):
+class ApplicationType(Base):
   __tablename__ = 'application_card_types'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False, unique=True)
