@@ -32,6 +32,8 @@ PIC_data = 0x010203
 messages = []
 messages.append({"application_type": 0, "crate": 1, "slot": 2, "value": (PIC_data << 4) | digital_data})
 
+bpm_bits = 0x27787e27847b
+messages.append({"application_type": 1, "crate": 1, "slot": 3, "value": bpm_bits})
 
 #Dump the info from the messages into the raw machine state data structure
 for message in messages:
@@ -80,8 +82,9 @@ for device in session.query(models.DigitalDevice).all():
 
 #Do the same thing for analog devices.
 for device in session.query(models.AnalogDevice).all():
-  device_val = get_value_for_channel(device.channel)
-  print("Device: {0} has crossed threshold {1}".format(device.name, device_val))
+  decimated_val = get_value_for_channel(device.channel)
+  device_val = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==device.analog_device_type.threshold_value_map_id).filter(models.ThresholdValue.threshold >= decimated_val).order_by(models.ThresholdValue.threshold).first().value
+  print("Device: {0} has a value of {1} {2}".format(device.name, device_val, device.analog_device_type.units))
   device_states[device.id] = device_val
 
 #Evaluate faults.  This script queries the database to find the right fault state, and the allowed classes.
@@ -89,7 +92,7 @@ for device in session.query(models.AnalogDevice).all():
 fault_results = {}
 for fault in session.query(models.Fault).all():
   fault_value = fault.fault_value(device_states)
-  print("Fault: {0}.  Value: {1}".format(fault.name, fault_value))
+  print("Digital Fault: {0}.  Value: {1}".format(fault.name, fault_value))
   fault_state = session.query(models.DigitalFaultState).filter(models.DigitalFaultState.fault_id==fault.id).filter(models.DigitalFaultState.value==fault_value).one()
   fault_results[fault.name] = fault_state.name
   print("State is: {0}".format(fault_state.name))
@@ -99,10 +102,9 @@ for fault in session.query(models.Fault).all():
 
 for fault in session.query(models.ThresholdFault).all():
   device = fault.analog_device
-  fault_state = session.query(models.ThresholdFaultState).filter(models.ThresholdFaultState.threshold_fault_id==fault.id).filter(models.ThresholdFaultState.threshold >= device_states[device.id]).order_by(models.ThresholdFaultState.threshold).first()
-  fault_results[fault.name] = "crossed threshold {0}".format(fault_state.threshold)
-  for md in session.query(models.MitigationDevice).all():
-    allowed_classes = session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id==fault_state.id).filter(models.AllowedClass.mitigation_device_id==md.id).all()
-    print("Allowed classes at {mitigation_device} for this threshold are: {state_list}".format(mitigation_device=md.name, state_list=", ".join([c.beam_class.name for c in allowed_classes])))
+  if fault.greater_than and device_states[device.id] >= fault.threshold:
+    print("Threshold Fault: {0}.  Value {1} >= Threshold {2}".format(fault.name, device_states[device.id], fault.threshold))
+  elif fault.less_than and device_states[device.id] < fault.threshold:
+    print("Threshold Fault: {0}.  Value {1} < Threshold {2}".format(fault.name, device_states[device.id], fault.threshold))
   
 print fault_results
