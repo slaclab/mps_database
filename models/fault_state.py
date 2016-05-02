@@ -35,5 +35,4 @@ class ThresholdFaultState(FaultState):
   __tablename__ = 'threshold_fault_states'
   __mapper_args__ = {'polymorphic_identity': 'threshold_fault_state'}
   id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
-  threshold = Column(Integer, nullable=False)
   threshold_fault_id = Column(Integer, ForeignKey('threshold_faults.id'), nullable=False)
