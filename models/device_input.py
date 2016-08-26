@@ -3,6 +3,17 @@ from sqlalchemy.orm import relationship, backref
 from models import Base
 
 class DeviceInput(Base):
+  """
+  DeviceInput class (device_input table)
+
+  Properties:
+   bit_position: specifies which bit this input should be used when
+                 calculating the DigitalDevice value/state
+
+  References:
+    digital_device_id: the DigitalDevice that uses this DeviceInput
+    channel_id: the DigitalChannel connected to this DeviceInput
+  """
   __tablename__ = 'device_inputs'
   id = Column(Integer, primary_key=True)
   digital_device_id = Column(Integer, ForeignKey('digital_devices.id'), nullable=False)

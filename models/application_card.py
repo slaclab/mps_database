@@ -3,6 +3,28 @@ from sqlalchemy.orm import relationship, backref, validates
 from models import Base
 
 class ApplicationCard(Base):
+  """
+  ApplicationCard class (application_cards table)
+
+  Defines an application card, by specifying its type and location (which 
+  crate and slot).
+
+  Properties:
+   number: serial/property number
+   slot_number: number of slot within the ATCA crate where it is installed
+
+  References:
+   crate_id: specifies the crate that contains this card
+   type_id: specifies the type of this card (e.g. Mixed Mode Link Node type)
+
+  Relationships:
+   digital_channels: there are zero or more entries in the
+                     digital_channels table pointing to an application_card
+                     entry.
+   analog_channels: there are zero or more entries in the
+                    digital_channels table pointing to an application_card
+                    entry.
+  """
   __tablename__ = 'application_cards'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
@@ -14,19 +36,30 @@ class ApplicationCard(Base):
   
   @validates('digital_channels')
   def validate_digital_channel(self, key, new_channel):
+    """
+    When a digital_channel is added to the card, make sure the number
+    of digital channels as specified in the application_card_type table
+    is not exceeded.
+    """
     channel_list = self.digital_channels
     channel_count = self.type.digital_channel_count
     return self.validate_generic_channel(new_channel, channel_list, channel_count)
     
-  
   @validates('analog_channels')
   def validate_analog_channel(self, key, new_channel):
+    """
+    When a digital_channel is added to the card, make sure the number
+    of analog channels as specified in the application_card_type table
+    is not exceeded.
+    """
     channel_list = self.analog_channels
     channel_count = self.type.analog_channel_count
     return self.validate_generic_channel(new_channel, channel_list, channel_count)
   
-  
   def validate_generic_channel(self, new_channel, channel_list, channel_count):
+    """
+    Invoked by the digital_channel and analog_channel validators.
+    """
     if self.type and len(channel_list)+1 > channel_count:
       raise ValueError("Number of channels on this card cannot exceed the card type's channel count ({count})".format(count=channel_count))
     

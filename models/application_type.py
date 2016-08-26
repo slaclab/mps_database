@@ -2,7 +2,32 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql import func
 from models import Base
+
 class ApplicationType(Base):
+  """
+  ApplicationType (application_card_types table)
+
+  Describe an application card type that physically takes one slot. An 
+  ApplicationCard is an ATCA carrier card with (or without) AMCs.
+
+  It has a defined number of digital and analog channels, as described
+  by the DigitalChannel class (digital_channels table) and 
+  AnalogChannel class (analog_channels table).
+
+  Properties:
+   id: unique application card type identifier
+   number: part number
+   name: e.g. Mixed Mode Link Node (one digital and one analog AMC)
+   analog_channel_count: number of analog channels
+   analog_channel_size: number of bits used by each analog channel
+   digital_channel_count: number of digital channels
+   digital_channel_size: number of bits used by each digital channel
+   double_slot: indicates if this application card type uses two slots
+   i.e. it really is composed of two cards (FIXME: not implemented yet, only added to comments)
+
+  Relationships:
+   cards: which ApplicationCards (application_cards table) are of this type
+  """
   __tablename__ = 'application_card_types'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False, unique=True)

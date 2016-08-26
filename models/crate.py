@@ -3,6 +3,17 @@ from sqlalchemy.orm import relationship, validates
 from models import Base
 
 class Crate(Base):
+  """
+  Crate class (crates table)
+  
+  Describes an ATCA crate, properties are:
+    number: crate number (property or serial number)
+    self_number: 
+    num_slots: number of slots available (usually 2 or 7)
+
+  Relationships:
+    cards: each ApplicationCard has a reference to a crate 
+  """
   __tablename__ = 'crates'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, unique=True, nullable=False)
@@ -12,6 +23,10 @@ class Crate(Base):
   
   @validates('cards')
   def validate_card(self, key, new_card):
+    """
+    When a new card is added make sure there are no conflicts,
+    such as is the slot available and is the slot number valid.
+    """
     #Ensure the crate won't be full after adding the new card
     if len(self.cards)+1 > self.num_slots:
       raise ValueError("Crate cannot have more cards than num_slots.")
@@ -31,6 +46,10 @@ class Crate(Base):
   
   @validates('num_slots')
   def validate_num_slots(self, key, new_num_slots):
+    """
+    Make sure the number of slots is enough to hold all the cards
+    (ApplicationCard class) that are in the crate.
+    """
     #Ensure there are enough slots to fit all the installed cards.
     if new_num_slots < len(self.cards):
       raise ValueError("num_slots ({num_slots}) must be >= than the number of cards in this crate ({num_cards}).".format(num_slots=new_num_slots, num_cards=len(self.cards)))

@@ -4,6 +4,15 @@ from models import Base
 from .allowed_class import AllowedClass
 
 class FaultState(Base):
+  """
+  FaultState class (fault_states table)
+
+  Properties:
+    type: either digital_fault_state or analog_fault_state
+
+  Relationships:
+    allowed_classes: list of beam allowed classes for this fault
+  """
   __tablename__ = 'fault_states'
   id = Column(Integer, primary_key=True)
   discriminator = Column('type', String(50))
@@ -24,6 +33,16 @@ class FaultState(Base):
     return acs
 
 class DigitalFaultState(FaultState):
+  """
+  DigitalFaultState class (digital_fault_states table)
+
+  Properties:
+    value: bit combination that represents this fault
+    name: fault name (e.g. Out, In, Broken...)
+
+  References:
+    fault_id: points to the Fault that can generate this state
+  """
   __tablename__ = 'digital_fault_states'
   __mapper_args__ = {'polymorphic_identity': 'digital_fault_state'}
   id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
@@ -32,6 +51,13 @@ class DigitalFaultState(FaultState):
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
 
 class ThresholdFaultState(FaultState):
+  """
+  ThresholdFaultState class (threshold_fault_states table)
+
+  References:
+    fault_id: points to the ThresholdFault (analog fault) that can
+              generate this state
+  """
   __tablename__ = 'threshold_fault_states'
   __mapper_args__ = {'polymorphic_identity': 'threshold_fault_state'}
   id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)

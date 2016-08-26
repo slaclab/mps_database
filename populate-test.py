@@ -32,6 +32,10 @@ bpm_card_type = models.ApplicationType(name="BPM", number=1, digital_channel_cou
 
 session.add_all([mixed_link_node_type, bpm_card_type])
 
+#Add one application for everything...
+global_app = models.Application(global_id=100,name="MyGlobalApp",description="Generic Application")
+session.add(global_app)
+
 #Install a mixed-mode link node card in the crate.
 card = models.ApplicationCard(number=1)
 card.type = mixed_link_node_type
@@ -73,6 +77,7 @@ session.add_all([otr_screen_out, otr_screen_in, otr_screen_moving, otr_screen_br
 #Add a device - an OTR screen.
 otr_screen = models.DigitalDevice(name="OTR")
 otr_screen.device_type = insertion_device_type
+otr_screen.application = global_app
 session.add(otr_screen)
 
 #Give the device some inputs.  It has in and out limit switches.
@@ -132,6 +137,7 @@ otr_fault_broken.allowed_classes = []
 #Add a second device
 attenuator = models.DigitalDevice(name="Attenuator")
 attenuator.device_type = insertion_device_type
+attenuator.application = global_app
 session.add(attenuator)
 
 #Give the attenuator some inputs
@@ -221,20 +227,26 @@ pic_devices = []
 pic = models.AnalogDevice(name="PIC 01 Single Shot")
 pic.analog_device_type = pic_device_type
 pic.channel = pic_chan_0
+pic.application = global_app
 pic_devices.append(pic)
 
 pic = models.AnalogDevice(name="PIC 01 Fast Integration")
 pic.analog_device_type = pic_device_type
 pic.channel = pic_chan_1
+pic.application = global_app
 pic_devices.append(pic)
 
 #Make a new PIC, hook it up to the card.
 pic = models.AnalogDevice(name="PIC 01 Slow Integration")
 pic.analog_device_type = pic_device_type
 pic.channel = pic_chan_2
+pic.application = global_app
 pic_devices.append(pic)
 
-
+attenuator2 = models.DigitalDevice(name="Attenuator2")
+attenuator2.device_type = insertion_device_type
+attenuator2.application = global_app
+session.add(attenuator2)
 
 #Add some faults for the PIC.  We'll make idential faults for each integration time, but you don't *have* to do that.
 for pic in pic_devices:
@@ -295,6 +307,7 @@ for bpm_name in bpm_names:
     session.add(bpm_chan)
     bpm_device = models.AnalogDevice(name="{name} {chan}".format(name=bpm_name, chan=bpm_channel_name))
     bpm_device.channel = bpm_chan
+    bpm_device.application = global_app
     bpm_devices.append(bpm_device)
     session.add(bpm_device)
     channel_number += 1

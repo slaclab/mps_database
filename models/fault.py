@@ -5,6 +5,20 @@ from .fault_input import FaultInput
 from .device import Device
 
 class Fault(Base):
+  """
+  Fault class (faults table)
+
+  Describe a digital Fault, which is composed of one or more FaultInputs
+  that make up the Fault value. 
+
+  Properties:
+    name: short fault identifier
+    description: short explanation of the fault
+
+  Relationships:
+    states: list of DigitalFaultStates that belong to this fault
+    inputs: list of FaultInputs for this fault
+  """
   __tablename__ = 'faults'
   id = Column(Integer, primary_key=True)
   name = Column(String, unique=True, nullable=False)
