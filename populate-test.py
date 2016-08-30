@@ -243,14 +243,14 @@ pic.channel = pic_chan_2
 pic.application = global_app
 pic_devices.append(pic)
 
-attenuator2 = models.DigitalDevice(name="Attenuator2")
-attenuator2.device_type = insertion_device_type
-attenuator2.application = global_app
-session.add(attenuator2)
+#attenuator2 = models.DigitalDevice(name="Attenuator2")
+#attenuator2.device_type = insertion_device_type
+#attenuator2.application = global_app
+#session.add(attenuator2)
 
 #Add some faults for the PIC.  We'll make idential faults for each integration time, but you don't *have* to do that.
 for pic in pic_devices:
-  pic_fault_1 = models.ThresholdFault(name="PIC Loss > 1.0", threshold=1.0, greater_than=True)
+  pic_fault_1 = models.ThresholdFault(name="PIC Loss > 1.0", threshold=1, greater_than=True)
   pic_fault_1.analog_device = pic
   threshold_fault_state = models.ThresholdFaultState()
   #This fault will limit the hard line to class 2 or 1, and will not limit any other line.
@@ -259,7 +259,7 @@ for pic in pic_devices:
   threshold_fault_state.add_allowed_classes([class_1, class_2], mitigation_device=hard_kicker)
   pic_fault_1.threshold_fault_state = threshold_fault_state
 
-  pic_fault_2 = models.ThresholdFault(name="PIC Loss > 2.0", threshold=2.0, greater_than=True)
+  pic_fault_2 = models.ThresholdFault(name="PIC Loss > 2.0", threshold=2, greater_than=True)
   pic_fault_2.analog_device = pic
   threshold_fault_state = models.ThresholdFaultState()
   #This fault will limit the hard line to class 1 only, and will not limit any other line.
@@ -313,7 +313,7 @@ for bpm_name in bpm_names:
     channel_number += 1
     if bpm_channel_name == "TMIT":
       bpm_device.analog_device_type = bpm_tmit_type
-      bpm_fault = models.ThresholdFault(name="{name} TMIT < 150 pC".format(name=bpm_name), threshold=150.0, greater_than=False)
+      bpm_fault = models.ThresholdFault(name="{name} TMIT < 150 pC".format(name=bpm_name), threshold=150, greater_than=False)
       bpm_fault.analog_device = bpm_device
       bpm_fault.threshold_fault_state = models.ThresholdFaultState()
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1], mitigation_device=gun)
@@ -321,7 +321,7 @@ for bpm_name in bpm_names:
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1, class_2, class_3], mitigation_device=hard_kicker)
     else:
       bpm_device.analog_device_type = bpm_position_type
-      bpm_fault = models.ThresholdFault(name="{name} {chan} Position > 1 mm".format(name=bpm_name, chan=bpm_channel_name), threshold=1.0, greater_than=True)
+      bpm_fault = models.ThresholdFault(name="{name} {chan} Position > 1 mm".format(name=bpm_name, chan=bpm_channel_name), threshold=1, greater_than=True)
       bpm_fault.analog_device = bpm_device
       bpm_fault.threshold_fault_state = models.ThresholdFaultState()
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1], mitigation_device=gun)

@@ -3,6 +3,22 @@ from sqlalchemy.orm import relationship, backref
 from models import Base
 
 class ThresholdValue(Base):
+  """
+  ThresholdValue class (threshold_values table)
+
+  This class contains the mapping from compressed analog values to 
+  floating point values. The analog data in transmitted from Link Nodes
+  to the Central Node using up to 12-bits, i.e. a compressed version
+  of the actual analog value. 
+
+  Properties:
+    threshold: compressed threshold value 
+    value: actual analog value
+
+  References:
+    threshold_value_map_id: this ThresholdValue belongs to a map for a
+                            given AnalogDeviceType.
+  """
   __tablename__ = 'threshold_values'
   id = Column(Integer, primary_key=True)
   threshold = Column(Integer, nullable=False)
