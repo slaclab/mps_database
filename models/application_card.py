@@ -52,10 +52,11 @@ class ApplicationCard(Base):
     of analog channels as specified in the application_card_type table
     is not exceeded.
     """
-    channel_list = self.analog_channels
     channel_count = self.type.analog_channel_count
+    channel_list = self.analog_channels
+
     return self.validate_generic_channel(new_channel, channel_list, channel_count)
-  
+   
   def validate_generic_channel(self, new_channel, channel_list, channel_count):
     """
     Invoked by the digital_channel and analog_channel validators.
@@ -72,6 +73,7 @@ class ApplicationCard(Base):
     #Ensure the channel isn't taken
     if new_channel.number in [c.number for c in channel_list]:
       raise ValueError("Channel number {num} is already taken by an existing channel.".format(num=new_channel.number))
+
     return new_channel
   
   @validates('slot_number')
@@ -81,5 +83,5 @@ class ApplicationCard(Base):
 
     if self.crate and new_slot in [c.slot_number for c in self.crate.cards]: 
       raise ValueError("This slot is already taken by another card in the crate.")
-    
+
     return new_slot

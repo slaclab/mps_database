@@ -15,12 +15,16 @@ class ThresholdFault(Base):
 
   Properties:
     name: short fault description
-    threshold: compressed threshold value that is compared against the
-               device reading.
     greater_than: if true, if the AnalogDevice value is larger than the 
                   compressed_threshold then a ThresholdFault is generated
                   if false, if the AnalogDevice value is smaller than the
                   compressed threshold then a ThresholdFault is generated
+
+  References:
+    analog_device_id: defines the type of analog device related to this 
+                      fault
+    threshold_value_id: defines which threshold value is used when calculating
+                        if a fault happened
 
   Relationships:
     threshold_fault_state: through the ThresholdFaultStates this
@@ -30,12 +34,12 @@ class ThresholdFault(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False)
   analog_device_id = Column(Integer, ForeignKey('analog_devices.id'), nullable=False)
-  threshold = Column(Integer, nullable=False)
   #If greater_than is true, a value larger than the threshold will generate a fault.
   #If greater_than is false, a value smaller than the threshold will generate a fault.
   greater_than = Column(Boolean, nullable=False)
   threshold_fault_state = relationship("ThresholdFaultState", uselist=False, backref="threshold_fault")
-  
+  threshold_value_id = Column(Integer, ForeignKey('threshold_values.id'), nullable=False)
+
   @property
   def less_than(self):
     return not self.greater_than

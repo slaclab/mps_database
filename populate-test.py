@@ -28,7 +28,7 @@ session.add(crate)
 #Define a mixed-mode link node (One digital AMC, one analog).
 mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=4, digital_channel_size=1, analog_channel_count=3, analog_channel_size=8)
 #Define a BPM type
-bpm_card_type = models.ApplicationType(name="BPM", number=1, digital_channel_count=0, digital_channel_size=1, analog_channel_count=6, analog_channel_size=8)
+bpm_card_type = models.ApplicationType(name="BPM", number=1, digital_channel_count=4, digital_channel_size=1, analog_channel_count=6, analog_channel_size=8)
 
 session.add_all([mixed_link_node_type, bpm_card_type])
 
@@ -37,17 +37,24 @@ global_app = models.Application(global_id=100,name="MyGlobalApp",description="Ge
 session.add(global_app)
 
 #Install a mixed-mode link node card in the crate.
-card = models.ApplicationCard(number=1)
-card.type = mixed_link_node_type
-card.slot_number = 2
-crate.cards.append(card)
-session.add(card)
+pic_card = models.ApplicationCard(number=1)
+pic_card.type = mixed_link_node_type
+pic_card.slot_number = 2
+crate.cards.append(pic_card)
+session.add(pic_card)
+
+#Install a BPM card in the crate.
+#bpm_card = models.ApplicationCard(number=2)
+#bpm_card.type = bpm_card_type
+#bpm_card.slot_number = 3
+#crate.cards.append(bpm_card)
+#session.add(bpm_card)
 
 #Define some channels for the card.
 digital_chans = []
 for i in range(0,4):
   chan = models.DigitalChannel(number=i)
-  chan.card = card
+  chan.card = pic_card
   digital_chans.append(chan)
   session.add(chan)
 
@@ -197,15 +204,15 @@ no_atten.allowed_classes = []
 
 #This PIC has three channels.
 pic_chan_0 = models.AnalogChannel(number=0)
-pic_chan_0.card = card
+pic_chan_0.card = pic_card
 session.add(pic_chan_0)
 
 pic_chan_1 = models.AnalogChannel(number=1)
-pic_chan_1.card = card
+pic_chan_1.card = pic_card
 session.add(pic_chan_1)
 
-pic_chan_2 = models.AnalogChannel(number=2)
-pic_chan_2.card = card
+pic_chan_2 = models.AnalogChannel(number=2, card=pic_card)
+#pic_chan_2.card = pic_card
 session.add(pic_chan_2)
 
 #Define a PIC analog device type
@@ -213,8 +220,8 @@ pic_device_type = models.AnalogDeviceType(name="PIC", units="counts")
 session.add(pic_device_type)
 #All analog device types need a threshold map.
 pic_threshold_map = models.ThresholdValueMap(description="Map for generic PICs.")
-for i in range(0,5):
-  threshold = models.ThresholdValue(threshold=i, value=0.3*i)
+for i in range(0,15):
+  threshold = models.ThresholdValue(threshold=i, value=0.25*i)
   pic_threshold_map.values.append(threshold)
 session.add(pic_threshold_map)
 
@@ -247,10 +254,20 @@ pic_devices.append(pic)
 #attenuator2.device_type = insertion_device_type
 #attenuator2.application = global_app
 #session.add(attenuator2)
+#session.commit()
+session.flush()
+session.refresh(pic_device_type)
+
+# Find the thresholds for PIC 1.0 and 2.0 values
+tv1 = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==pic_device_type.threshold_value_map_id).filter(models.ThresholdValue.value == 1.0).one()
+print("Threshold Val: {0} -> {1}; {2}".format(tv1.threshold, tv1.value, tv1.threshold_value_map_id))
+
+tv2 = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==pic_device_type.threshold_value_map_id).filter(models.ThresholdValue.value == 2.0).one()
+print("Threshold Val: {0} -> {1}; {2}".format(tv2.threshold, tv2.value, tv2.threshold_value_map_id))
 
 #Add some faults for the PIC.  We'll make idential faults for each integration time, but you don't *have* to do that.
 for pic in pic_devices:
-  pic_fault_1 = models.ThresholdFault(name="PIC Loss > 1.0", threshold=1, greater_than=True)
+  pic_fault_1 = models.ThresholdFault(name="PIC Loss > 1.0", greater_than=True, threshold_value=tv1)
   pic_fault_1.analog_device = pic
   threshold_fault_state = models.ThresholdFaultState()
   #This fault will limit the hard line to class 2 or 1, and will not limit any other line.
@@ -259,7 +276,7 @@ for pic in pic_devices:
   threshold_fault_state.add_allowed_classes([class_1, class_2], mitigation_device=hard_kicker)
   pic_fault_1.threshold_fault_state = threshold_fault_state
 
-  pic_fault_2 = models.ThresholdFault(name="PIC Loss > 2.0", threshold=2, greater_than=True)
+  pic_fault_2 = models.ThresholdFault(name="PIC Loss > 2.0", greater_than=True, threshold_value=tv2)
   pic_fault_2.analog_device = pic
   threshold_fault_state = models.ThresholdFaultState()
   #This fault will limit the hard line to class 1 only, and will not limit any other line.
@@ -273,7 +290,14 @@ bpm_card = models.ApplicationCard(number=2)
 bpm_card.type = bpm_card_type
 bpm_card.slot_number = 3
 crate.cards.append(bpm_card)
+
+session.flush()
+session.refresh(crate)
+print("crate_id: {}".format(crate.id))
+
 session.add(bpm_card)
+#session.flush()
+#session.commit()
 
 #Define a BPM position analog device type
 bpm_position_type = models.AnalogDeviceType(name="BPM Position", units="mm")
@@ -285,6 +309,9 @@ for i in range(0,255): #Map 0-255 to -10mm to +10mm
 session.add(bpm_threshold_map)
 bpm_position_type.threshold_value_map = bpm_threshold_map
 
+session.flush()
+session.refresh(bpm_threshold_map)
+
 #Define a BPM TMIT analog device type
 bpm_tmit_type = models.AnalogDeviceType(name="BPM TMIT", units="pC")
 session.add(bpm_tmit_type)
@@ -295,6 +322,17 @@ for i in range(0,255): #Map 0-255 to 0 pC to 1000 pC
 session.add(bpm_threshold_map)
 bpm_tmit_type.threshold_value_map = bpm_threshold_map
 
+session.flush()
+session.refresh(bpm_threshold_map)
+
+# Find the closest threshold to 1mm
+tv_1mm = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==bpm_position_type.threshold_value_map_id).filter(models.ThresholdValue.value <= 1.0).order_by(models.ThresholdValue.value.desc()).first()
+print("Threshold Val: {0} -> {1}; {2}".format(tv_1mm.threshold, tv_1mm.value, tv_1mm.threshold_value_map_id))
+
+# Find the closest threshold to 150pC
+tv_150pC = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==bpm_tmit_type.threshold_value_map_id).filter(models.ThresholdValue.value <= 150.0).order_by(models.ThresholdValue.value.desc()).first()
+print("Threshold Val: {0} -> {1}; {2}".format(tv_150pC.threshold, tv_150pC.value, tv_150pC.threshold_value_map_id))
+
 #The BPM card has six analog channels: Two BPMs, each with X,Y,and TMIT channels.
 bpm_devices = []
 channel_number = 0
@@ -302,18 +340,20 @@ bpm_channels = ["X", "Y", "TMIT"]
 bpm_names = ["BPM 01", "BPM 02"]
 for bpm_name in bpm_names:
   for bpm_channel_name in bpm_channels:
-    bpm_chan = models.AnalogChannel(number=channel_number)
+    bpm_chan = models.AnalogChannel(number=channel_number) #, card=bpm_card)
     bpm_chan.card = bpm_card
     session.add(bpm_chan)
+
     bpm_device = models.AnalogDevice(name="{name} {chan}".format(name=bpm_name, chan=bpm_channel_name))
     bpm_device.channel = bpm_chan
     bpm_device.application = global_app
     bpm_devices.append(bpm_device)
     session.add(bpm_device)
+
     channel_number += 1
     if bpm_channel_name == "TMIT":
       bpm_device.analog_device_type = bpm_tmit_type
-      bpm_fault = models.ThresholdFault(name="{name} TMIT < 150 pC".format(name=bpm_name), threshold=150, greater_than=False)
+      bpm_fault = models.ThresholdFault(name="{name} TMIT < 150 pC".format(name=bpm_name), greater_than=False, threshold_value=tv_150pC)
       bpm_fault.analog_device = bpm_device
       bpm_fault.threshold_fault_state = models.ThresholdFaultState()
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1], mitigation_device=gun)
@@ -321,14 +361,12 @@ for bpm_name in bpm_names:
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1, class_2, class_3], mitigation_device=hard_kicker)
     else:
       bpm_device.analog_device_type = bpm_position_type
-      bpm_fault = models.ThresholdFault(name="{name} {chan} Position > 1 mm".format(name=bpm_name, chan=bpm_channel_name), threshold=1, greater_than=True)
+      bpm_fault = models.ThresholdFault(name="{name} {chan} Position > 1 mm".format(name=bpm_name, chan=bpm_channel_name), greater_than=True, threshold_value=tv_1mm)
       bpm_fault.analog_device = bpm_device
       bpm_fault.threshold_fault_state = models.ThresholdFaultState()
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1], mitigation_device=gun)
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1, class_2, class_3], mitigation_device=soft_kicker)
       bpm_fault.threshold_fault_state.add_allowed_classes([class_1, class_2, class_3], mitigation_device=hard_kicker)
       
-
-
 #Save this stuff
 session.commit()
