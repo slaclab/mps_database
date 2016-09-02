@@ -16,10 +16,11 @@ soft_kicker = models.MitigationDevice(name="Soft Kicker")
 session.add_all([gun, hard_kicker, soft_kicker])
 
 #Make some beam classes.
+class_0 = models.BeamClass(number=0,name="Class ZERO")
 class_1 = models.BeamClass(number=1,name="Class 1")
 class_2 = models.BeamClass(number=2,name="Class 2")
 class_3 = models.BeamClass(number=3,name="Class 3")
-session.add_all([class_1, class_2, class_3])
+session.add_all([class_0, class_1, class_2, class_3])
 
 #Make a crate.
 crate = models.Crate(number=1, shelf_number=1, num_slots=6)
@@ -112,10 +113,10 @@ otr_fault_input.fault = otr_fault
 session.add(otr_fault_input)
 
 #This fault's states match up exactly with the device states.
-otr_fault_out = models.DigitalFaultState(name="Out")
-otr_fault_out.fault = otr_fault
-otr_fault_out.value = 1
-session.add(otr_fault_out)
+#otr_fault_out = models.DigitalFaultState(name="Out")
+#otr_fault_out.fault = otr_fault
+#otr_fault_out.value = 1
+#session.add(otr_fault_out)
 otr_fault_in = models.DigitalFaultState(name="In")
 otr_fault_in.fault = otr_fault
 otr_fault_in.value = 2
@@ -130,16 +131,22 @@ otr_fault_broken.value = 3
 session.add(otr_fault_broken)
 
 #Give the fault states allowed beam classes.
-otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=gun)
-otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=hard_kicker)
-otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
+#otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=gun)
+#otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=hard_kicker)
+#otr_fault_out.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
 
 otr_fault_in.add_allowed_class(beam_class=class_1, mitigation_device=gun)
 otr_fault_in.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=hard_kicker)
 otr_fault_in.add_allowed_classes(beam_classes=[class_1, class_2, class_3], mitigation_device=soft_kicker)
 
-otr_fault_moving.allowed_classes = []
-otr_fault_broken.allowed_classes = []
+#otr_fault_moving.allowed_classes = []
+otr_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=gun)
+otr_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=hard_kicker)
+otr_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=soft_kicker)
+#otr_fault_broken.allowed_classes = []
+otr_fault_broken.add_allowed_class(beam_class=class_0, mitigation_device=gun)
+otr_fault_broken.add_allowed_classes(beam_class=[class_0, class_1, class_2, class_3], mitigation_device=hard_kicker)
+otr_fault_broken.add_allowed_classes(beam_class=[class_0, class_1, class_2, class_3], mitigation_device=soft_kicker)
 
 #Add a second device
 attenuator = models.DigitalDevice(name="Attenuator")
