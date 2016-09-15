@@ -22,8 +22,8 @@ class Device(Base):
   id = Column(Integer, primary_key=True)
   discriminator = Column('type', String(50))
   name = Column(String, unique=True, nullable=False)
-  description = Column(String, nullable=True)
-  z_position = Column(Float, nullable=True)
+  description = Column(String, nullable=False)
+  z_position = Column(Float, nullable=False)
   application_id = Column(Integer, ForeignKey('applications.id'), nullable=False)
   __mapper_args__ = {'polymorphic_on': discriminator}
 

@@ -83,7 +83,7 @@ otr_screen_broken.value = 3
 session.add_all([otr_screen_out, otr_screen_in, otr_screen_moving, otr_screen_broken])
 
 #Add a device - an OTR screen.
-otr_screen = models.DigitalDevice(name="OTR")
+otr_screen = models.DigitalDevice(name="OTR", z_position=101, description="OTR screen")
 otr_screen.device_type = insertion_device_type
 otr_screen.application = global_app
 session.add(otr_screen)
@@ -145,13 +145,15 @@ otr_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=hard_ki
 otr_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=soft_kicker)
 #otr_fault_broken.allowed_classes = []
 otr_fault_broken.add_allowed_class(beam_class=class_0, mitigation_device=gun)
-otr_fault_broken.add_allowed_classes(beam_class=[class_0, class_1, class_2, class_3], mitigation_device=hard_kicker)
-otr_fault_broken.add_allowed_classes(beam_class=[class_0, class_1, class_2, class_3], mitigation_device=soft_kicker)
+otr_fault_broken.add_allowed_classes(beam_classes=[class_0, class_1, class_2, class_3], mitigation_device=hard_kicker)
+otr_fault_broken.add_allowed_classes(beam_classes=[class_0, class_1, class_2, class_3], mitigation_device=soft_kicker)
 
 #Add a second device
 attenuator = models.DigitalDevice(name="Attenuator")
 attenuator.device_type = insertion_device_type
 attenuator.application = global_app
+attenuator.z_position = 110
+attenuator.description = "Attenuator"
 session.add(attenuator)
 
 #Give the attenuator some inputs
@@ -242,12 +244,16 @@ pic = models.AnalogDevice(name="PIC 01 Single Shot")
 pic.analog_device_type = pic_device_type
 pic.channel = pic_chan_0
 pic.application = global_app
+pic.z_position = 203
+pic.description = "PIC Single Shot"
 pic_devices.append(pic)
 
 pic = models.AnalogDevice(name="PIC 01 Fast Integration")
 pic.analog_device_type = pic_device_type
 pic.channel = pic_chan_1
 pic.application = global_app
+pic.z_position = 203
+pic.description = "PIC Fast Integration"
 pic_devices.append(pic)
 
 #Make a new PIC, hook it up to the card.
@@ -255,6 +261,8 @@ pic = models.AnalogDevice(name="PIC 01 Slow Integration")
 pic.analog_device_type = pic_device_type
 pic.channel = pic_chan_2
 pic.application = global_app
+pic.z_position = 203
+pic.description = "PIC Slow Integration"
 pic_devices.append(pic)
 
 #attenuator2 = models.DigitalDevice(name="Attenuator2")
@@ -354,6 +362,8 @@ for bpm_name in bpm_names:
     bpm_device = models.AnalogDevice(name="{name} {chan}".format(name=bpm_name, chan=bpm_channel_name))
     bpm_device.channel = bpm_chan
     bpm_device.application = global_app
+    bpm_device.z_position = 406
+    bpm_device.description = "BPM {name} {chan}"
     bpm_devices.append(bpm_device)
     session.add(bpm_device)
 

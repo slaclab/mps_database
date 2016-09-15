@@ -48,4 +48,21 @@ def model_representer(dumper, obj):
       node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:bool', value=unicode(getattr(obj, column.name)), style='')))
     else:
       raise TypeError("No scalar representation is implemented for SQLAlchemy column type {col_type}".format(column.type))
+
+  # This code is to print out the attributes inherited from the class Device by the AnalogDevice and DigitalDevice
+  if (hasattr(obj.__class__.__bases__[0],'__tablename__')):
+    if (obj.__class__.__bases__[0].__tablename__ == "devices"):
+      for column in obj.__class__.__bases__[0].__table__.columns:
+        if (column.name != "type"):
+          if isinstance(column.type, String):
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:str', value=unicode(getattr(obj, column.name)), style='"')))
+          elif isinstance(column.type, Integer):
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:int', value=unicode(getattr(obj, column.name)), style='')))
+          elif isinstance(column.type, Float):
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:float', value=unicode(getattr(obj, column.name)), style='')))
+          elif isinstance(column.type, Boolean):
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:bool', value=unicode(getattr(obj, column.name)), style='')))
+          else:
+            raise TypeError("No scalar representation is implemented for SQLAlchemy column type {col_type}".format(column.type))
+ 
   return node
