@@ -37,18 +37,20 @@ class DigitalFaultState(FaultState):
   DigitalFaultState class (digital_fault_states table)
 
   Properties:
-    value: bit combination that represents this fault
-    name: fault name (e.g. Out, In, Broken...)
+    value: bit combination that represents this fault -> This is now in DeviceState only
+    name: fault name (e.g. Out, In, Broken...) -> This is now in DeviceState only
 
   References:
     fault_id: points to the Fault that can generate this state
+    device_state_id: points to the DeviceState that corresponds to this fault
   """
   __tablename__ = 'digital_fault_states'
   __mapper_args__ = {'polymorphic_identity': 'digital_fault_state'}
   id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
-  value = Column(Integer, nullable=False)
-  name = Column(String, nullable=False)
+#  value = Column(Integer, nullable=False)
+#  name = Column(String, nullable=False)
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
+  device_state_id = Column(Integer, ForeignKey('device_states.id'), nullable=False)
 
 class ThresholdFaultState(FaultState):
   """

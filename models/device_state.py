@@ -14,9 +14,14 @@ class DeviceState(Base):
 
   References:
     device_type_id: reference to the DeviceType that can be in this state
+
+  Relationships:
+    
+    
   """
   __tablename__ = 'device_states'
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False)
   value = Column(Integer, nullable=False)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
+  digital_fault_states = relationship("DigitalFaultState", backref='device_state')
