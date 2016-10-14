@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from models import Base
 
@@ -10,6 +10,7 @@ class DigitalChannel(Base):
    number: position of this channel in the card - starts at 0. The
            ApplicationCard checks if there are duplicate numbers and
            if the number does not exceed the maximum number of channels
+   name: string identification for channel
 
   References:
    card_id: specifies the card that contains this channel
@@ -21,6 +22,7 @@ class DigitalChannel(Base):
   __tablename__ = 'digital_channels'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False) #NOTE: Channel numbers need to start at 0, not 1.
+  name = Column(String, unique=True, nullable=False)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_input = relationship("DeviceInput", uselist=False, backref="channel")
   
@@ -32,6 +34,7 @@ class AnalogChannel(Base):
    number: position of this channel in the card - starts at 0. The
            ApplicationCard checks if there are duplicate numbers and
            if the number does not exceed the maximum number of channels
+   name: string identification for channel
 
   References:
    card_id: specifies the card that contains this channel
@@ -42,5 +45,6 @@ class AnalogChannel(Base):
   __tablename__ = 'analog_channels'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
+  name = Column(String, unique=True, nullable=False)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   analog_device = relationship("AnalogDevice", uselist=False, backref="channel")

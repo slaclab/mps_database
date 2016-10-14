@@ -11,6 +11,8 @@ class DeviceState(Base):
   Properties:
     name: description of this state (e.g. BROKEN)
     value: the value a DigitalDevice should have to be in this state
+    mask: bit mask used to ignore certain bits before comparing the
+          DigitalDevice value with the state value
 
   References:
     device_type_id: reference to the DeviceType that can be in this state
@@ -23,5 +25,6 @@ class DeviceState(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False)
   value = Column(Integer, nullable=False)
+  mask = Column(Integer, nullable=False, default=0xFFFFFFFF)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   digital_fault_states = relationship("DigitalFaultState", backref='device_state')

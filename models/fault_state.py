@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from models import Base
 from .allowed_class import AllowedClass
@@ -39,6 +39,8 @@ class DigitalFaultState(FaultState):
   Properties:
     value: bit combination that represents this fault -> This is now in DeviceState only
     name: fault name (e.g. Out, In, Broken...) -> This is now in DeviceState only
+    default: defines if this state is the default for the fault, i.e. if other digital
+             states are not faulted, it defaults to this one
 
   References:
     fault_id: points to the Fault that can generate this state
@@ -49,6 +51,7 @@ class DigitalFaultState(FaultState):
   id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
 #  value = Column(Integer, nullable=False)
 #  name = Column(String, nullable=False)
+  default = Column(Boolean, nullable=False, default=False)
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
   device_state_id = Column(Integer, ForeignKey('device_states.id'), nullable=False)
 

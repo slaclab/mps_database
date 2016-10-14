@@ -31,7 +31,7 @@ crate2 = models.Crate(number=2, shelf_number=1, num_slots=6)
 session.add(crate2)
 
 #Define a mixed-mode link node (One digital AMC only)
-mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=6, digital_channel_size=1, analog_channel_count=0, analog_channel_size=1)
+mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=7, digital_channel_size=1, analog_channel_count=0, analog_channel_size=1)
 
 #Define a mitigation link node (no inputs?)
 mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2, digital_channel_count=0, digital_channel_size=0, analog_channel_count=0, analog_channel_size=0)
@@ -55,16 +55,20 @@ session.add(link_node_card)
 # channel 2 - Gun temperature
 # channel 3 - Waveguide temperature
 # channel 4 - Buncher temperature
-# channel 5 - SOL01/SOL02 temperature
-# channel 6 - SOL01 flow
-# channel 7 - SOL02 flow
-# channel 8 - SOL01 current
-# channel 9 - SOL02 current
-# channel 10 - VVR01 vacuum status
-# channel 11 - VVR02 vacuum status
+# channel 5 - SOL01 temperature
+# channel 6 - SOL02 temperature
+# channel 7 - SOL01 flow
+# channel 8 - SOL02 flow
+# channel 9 - SOL01 current
+# channel 10 - SOL02 current
+# channel 11 - VVR01 vacuum status
+# channel 12 - VVR02 vacuum status
 digital_chans = []
-for i in range(0,6):
+chan_name = ["YAG01_OUT_SWITCH", "YAG01_IN_SWITCH", "GUN_TEMP",
+             "WAVEGUIDE_TEMP", "BUNCHER_TEMP", "SOL01_TEMP", "SOL02_TEMP"]
+for i in range(0,7):
   chan = models.DigitalChannel(number=i)
+  chan.name =chan_name[i]
   chan.card = link_node_card
   digital_chans.append(chan)
   session.add(chan)
@@ -131,8 +135,8 @@ yag_in_lim_sw.bit_position = 1
 yag_in_lim_sw.digital_device = screen
 session.add(yag_in_lim_sw)
 
-#Configure a fault for the device
-yag_fault = models.Fault(name="Profile Monitor Fault")
+#Configure faults for the device
+yag_fault = models.Fault(name="YAG01 Profile Monitor Fault")
 session.add(yag_fault)
 
 #This fault only has one input: the device state.
@@ -221,46 +225,78 @@ session.add(buncher_temperature_channel)
 #================================================================================
 
 #================================================================================
-#Add SOL01/SOL02 Temperature input device
-sol_temperature = models.DigitalDevice(name="SOL01/SOL02 Temperature")
-sol_temperature.device_type = temperature_device_type
-sol_temperature.application = global_app
-sol_temperature.z_position = 0
-sol_temperature.description = "SOL01/SOL02 Temperature Summary Input"
-session.add(sol_temperature)
+#Add SOL01 Temperature input device
+sol1_temperature = models.DigitalDevice(name="SOL01", z_position=-32.115049, description="SOL01 Temperature")
+#sol1_temperature = models.DigitalDevice(name="SOL01 Temperature")
+sol1_temperature.device_type = temperature_device_type
+sol1_temperature.application = global_app
+session.add(sol1_temperature)
 
-# Give the SOL01/SOL02 Temperature its single input channel
-sol_temperature_channel = models.DeviceInput()
-sol_temperature_channel.channel = digital_chans[5]
-sol_temperature_channel.bit_position = 0
-sol_temperature_channel.digital_device = sol_temperature
-session.add(sol_temperature_channel)
+# Give the SOL01 Temperature its single input channel
+sol1_temperature_channel = models.DeviceInput()
+sol1_temperature_channel.channel = digital_chans[5]
+sol1_temperature_channel.bit_position = 0
+sol1_temperature_channel.digital_device = sol1_temperature
+session.add(sol1_temperature_channel)
 #================================================================================
 
-# Configure a fault for the Temperature input device (used for Gun/Waveguide/Buncher/Solenoid temperature)
-temperature_fault = models.Fault(name="Temperature Fault")
-session.add(temperature_fault)
+#================================================================================
+#Add SOL02 Temperature input device
+sol2_temperature = models.DigitalDevice(name="SOL02", z_position=-27.538278, description="SOL02 Temperature")
+#sol_temperature = models.DigitalDevice(name="SOL01/SOL02 Temperature")
+sol2_temperature.device_type = temperature_device_type
+sol2_temperature.application = global_app
+session.add(sol2_temperature)
+
+# Give the SOL02 Temperature its single input channel
+sol2_temperature_channel = models.DeviceInput()
+sol2_temperature_channel.channel = digital_chans[6]
+sol2_temperature_channel.bit_position = 0
+sol2_temperature_channel.digital_device = sol2_temperature
+session.add(sol2_temperature_channel)
+#================================================================================
+
+# Configure Faults for Temperature input devices (used for Gun/Waveguide/Buncher/Solenoid temperature)
+gun_temperature_fault = models.Fault(name="Gun Temperature Fault")
+session.add(gun_temperature_fault)
+
+wg_temperature_fault = models.Fault(name="Waveguide Temperature Fault")
+session.add(wg_temperature_fault)
+
+buncher_temperature_fault = models.Fault(name="Buncher Temperature Fault")
+session.add(buncher_temperature_fault)
+
+sol1_temperature_fault = models.Fault(name="SOL01 Temperature Fault")
+session.add(sol1_temperature_fault)
+
+sol2_temperature_fault = models.Fault(name="SOL02 Temperature Fault")
+session.add(sol2_temperature_fault)
 
 # Temperature Fault Inputs
 temperature_fault_input = models.FaultInput()
 temperature_fault_input.bit_position = 0
 temperature_fault_input.device = gun_temperature
-temperature_fault_input.fault = temperature_fault
+temperature_fault_input.fault = gun_temperature_fault
 session.add(temperature_fault_input)
 temperature_fault_input = models.FaultInput()
 temperature_fault_input.bit_position = 0
 temperature_fault_input.device = wg_temperature
-temperature_fault_input.fault = temperature_fault
+temperature_fault_input.fault = wg_temperature_fault
 session.add(temperature_fault_input)
 temperature_fault_input = models.FaultInput()
 temperature_fault_input.bit_position = 0
 temperature_fault_input.device = buncher_temperature
-temperature_fault_input.fault = temperature_fault
+temperature_fault_input.fault = buncher_temperature_fault
 session.add(temperature_fault_input)
 temperature_fault_input = models.FaultInput()
 temperature_fault_input.bit_position = 0
-temperature_fault_input.device = sol_temperature
-temperature_fault_input.fault = temperature_fault
+temperature_fault_input.device = sol1_temperature
+temperature_fault_input.fault = sol1_temperature_fault
+session.add(temperature_fault_input)
+temperature_fault_input = models.FaultInput()
+temperature_fault_input.bit_position = 0
+temperature_fault_input.device = sol2_temperature
+temperature_fault_input.fault = sol2_temperature_fault
 session.add(temperature_fault_input)
 
 # Fault state for Temperature
@@ -274,12 +310,34 @@ temperature_device_fault.device_type = temperature_device_type
 temperature_device_fault.value = 0
 session.add(temperature_device_fault)
 
-temperature_fault_state = models.DigitalFaultState()
-temperature_fault_state.fault = temperature_fault
-temperature_fault_state.device_state = temperature_device_fault
-session.add(temperature_fault_state)
+gun_temperature_fault_state = models.DigitalFaultState()
+gun_temperature_fault_state.fault = gun_temperature_fault
+gun_temperature_fault_state.device_state = temperature_device_fault
+session.add(gun_temperature_fault_state)
+gun_temperature_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 
-# Give the Temperature fault state allowed beam classes.
-temperature_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+wg_temperature_fault_state = models.DigitalFaultState()
+wg_temperature_fault_state.fault = wg_temperature_fault
+wg_temperature_fault_state.device_state = temperature_device_fault
+session.add(wg_temperature_fault_state)
+wg_temperature_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+
+buncher_temperature_fault_state = models.DigitalFaultState()
+buncher_temperature_fault_state.fault = buncher_temperature_fault
+buncher_temperature_fault_state.device_state = temperature_device_fault
+session.add(buncher_temperature_fault_state)
+buncher_temperature_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+
+sol1_temperature_fault_state = models.DigitalFaultState()
+sol1_temperature_fault_state.fault = sol1_temperature_fault
+sol1_temperature_fault_state.device_state = temperature_device_fault
+session.add(sol1_temperature_fault_state)
+sol1_temperature_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+
+sol2_temperature_fault_state = models.DigitalFaultState()
+sol2_temperature_fault_state.fault = sol2_temperature_fault
+sol2_temperature_fault_state.device_state = temperature_device_fault
+session.add(sol2_temperature_fault_state)
+sol2_temperature_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 
 session.commit()
