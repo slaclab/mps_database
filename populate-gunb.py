@@ -27,8 +27,8 @@ crate1 = models.Crate(number=1, shelf_number=1, num_slots=6)
 crate2 = models.Crate(number=2, shelf_number=1, num_slots=6)
 session.add_all([crate1,crate2])
 
-#Define a mixed-mode link node (One digital AMC only)
-mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=11, digital_channel_size=1, analog_channel_count=0, analog_channel_size=1)
+#Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)
+mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=11, digital_channel_size=1, analog_channel_count=4, analog_channel_size=1)
 
 #Define a mitigation link node (no inputs?)
 mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2, digital_channel_count=0, digital_channel_size=0, analog_channel_count=0, analog_channel_size=0)
@@ -67,7 +67,18 @@ for i in range(0,11):
   digital_chans.append(chan)
   session.add(chan)
 
-# Add device types
+# LN card analog channels
+# channel 0 - IM01
+# channel 1 - Faraday Cup (FC)
+# channel 2 - SOL01 Current
+# channel 3 - SOL02 Current
+im01_channel = models.AnalogChannel(name="IM01 Charge", number=0, card = link_node_card)
+fc_channel = models.AnalogChannel(name="Faraday Cup Current", number=1, card = link_node_card)
+sol01_channel = models.AnalogChannel(name="SOL01 Current", number=2, card = link_node_card)
+sol02_channel = models.AnalogChannel(name="SOL02 Current", number=3, card = link_node_card)
+session.add_all([im01_channel])
+
+# Add digital device types
 profmon_device_type = models.DeviceType(name="Profile Monitor")
 temp_device_type = models.DeviceType(name="Temperature")
 flow_device_type = models.DeviceType(name="Flow Meter")
@@ -75,17 +86,43 @@ vvr_device_type = models.DeviceType(name="Vacuum Status")
 session.add_all([profmon_device_type, temp_device_type,
                  flow_device_type, vvr_device_type])
 
+# Add analog device types
+im_device_type = models.AnalogDeviceType(name="ICT", units="uC")
+fc_device_type = models.AnalogDeviceType(name="Faraday Cup", units="mA")
+sol_curr_device_type = models.AnalogDeviceType(name="Solenoid Curretn", units="mA")
+session.add_all([im_device_type, fc_device_type, sol_curr_device_type])
+
+generic_threshold_map = models.ThresholdValueMap(description="Generic threshold map for analog devices")
+for i in range(0,15):
+  threshold = models.ThresholdValue(threshold=i, value=0.25*i)
+  generic_threshold_map.values.append(threshold)
+session.add(generic_threshold_map)
+
+fc_threshold_map = models.ThresholdValueMap(description="Mapping for Faraday Cup Threshold")
+fc_threshold = models.ThresholdValue(threshold=0, value=0.1)
+fc_threshold_map.values.append(fc_threshold)
+session.add(fc_threshold_map)
+
+sol_threshold_map = models.ThresholdValueMap(description="Mapping for Solenoid Current Threshold")
+sol_threshold = models.ThresholdValue(threshold=0, value=0.05)
+fc_threshold_map.values.append(sol_threshold)
+session.add(sol_threshold_map)
+
+im_device_type.threshold_value_map = generic_threshold_map
+fc_device_type.threshold_value_map = fc_threshold_map
+sol_curr_device_type.threshold_value_map = sol_threshold_map
+
 # Define some states for the device types
-screen_out = models.DeviceState(name="Out", device_type = profmon_device_type, value = 1)
-screen_in = models.DeviceState(name="In", device_type = profmon_device_type, value = 2)
-screen_moving = models.DeviceState(name="Moving", device_type = profmon_device_type, value = 0)
-screen_broken = models.DeviceState(name="Broken", device_type = profmon_device_type, value = 3)
-temp_device_fault = models.DeviceState(name="Temperature Fault", device_type = temp_device_type, value = 1)
-temp_device_ok = models.DeviceState(name="Temperature OK", device_type = temp_device_type, value = 0)
-flow_device_fault = models.DeviceState(name="Flow Fault", device_type = flow_device_type, value = 1)
-flow_device_ok = models.DeviceState(name="Flow OK", device_type = flow_device_type, value = 1)
-vvr_device_fault = models.DeviceState(name="Vacuum Fault", device_type = vvr_device_type, value = 1)
-vvr_device_ok = models.DeviceState(name="Vacuum OK", device_type = vvr_device_type, value = 1)
+screen_out        = models.DeviceState(name="Out           ", device_type = profmon_device_type, value = 1)
+screen_in         = models.DeviceState(name="In            ", device_type = profmon_device_type, value = 2)
+screen_moving     = models.DeviceState(name="Moving        ", device_type = profmon_device_type, value = 0)
+screen_broken     = models.DeviceState(name="Broken        ", device_type = profmon_device_type, value = 3)
+temp_device_fault = models.DeviceState(name="Temp Fault    ", device_type = temp_device_type, value = 1)
+temp_device_ok    = models.DeviceState(name="Temperature OK", device_type = temp_device_type, value = 0)
+flow_device_fault = models.DeviceState(name="Flow Fault    ", device_type = flow_device_type, value = 1)
+flow_device_ok    = models.DeviceState(name="Flow OK       ", device_type = flow_device_type, value = 1)
+vvr_device_fault  = models.DeviceState(name="Vacuum Fault  ", device_type = vvr_device_type, value = 1)
+vvr_device_ok     = models.DeviceState(name="Vacuum OK     ", device_type = vvr_device_type, value = 1)
 
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
@@ -93,7 +130,7 @@ session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  vvr_device_fault, vvr_device_ok])
 session.commit()
 
-#Add the devices
+#Add digital devices
 screen = models.DigitalDevice(name="YAG01", z_position=-28.061394, description="YAG Screen",
                               device_type = profmon_device_type, application = global_app)
 gun_temp = models.DigitalDevice(name="Gun Temperature", device_type = temp_device_type,
@@ -121,6 +158,16 @@ vvr2 = models.DigitalDevice(name="VVR2", z_position=-26, description="Vacuum Gat
 session.add_all([screen, gun_temp, wg_temp, buncher_temp, sol01_temp, sol02_temp,
                  sol01_flow, sol02_flow, vvr1, vvr2])
 
+# Add analog devices
+im01 = models.AnalogDevice(name="IM01", analog_device_type=im_device_type, channel=im01_channel,
+                           application=global_app, z_position=-31.00474, description="ICT Charge")
+fc = models.AnalogDevice(name="FC", analog_device_type=im_device_type, channel=fc_channel,
+                           application=global_app, z_position=-25, description="Faraday Cup Current")
+sol01_curr = models.AnalogDevice(name="SOL01", analog_device_type=im_device_type, channel=sol01_channel,
+                                 application=global_app, z_position=-32.115049, description="SOL01 Current")
+sol02_curr = models.AnalogDevice(name="SOL02", analog_device_type=im_device_type, channel=sol02_channel,
+                                 application=global_app, z_position=-27.538278, description="SOL02 Current")
+
 # Give the device some inputs.  It has in and out limit switches.
 yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen)
 yag_in_lim_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, digital_device = screen)
@@ -146,7 +193,7 @@ session.add_all([yag_out_lim_sw,yag_in_lim_sw, gun_temp_channel, wg_temp_channel
                  buncher_temp_channel, sol01_temp_channel, sol02_temp_channel,
                  sol01_flow_channel, sol02_flow_channel, vvr1_channel, vvr2_channel])
 
-#Configure faults for the device
+#Configure faults for the digital devices
 yag_fault = models.Fault(name="YAG01 Profile Monitor Fault")
 gun_temp_fault = models.Fault(name="Gun Temperature Fault")
 wg_temp_fault = models.Fault(name="Waveguide Temperature Fault")
@@ -161,15 +208,20 @@ session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
                  buncher_temp_fault, sol01_temp_fault, sol02_temp_fault,
                  sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
 
-#this fault only has one input: the device state.
+# Inputs for the faults
 yag_fault_input = models.FaultInput(bit_position = 0, device = screen, fault = yag_fault)
 gun_temp_fault_input = models.FaultInput(bit_position = 0, device = gun_temp, fault = gun_temp_fault)
 wg_temp_fault_input = models.FaultInput(bit_position = 0, device = wg_temp, fault = wg_temp_fault)
 buncher_temp_fault_input = models.FaultInput(bit_position = 0, device = buncher_temp, fault = buncher_temp_fault)
 sol01_temp_fault_input = models.FaultInput(bit_position = 0, device = sol01_temp, fault = sol01_temp_fault)
 sol02_temp_fault_input = models.FaultInput(bit_position = 0, device = sol02_temp, fault = sol02_temp_fault)
+sol01_flow_fault_input = models.FaultInput(bit_position = 0, device = sol01_flow, fault = sol01_flow_fault)
+sol02_flow_fault_input = models.FaultInput(bit_position = 0, device = sol02_flow, fault = sol02_flow_fault)
+vvr1_fault_input = models.FaultInput(bit_position = 0, device = vvr1, fault = vvr1_fault)
+vvr2_fault_input = models.FaultInput(bit_position = 0, device = vvr2, fault = vvr2_fault)
 session.add_all([yag_fault_input, gun_temp_fault_input, wg_temp_fault_input,
-                 buncher_temp_fault_input, sol01_temp_fault_input, sol02_temp_fault_input])
+                 buncher_temp_fault_input, sol01_temp_fault_input, sol02_temp_fault_input,
+                 sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
 
 # FaultStates
 yag_fault_in = models.DigitalFaultState(device_state = screen_in, fault = yag_fault)
@@ -206,5 +258,24 @@ vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter
 vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
+
+# Faults for the analog devices
+fc_fault = models.ThresholdFault(name="FC > 0.1mA", greater_than=True, threshold_value=fc_threshold,
+                                 analog_device = fc)
+fc_fault_state = models.ThresholdFaultState()
+fc_fault_state.add_allowed_class(class_0, mitigation_device=shutter)
+fc_fault.threshold_fault_state = fc_fault_state
+
+sol01_curr_fault = models.ThresholdFault(name="Curr < 0.05", greater_than=False, threshold_value=sol_threshold,
+                                         analog_device = sol01_curr)
+sol01_curr_fault_state = models.ThresholdFaultState()
+sol01_curr_fault_state.add_allowed_class(class_0, mitigation_device=shutter)
+sol01_curr_fault.threshold_fault_state = sol01_curr_fault_state
+
+sol02_curr_fault = models.ThresholdFault(name="Curr < 0.05", greater_than=False, threshold_value=sol_threshold,
+                                         analog_device = sol02_curr)
+sol02_curr_fault_state = models.ThresholdFaultState()
+sol02_curr_fault_state.add_allowed_class(class_0, mitigation_device=shutter)
+sol02_curr_fault.threshold_fault_state = sol02_curr_fault_state
 
 session.commit()
