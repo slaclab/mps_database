@@ -99,13 +99,15 @@ for i in range(0,15):
 session.add(generic_threshold_map)
 
 fc_threshold_map = models.ThresholdValueMap(description="Mapping for Faraday Cup Threshold")
-fc_threshold = models.ThresholdValue(threshold=0, value=0.1)
+fc_threshold_ok = models.ThresholdValue(threshold=0, value=0.05)
+fc_threshold_map.values.append(fc_threshold_ok)
+fc_threshold = models.ThresholdValue(threshold=1, value=0.1)
 fc_threshold_map.values.append(fc_threshold)
 session.add(fc_threshold_map)
 
 sol_threshold_map = models.ThresholdValueMap(description="Mapping for Solenoid Current Threshold")
 sol_threshold = models.ThresholdValue(threshold=0, value=0.05)
-fc_threshold_map.values.append(sol_threshold)
+sol_threshold_map.values.append(sol_threshold)
 session.add(sol_threshold_map)
 
 im_device_type.threshold_value_map = generic_threshold_map

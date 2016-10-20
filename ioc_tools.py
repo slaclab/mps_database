@@ -27,7 +27,10 @@ def dump_db_to_yaml(mps_config, filename):
                   models.ThresholdFaultState,
                   models.MitigationDevice,
                   models.BeamClass,
-                  models.AllowedClass]
+                  models.AllowedClass,
+                   models.Condition,
+                   models.IgnoreCondition,
+                   models.ConditionInput]
   for model_class in model_classes:
     collection = session.query(model_class).order_by(model_class.id).all()
     

@@ -91,7 +91,7 @@ for fault in session.query(models.ThresholdFault).all():
   if (fault.greater_than):
     comp = analogDevice.name + " >= " + str(thresholdValue.threshold)
   else:
-    comp = analogDevice.name + " <= " + str(thresholdValue.threshold)
+    comp = analogDevice.name + " < " + str(thresholdValue.threshold)
     
   state = session.query(models.ThresholdFaultState).filter(models.ThresholdFaultState.threshold_fault_id==fault.id).one()
   for c in state.allowed_classes:
