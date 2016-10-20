@@ -18,7 +18,9 @@ class FaultState(Base):
   discriminator = Column('type', String(50))
   __mapper_args__ = {'polymorphic_on': discriminator}
   allowed_classes = relationship("AllowedClass", backref='fault_state')
-  
+  ignore_conditions = relationship("IgnoreCondition", backref='fault_state')
+  condition_inputs = relationship("ConditionInput", backref='fault_state')
+
   def add_allowed_class(self, beam_class, mitigation_device):
     ac = AllowedClass()
     ac.beam_class = beam_class

@@ -278,4 +278,21 @@ sol02_curr_fault_state = models.ThresholdFaultState()
 sol02_curr_fault_state.add_allowed_class(class_0, mitigation_device=shutter)
 sol02_curr_fault.threshold_fault_state = sol02_curr_fault_state
 
+# Ignore logic
+# 1) If YAG01 is IN, ignore SOL01 Current and SOL02 Current faults, VVR1 and VVR2 faults
+yag01_in_condition = models.Condition(name="YAG01_IN", description="YAG01 screen IN", value=1)
+session.add(yag01_in_condition)
+
+yag01_condition_input = models.ConditionInput(bit_position=0,fault_state=yag_fault_in,
+                                              condition=yag01_in_condition)
+session.add(yag01_condition_input)
+
+sol01_ignore_condition = models.IgnoreCondition(condition=yag01_in_condition, fault_state=sol01_curr_fault_state)
+sol02_ignore_condition = models.IgnoreCondition(condition=yag01_in_condition, fault_state=sol02_curr_fault_state)
+vvr1_condition = models.IgnoreCondition(condition=yag01_in_condition, fault_state=vvr1_fault_state)
+vvr2_condition = models.IgnoreCondition(condition=yag01_in_condition, fault_state=vvr2_fault_state)
+session.add_all([sol01_ignore_condition, sol02_ignore_condition,
+                 vvr1_condition, vvr2_condition])
+
+
 session.commit()
