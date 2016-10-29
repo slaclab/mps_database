@@ -20,7 +20,7 @@ for fault in session.query(models.Fault).all():
   channelNames = []
   num_bits = 0
   for inp in fault.inputs:
-    digitalDevice = session.query(models.DigitalDevice).filter(models.DigitalDevice.id==inp.id).one()
+    digitalDevice = session.query(models.DigitalDevice).filter(models.DigitalDevice.id==inp.device_id).one()
     channels = []
     for ddi in digitalDevice.inputs:
       channel = session.query(models.DigitalChannel).filter(models.DigitalChannel.id==ddi.channel_id).one()
@@ -113,7 +113,9 @@ for condition in session.query(models.Condition).all():
   print "0x%0.4X" % condition.value
   print "+------------------------------------------------------------------+"
   for inp in condition.condition_inputs:
-    print "| bit " + str(inp.bit_position) + ": " + inp.fault_state.fault.name
+    faultState = session.query(models.FaultState).filter(models.FaultState.id==inp.fault_state_id).one()
+    deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
+    print "| bit " + str(inp.bit_position) + ": " + inp.fault_state.fault.name + ", value: " + str(deviceState.value)
   print "+------------------------------------------------------------------+"
 
   print "| Ignored Faults:"
