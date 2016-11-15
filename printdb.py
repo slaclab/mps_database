@@ -56,7 +56,10 @@ for fault in session.query(models.Fault).all():
         print '-',
       else:
         print bits[b],
-    print "0x%0.4X" % deviceState.value, 
+    if (state.default == True):
+      print "default",
+    else:
+      print "0x%0.4X" % deviceState.value, 
     print "\t| " + deviceState.name + "\t|",
     for c in state.allowed_classes:
       beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()

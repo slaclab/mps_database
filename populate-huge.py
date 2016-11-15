@@ -16,7 +16,7 @@ numCards = numCrates # Yep, one card per crate
 channelsPerCard = channelsPerCrate
 channelsPerDevice = 2 # e.g. IN and OUT switch
 devicesPerCard = channelsPerCard / channelsPerDevice
-numBeamClasses = 2 * 2**channelsPerDevice
+numBeamClasses = 2**(2**channelsPerDevice)
 
 session = conf.session
 
@@ -95,7 +95,7 @@ session.add(faultDigitalDeviceType)
 # States for the faults
 # 2 sets of 2**channelsPerDevice
 faultDeviceStates=[]
-for i in range(0, 2 * 2**channelsPerDevice):
+for i in range(0, 2 ** (2**channelsPerDevice)):
   faultDeviceState = models.DeviceState(name="FaultState " + str(i),
                                         device_type=faultDigitalDeviceType,
                                         value=i)
@@ -159,3 +159,17 @@ for i in range(0,len(faults)):
     session.add(ignoreCondition)
 
 session.commit()
+
+#
+# Create test file
+#
+f = open("inputs-huge.txt", "w")
+f.write('Inputs {0} 0\n'.format(numChannels))
+value = 0
+for i in range(1, numChannels+1):
+  f.write('{0} {1}\n'.format(i, value))
+  if (value == 0):
+    value = 1
+  else:
+    value = 0
+f.close()
