@@ -25,6 +25,8 @@ class Device(Base):
   description = Column(String, nullable=False)
   z_position = Column(Float, nullable=False)
   application_id = Column(Integer, ForeignKey('applications.id'), nullable=False)
+  device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
+  fault_outputs = relationship("FaultInput", backref='device')
   __mapper_args__ = {'polymorphic_on': discriminator}
 
 class DigitalDevice(Device):  
@@ -38,9 +40,8 @@ class DigitalDevice(Device):
   __tablename__ = 'digital_devices'
   __mapper_args__ = {'polymorphic_identity': 'digital_device'}
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
-  device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   inputs = relationship("DeviceInput", backref='digital_device')
-  fault_outputs = relationship("FaultInput", backref='device')
+#  fault_outputs = relationship("FaultInput", backref='device')
 
 class AnalogDevice(Device):
   """
@@ -57,6 +58,6 @@ class AnalogDevice(Device):
   __tablename__ = 'analog_devices'
   __mapper_args__ = {'polymorphic_identity': 'analog_device'}
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
-  analog_device_type_id = Column(Integer, ForeignKey('analog_device_types.id'), nullable=False)
+#  analog_device_type_id = Column(Integer, ForeignKey('analog_device_types.id'), nullable=False)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
-  threshold_faults = relationship("ThresholdFault", backref='analog_device')
+#  threshold_faults = relationship("ThresholdFault", backref='analog_device')

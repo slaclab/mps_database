@@ -20,4 +20,4 @@ class DeviceType(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False, unique=True)
   states = relationship("DeviceState", backref='device_type')
-  devices = relationship("DigitalDevice", backref='device_type')
+  devices = relationship("Device", backref='device_type')

@@ -57,15 +57,15 @@ class DigitalFaultState(FaultState):
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
   device_state_id = Column(Integer, ForeignKey('device_states.id'), nullable=False)
 
-class ThresholdFaultState(FaultState):
-  """
-  ThresholdFaultState class (threshold_fault_states table)
-
-  References:
-    fault_id: points to the ThresholdFault (analog fault) that can
-              generate this state
-  """
-  __tablename__ = 'threshold_fault_states'
-  __mapper_args__ = {'polymorphic_identity': 'threshold_fault_state'}
-  id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
-  threshold_fault_id = Column(Integer, ForeignKey('threshold_faults.id'), nullable=False)
+#class ThresholdFaultState(FaultState):
+#  """
+#  ThresholdFaultState class (threshold_fault_states table)
+#
+#  References:
+#    fault_id: points to the ThresholdFault (analog fault) that can
+#              generate this state
+#  """
+#  __tablename__ = 'threshold_fault_states'
+#  __mapper_args__ = {'polymorphic_identity': 'threshold_fault_state'}
+#  id = Column(Integer, ForeignKey('fault_states.id'), primary_key=True)
+#  threshold_fault_id = Column(Integer, ForeignKey('threshold_faults.id'), nullable=False)
