@@ -134,9 +134,9 @@ vvr_device_ok     = models.DeviceState(name="Vacuum OK     ", device_type = vvr_
 # BPM Thresholds:
 # Bit:       2 | 1 | 0
 # Threshold: X | Y | TMIT
-bpm_x_thres_state = models.DeviceState(name="BPM X Fault   ", value=4, mask=0x3, device_type = bpm_device_type)
-bpm_y_thres_state = models.DeviceState(name="BPM Y Fault   ", value=2, mask=0x5, device_type = bpm_device_type)
-bpm_t_thres_state = models.DeviceState(name="BPM TMIT Fault", value=1, mask=0x6, device_type = bpm_device_type)
+bpm_x_thres_state = models.DeviceState(name="BPM X Fault   ", value=4, mask=0x4, device_type = bpm_device_type)
+bpm_y_thres_state = models.DeviceState(name="BPM Y Fault   ", value=2, mask=0x2, device_type = bpm_device_type)
+bpm_t_thres_state = models.DeviceState(name="BPM TMIT Fault", value=1, mask=0x1, device_type = bpm_device_type)
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
                  flow_device_fault, flow_device_ok,
