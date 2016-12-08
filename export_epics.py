@@ -21,32 +21,32 @@ def printRecord(file, recType, recName, fields):
     file.write("  field({0}, \"{1}\")\n".format(name, value))
   file.write("}\n\n")
 
-def exportDigitalChannels(file, digitalChannels):
-  for digitalChannel in digitalChannels:
+def exportDeviceInputs(file, deviceInputs):
+  for deviceInput in deviceInputs:
     fields=[]
     fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
-                   format(digitalChannel.card.crate.number,
-                          digitalChannel.card.number,
-                          digitalChannel.number)))
+                   format(deviceInput.channel.card.crate.number,
+                          deviceInput.channel.card.number,
+                          deviceInput.channel.number)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', 'OK'))
     fields.append(('ONAM', 'FAULTED'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)DIGITAL_CHANNEL'.format(digitalChannel.id)))
-    printRecord(file, 'bi', '$(BASE):{0}'.format(digitalChannel.name), fields)
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)DEVICE_INPUT'.format(deviceInput.id)))
+    printRecord(file, 'bi', '$(BASE):{0}'.format(deviceInput.channel.name), fields)
   file.close()
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
 parser.add_argument('database', metavar='db', type=file, nargs=1, help='database file name (e.g. mps_gun.db)')
-parser.add_argument('--digital-channels', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for digital channels (e.g. digital_channels.template)')
+parser.add_argument('--device-inputs', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for digital channels (e.g. device-inputs.template)')
 
 args = parser.parse_args()
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
 
-if (args.digital_channels):
-  exportDigitalChannels(args.digital_channels, session.query(models.DigitalChannel).all())
+if (args.device_inputs):
+  exportDeviceInputs(args.device_inputs, session.query(models.DeviceInput).all())
 
 session.close()
 
