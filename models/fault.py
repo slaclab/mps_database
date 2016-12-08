@@ -16,14 +16,14 @@ class Fault(Base):
     description: short explanation of the fault
 
   Relationships:
-    states: list of DigitalFaultStates that belong to this fault
+    states: list of FaultStates that belong to this fault
     inputs: list of FaultInputs for this fault
   """
   __tablename__ = 'faults'
   id = Column(Integer, primary_key=True)
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=True)
-  states = relationship("DigitalFaultState", backref='fault')
+  states = relationship("FaultState", backref='fault')
   inputs = relationship("FaultInput", backref='fault')
   
   def fault_value(self, device_states):

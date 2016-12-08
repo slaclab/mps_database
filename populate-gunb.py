@@ -246,25 +246,25 @@ bpm01_fault_input = models.FaultInput(bit_position = 0, device = bpm01, fault = 
 session.add_all([bpm01_fault_input])
 
 # FaultStates
-yag_fault_in = models.DigitalFaultState(device_state = screen_in, fault = yag_fault)
-yag_fault_moving = models.DigitalFaultState(fault = yag_fault, device_state = screen_moving)
-yag_fault_broken = models.DigitalFaultState(fault = yag_fault, device_state = screen_broken)
-gun_temp_fault_state = models.DigitalFaultState(fault = gun_temp_fault, device_state = temp_device_fault)
-wg_temp_fault_state = models.DigitalFaultState(fault = wg_temp_fault, device_state = temp_device_fault)
-buncher_temp_fault_state = models.DigitalFaultState(fault = buncher_temp_fault, device_state = temp_device_fault)
-sol01_temp_fault_state = models.DigitalFaultState(fault = sol01_temp_fault, device_state = temp_device_fault)
-sol02_temp_fault_state = models.DigitalFaultState(fault = sol02_temp_fault, device_state = temp_device_fault)
-sol01_flow_fault_state = models.DigitalFaultState(fault = sol01_flow_fault, device_state = flow_device_fault)
-sol02_flow_fault_state = models.DigitalFaultState(fault = sol02_flow_fault, device_state = flow_device_fault)
-vvr1_fault_state = models.DigitalFaultState(fault = vvr1_fault, device_state = vvr_device_fault)
-vvr2_fault_state = models.DigitalFaultState(fault = vvr2_fault, device_state = vvr_device_fault)
+yag_fault_in = models.FaultState(device_state = screen_in, fault = yag_fault)
+yag_fault_moving = models.FaultState(fault = yag_fault, device_state = screen_moving)
+yag_fault_broken = models.FaultState(fault = yag_fault, device_state = screen_broken)
+gun_temp_fault_state = models.FaultState(fault = gun_temp_fault, device_state = temp_device_fault)
+wg_temp_fault_state = models.FaultState(fault = wg_temp_fault, device_state = temp_device_fault)
+buncher_temp_fault_state = models.FaultState(fault = buncher_temp_fault, device_state = temp_device_fault)
+sol01_temp_fault_state = models.FaultState(fault = sol01_temp_fault, device_state = temp_device_fault)
+sol02_temp_fault_state = models.FaultState(fault = sol02_temp_fault, device_state = temp_device_fault)
+sol01_flow_fault_state = models.FaultState(fault = sol01_flow_fault, device_state = flow_device_fault)
+sol02_flow_fault_state = models.FaultState(fault = sol02_flow_fault, device_state = flow_device_fault)
+vvr1_fault_state = models.FaultState(fault = vvr1_fault, device_state = vvr_device_fault)
+vvr2_fault_state = models.FaultState(fault = vvr2_fault, device_state = vvr_device_fault)
 session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken,
                  gun_temp_fault_state, wg_temp_fault_state, buncher_temp_fault_state,
                  sol01_temp_fault_state, sol02_temp_fault_state])
 
-bpm_x_fault_state = models.DigitalFaultState(device_state = bpm_x_thres_state, fault = bpm01_fault)
-bpm_y_fault_state = models.DigitalFaultState(device_state = bpm_y_thres_state, fault = bpm01_fault)
-bpm_t_fault_state = models.DigitalFaultState(device_state = bpm_t_thres_state, fault = bpm01_fault)
+bpm_x_fault_state = models.FaultState(device_state = bpm_x_thres_state, fault = bpm01_fault)
+bpm_y_fault_state = models.FaultState(device_state = bpm_y_thres_state, fault = bpm01_fault)
+bpm_t_fault_state = models.FaultState(device_state = bpm_t_thres_state, fault = bpm01_fault)
 session.add_all([bpm_x_fault_state, bpm_y_fault_state, bpm_t_fault_state])
 
 # Fault states allowed beam classes.

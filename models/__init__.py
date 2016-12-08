@@ -26,7 +26,7 @@ from fault_input import FaultInput
 from mitigation_device import MitigationDevice
 from beam_class import BeamClass
 from allowed_class import AllowedClass
-from fault_state import DigitalFaultState
+#from fault_state import DigitalFaultState
 #from fault_state import ThresholdFaultState
 #from threshold_fault import ThresholdFault
 #from threshold_value_map import ThresholdValueMap

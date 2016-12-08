@@ -169,11 +169,11 @@ cp_fault_input = models.FaultInput(bit_position=8, device=cp_device, fault=sxrss
 session.add_all([m1_fault_input, slit_fault_input, m2_fault_input, m3_fault_input, cp_fault_input])
 
 # Add fault states
-sxrss_fault_state_default = models.DigitalFaultState(device_state=sxrss_default_state,
+sxrss_fault_state_default = models.FaultState(device_state=sxrss_default_state,
                                                      fault=sxrss_fault, default=True)
-sxrss_fault_state_ss = models.DigitalFaultState(device_state=sxrss_state_ss, fault=sxrss_fault)
-sxrss_fault_state_harmonic = models.DigitalFaultState(device_state=sxrss_state_harmonic, fault=sxrss_fault)
-sxrss_fault_state_sase = models.DigitalFaultState(device_state=sxrss_state_sase, fault=sxrss_fault)
+sxrss_fault_state_ss = models.FaultState(device_state=sxrss_state_ss, fault=sxrss_fault)
+sxrss_fault_state_harmonic = models.FaultState(device_state=sxrss_state_harmonic, fault=sxrss_fault)
+sxrss_fault_state_sase = models.FaultState(device_state=sxrss_state_sase, fault=sxrss_fault)
 session.add_all([sxrss_fault_state_default, sxrss_fault_state_ss,
                  sxrss_fault_state_harmonic, sxrss_fault_state_sase])
 

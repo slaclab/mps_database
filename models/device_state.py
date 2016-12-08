@@ -27,4 +27,4 @@ class DeviceState(Base):
   value = Column(Integer, nullable=False)
   mask = Column(Integer, nullable=False, default=0xFFFFFFFF)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
-  digital_fault_states = relationship("DigitalFaultState", backref='device_state')
+  fault_states = relationship("FaultState", backref='device_state')

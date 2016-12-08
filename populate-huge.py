@@ -136,7 +136,7 @@ for i in range(0, numCards):
 
     # Add fault states, and allowed beam class - one for each DeviceState
     for k in range(0, len(faultDeviceStates)):
-      faultState = models.DigitalFaultState(device_state=faultDeviceStates[k], fault=fault)
+      faultState = models.FaultState(device_state=faultDeviceStates[k], fault=fault)
       faultStates.append(faultState)
       session.add(faultState)
       faultState.add_allowed_class(beam_class=beamClasses[k], mitigation_device=mitigationDevices[0])

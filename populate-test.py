@@ -113,19 +113,19 @@ otr_fault_input.fault = otr_fault
 session.add(otr_fault_input)
 
 #This fault's states match up exactly with the device states.
-#otr_fault_out = models.DigitalFaultState(name="Out")
+#otr_fault_out = models.FaultState(name="Out")
 #otr_fault_out.fault = otr_fault
 #otr_fault_out.value = 1
 #session.add(otr_fault_out)
-otr_fault_in = models.DigitalFaultState(name="In")
+otr_fault_in = models.FaultState(name="In")
 otr_fault_in.fault = otr_fault
 otr_fault_in.value = 2
 session.add(otr_fault_in)
-otr_fault_moving = models.DigitalFaultState(name="Moving")
+otr_fault_moving = models.FaultState(name="Moving")
 otr_fault_moving.fault = otr_fault
 otr_fault_moving.value = 0
 session.add(otr_fault_moving)
-otr_fault_broken = models.DigitalFaultState(name="Broken")
+otr_fault_broken = models.FaultState(name="Broken")
 otr_fault_broken.fault = otr_fault
 otr_fault_broken.value = 3
 session.add(otr_fault_broken)
@@ -185,15 +185,15 @@ att_input.fault = otr_atten_fault
 session.add(att_input)
 
 #Add some states to this fault.
-both_out = models.DigitalFaultState(name="Both out")
+both_out = models.FaultState(name="Both out")
 both_out.fault = otr_atten_fault
 both_out.value = 5
 session.add(both_out)
-both_in = models.DigitalFaultState(name="Both in")
+both_in = models.FaultState(name="Both in")
 both_in.fault = otr_atten_fault
 both_in.value = 10
 session.add(both_in)
-no_atten = models.DigitalFaultState(name="OTR in without attenuation")
+no_atten = models.FaultState(name="OTR in without attenuation")
 no_atten.fault = otr_atten_fault
 no_atten.value = 6
 session.add(no_atten)

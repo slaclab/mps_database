@@ -18,7 +18,7 @@ def dump_db_to_yaml(mps_config, filename):
                   models.DeviceInput,
                   models.Fault,
                   models.FaultInput,
-                  models.DigitalFaultState,
+                  models.FaultState,
 #                  models.ThresholdValueMap,
 #                  models.ThresholdValue,
 #                  models.AnalogDeviceType,
