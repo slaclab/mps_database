@@ -134,9 +134,9 @@ vvr_device_ok     = models.DeviceState(name="Vacuum OK     ", device_type = vvr_
 # BPM Thresholds:
 # Bit:       2 | 1 | 0
 # Threshold: X | Y | TMIT
-bpm_x_thres_state = models.DeviceState(name="BPM X Fault   ", value=4, mask=0x4, device_type = bpm_device_type)
-bpm_y_thres_state = models.DeviceState(name="BPM Y Fault   ", value=2, mask=0x2, device_type = bpm_device_type)
-bpm_t_thres_state = models.DeviceState(name="BPM TMIT Fault", value=1, mask=0x1, device_type = bpm_device_type)
+bpm_x_thres_state = models.DeviceState(name="X_FAULT", value=4, mask=0x4, device_type = bpm_device_type)
+bpm_y_thres_state = models.DeviceState(name="Y_FAULT", value=2, mask=0x2, device_type = bpm_device_type)
+bpm_t_thres_state = models.DeviceState(name="TMIT_FAULT", value=1, mask=0x1, device_type = bpm_device_type)
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
                  flow_device_fault, flow_device_ok,
@@ -181,7 +181,7 @@ session.add_all([screen, gun_temp, wg_temp, buncher_temp, sol01_temp, sol02_temp
 #                                 application=global_app, z_position=-32.115049, description="SOL01 Current")
 #sol02_curr = models.AnalogDevice(name="SOL02", analog_device_type=im_device_type, channel=sol02_channel,
 #                                 application=global_app, z_position=-27.538278, description="SOL02 Current")
-bpm01 = models.AnalogDevice(name="BPM01", device_type = profmon_device_type, channel=bpm01_channel,
+bpm01 = models.AnalogDevice(name="BPM01", device_type = bpm_device_type, channel=bpm01_channel,
                             application=global_app, z_position=-31.349744, description="BPM01")
 
 # Give the device some inputs.  It has in and out limit switches.

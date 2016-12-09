@@ -9,7 +9,8 @@ class DeviceState(Base):
   Describe a state of a DigitalDevice, based on its value. 
 
   Properties:
-    name: description of this state (e.g. BROKEN)
+    name: 
+    description: short explanation of the state
     value: the value a DigitalDevice should have to be in this state
     mask: bit mask used to ignore certain bits before comparing the
           DigitalDevice value with the state value
@@ -24,6 +25,7 @@ class DeviceState(Base):
   __tablename__ = 'device_states'
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False)
+  description = Column(String, nullable=True)
   value = Column(Integer, nullable=False)
   mask = Column(Integer, nullable=False, default=0xFFFFFFFF)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
