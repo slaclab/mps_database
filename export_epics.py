@@ -4,7 +4,7 @@ import sys
 import argparse
 
 #
-# Sample Digital Channel record:
+# Sample Device Input (i.e. Digital Channel) record:
 #
 # record(bi, "CentralNode:DIGIN0") {
 #     field(DESC, "Test input")
@@ -21,6 +21,9 @@ def printRecord(file, recType, recName, fields):
     file.write("  field({0}, \"{1}\")\n".format(name, value))
   file.write("}\n\n")
 
+#
+# Create one bi record for each device input (digital device)
+#
 def exportDeviceInputs(file, deviceInputs):
   for deviceInput in deviceInputs:
     fields=[]
@@ -28,16 +31,21 @@ def exportDeviceInputs(file, deviceInputs):
                    format(deviceInput.channel.card.crate.number,
                           deviceInput.channel.card.number,
                           deviceInput.channel.number)))
-    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('DTYP', 'asynUInt32Digital'))
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', 'OK'))
     fields.append(('ONAM', 'FAULTED'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)DEVICE_INPUT'.format(deviceInput.id)))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT'.format(deviceInput.id)))
     printRecord(file, 'bi', '$(BASE):{0}'.format(deviceInput.channel.name), fields)
   file.close()
 
 #
 # Create one bi record for each device state for each analog device
+#
+# For example, the BPMs have threshold bits for X, Y and TMIT. Each
+# one of them has a bit mask to identify the fault. The mask
+# is passed to asyn as the third parameter within the 
+# '@asynMask(PORT ADDR MASK TIMEOUT)' INP record field
 #
 def exportAnalogDevices(file, analogDevices):
   for analogDevice in analogDevices:
@@ -56,12 +64,38 @@ def exportAnalogDevices(file, analogDevices):
     
   file.close()
 
+def exportMitiagationDevices(file, mitigationDevices, beamClasses):
+  fields=[]
+  fields.append(('DESC', 'Number of beam classes'))
+  fields.append(('PINI', 'YES'))
+  fields.append(('VAL', '{0}'.format((len(beamClasses)))))
+  printRecord(file, 'ao', '$(BASE):NUM_BEAM_CLASSES', fields)
+
+  for beamClass in beamClasses:
+    fields=[]
+    fields.append(('DESC', '{0}'.format(beamClass.description)))
+    fields.append(('PINI', 'YES'))
+    fields.append(('VAL', '{0}'.format(beamClass.number)))
+    printRecord(file, 'ao', '$(BASE):BEAM_CLASS_{0}'.format(beamClass.number), fields)
+
+  for mitigationDevice in mitigationDevices:
+    fields=[]
+    fields.append(('DESC', 'Mitigation Device: {0}'.format(mitigationDevice.name)))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MITIGATION_DEVICE'.format(mitigationDevice.id)))
+    printRecord(file, 'ai', '$(BASE):{0}_ALLOWED_CLASS'.format(mitigationDevice.name.upper()), fields)
+    
+
+  file.close()
+
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
 parser.add_argument('database', metavar='db', type=file, nargs=1, help='database file name (e.g. mps_gun.db)')
 parser.add_argument('--device-inputs', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for digital channels (e.g. device-inputs.template)')
 parser.add_argument('--analog-devices', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for analog channels (e.g. analog-devices.template)')
+parser.add_argument('--mitigation-devices', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for mitigation devices and beam classes (e.g. mitigation.template)')
 
 args = parser.parse_args()
 
@@ -73,6 +107,11 @@ if (args.device_inputs):
 
 if (args.analog_devices):
   exportAnalogDevices(args.analog_devices, session.query(models.AnalogDevice).all())
+
+if (args.mitigation_devices):
+  exportMitiagationDevices(args.mitigation_devices,
+                           session.query(models.MitigationDevice).all(),
+                           session.query(models.BeamClass).all())
 
 session.close()
 

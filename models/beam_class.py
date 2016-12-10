@@ -13,6 +13,7 @@ class BeamClass(Base):
             power and increasing according to the power. This number is
             used to define which BeamClass to use in case of a fault.
     name: beam class name identifier
+    description: short explanation for this beam class
 
   Relationships:
     allowed_classes: list of AllowedClasses that have this BeamClass
@@ -22,4 +23,5 @@ class BeamClass(Base):
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False, unique=True)
   name = Column(String, nullable=False)
+  description = Column(String, nullable=True)
   allowed_classes = relationship("AllowedClass", backref='beam_class')

@@ -11,9 +11,9 @@ class DeviceState(Base):
   Properties:
     name: 
     description: short explanation of the state
-    value: the value a DigitalDevice should have to be in this state
-    mask: bit mask used to ignore certain bits before comparing the
-          DigitalDevice value with the state value
+    value: the value a Device should have to be in this state
+    mask: bit mask used to ignore certain bits from the Device value
+          before comparing the DeviceState value
 
   References:
     device_type_id: reference to the DeviceType that can be in this state

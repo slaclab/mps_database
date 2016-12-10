@@ -16,10 +16,10 @@ llrf = models.MitigationDevice(name="RF")
 session.add_all([shutter, aom, llrf])
 
 #Make some beam classes.
-class_0 = models.BeamClass(number=0,name="Class 0 (0 Hz)")
-class_1 = models.BeamClass(number=1,name="Class 1")
-class_2 = models.BeamClass(number=2,name="Class 2")
-class_3 = models.BeamClass(number=3,name="Class 3")
+class_0 = models.BeamClass(number=0,name="Class 0 (0 Hz)",description="No Beam")
+class_1 = models.BeamClass(number=1,name="Class 1",description="1pC @ 10 Hz")
+class_2 = models.BeamClass(number=2,name="Class 2",description="5pC @ 500 KHz")
+class_3 = models.BeamClass(number=3,name="Class 3",description="5pC @ 1 MHz")
 session.add_all([class_0, class_1, class_2, class_3])
 
 # Make a crate for BPMs, and for the mitigation LN
@@ -120,16 +120,16 @@ session.add_all([bpm_device_type])
 #sol_curr_device_type.threshold_value_map = sol_threshold_map
 
 # Define some states for the device types
-screen_out        = models.DeviceState(name="Out           ", device_type = profmon_device_type, value = 1)
-screen_in         = models.DeviceState(name="In            ", device_type = profmon_device_type, value = 2)
-screen_moving     = models.DeviceState(name="Moving        ", device_type = profmon_device_type, value = 0)
-screen_broken     = models.DeviceState(name="Broken        ", device_type = profmon_device_type, value = 3)
-temp_device_fault = models.DeviceState(name="Temp Fault    ", device_type = temp_device_type, value = 1)
+screen_out        = models.DeviceState(name="Out", device_type = profmon_device_type, value = 1)
+screen_in         = models.DeviceState(name="In", device_type = profmon_device_type, value = 2)
+screen_moving     = models.DeviceState(name="Moving", device_type = profmon_device_type, value = 0)
+screen_broken     = models.DeviceState(name="Broken", device_type = profmon_device_type, value = 3)
+temp_device_fault = models.DeviceState(name="Temp Fault", device_type = temp_device_type, value = 1)
 temp_device_ok    = models.DeviceState(name="Temperature OK", device_type = temp_device_type, value = 0)
-flow_device_fault = models.DeviceState(name="Flow Fault    ", device_type = flow_device_type, value = 1)
-flow_device_ok    = models.DeviceState(name="Flow OK       ", device_type = flow_device_type, value = 1)
-vvr_device_fault  = models.DeviceState(name="Vacuum Fault  ", device_type = vvr_device_type, value = 1)
-vvr_device_ok     = models.DeviceState(name="Vacuum OK     ", device_type = vvr_device_type, value = 1)
+flow_device_fault = models.DeviceState(name="Flow Fault", device_type = flow_device_type, value = 1)
+flow_device_ok    = models.DeviceState(name="Flow OK", device_type = flow_device_type, value = 0)
+vvr_device_fault  = models.DeviceState(name="Vacuum Fault", device_type = vvr_device_type, value = 1)
+vvr_device_ok     = models.DeviceState(name="Vacuum OK", device_type = vvr_device_type, value = 0)
 
 # BPM Thresholds:
 # Bit:       2 | 1 | 0
