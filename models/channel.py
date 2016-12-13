@@ -11,6 +11,8 @@ class DigitalChannel(Base):
            ApplicationCard checks if there are duplicate numbers and
            if the number does not exceed the maximum number of channels
    name: string identification for channel
+   z_name: named state when value is zero (e.g. OUT or OFF) 
+   o_name: named state when value is one (e.g. IN or ON)
 
   References:
    card_id: specifies the card that contains this channel
@@ -23,6 +25,8 @@ class DigitalChannel(Base):
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False) #NOTE: Channel numbers need to start at 0, not 1.
   name = Column(String, unique=True, nullable=False)
+  z_name = Column(String, nullable=False)
+  o_name = Column(String, nullable=False)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_input = relationship("DeviceInput", uselist=False, backref="channel")
   

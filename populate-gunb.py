@@ -12,8 +12,7 @@ session = conf.session
 #First lets define our mitigation devices.
 shutter = models.MitigationDevice(name="Shutter")
 aom = models.MitigationDevice(name="AOM")
-llrf = models.MitigationDevice(name="RF")
-session.add_all([shutter, aom, llrf])
+session.add_all([shutter, aom])
 
 #Make some beam classes.
 class_0 = models.BeamClass(number=0,name="Class 0 (0 Hz)",description="No Beam")
@@ -28,10 +27,14 @@ crate2 = models.Crate(number=2, shelf_number=1, num_slots=6)
 session.add_all([crate1,crate2])
 
 #Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)
-mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=11, digital_channel_size=1, analog_channel_count=4, analog_channel_size=1)
+mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0,
+                                              digital_channel_count=11, digital_channel_size=1,
+                                              analog_channel_count=4, analog_channel_size=1)
 
 #Define a mitigation link node (no inputs?)
-mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2, digital_channel_count=0, digital_channel_size=0, analog_channel_count=0, analog_channel_size=0)
+mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2,
+                                                   digital_channel_count=0, digital_channel_size=0, 
+                                                   analog_channel_count=0, analog_channel_size=0)
 
 session.add_all([mixed_link_node_type, mitigation_link_node_type])
 
@@ -57,12 +60,26 @@ session.add(link_node_card)
 # channel 9 - VVR01 vacuum status
 # channel 10 - VVR02 vacuum status
 digital_chans = []
-chan_name = ["YAG01_OUT_SWITCH", "YAG01_IN_SWITCH", "GUN_TEMP",
-             "WAVEGUIDE_TEMP", "BUNCHER_TEMP", "SOL01_TEMP", "SOL02_TEMP",
-             "SOL01_FLOW", "SOL02_FLOW", "VVR01_VAC", "VVR02_VAC"]
+
+names=[]
+names.append(("YAG01_OUT_SWITCH", "IS_OUT", "NOT_OUT"))
+names.append(("YAG01_IN_SWITCH", "IS_IN", "NOT_IN"))
+names.append(("GUN_TEMP", "IS_FAULTED", "IS_OK"))
+names.append(("WAVEGUIDE_TEMP", "IS_FAULTED", "IS_OK"))
+names.append(("BUNCHER_TEMP", "IS_FAULTED", "IS_OK"))
+names.append(("SOL01_TEMP", "IS_FAULTED", "IS_OK"))
+names.append(("SOL02_TEMP", "IS_FAULTED", "IS_OK"))
+names.append(("SOL01_FLOW", "IS_FAULTED", "IS_OK"))
+names.append(("SOL02_FLOW", "IS_FAULTED", "IS_OK"))
+names.append(("VVR01_VAC", "IS_FAULTED", "IS_OK"))
+names.append(("VVR02_VAC", "IS_FAULTED", "IS_OK"))
+
 for i in range(0,11):
   chan = models.DigitalChannel(number=i)
-  chan.name =chan_name[i]
+  (name, z_name, o_name) = names[i]
+  chan.name = name
+  chan.z_name = z_name
+  chan.o_name = o_name
   chan.card = link_node_card
   digital_chans.append(chan)
   session.add(chan)
@@ -120,23 +137,23 @@ session.add_all([bpm_device_type])
 #sol_curr_device_type.threshold_value_map = sol_threshold_map
 
 # Define some states for the device types
-screen_out        = models.DeviceState(name="Out", device_type = profmon_device_type, value = 1)
-screen_in         = models.DeviceState(name="In", device_type = profmon_device_type, value = 2)
-screen_moving     = models.DeviceState(name="Moving", device_type = profmon_device_type, value = 0)
-screen_broken     = models.DeviceState(name="Broken", device_type = profmon_device_type, value = 3)
-temp_device_fault = models.DeviceState(name="Temp Fault", device_type = temp_device_type, value = 1)
-temp_device_ok    = models.DeviceState(name="Temperature OK", device_type = temp_device_type, value = 0)
-flow_device_fault = models.DeviceState(name="Flow Fault", device_type = flow_device_type, value = 1)
-flow_device_ok    = models.DeviceState(name="Flow OK", device_type = flow_device_type, value = 0)
-vvr_device_fault  = models.DeviceState(name="Vacuum Fault", device_type = vvr_device_type, value = 1)
-vvr_device_ok     = models.DeviceState(name="Vacuum OK", device_type = vvr_device_type, value = 0)
+screen_out        = models.DeviceState(name="Out", device_type = profmon_device_type, value = 2)
+screen_in         = models.DeviceState(name="In", device_type = profmon_device_type, value = 1)
+screen_moving     = models.DeviceState(name="Moving", device_type = profmon_device_type, value = 3)
+screen_broken     = models.DeviceState(name="Broken", device_type = profmon_device_type, value = 0)
+temp_device_fault = models.DeviceState(name="Temp Fault", device_type = temp_device_type, value = 0)
+temp_device_ok    = models.DeviceState(name="Temperature OK", device_type = temp_device_type, value = 1)
+flow_device_fault = models.DeviceState(name="Flow Fault", device_type = flow_device_type, value = 0)
+flow_device_ok    = models.DeviceState(name="Flow OK", device_type = flow_device_type, value = 1)
+vvr_device_fault  = models.DeviceState(name="Vacuum Fault", device_type = vvr_device_type, value = 0)
+vvr_device_ok     = models.DeviceState(name="Vacuum OK", device_type = vvr_device_type, value = 1)
 
-# BPM Thresholds:
+# BPM Thresholds - threshold crossed if bit is 0. Bit=1 means all good.
 # Bit:       2 | 1 | 0
 # Threshold: X | Y | TMIT
-bpm_x_thres_state = models.DeviceState(name="X_FAULT", value=4, mask=0x4, device_type = bpm_device_type)
-bpm_y_thres_state = models.DeviceState(name="Y_FAULT", value=2, mask=0x2, device_type = bpm_device_type)
-bpm_t_thres_state = models.DeviceState(name="TMIT_FAULT", value=1, mask=0x1, device_type = bpm_device_type)
+bpm_x_thres_state = models.DeviceState(name="X_FAULT", value=3, mask=0x4, device_type = bpm_device_type)
+bpm_y_thres_state = models.DeviceState(name="Y_FAULT", value=5, mask=0x2, device_type = bpm_device_type)
+bpm_t_thres_state = models.DeviceState(name="TMIT_FAULT", value=6, mask=0x1, device_type = bpm_device_type)
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
                  flow_device_fault, flow_device_ok,
@@ -210,21 +227,21 @@ session.add_all([yag_out_lim_sw,yag_in_lim_sw, gun_temp_channel, wg_temp_channel
                  sol01_flow_channel, sol02_flow_channel, vvr1_channel, vvr2_channel])
 
 #Configure faults for the digital devices
-yag_fault = models.Fault(name="YAG01 Profile Monitor Fault")
-gun_temp_fault = models.Fault(name="Gun Temperature Fault")
-wg_temp_fault = models.Fault(name="Waveguide Temperature Fault")
-buncher_temp_fault = models.Fault(name="Buncher Temperature Fault")
-sol01_temp_fault = models.Fault(name="SOL01 Temperature Fault")
-sol02_temp_fault = models.Fault(name="SOL02 Temperature Fault")
-sol01_flow_fault = models.Fault(name="SOL01 Flow Fault")
-sol02_flow_fault = models.Fault(name="SOL02 Flow Fault")
-vvr1_fault = models.Fault(name="VVR1 Vacuum Valve Fault")
-vvr2_fault = models.Fault(name="VVR2 Vacuum Valve Fault")
+yag_fault = models.Fault(name="YAG01", description="YAG01 Profile Monitor Fault")
+gun_temp_fault = models.Fault(name="GUN_TEMP", description="Gun Temperature Fault")
+wg_temp_fault = models.Fault(name="WG_TEMP", description="Waveguide Temperature Fault")
+buncher_temp_fault = models.Fault(name="BUNCH_TEMP", description="Buncher Temperature Fault")
+sol01_temp_fault = models.Fault(name="SOL01_TEMP", description="SOL01 Temperature Fault")
+sol02_temp_fault = models.Fault(name="SOL02_TEMP", description="SOL02 Temperature Fault")
+sol01_flow_fault = models.Fault(name="SOL01_FLOW", description="SOL01 Flow Fault")
+sol02_flow_fault = models.Fault(name="SOL02_FLOW", description="SOL02 Flow Fault")
+vvr1_fault = models.Fault(name="VVR1", description="VVR1 Vacuum Valve Fault")
+vvr2_fault = models.Fault(name="VVR2", description="VVR2 Vacuum Valve Fault")
 session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
                  buncher_temp_fault, sol01_temp_fault, sol02_temp_fault,
                  sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
 
-bpm01_fault = models.Fault(name="BPM01 Fault")
+bpm01_fault = models.Fault(name="BPM01", description="BPM01 X/Y/TMIT Threshold Fault")
 session.add_all([bpm01_fault])
 
 # Inputs for the faults
@@ -272,19 +289,14 @@ yag_fault_in.add_allowed_class(beam_class=class_1, mitigation_device=aom)
 yag_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 yag_fault_broken.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 gun_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-gun_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
 wg_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-wg_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
 buncher_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-buncher_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
 sol01_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 sol02_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 sol01_flow_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 sol02_flow_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=llrf)
 
 bpm_x_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 bpm_y_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)

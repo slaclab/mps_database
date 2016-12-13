@@ -23,6 +23,11 @@ def printRecord(file, recType, recName, fields):
 
 #
 # Create one bi record for each device input (digital device)
+# Also creates:
+#  ${DEV}_LATCHED
+#  ${DEV}_BYPV (bypass value)
+#  ${DEV}_BYPS (bypass status)
+#  ${DEV}_BYPEXP (bypass expiration date?)
 #
 def exportDeviceInputs(file, deviceInputs):
   for deviceInput in deviceInputs:
@@ -33,10 +38,18 @@ def exportDeviceInputs(file, deviceInputs):
                           deviceInput.channel.number)))
     fields.append(('DTYP', 'asynUInt32Digital'))
     fields.append(('SCAN', '1 second'))
-    fields.append(('ZNAM', 'OK'))
-    fields.append(('ONAM', 'FAULTED'))
+    fields.append(('ZNAM', '{0}'.format(deviceInput.channel.z_name)))
+    fields.append(('ONAM', '{0}'.format(deviceInput.channel.o_name)))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT'.format(deviceInput.id)))
     printRecord(file, 'bi', '$(BASE):{0}'.format(deviceInput.channel.name), fields)
+
+    fields[0]=(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}] Latched'.
+                format(deviceInput.channel.card.crate.number,
+                       deviceInput.channel.card.number,
+                       deviceInput.channel.number)))
+    fields[5]=(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_LATCHED'.format(deviceInput.id)))
+    printRecord(file, 'bi', '$(BASE):{0}_LATCHED'.format(deviceInput.channel.name), fields)
+
   file.close()
 
 #
@@ -57,8 +70,8 @@ def exportAnalogDevices(file, analogDevices):
                             analogDevice.channel.number)))
       fields.append(('DTYP', 'asynUInt32Digital'))
       fields.append(('SCAN', '1 second'))
-      fields.append(('ZNAM', 'OK'))
-      fields.append(('ONAM', 'FAULTED'))
+      fields.append(('ZNAM', 'IS_EXCEEDED'))
+      fields.append(('ONAM', 'IS_OK'))
       fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE'.format(analogDevice.id, state.value)))
       printRecord(file, 'bi', '$(BASE):{0}_{1}'.format(analogDevice.channel.name, state.name), fields)
     
@@ -89,13 +102,32 @@ def exportMitiagationDevices(file, mitigationDevices, beamClasses):
 
   file.close()
 
+def exportFaults(file, faults):
+  for fault in faults:
+    fields=[]
+    fields.append(('DESC', '{0}'.format(fault.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'OK'))
+    fields.append(('ONAM', 'FAULTED'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT'.format(fault.id)))
+    printRecord(file, 'bi', '$(BASE):{0}'.format(fault.name), fields)
+
+  file.close()
+
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
-parser.add_argument('database', metavar='db', type=file, nargs=1, help='database file name (e.g. mps_gun.db)')
-parser.add_argument('--device-inputs', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for digital channels (e.g. device-inputs.template)')
-parser.add_argument('--analog-devices', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for analog channels (e.g. analog-devices.template)')
-parser.add_argument('--mitigation-devices', metavar='file', type=argparse.FileType('w'), nargs='?', help='epics template file name for mitigation devices and beam classes (e.g. mitigation.template)')
+parser.add_argument('database', metavar='db', type=file, nargs=1, 
+                    help='database file name (e.g. mps_gun.db)')
+parser.add_argument('--device-inputs', metavar='file', type=argparse.FileType('w'), nargs='?',
+                    help='epics template file name for digital channels (e.g. device-inputs.template)')
+parser.add_argument('--analog-devices', metavar='file', type=argparse.FileType('w'), nargs='?', 
+                    help='epics template file name for analog channels (e.g. analog-devices.template)')
+parser.add_argument('--mitigation-devices', metavar='file', type=argparse.FileType('w'), nargs='?', 
+                    help='epics template file name for mitigation devices and beam classes (e.g. mitigation.template)')
+parser.add_argument('--faults', metavar='file', type=argparse.FileType('w'), nargs='?', 
+                    help='epics template file name for faults (e.g. faults.template)')
 
 args = parser.parse_args()
 
@@ -112,6 +144,9 @@ if (args.mitigation_devices):
   exportMitiagationDevices(args.mitigation_devices,
                            session.query(models.MitigationDevice).all(),
                            session.query(models.BeamClass).all())
+
+if (args.faults):
+  exportFaults(args.faults, session.query(models.Fault).all())
 
 session.close()
 
