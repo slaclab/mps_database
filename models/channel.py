@@ -13,6 +13,7 @@ class DigitalChannel(Base):
    name: string identification for channel
    z_name: named state when value is zero (e.g. OUT or OFF) 
    o_name: named state when value is one (e.g. IN or ON)
+   alarm_state: define whether zero or one value is the fault state
 
   References:
    card_id: specifies the card that contains this channel
@@ -27,6 +28,7 @@ class DigitalChannel(Base):
   name = Column(String, unique=True, nullable=False)
   z_name = Column(String, nullable=False)
   o_name = Column(String, nullable=False)
+  alarm_state = Column(Integer, nullable=False, default=0)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_input = relationship("DeviceInput", uselist=False, backref="channel")
   

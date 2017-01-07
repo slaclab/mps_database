@@ -32,7 +32,7 @@ def printRecord(file, recType, recName, fields):
 def exportDeviceInputs(file, deviceInputs):
   for deviceInput in deviceInputs:
     fields=[]
-    fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
+    fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}]'.
                    format(deviceInput.channel.card.crate.number,
                           deviceInput.channel.card.number,
                           deviceInput.channel.number)))
@@ -40,15 +40,71 @@ def exportDeviceInputs(file, deviceInputs):
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', '{0}'.format(deviceInput.channel.z_name)))
     fields.append(('ONAM', '{0}'.format(deviceInput.channel.o_name)))
+    if deviceInput.channel.alarm_state == 0:
+      fields.append(('ZSV', 'MAJOR'))
+      fields.append(('OSV', 'NO_ALARM'))
+    else:
+      fields.append(('ZSV', 'NO_ALARM'))
+      fields.append(('OSV', 'MAJOR'))
+
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT'.format(deviceInput.id)))
     printRecord(file, 'bi', '$(BASE):{0}'.format(deviceInput.channel.name), fields)
 
-    fields[0]=(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}] Latched'.
+    #=== Begin Latch records ====
+    # Record for latched value
+    fields[0]=(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Latched Value'.
                 format(deviceInput.channel.card.crate.number,
                        deviceInput.channel.card.number,
                        deviceInput.channel.number)))
-    fields[5]=(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_LATCHED'.format(deviceInput.id)))
+    fields[7]=(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_LATCHED'.format(deviceInput.id)))
     printRecord(file, 'bi', '$(BASE):{0}_LATCHED'.format(deviceInput.channel.name), fields)
+
+    # Record to process unlatch value
+    fields=[]
+    fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Unlatch'.
+                   format(deviceInput.channel.card.crate.number,
+                          deviceInput.channel.card.number,
+                          deviceInput.channel.number)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_UNLATCH'.format(deviceInput.id)))
+    printRecord(file, 'bo', '$(BASE):{0}_UNLATCH'.format(deviceInput.channel.name), fields)
+    #=== End Latch records ====
+
+    #=== Begin Bypass records ====
+    # Bypass Value: used while bypass is active
+    fields=[]
+    fields.append(('DESC', 'Bypass Value'))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('ZNAM', '{0}'.format(deviceInput.channel.z_name)))
+    fields.append(('ONAM', '{0}'.format(deviceInput.channel.o_name)))
+    if deviceInput.channel.alarm_state == 0:
+      fields.append(('ZSV', 'MAJOR'))
+      fields.append(('OSV', 'NO_ALARM'))
+    else:
+      fields.append(('ZSV', 'NO_ALARM'))
+      fields.append(('OSV', 'MAJOR'))
+    fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_BYPV'.format(deviceInput.id)))
+    printRecord(file, 'bo', '$(BASE):{0}_BYPV'.format(deviceInput.channel.name), fields)
+
+    # Bypass Status: shows if bypass is currently active or not
+    fields=[]
+    fields.append(('DESC', 'Bypass Status'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('DTYP', 'asynUInt32Digital'))    
+    fields.append(('ZNAM', 'Not Bypassed'))
+    fields.append(('ONAM', 'Bypassed'))
+    fields.append(('ZSV', 'MAJOR'))
+    fields.append(('OSV', 'NO_ALARM'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_BYPS'.format(deviceInput.id)))
+    printRecord(file, 'bi', '$(BASE):{0}_BYPS'.format(deviceInput.channel.name), fields)
+
+    # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
+    fields=[]
+    fields.append(('DESC', 'Bypass Expiration Date/Time'))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)DEVICE_INPUT_BYPEXPDATE'.format(deviceInput.id)))
+    printRecord(file, 'ao', '$(BASE):{0}_BYPEXPDATE'.format(deviceInput.channel.name), fields)
+    #=== End Bypass records ====
 
   file.close()
 
@@ -72,9 +128,35 @@ def exportAnalogDevices(file, analogDevices):
       fields.append(('SCAN', '1 second'))
       fields.append(('ZNAM', 'IS_EXCEEDED'))
       fields.append(('ONAM', 'IS_OK'))
-      fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE'.format(analogDevice.id, state.value)))
+      fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE'.format(analogDevice.id, state.mask)))
       printRecord(file, 'bi', '$(BASE):{0}_{1}'.format(analogDevice.channel.name, state.name), fields)
     
+    #=== Begin Bypass records ====
+    # Bypass Value: used while bypass is active
+    fields=[]
+    fields.append(('DESC', 'Threshold bypass value for {0}'.format(analogDevice.channel.name)))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPV'.format(analogDevice.id)))
+    printRecord(file, 'ao', '$(BASE):{0}_BYPV'.format(analogDevice.channel.name), fields)
+
+    # Bypass Status: shows if bypass is currently active or not
+    fields=[]
+    fields.append(('DESC', 'Bypass Status'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('DTYP', 'asynUInt32Digital'))    
+    fields.append(('ZNAM', 'Not Bypassed'))
+    fields.append(('ONAM', 'Bypassed'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)ANALOG_DEVICE_BYPS'.format(analogDevice.id)))
+    printRecord(file, 'bi', '$(BASE):{0}_BYPS'.format(analogDevice.channel.name), fields)
+
+    # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
+    fields=[]
+    fields.append(('DESC', 'Bypass Expiration Date/Time'))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id)))
+    printRecord(file, 'ao', '$(BASE):{0}_BYPEXPDATE'.format(analogDevice.channel.name), fields)
+    #=== End Bypass records ====
+
   file.close()
 
 def exportMitiagationDevices(file, mitigationDevices, beamClasses):
@@ -112,6 +194,15 @@ def exportFaults(file, faults):
     fields.append(('ONAM', 'FAULTED'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT'.format(fault.id)))
     printRecord(file, 'bi', '$(BASE):{0}'.format(fault.name), fields)
+
+    fields=[]
+    fields.append(('DESC', '{0} (ignore state)'.format(fault.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'Not Ignored'))
+    fields.append(('ONAM', 'Ignored'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT_IGNORED'.format(fault.id)))
+    printRecord(file, 'bi', '$(BASE):{0}_IGNORED'.format(fault.name), fields)
 
   file.close()
 

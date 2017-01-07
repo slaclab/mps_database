@@ -62,24 +62,26 @@ session.add(link_node_card)
 digital_chans = []
 
 names=[]
-names.append(("YAG01_OUT_SWITCH", "IS_OUT", "NOT_OUT"))
-names.append(("YAG01_IN_SWITCH", "IS_IN", "NOT_IN"))
-names.append(("GUN_TEMP", "IS_FAULTED", "IS_OK"))
-names.append(("WAVEGUIDE_TEMP", "IS_FAULTED", "IS_OK"))
-names.append(("BUNCHER_TEMP", "IS_FAULTED", "IS_OK"))
-names.append(("SOL01_TEMP", "IS_FAULTED", "IS_OK"))
-names.append(("SOL02_TEMP", "IS_FAULTED", "IS_OK"))
-names.append(("SOL01_FLOW", "IS_FAULTED", "IS_OK"))
-names.append(("SOL02_FLOW", "IS_FAULTED", "IS_OK"))
-names.append(("VVR01_VAC", "IS_FAULTED", "IS_OK"))
-names.append(("VVR02_VAC", "IS_FAULTED", "IS_OK"))
+#===========  device, zero name, one name, fault state
+names.append(("YAG01_OUT_SWITCH", "IS_OUT", "NOT_OUT", 1))
+names.append(("YAG01_IN_SWITCH", "IS_IN", "NOT_IN", 1))
+names.append(("GUN_TEMP", "IS_FAULTED", "IS_OK", 0))
+names.append(("WAVEGUIDE_TEMP", "IS_FAULTED", "IS_OK", 0))
+names.append(("BUNCHER_TEMP", "IS_FAULTED", "IS_OK", 0))
+names.append(("SOL01_TEMP", "IS_FAULTED", "IS_OK", 0))
+names.append(("SOL02_TEMP", "IS_FAULTED", "IS_OK", 0))
+names.append(("SOL01_FLOW", "IS_FAULTED", "IS_OK", 0))
+names.append(("SOL02_FLOW", "IS_FAULTED", "IS_OK", 0))
+names.append(("VVR01_VAC", "IS_FAULTED", "IS_OK", 0))
+names.append(("VVR02_VAC", "IS_FAULTED", "IS_OK", 0))
 
 for i in range(0,11):
   chan = models.DigitalChannel(number=i)
-  (name, z_name, o_name) = names[i]
+  (name, z_name, o_name, alarm_state) = names[i]
   chan.name = name
   chan.z_name = z_name
   chan.o_name = o_name
+  chan.alarm_state = alarm_state
   chan.card = link_node_card
   digital_chans.append(chan)
   session.add(chan)
@@ -151,9 +153,9 @@ vvr_device_ok     = models.DeviceState(name="Vacuum OK", device_type = vvr_devic
 # BPM Thresholds - threshold crossed if bit is 0. Bit=1 means all good.
 # Bit:       2 | 1 | 0
 # Threshold: X | Y | TMIT
-bpm_x_thres_state = models.DeviceState(name="X_FAULT", value=3, mask=0x4, device_type = bpm_device_type)
-bpm_y_thres_state = models.DeviceState(name="Y_FAULT", value=5, mask=0x2, device_type = bpm_device_type)
-bpm_t_thres_state = models.DeviceState(name="TMIT_FAULT", value=6, mask=0x1, device_type = bpm_device_type)
+bpm_x_thres_state = models.DeviceState(name="X_FAULT", value=0, mask=0x4, device_type = bpm_device_type)
+bpm_y_thres_state = models.DeviceState(name="Y_FAULT", value=0, mask=0x2, device_type = bpm_device_type)
+bpm_t_thres_state = models.DeviceState(name="TMIT_FAULT", value=0, mask=0x1, device_type = bpm_device_type)
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
                  flow_device_fault, flow_device_ok,
@@ -181,9 +183,9 @@ sol01_flow = models.DigitalDevice(name="SOL01 Flow", z_position=-32.115049, desc
                                   device_type = flow_device_type, application = global_app)
 sol02_flow = models.DigitalDevice(name="SOL02 Flow", z_position=-27.538278, description="SOL02 Flow",
                                   device_type = flow_device_type, application = global_app)
-vvr1 = models.DigitalDevice(name="VVR1", z_position=-31, description="Vacuum Gate Valve VVR1",
+vvr1 = models.DigitalDevice(name="VVR01", z_position=-31, description="Vacuum Gate Valve VVR01",
                                   device_type = vvr_device_type, application = global_app)
-vvr2 = models.DigitalDevice(name="VVR2", z_position=-26, description="Vacuum Gate Valve VVR2",
+vvr2 = models.DigitalDevice(name="VVR02", z_position=-26, description="Vacuum Gate Valve VVR02",
                                   device_type = vvr_device_type, application = global_app)
 
 session.add_all([screen, gun_temp, wg_temp, buncher_temp, sol01_temp, sol02_temp,
@@ -202,25 +204,25 @@ bpm01 = models.AnalogDevice(name="BPM01", device_type = bpm_device_type, channel
                             application=global_app, z_position=-31.349744, description="BPM01")
 
 # Give the device some inputs.  It has in and out limit switches.
-yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen)
-yag_in_lim_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, digital_device = screen)
+yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=0)
+yag_in_lim_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, digital_device = screen, fault_value=0)
 gun_temp_channel = models.DeviceInput(channel = digital_chans[2], bit_position = 0,
-                                      digital_device = gun_temp)
-wg_temp_channel = models.DeviceInput(channel = digital_chans[3], bit_position = 0, digital_device = wg_temp)
+                                      digital_device = gun_temp, fault_value=0)
+wg_temp_channel = models.DeviceInput(channel = digital_chans[3], bit_position = 0, digital_device = wg_temp, fault_value=0)
 buncher_temp_channel = models.DeviceInput(channel = digital_chans[4], bit_position = 0,
-                                          digital_device = buncher_temp)
+                                          digital_device = buncher_temp, fault_value=0)
 sol01_temp_channel = models.DeviceInput(channel = digital_chans[5], bit_position = 0, 
-                                        digital_device = sol01_temp)
+                                        digital_device = sol01_temp, fault_value=0)
 sol02_temp_channel = models.DeviceInput(channel = digital_chans[6], bit_position = 0,
-                                        digital_device = sol02_temp)
+                                        digital_device = sol02_temp, fault_value=0)
 sol01_flow_channel =  models.DeviceInput(channel = digital_chans[7], bit_position = 0,
-                                        digital_device = sol01_flow)
+                                        digital_device = sol01_flow, fault_value=0)
 sol02_flow_channel =  models.DeviceInput(channel = digital_chans[8], bit_position = 0,
-                                        digital_device = sol02_flow)
+                                        digital_device = sol02_flow, fault_value=0)
 vvr1_channel =  models.DeviceInput(channel = digital_chans[9], bit_position = 0,
-                                   digital_device = vvr1)
+                                   digital_device = vvr1, fault_value=0)
 vvr2_channel =  models.DeviceInput(channel = digital_chans[10], bit_position = 0,
-                                   digital_device = vvr2)
+                                   digital_device = vvr2, fault_value=0)
 
 session.add_all([yag_out_lim_sw,yag_in_lim_sw, gun_temp_channel, wg_temp_channel,
                  buncher_temp_channel, sol01_temp_channel, sol02_temp_channel,
@@ -235,8 +237,8 @@ sol01_temp_fault = models.Fault(name="SOL01_TEMP", description="SOL01 Temperatur
 sol02_temp_fault = models.Fault(name="SOL02_TEMP", description="SOL02 Temperature Fault")
 sol01_flow_fault = models.Fault(name="SOL01_FLOW", description="SOL01 Flow Fault")
 sol02_flow_fault = models.Fault(name="SOL02_FLOW", description="SOL02 Flow Fault")
-vvr1_fault = models.Fault(name="VVR1", description="VVR1 Vacuum Valve Fault")
-vvr2_fault = models.Fault(name="VVR2", description="VVR2 Vacuum Valve Fault")
+vvr1_fault = models.Fault(name="VVR01", description="VVR01 Vacuum Valve Fault")
+vvr2_fault = models.Fault(name="VVR02", description="VVR02 Vacuum Valve Fault")
 session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
                  buncher_temp_fault, sol01_temp_fault, sol02_temp_fault,
                  sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
@@ -322,8 +324,8 @@ bpm_t_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutte
 #sol02_curr_fault.threshold_fault_state = sol02_curr_fault_state
 
 # Ignore logic
-# 1) If YAG01 is IN, ignore SOL01 Current and SOL02 Current faults, VVR1 and VVR2 faults
-yag01_in_condition = models.Condition(name="YAG01_IN", description="YAG01 screen IN", value=1)
+# 1) If YAG01 is IN, ignore SOL01 Current and SOL02 Current faults, VVR01 and VVR02 faults
+yag01_in_condition = models.Condition(name="YAG01_IN", description="YAG01 screen IN", value=0)
 session.add(yag01_in_condition)
 
 yag01_condition_input = models.ConditionInput(bit_position=0,fault_state=yag_fault_in,
