@@ -1,0 +1,483 @@
+#import math
+#set $WINDOW_HEIGHT = int($DEVICE_INPUTS) * 20 + 110 
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 153
+y 179
+w 996
+h $WINDOW_HEIGHT
+font "helvetica-medium-r-10.0"
+ctlFont "helvetica-medium-r-10.0"
+btnFont "helvetica-medium-r-10.0"
+fgColor index 14
+bgColor index 5
+textColor index 14
+ctlFgColor1 index 25
+ctlFgColor2 index 18
+ctlBgColor1 index 4
+ctlBgColor2 index 4
+topShadowColor index 1
+botShadowColor index 11
+title "Diginal Inputs"
+showGrid
+snapToGrid
+gridSize 4
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 20
+w 960
+h $WINDOW_HEIGHT - 76
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 12
+w 160
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Digital Inputs"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 92
+y 34
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Crate"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 136
+y 34
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Card"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 180
+y 34
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Channel"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 240
+y 34
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Device Name"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 412
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Current State"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 512
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Latched State"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 692
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bypass Value"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 792
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bypass Status"
+}
+endObjectProperties
+
+#==========================================================================
+# Add a line for each device_input:
+
+#for $i in range (0, int($DEVICE_INPUTS))
+#set $WIDGET_Y = 68 + 16 * ($i - 1)
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 92
+y $WIDGET_Y
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_CRATE[$i]"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 684
+y $WIDGET_Y
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "$DI_BYPS[$i]"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 944
+y $WIDGET_Y
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "$DI_BYPS[$i]"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 136
+y $WIDGET_Y
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_CARD[$i]"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 180
+y $WIDGET_Y
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_CHANNEL[$i]"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 240
+y $WIDGET_Y
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_NAME[$i]"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 412
+y $WIDGET_Y
+w 100
+h 16
+controlPv "$DI_PV[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 512
+y $WIDGET_Y
+w 100
+h 16
+controlPv "$DI_PV_LATCHED[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 612
+y $WIDGET_Y
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$DI_PV_UNLATCH[$i]"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 692
+y $WIDGET_Y
+w 100
+h 16
+controlPv "$DI_BYPV[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 792
+y $WIDGET_Y
+w 100
+h 16
+controlPv "$DI_BYPS[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 892
+y $WIDGET_Y
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=$DI_PV[$i],NAME=$DI_NAME[$i]"
+}
+endObjectProperties
+
+#end for
+

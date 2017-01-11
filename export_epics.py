@@ -84,6 +84,8 @@ def exportDeviceInputs(file, deviceInputs):
       fields.append(('ZSV', 'NO_ALARM'))
       fields.append(('OSV', 'MAJOR'))
     fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_BYPV'.format(deviceInput.id)))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
     printRecord(file, 'bo', '$(BASE):{0}_BYPV'.format(deviceInput.channel.name), fields)
 
     # Bypass Status: shows if bypass is currently active or not
@@ -102,8 +104,20 @@ def exportDeviceInputs(file, deviceInputs):
     fields=[]
     fields.append(('DESC', 'Bypass Expiration Date/Time'))
     fields.append(('DTYP', 'asynInt32'))
+    fields.append(('EGU', 'Seconds'))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)DEVICE_INPUT_BYPEXPDATE'.format(deviceInput.id)))
-    printRecord(file, 'ao', '$(BASE):{0}_BYPEXPDATE'.format(deviceInput.channel.name), fields)
+    printRecord(file, 'longout', '$(BASE):{0}_BYPEXPDATE'.format(deviceInput.channel.name), fields)
+
+    fields=[]
+    fields.append(('DESC', 'Bypass Expiration Date/Time String'))
+    fields.append(('DTYP', 'asynOctetRead'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('VAL', 'Invalid'))
+    fields.append(('PINI', 'YES'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)DEVICE_INPUT_BYPEXPDATE_STRING'.format(deviceInput.id)))
+    printRecord(file, 'stringin', '$(BASE):{0}_BYPEXPDATE_STR'.format(deviceInput.channel.name), fields)
     #=== End Bypass records ====
 
   file.close()
@@ -136,8 +150,10 @@ def exportAnalogDevices(file, analogDevices):
     fields=[]
     fields.append(('DESC', 'Threshold bypass value for {0}'.format(analogDevice.channel.name)))
     fields.append(('DTYP', 'asynInt32'))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPV'.format(analogDevice.id)))
-    printRecord(file, 'ao', '$(BASE):{0}_BYPV'.format(analogDevice.channel.name), fields)
+    printRecord(file, 'longout', '$(BASE):{0}_BYPV'.format(analogDevice.channel.name), fields)
 
     # Bypass Status: shows if bypass is currently active or not
     fields=[]
@@ -153,8 +169,10 @@ def exportAnalogDevices(file, analogDevices):
     fields=[]
     fields.append(('DESC', 'Bypass Expiration Date/Time'))
     fields.append(('DTYP', 'asynInt32'))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id)))
-    printRecord(file, 'ao', '$(BASE):{0}_BYPEXPDATE'.format(analogDevice.channel.name), fields)
+    printRecord(file, 'longout', '$(BASE):{0}_BYPEXPDATE'.format(analogDevice.channel.name), fields)
     #=== End Bypass records ====
 
   file.close()
@@ -164,14 +182,14 @@ def exportMitiagationDevices(file, mitigationDevices, beamClasses):
   fields.append(('DESC', 'Number of beam classes'))
   fields.append(('PINI', 'YES'))
   fields.append(('VAL', '{0}'.format((len(beamClasses)))))
-  printRecord(file, 'ao', '$(BASE):NUM_BEAM_CLASSES', fields)
+  printRecord(file, 'longout', '$(BASE):NUM_BEAM_CLASSES', fields)
 
   for beamClass in beamClasses:
     fields=[]
     fields.append(('DESC', '{0}'.format(beamClass.description)))
     fields.append(('PINI', 'YES'))
     fields.append(('VAL', '{0}'.format(beamClass.number)))
-    printRecord(file, 'ao', '$(BASE):BEAM_CLASS_{0}'.format(beamClass.number), fields)
+    printRecord(file, 'longout', '$(BASE):BEAM_CLASS_{0}'.format(beamClass.number), fields)
 
   for mitigationDevice in mitigationDevices:
     fields=[]
@@ -196,7 +214,7 @@ def exportFaults(file, faults):
     printRecord(file, 'bi', '$(BASE):{0}'.format(fault.name), fields)
 
     fields=[]
-    fields.append(('DESC', '{0} (ignore state)'.format(fault.description)))
+    fields.append(('DESC', '{0} (ignore)'.format(fault.description)))
     fields.append(('DTYP', 'asynUInt32Digital'))
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', 'Not Ignored'))
