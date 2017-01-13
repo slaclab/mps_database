@@ -95,8 +95,8 @@ def exportDeviceInputs(file, deviceInputs):
     fields.append(('DTYP', 'asynUInt32Digital'))    
     fields.append(('ZNAM', 'Not Bypassed'))
     fields.append(('ONAM', 'Bypassed'))
-    fields.append(('ZSV', 'MAJOR'))
-    fields.append(('OSV', 'NO_ALARM'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)DEVICE_INPUT_BYPS'.format(deviceInput.id)))
     printRecord(file, 'bi', '$(BASE):{0}_BYPS'.format(deviceInput.channel.name), fields)
 
@@ -140,11 +140,38 @@ def exportAnalogDevices(file, analogDevices):
                             analogDevice.channel.number)))
       fields.append(('DTYP', 'asynUInt32Digital'))
       fields.append(('SCAN', '1 second'))
-      fields.append(('ZNAM', 'IS_EXCEEDED'))
-      fields.append(('ONAM', 'IS_OK'))
+      fields.append(('ZNAM', 'IS_OK'))
+      fields.append(('ONAM', 'IS_EXCEEDED'))
+      fields.append(('ZSV', 'NO_ALARM'))
+      fields.append(('OSV', 'MAJOR'))
       fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE'.format(analogDevice.id, state.mask)))
       printRecord(file, 'bi', '$(BASE):{0}_{1}'.format(analogDevice.channel.name, state.name), fields)
     
+    #=== Begin Latch records ====
+    # Record for latched value
+    fields=[]
+    fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Latched Value'.
+                   format(analogDevice.channel.card.crate.number,
+                          analogDevice.channel.card.number,
+                          analogDevice.channel.number)))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('ZSV', 'NO_ALARM')) # when 0 there is no threshold faults
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 1)ANALOG_DEVICE_LATCHED'.format(analogDevice.id)))
+    printRecord(file, 'longin', '$(BASE):{0}_LATCHED'.format(analogDevice.channel.name), fields)
+
+    # Record to process unlatch value
+    fields=[]
+    fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Unlatch'.
+                   format(analogDevice.channel.card.crate.number,
+                          analogDevice.channel.card.number,
+                          analogDevice.channel.number)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 1 0)ANALOG_DEVICE_UNLATCH'.format(analogDevice.id)))
+    printRecord(file, 'bo', '$(BASE):{0}_UNLATCH'.format(analogDevice.channel.name), fields)
+    #=== End Latch records ====
+
     #=== Begin Bypass records ====
     # Bypass Value: used while bypass is active
     fields=[]
@@ -152,6 +179,8 @@ def exportAnalogDevices(file, analogDevices):
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('VAL', '0'))
     fields.append(('PINI', 'YES'))
+    fields.append(('ZSV', 'NO_ALARM')) # when 0 there is no threshold faults
+    fields.append(('OSV', 'MAJOR'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPV'.format(analogDevice.id)))
     printRecord(file, 'longout', '$(BASE):{0}_BYPV'.format(analogDevice.channel.name), fields)
 
@@ -162,6 +191,8 @@ def exportAnalogDevices(file, analogDevices):
     fields.append(('DTYP', 'asynUInt32Digital'))    
     fields.append(('ZNAM', 'Not Bypassed'))
     fields.append(('ONAM', 'Bypassed'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)ANALOG_DEVICE_BYPS'.format(analogDevice.id)))
     printRecord(file, 'bi', '$(BASE):{0}_BYPS'.format(analogDevice.channel.name), fields)
 
@@ -173,6 +204,15 @@ def exportAnalogDevices(file, analogDevices):
     fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id)))
     printRecord(file, 'longout', '$(BASE):{0}_BYPEXPDATE'.format(analogDevice.channel.name), fields)
+
+    fields=[]
+    fields.append(('DESC', 'Bypass Expiration Date/Time String'))
+    fields.append(('DTYP', 'asynOctetRead'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('VAL', 'Invalid'))
+    fields.append(('PINI', 'YES'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id)))
+    printRecord(file, 'stringin', '$(BASE):{0}_BYPEXPDATE_STR'.format(analogDevice.channel.name), fields)
     #=== End Bypass records ====
 
   file.close()
