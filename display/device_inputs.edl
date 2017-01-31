@@ -1,0 +1,3008 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 153
+y 179
+w 900
+h 261
+font "helvetica-medium-r-10.0"
+ctlFont "helvetica-medium-r-10.0"
+btnFont "helvetica-medium-r-10.0"
+fgColor index 14
+bgColor index 5
+textColor index 14
+ctlFgColor1 index 25
+ctlFgColor2 index 18
+ctlBgColor1 index 4
+ctlBgColor2 index 4
+topShadowColor index 1
+botShadowColor index 11
+title "Diginal Inputs"
+showGrid
+snapToGrid
+gridSize 4
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 20
+w 872
+h 226
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 12
+w 160
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Digital Inputs"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 34
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Crate"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 76
+y 34
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Card"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 34
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Channel"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 34
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Device Name"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 342
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Current State"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 442
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Latched State"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 622
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bypass Value"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 722
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bypass Status"
+}
+endObjectProperties
+
+#==========================================================================
+# Add a line for each device_input:
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 52
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 52
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:YAG01_OUT_SWITCH_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 52
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:YAG01_OUT_SWITCH_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 52
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 52
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 52
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "YAG01_OUT_SWITCH"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 52
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_OUT_SWITCH"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 52
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_OUT_SWITCH_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 52
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:YAG01_OUT_SWITCH_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 52
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_OUT_SWITCH_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 52
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_OUT_SWITCH_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 52
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:YAG01_OUT_SWITCH,NAME=YAG01_OUT_SWITCH"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 68
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 68
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:YAG01_IN_SWITCH_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 68
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:YAG01_IN_SWITCH_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 68
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 68
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 68
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "YAG01_IN_SWITCH"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 68
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_IN_SWITCH"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 68
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_IN_SWITCH_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 68
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:YAG01_IN_SWITCH_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 68
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_IN_SWITCH_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 68
+w 100
+h 16
+controlPv "MPS:DIGITAL:YAG01_IN_SWITCH_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 68
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:YAG01_IN_SWITCH,NAME=YAG01_IN_SWITCH"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 84
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 84
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:GUN_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 84
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:GUN_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 84
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 84
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 84
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "GUN_TEMP"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 84
+w 100
+h 16
+controlPv "MPS:DIGITAL:GUN_TEMP"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 84
+w 100
+h 16
+controlPv "MPS:DIGITAL:GUN_TEMP_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 84
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:GUN_TEMP_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 84
+w 100
+h 16
+controlPv "MPS:DIGITAL:GUN_TEMP_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 84
+w 100
+h 16
+controlPv "MPS:DIGITAL:GUN_TEMP_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 84
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:GUN_TEMP,NAME=GUN_TEMP"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 100
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 100
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:WAVEGUIDE_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 100
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:WAVEGUIDE_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 100
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 100
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "3"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 100
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "WAVEGUIDE_TEMP"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 100
+w 100
+h 16
+controlPv "MPS:DIGITAL:WAVEGUIDE_TEMP"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 100
+w 100
+h 16
+controlPv "MPS:DIGITAL:WAVEGUIDE_TEMP_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 100
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:WAVEGUIDE_TEMP_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 100
+w 100
+h 16
+controlPv "MPS:DIGITAL:WAVEGUIDE_TEMP_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 100
+w 100
+h 16
+controlPv "MPS:DIGITAL:WAVEGUIDE_TEMP_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 100
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:WAVEGUIDE_TEMP,NAME=WAVEGUIDE_TEMP"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 116
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 116
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:BUNCHER_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 116
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:BUNCHER_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 116
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 116
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "4"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 116
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BUNCHER_TEMP"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 116
+w 100
+h 16
+controlPv "MPS:DIGITAL:BUNCHER_TEMP"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 116
+w 100
+h 16
+controlPv "MPS:DIGITAL:BUNCHER_TEMP_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 116
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:BUNCHER_TEMP_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 116
+w 100
+h 16
+controlPv "MPS:DIGITAL:BUNCHER_TEMP_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 116
+w 100
+h 16
+controlPv "MPS:DIGITAL:BUNCHER_TEMP_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 116
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:BUNCHER_TEMP,NAME=BUNCHER_TEMP"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 132
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 132
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL01_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 132
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL01_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 132
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 132
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "5"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 132
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "SOL01_TEMP"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 132
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_TEMP"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 132
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_TEMP_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 132
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:SOL01_TEMP_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 132
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_TEMP_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 132
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_TEMP_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 132
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:SOL01_TEMP,NAME=SOL01_TEMP"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 148
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 148
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL02_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 148
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL02_TEMP_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 148
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 148
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "6"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 148
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "SOL02_TEMP"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 148
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_TEMP"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 148
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_TEMP_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 148
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:SOL02_TEMP_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 148
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_TEMP_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 148
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_TEMP_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 148
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:SOL02_TEMP,NAME=SOL02_TEMP"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 164
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 164
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL01_FLOW_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 164
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL01_FLOW_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 164
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 164
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "7"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 164
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "SOL01_FLOW"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 164
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_FLOW"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 164
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_FLOW_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 164
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:SOL01_FLOW_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 164
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_FLOW_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 164
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL01_FLOW_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 164
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:SOL01_FLOW,NAME=SOL01_FLOW"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 180
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 180
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL02_FLOW_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 180
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:SOL02_FLOW_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 180
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 180
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "8"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 180
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "SOL02_FLOW"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 180
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_FLOW"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 180
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_FLOW_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 180
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:SOL02_FLOW_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 180
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_FLOW_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 180
+w 100
+h 16
+controlPv "MPS:DIGITAL:SOL02_FLOW_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 180
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:SOL02_FLOW,NAME=SOL02_FLOW"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 196
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 196
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:VVR01_VAC_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 196
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:VVR01_VAC_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 196
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 196
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "9"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 196
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "VVR01_VAC"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 196
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR01_VAC"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 196
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR01_VAC_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 196
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:VVR01_VAC_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 196
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR01_VAC_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 196
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR01_VAC_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 196
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:VVR01_VAC,NAME=VVR01_VAC"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 212
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 212
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:VVR02_VAC_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 212
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:DIGITAL:VVR02_VAC_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 66
+y 212
+w 44
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 212
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "10"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 170
+y 212
+w 172
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "VVR02_VAC"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 212
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR02_VAC"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 212
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR02_VAC_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 212
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:DIGITAL:VVR02_VAC_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 212
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR02_VAC_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 212
+w 100
+h 16
+controlPv "MPS:DIGITAL:VVR02_VAC_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 212
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=MPS:DIGITAL:VVR02_VAC,NAME=VVR02_VAC"
+}
+endObjectProperties
+
+

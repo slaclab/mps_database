@@ -155,8 +155,7 @@ def exportAnalogDevices(file, analogDevices):
                           analogDevice.channel.card.number,
                           analogDevice.channel.number)))
     fields.append(('DTYP', 'asynInt32'))
-    fields.append(('ZSV', 'NO_ALARM')) # when 0 there is no threshold faults
-    fields.append(('OSV', 'MAJOR'))
+    fields.append(('HIHI', '1')) # Alarm if value is non-zero
     fields.append(('SCAN', '1 second'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 1)ANALOG_DEVICE_LATCHED'.format(analogDevice.id)))
     printRecord(file, 'longin', '$(BASE):{0}_LATCHED'.format(analogDevice.channel.name), fields)
@@ -179,8 +178,7 @@ def exportAnalogDevices(file, analogDevices):
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('VAL', '0'))
     fields.append(('PINI', 'YES'))
-    fields.append(('ZSV', 'NO_ALARM')) # when 0 there is no threshold faults
-    fields.append(('OSV', 'MAJOR'))
+    fields.append(('HIHI', '1')) # Alarm if value is non-zero
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPV'.format(analogDevice.id)))
     printRecord(file, 'longout', '$(BASE):{0}_BYPV'.format(analogDevice.channel.name), fields)
 

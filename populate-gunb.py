@@ -96,7 +96,8 @@ for i in range(0,11):
 #sol01_channel = models.AnalogChannel(name="SOL01 Current", number=2, card = link_node_card)
 #sol02_channel = models.AnalogChannel(name="SOL02 Current", number=3, card = link_node_card)
 bpm01_channel = models.AnalogChannel(name="BPM01", number=0, card = link_node_card)
-session.add_all([bpm01_channel])
+bpm02_channel = models.AnalogChannel(name="BPM02", number=1, card = link_node_card)
+session.add_all([bpm01_channel, bpm02_channel])
 
 # Add digital device types
 profmon_device_type = models.DeviceType(name="Profile Monitor")
@@ -202,6 +203,8 @@ session.add_all([screen, gun_temp, wg_temp, buncher_temp, sol01_temp, sol02_temp
 #                                 application=global_app, z_position=-27.538278, description="SOL02 Current")
 bpm01 = models.AnalogDevice(name="BPM01", device_type = bpm_device_type, channel=bpm01_channel,
                             application=global_app, z_position=-31.349744, description="BPM01")
+bpm02 = models.AnalogDevice(name="BPM02", device_type = bpm_device_type, channel=bpm02_channel,
+                            application=global_app, z_position=-26.772972, description="BPM02")
 
 # Give the device some inputs.  It has in and out limit switches.
 yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=0)
@@ -244,7 +247,8 @@ session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
                  sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
 
 bpm01_fault = models.Fault(name="BPM01", description="BPM01 X/Y/TMIT Threshold Fault")
-session.add_all([bpm01_fault])
+bpm02_fault = models.Fault(name="BPM02", description="BPM02 X/Y/TMIT Threshold Fault")
+session.add_all([bpm01_fault, bpm02_fault])
 
 # Inputs for the faults
 yag_fault_input = models.FaultInput(bit_position = 0, device = screen, fault = yag_fault)
@@ -262,7 +266,8 @@ session.add_all([yag_fault_input, gun_temp_fault_input, wg_temp_fault_input,
                  sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
 
 bpm01_fault_input = models.FaultInput(bit_position = 0, device = bpm01, fault = bpm01_fault)
-session.add_all([bpm01_fault_input])
+bpm02_fault_input = models.FaultInput(bit_position = 0, device = bpm02, fault = bpm02_fault)
+session.add_all([bpm01_fault_input, bpm02_fault_input])
 
 # FaultStates
 yag_fault_in = models.FaultState(device_state = screen_in, fault = yag_fault)
@@ -281,10 +286,15 @@ session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken,
                  gun_temp_fault_state, wg_temp_fault_state, buncher_temp_fault_state,
                  sol01_temp_fault_state, sol02_temp_fault_state])
 
-bpm_x_fault_state = models.FaultState(device_state = bpm_x_thres_state, fault = bpm01_fault)
-bpm_y_fault_state = models.FaultState(device_state = bpm_y_thres_state, fault = bpm01_fault)
-bpm_t_fault_state = models.FaultState(device_state = bpm_t_thres_state, fault = bpm01_fault)
-session.add_all([bpm_x_fault_state, bpm_y_fault_state, bpm_t_fault_state])
+bpm01_x_fault_state = models.FaultState(device_state = bpm_x_thres_state, fault = bpm01_fault)
+bpm01_y_fault_state = models.FaultState(device_state = bpm_y_thres_state, fault = bpm01_fault)
+bpm01_t_fault_state = models.FaultState(device_state = bpm_t_thres_state, fault = bpm01_fault)
+session.add_all([bpm01_x_fault_state, bpm01_y_fault_state, bpm01_t_fault_state])
+
+bpm02_x_fault_state = models.FaultState(device_state = bpm_x_thres_state, fault = bpm02_fault)
+bpm02_y_fault_state = models.FaultState(device_state = bpm_y_thres_state, fault = bpm02_fault)
+bpm02_t_fault_state = models.FaultState(device_state = bpm_t_thres_state, fault = bpm02_fault)
+session.add_all([bpm02_x_fault_state, bpm02_y_fault_state, bpm02_t_fault_state])
 
 # Fault states allowed beam classes.
 yag_fault_in.add_allowed_class(beam_class=class_1, mitigation_device=aom)
@@ -300,9 +310,12 @@ sol02_flow_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=s
 vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 
-bpm_x_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm_y_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm_t_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+bpm01_x_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+bpm01_y_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+bpm01_t_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+bpm02_x_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+bpm02_y_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+bpm02_t_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 
 # Faults for the analog devices
 #fc_fault = models.ThresholdFault(name="FC > 0.1mA", greater_than=True, threshold_value=fc_threshold,
@@ -341,3 +354,5 @@ session.add_all([vvr1_condition, vvr2_condition])
 
 
 session.commit()
+Engine::getInstance().bypassManager->setBypass(Engine::getInstance().mpsDb, BYPASS_DIGITAL, 4, /* deviceId */
+				       1 /* bypass value */, 110 /* until*/, true);
