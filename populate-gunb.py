@@ -354,5 +354,3 @@ session.add_all([vvr1_condition, vvr2_condition])
 
 
 session.commit()
-Engine::getInstance().bypassManager->setBypass(Engine::getInstance().mpsDb, BYPASS_DIGITAL, 4, /* deviceId */
-				       1 /* bypass value */, 110 /* until*/, true);
