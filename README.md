@@ -40,3 +40,8 @@ The command above generates three .db files:
 - faults.db for the list of faults
 
 The source for the EPICS databases is the mps_gun_config.db file (sqlite format).
+
+Export EDM panels for central node IOC:
+
+$ python export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
+
