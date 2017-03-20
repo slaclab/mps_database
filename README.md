@@ -25,3 +25,18 @@ After it finishes, activate the virtual environment:
 
 Next, install all the modules the project uses:
 > pip install -r requirements.txt
+
+Scripts
+-------
+
+Export EPICS databases for central node IOC:
+
+$ python export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
+
+The command above generates three .db files:
+- device_inputs.db for the digital inputs
+- analog_devices.db for the analog inputs
+- mitigation.db for the mitigation devices
+- faults.db for the list of faults
+
+The source for the EPICS databases is the mps_gun_config.db file (sqlite format).
