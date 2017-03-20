@@ -29,6 +29,10 @@ Next, install all the modules the project uses:
 Scripts
 -------
 
+Generate GUNB database - this creates the file mps_gun_config.db (sqlite file) that is used by other scripts to generate EPICS database and panels.
+
+$ python populate-gunb.py
+
 Export EPICS databases for central node IOC:
 
 $ python export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
