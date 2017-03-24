@@ -15,37 +15,48 @@ aom = models.MitigationDevice(name="AOM")
 session.add_all([shutter, aom])
 
 #Make some beam classes.
-class_0 = models.BeamClass(number=0,name="Class 0 (0 Hz)",description="No Beam")
-class_1 = models.BeamClass(number=1,name="Class 1",description="1pC @ 10 Hz")
-class_2 = models.BeamClass(number=2,name="Class 2",description="5pC @ 500 KHz")
-class_3 = models.BeamClass(number=3,name="Class 3",description="5pC @ 1 MHz")
-session.add_all([class_0, class_1, class_2, class_3])
+class_0 = models.BeamClass(number=0,name="Power Class 0",description="No Beam")
+class_1 = models.BeamClass(number=1,name="Power Class 1",description="YAG Max Power")
+class_2 = models.BeamClass(number=2,name="Power Class 2",description="Full Power")
+session.add_all([class_0, class_1, class_2])
 
+# EIC Link Node - L2KA00-05 (Level 17)
 # Make a crate for BPMs, and for the mitigation LN
-crate1 = models.Crate(number=1, shelf_number=1, num_slots=6)
-crate2 = models.Crate(number=2, shelf_number=1, num_slots=6)
-session.add_all([crate1,crate2])
+crate = models.Crate(number=1, shelf_number=1, num_slots=8)
+session.add_all([crate])
 
 #Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)
-mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0,
-                                              digital_channel_count=11, digital_channel_size=1,
-                                              analog_channel_count=4, analog_channel_size=1)
+eic_link_node_type = models.ApplicationType(name="EIC Link Node", number=0,
+                                            digital_channel_count=9, digital_channel_size=1,
+                                            analog_channel_count=4, analog_channel_size=1)
+bpm_app_type = models.ApplicationType(name="BPM Card", number=1,
+                                      digital_channel_count=0, digital_channel_size=1,
+                                      analog_channel_count=2, analog_channel_size=1)
+bcm_app_type = models.ApplicationType(name="BCM Card", number=2,
+                                      digital_channel_count=0, digital_channel_size=1,
+                                      analog_channel_count=2, analog_channel_size=1)
 
-#Define a mitigation link node (no inputs?)
-mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2,
-                                                   digital_channel_count=0, digital_channel_size=0, 
-                                                   analog_channel_count=0, analog_channel_size=0)
 
-session.add_all([mixed_link_node_type, mitigation_link_node_type])
+session.add_all([eic_link_node_type])
 
-#Add one application for everything...
-global_app = models.Application(global_id=100,name="MyGlobalApp",description="Generic Application")
-session.add(global_app)
+# Applications - an application is basically an analog or digital status
+# summary embedded in a link node message, which contains status from
+# all inputs connected to it (coming from wires or from the backplane)
+eic_digital_app = models.Application(global_id=0, name="EIC_Digital", description="EIC Digital Status")
+bpm_eic_app = models.Application(global_id=1,name="EIC_BPM",description="EIC BPM Status")
+toro_sol_app = models.Application(global_id=2,name="EIC_Analog",description="IM01/SOL1/SOL2/FC Status")
+session.add_all([eic_digital_app, bpm_eic_app, toro_sol_app])
 
 #Install a mixed-mode link node card in the crate.
-link_node_card = models.ApplicationCard(number=1, type=mixed_link_node_type, slot_number = 2)
-crate1.cards.append(link_node_card)
-session.add(link_node_card)
+link_node_card = models.ApplicationCard(number=1, type=eic_link_node_type, slot_number=2)
+bpm_card = models.ApplicationCard(number=2, type=bpm_app_type, slot_number=3)
+toroid_card = models.ApplicationCard(number=2, type=bcm_app_type, slot_number=6)
+fc_card = models.ApplicationCard(number=2, type=bcm_app_type, slot_number=7)
+crate.cards.append(link_node_card)
+crate.cards.append(bpm_card)
+crate.cards.append(toroid_card)
+crate.cards.append(fc_card)
+session.add_all([link_node_card,bpm_card,toroid_card,fc_card])
 
 #Define some channels for the card.
 # channel 0 - YAG01 out switch
@@ -55,10 +66,8 @@ session.add(link_node_card)
 # channel 4 - Buncher temperature
 # channel 5 - SOL01 temperature
 # channel 6 - SOL02 temperature
-# channel 7 - SOL01 flow
-# channel 8 - SOL02 flow
-# channel 9 - VVR01 vacuum status
-# channel 10 - VVR02 vacuum status
+# channel 7 - VVR01 vacuum status
+# channel 8 - VVR02 vacuum status
 digital_chans = []
 
 names=[]
@@ -70,12 +79,10 @@ names.append(("WAVEGUIDE_TEMP", "IS_FAULTED", "IS_OK", 0))
 names.append(("BUNCHER_TEMP", "IS_FAULTED", "IS_OK", 0))
 names.append(("SOL01_TEMP", "IS_FAULTED", "IS_OK", 0))
 names.append(("SOL02_TEMP", "IS_FAULTED", "IS_OK", 0))
-names.append(("SOL01_FLOW", "IS_FAULTED", "IS_OK", 0))
-names.append(("SOL02_FLOW", "IS_FAULTED", "IS_OK", 0))
 names.append(("VVR01_VAC", "IS_FAULTED", "IS_OK", 0))
 names.append(("VVR02_VAC", "IS_FAULTED", "IS_OK", 0))
 
-for i in range(0,11):
+for i in range(0,9):
   chan = models.DigitalChannel(number=i)
   (name, z_name, o_name, alarm_state) = names[i]
   chan.name = name
@@ -87,25 +94,24 @@ for i in range(0,11):
   session.add(chan)
 
 # LN card analog channels
-# channel 0 - IM01
-# channel 1 - Faraday Cup (FC)
-# channel 2 - SOL01 Current
-# channel 3 - SOL02 Current
+# channel 0 - SOL01 Current
+# channel 1 - SOL02 Current
 #im01_channel = models.AnalogChannel(name="IM01 Charge", number=0, card = link_node_card)
 #fc_channel = models.AnalogChannel(name="Faraday Cup Current", number=1, card = link_node_card)
 #sol01_channel = models.AnalogChannel(name="SOL01 Current", number=2, card = link_node_card)
 #sol02_channel = models.AnalogChannel(name="SOL02 Current", number=3, card = link_node_card)
-bpm01_channel = models.AnalogChannel(name="BPM01", number=0, card = link_node_card)
-bpm02_channel = models.AnalogChannel(name="BPM02", number=1, card = link_node_card)
+bpm01_channel = models.AnalogChannel(name="BPM01", number=0, card = bpm_card)
+bpm02_channel = models.AnalogChannel(name="BPM02", number=1, card = bpm_card)
+# channel 0 - IM01
+# channel 1 - Faraday Cup (FC)
+
 session.add_all([bpm01_channel, bpm02_channel])
 
 # Add digital device types
 profmon_device_type = models.DeviceType(name="Profile Monitor")
 temp_device_type = models.DeviceType(name="Temperature")
-flow_device_type = models.DeviceType(name="Flow Meter")
 vvr_device_type = models.DeviceType(name="Vacuum Status")
-session.add_all([profmon_device_type, temp_device_type,
-                 flow_device_type, vvr_device_type])
+session.add_all([profmon_device_type, temp_device_type, vvr_device_type])
 
 # Add analog device types
 #im_device_type = models.AnalogDeviceType(name="ICT", units="uC")
@@ -145,52 +151,69 @@ screen_in         = models.DeviceState(name="In", device_type = profmon_device_t
 screen_moving     = models.DeviceState(name="Moving", device_type = profmon_device_type, value = 3)
 screen_broken     = models.DeviceState(name="Broken", device_type = profmon_device_type, value = 0)
 temp_device_fault = models.DeviceState(name="Temp Fault", device_type = temp_device_type, value = 0)
-temp_device_ok    = models.DeviceState(name="Temperature OK", device_type = temp_device_type, value = 1)
-flow_device_fault = models.DeviceState(name="Flow Fault", device_type = flow_device_type, value = 0)
-flow_device_ok    = models.DeviceState(name="Flow OK", device_type = flow_device_type, value = 1)
+temp_device_ok    = models.DeviceState(name="Temp OK", device_type = temp_device_type, value = 1)
 vvr_device_fault  = models.DeviceState(name="Vacuum Fault", device_type = vvr_device_type, value = 0)
 vvr_device_ok     = models.DeviceState(name="Vacuum OK", device_type = vvr_device_type, value = 1)
-
-# BPM Thresholds - threshold crossed if bit is 0. Bit=1 means all good.
-# Bit:       2 | 1 | 0
-# Threshold: X | Y | TMIT
-bpm_x_thres_state = models.DeviceState(name="X_FAULT", value=0, mask=0x4, device_type = bpm_device_type)
-bpm_y_thres_state = models.DeviceState(name="Y_FAULT", value=0, mask=0x2, device_type = bpm_device_type)
-bpm_t_thres_state = models.DeviceState(name="TMIT_FAULT", value=0, mask=0x1, device_type = bpm_device_type)
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
-                 flow_device_fault, flow_device_ok,
-                 vvr_device_fault, vvr_device_ok,
-                 bpm_x_thres_state, bpm_y_thres_state, bpm_t_thres_state])
+                 vvr_device_fault, vvr_device_ok])
+
+#
+# BPM DeviceStates - Threshold States
+#
+# There are 8 comparators for each X, Y and TMIT. Each comparator checks if
+# the measurement in within the low and high thresholds. If a bit is set
+# it means the measured value is outside the low/high window.
+#
+bpm_states=[]
+state_value = 1
+# X Thresholds - bits 0 through 7
+for i in range(0,8):
+  state_name = "X_THRSLD" + str(i)
+  bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
+  bpm_states.append(bpm_threshold_state)
+  session.add(bpm_threshold_state)
+  state_value = (state_value << 1)
+# Y Thresholds - bits 8 through 15
+for i in range(0,8):
+  state_name = "Y_THRSLD" + str(i)
+  bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
+  bpm_states.append(bpm_threshold_state)
+  session.add(bpm_threshold_state)
+  state_value = (state_value << 1)
+# TMIT Thresholds - bits 16 though 23
+for i in range(0,8):
+  state_name = "T_THRSLD" + str(i)
+  bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
+  bpm_states.append(bpm_threshold_state)
+  session.add(bpm_threshold_state)
+  state_value = (state_value << 1)
+
 session.commit()
 
 #Add digital devices
 screen = models.DigitalDevice(name="YAG01", z_position=-28.061394, description="YAG Screen",
-                              device_type = profmon_device_type, application = global_app)
+                              device_type = profmon_device_type, application = eic_digital_app)
 gun_temp = models.DigitalDevice(name="Gun Temperature", device_type = temp_device_type,
-                                application = global_app, z_position = 0,
+                                application = eic_digital_app, z_position = 0,
                                 description = "Gun Temperature Summary Input")
 wg_temp = models.DigitalDevice(name="Waveguide Temperature", device_type = temp_device_type, 
-                               application = global_app, z_position = 0,
+                               application = eic_digital_app, z_position = 0,
                                description = "Waveguide Temperature Summary Input")
 buncher_temp = models.DigitalDevice(name="Buncher Temperature", device_type = temp_device_type,
-                                    application = global_app, z_position = -30.299721,
+                                    application = eic_digital_app, z_position = -30.299721,
                                     description = "Buncher Temperature Summary Input")
 sol01_temp = models.DigitalDevice(name="SOL01 Temp", z_position=-32.115049, description="SOL01 Temperature",
-                                  device_type = temp_device_type, application = global_app)
+                                  device_type = temp_device_type, application = eic_digital_app)
 sol02_temp = models.DigitalDevice(name="SOL02 Temp", z_position=-27.538278, description="SOL02 Temperature",
-                                  device_type = temp_device_type, application = global_app)
-sol01_flow = models.DigitalDevice(name="SOL01 Flow", z_position=-32.115049, description="SOL01 Flow",
-                                  device_type = flow_device_type, application = global_app)
-sol02_flow = models.DigitalDevice(name="SOL02 Flow", z_position=-27.538278, description="SOL02 Flow",
-                                  device_type = flow_device_type, application = global_app)
+                                  device_type = temp_device_type, application = eic_digital_app)
 vvr1 = models.DigitalDevice(name="VVR01", z_position=-31, description="Vacuum Gate Valve VVR01",
-                                  device_type = vvr_device_type, application = global_app)
+                                  device_type = vvr_device_type, application = eic_digital_app)
 vvr2 = models.DigitalDevice(name="VVR02", z_position=-26, description="Vacuum Gate Valve VVR02",
-                                  device_type = vvr_device_type, application = global_app)
+                                  device_type = vvr_device_type, application = eic_digital_app)
 
-session.add_all([screen, gun_temp, wg_temp, buncher_temp, sol01_temp, sol02_temp,
-                 sol01_flow, sol02_flow, vvr1, vvr2])
+session.add_all([screen, gun_temp, wg_temp, buncher_temp,
+                 sol01_temp, sol02_temp, vvr1, vvr2])
 
 # Add analog devices
 #im01 = models.AnalogDevice(name="IM01", analog_device_type=im_device_type, channel=im01_channel,
@@ -202,9 +225,9 @@ session.add_all([screen, gun_temp, wg_temp, buncher_temp, sol01_temp, sol02_temp
 #sol02_curr = models.AnalogDevice(name="SOL02", analog_device_type=im_device_type, channel=sol02_channel,
 #                                 application=global_app, z_position=-27.538278, description="SOL02 Current")
 bpm01 = models.AnalogDevice(name="BPM01", device_type = bpm_device_type, channel=bpm01_channel,
-                            application=global_app, z_position=-31.349744, description="BPM01")
+                            application=bpm_eic_app, z_position=-31.349744, description="BPM01")
 bpm02 = models.AnalogDevice(name="BPM02", device_type = bpm_device_type, channel=bpm02_channel,
-                            application=global_app, z_position=-26.772972, description="BPM02")
+                            application=bpm_eic_app, z_position=-26.772972, description="BPM02")
 
 # Give the device some inputs.  It has in and out limit switches.
 yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=0)
@@ -218,18 +241,14 @@ sol01_temp_channel = models.DeviceInput(channel = digital_chans[5], bit_position
                                         digital_device = sol01_temp, fault_value=0)
 sol02_temp_channel = models.DeviceInput(channel = digital_chans[6], bit_position = 0,
                                         digital_device = sol02_temp, fault_value=0)
-sol01_flow_channel =  models.DeviceInput(channel = digital_chans[7], bit_position = 0,
-                                        digital_device = sol01_flow, fault_value=0)
-sol02_flow_channel =  models.DeviceInput(channel = digital_chans[8], bit_position = 0,
-                                        digital_device = sol02_flow, fault_value=0)
-vvr1_channel =  models.DeviceInput(channel = digital_chans[9], bit_position = 0,
+vvr1_channel =  models.DeviceInput(channel = digital_chans[7], bit_position = 0,
                                    digital_device = vvr1, fault_value=0)
-vvr2_channel =  models.DeviceInput(channel = digital_chans[10], bit_position = 0,
+vvr2_channel =  models.DeviceInput(channel = digital_chans[8], bit_position = 0,
                                    digital_device = vvr2, fault_value=0)
 
 session.add_all([yag_out_lim_sw,yag_in_lim_sw, gun_temp_channel, wg_temp_channel,
                  buncher_temp_channel, sol01_temp_channel, sol02_temp_channel,
-                 sol01_flow_channel, sol02_flow_channel, vvr1_channel, vvr2_channel])
+                 vvr1_channel, vvr2_channel])
 
 #Configure faults for the digital devices
 yag_fault = models.Fault(name="YAG01", description="YAG01 Profile Monitor Fault")
@@ -238,17 +257,27 @@ wg_temp_fault = models.Fault(name="WG_TEMP", description="Waveguide Temperature 
 buncher_temp_fault = models.Fault(name="BUNCH_TEMP", description="Buncher Temperature Fault")
 sol01_temp_fault = models.Fault(name="SOL01_TEMP", description="SOL01 Temperature Fault")
 sol02_temp_fault = models.Fault(name="SOL02_TEMP", description="SOL02 Temperature Fault")
-sol01_flow_fault = models.Fault(name="SOL01_FLOW", description="SOL01 Flow Fault")
-sol02_flow_fault = models.Fault(name="SOL02_FLOW", description="SOL02 Flow Fault")
 vvr1_fault = models.Fault(name="VVR01", description="VVR01 Vacuum Valve Fault")
 vvr2_fault = models.Fault(name="VVR02", description="VVR02 Vacuum Valve Fault")
 session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
                  buncher_temp_fault, sol01_temp_fault, sol02_temp_fault,
-                 sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
+                 vvr1_fault, vvr2_fault])
 
 bpm01_fault = models.Fault(name="BPM01", description="BPM01 X/Y/TMIT Threshold Fault")
 bpm02_fault = models.Fault(name="BPM02", description="BPM02 X/Y/TMIT Threshold Fault")
 session.add_all([bpm01_fault, bpm02_fault])
+
+#bpm01_x_fault = models.Fault(name="BPM01", description="BPM01 X Threshold Fault")
+#bpm01_y_fault = models.Fault(name="BPM01", description="BPM01 Y Threshold Fault")
+#bpm01_t_fault = models.Fault(name="BPM01", description="BPM01 TMIT Threshold Fault")
+#session.add_all([bpm01_x_fault, bpm01_y_fault, bpm01_t_fault])
+
+#bpm02_x_fault = models.Fault(name="BPM01", description="BPM01 X Threshold Fault")
+#bpm02_y_fault = models.Fault(name="BPM01", description="BPM01 Y Threshold Fault")
+#bpm02_t_fault = models.Fault(name="BPM01", description="BPM01 TMIT Threshold Fault")
+#session.add_all([bpm02_x_fault, bpm02_y_fault, bpm02_t_fault])
+
+##### TODO: MAR 24 - review how analog faults/devices are handled. They are more complex than before
 
 # Inputs for the faults
 yag_fault_input = models.FaultInput(bit_position = 0, device = screen, fault = yag_fault)
@@ -257,17 +286,15 @@ wg_temp_fault_input = models.FaultInput(bit_position = 0, device = wg_temp, faul
 buncher_temp_fault_input = models.FaultInput(bit_position = 0, device = buncher_temp, fault = buncher_temp_fault)
 sol01_temp_fault_input = models.FaultInput(bit_position = 0, device = sol01_temp, fault = sol01_temp_fault)
 sol02_temp_fault_input = models.FaultInput(bit_position = 0, device = sol02_temp, fault = sol02_temp_fault)
-sol01_flow_fault_input = models.FaultInput(bit_position = 0, device = sol01_flow, fault = sol01_flow_fault)
-sol02_flow_fault_input = models.FaultInput(bit_position = 0, device = sol02_flow, fault = sol02_flow_fault)
 vvr1_fault_input = models.FaultInput(bit_position = 0, device = vvr1, fault = vvr1_fault)
 vvr2_fault_input = models.FaultInput(bit_position = 0, device = vvr2, fault = vvr2_fault)
 session.add_all([yag_fault_input, gun_temp_fault_input, wg_temp_fault_input,
                  buncher_temp_fault_input, sol01_temp_fault_input, sol02_temp_fault_input,
-                 sol01_flow_fault, sol02_flow_fault, vvr1_fault, vvr2_fault])
+                 vvr1_fault, vvr2_fault])
 
 bpm01_fault_input = models.FaultInput(bit_position = 0, device = bpm01, fault = bpm01_fault)
 bpm02_fault_input = models.FaultInput(bit_position = 0, device = bpm02, fault = bpm02_fault)
-session.add_all([bpm01_fault_input, bpm02_fault_input])
+session.add_all([bpm01_fault_input, bpm02_fault_input])#
 
 # FaultStates
 yag_fault_in = models.FaultState(device_state = screen_in, fault = yag_fault)
@@ -278,23 +305,27 @@ wg_temp_fault_state = models.FaultState(fault = wg_temp_fault, device_state = te
 buncher_temp_fault_state = models.FaultState(fault = buncher_temp_fault, device_state = temp_device_fault)
 sol01_temp_fault_state = models.FaultState(fault = sol01_temp_fault, device_state = temp_device_fault)
 sol02_temp_fault_state = models.FaultState(fault = sol02_temp_fault, device_state = temp_device_fault)
-sol01_flow_fault_state = models.FaultState(fault = sol01_flow_fault, device_state = flow_device_fault)
-sol02_flow_fault_state = models.FaultState(fault = sol02_flow_fault, device_state = flow_device_fault)
 vvr1_fault_state = models.FaultState(fault = vvr1_fault, device_state = vvr_device_fault)
 vvr2_fault_state = models.FaultState(fault = vvr2_fault, device_state = vvr_device_fault)
 session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken,
                  gun_temp_fault_state, wg_temp_fault_state, buncher_temp_fault_state,
                  sol01_temp_fault_state, sol02_temp_fault_state])
 
-bpm01_x_fault_state = models.FaultState(device_state = bpm_x_thres_state, fault = bpm01_fault)
-bpm01_y_fault_state = models.FaultState(device_state = bpm_y_thres_state, fault = bpm01_fault)
-bpm01_t_fault_state = models.FaultState(device_state = bpm_t_thres_state, fault = bpm01_fault)
-session.add_all([bpm01_x_fault_state, bpm01_y_fault_state, bpm01_t_fault_state])
+# BPM01 threshold fault states - there is one FaultState for each DeviceState,
+# there are 24 of them.
+bpm01_fault_states=[]
+for i in range(0,24):
+  bpm01_fault_state = models.FaultState(fault = bpm01_fault, device_state = bpm_states[i])
+  session.add(bpm01_fault_state)
+  bpm01_fault_states.append(bpm01_fault_state)
 
-bpm02_x_fault_state = models.FaultState(device_state = bpm_x_thres_state, fault = bpm02_fault)
-bpm02_y_fault_state = models.FaultState(device_state = bpm_y_thres_state, fault = bpm02_fault)
-bpm02_t_fault_state = models.FaultState(device_state = bpm_t_thres_state, fault = bpm02_fault)
-session.add_all([bpm02_x_fault_state, bpm02_y_fault_state, bpm02_t_fault_state])
+# BPM02 threshold fault states - there is one FaultState for each DeviceState,
+# there are 24 of them.
+bpm02_fault_states=[]
+for i in range(0,24):
+  bpm02_fault_state = models.FaultState(fault = bpm02_fault, device_state = bpm_states[i])
+  session.add(bpm02_fault_state)
+  bpm02_fault_states.append(bpm02_fault_state)
 
 # Fault states allowed beam classes.
 yag_fault_in.add_allowed_class(beam_class=class_1, mitigation_device=aom)
@@ -305,17 +336,17 @@ wg_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shut
 buncher_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 sol01_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 sol02_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-sol01_flow_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-sol02_flow_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
 
-bpm01_x_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm01_y_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm01_t_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm02_x_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm02_y_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-bpm02_t_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+# Allowed beam classes for the BPM01/BPM02 FaultStates
+for fault_state in bpm01_fault_states:
+  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
+
+for fault_state in bpm02_fault_states:
+  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 
 # Faults for the analog devices
 #fc_fault = models.ThresholdFault(name="FC > 0.1mA", greater_than=True, threshold_value=fc_threshold,

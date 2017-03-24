@@ -6,7 +6,7 @@ release 1
 x 153
 y 179
 w 900
-h 176
+h 848
 font "helvetica-medium-r-10.0"
 ctlFont "helvetica-medium-r-10.0"
 btnFont "helvetica-medium-r-10.0"
@@ -34,7 +34,7 @@ release 0
 x 16
 y 20
 w 872
-h 141
+h 813
 lineColor index 3
 fill
 fillColor index 3
@@ -277,7 +277,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "2"
 }
 endObjectProperties
 
@@ -315,7 +315,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "0x0004"
+  "0x0001"
 }
 endObjectProperties
 
@@ -334,7 +334,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "BPM01 X_FAULT"
+  "BPM01 X_THRSLD0"
 }
 endObjectProperties
 
@@ -384,7 +384,7 @@ x 342
 y 52
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM01_X_FAULT"
+controlPv "MPS:ANALOG:BPM01_X_THRSLD0"
 precision 1
 fgColor index 16
 fgAlarm
@@ -510,7 +510,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=MPS:ANALOG:BPM01_X_FAULT,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_FAULT"
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD0,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD0"
 }
 endObjectProperties
 
@@ -549,7 +549,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "2"
 }
 endObjectProperties
 
@@ -606,7 +606,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "BPM01 Y_FAULT"
+  "BPM01 X_THRSLD1"
 }
 endObjectProperties
 
@@ -656,7 +656,7 @@ x 342
 y 68
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM01_Y_FAULT"
+controlPv "MPS:ANALOG:BPM01_X_THRSLD1"
 precision 1
 fgColor index 16
 fgAlarm
@@ -782,7 +782,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=MPS:ANALOG:BPM01_Y_FAULT,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_FAULT"
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD1,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD1"
 }
 endObjectProperties
 
@@ -821,7 +821,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "2"
 }
 endObjectProperties
 
@@ -859,7 +859,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "0x0001"
+  "0x0004"
 }
 endObjectProperties
 
@@ -878,7 +878,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "BPM01 TMIT_FAULT"
+  "BPM01 X_THRSLD2"
 }
 endObjectProperties
 
@@ -928,7 +928,7 @@ x 342
 y 84
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM01_TMIT_FAULT"
+controlPv "MPS:ANALOG:BPM01_X_THRSLD2"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1054,7 +1054,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=MPS:ANALOG:BPM01_TMIT_FAULT,PV=MPS:ANALOG:BPM01,NAME=BPM01 TMIT_FAULT"
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD2,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD2"
 }
 endObjectProperties
 
@@ -1093,7 +1093,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "2"
 }
 endObjectProperties
 
@@ -1112,7 +1112,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "0"
 }
 endObjectProperties
 
@@ -1131,7 +1131,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "0x0004"
+  "0x0008"
 }
 endObjectProperties
 
@@ -1150,7 +1150,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "BPM02 X_FAULT"
+  "BPM01 X_THRSLD3"
 }
 endObjectProperties
 
@@ -1167,7 +1167,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "MPS:ANALOG:BPM02_BYPS"
+visPv "MPS:ANALOG:BPM01_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1185,7 +1185,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "MPS:ANALOG:BPM02_BYPS"
+visPv "MPS:ANALOG:BPM01_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1200,7 +1200,7 @@ x 342
 y 100
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_X_FAULT"
+controlPv "MPS:ANALOG:BPM01_X_THRSLD3"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1221,7 +1221,7 @@ x 442
 y 100
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_LATCHED"
+controlPv "MPS:ANALOG:BPM01_LATCHED"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1247,7 +1247,7 @@ onColor index 4
 offColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "MPS:ANALOG:BPM02_UNLATCH"
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
 pressValue "1"
 onLabel "Unlatch"
 offLabel "Unlatch"
@@ -1266,7 +1266,7 @@ x 622
 y 100
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_BYPV"
+controlPv "MPS:ANALOG:BPM01_BYPV"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1287,7 +1287,7 @@ x 722
 y 100
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_BYPS"
+controlPv "MPS:ANALOG:BPM01_BYPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1326,7 +1326,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=MPS:ANALOG:BPM02_X_FAULT,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_FAULT"
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD3,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD3"
 }
 endObjectProperties
 
@@ -1365,7 +1365,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "2"
 }
 endObjectProperties
 
@@ -1384,7 +1384,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "0"
 }
 endObjectProperties
 
@@ -1403,7 +1403,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "0x0002"
+  "0x0010"
 }
 endObjectProperties
 
@@ -1422,7 +1422,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "BPM02 Y_FAULT"
+  "BPM01 X_THRSLD4"
 }
 endObjectProperties
 
@@ -1439,7 +1439,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "MPS:ANALOG:BPM02_BYPS"
+visPv "MPS:ANALOG:BPM01_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1457,7 +1457,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "MPS:ANALOG:BPM02_BYPS"
+visPv "MPS:ANALOG:BPM01_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1472,7 +1472,7 @@ x 342
 y 116
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_Y_FAULT"
+controlPv "MPS:ANALOG:BPM01_X_THRSLD4"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1493,7 +1493,7 @@ x 442
 y 116
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_LATCHED"
+controlPv "MPS:ANALOG:BPM01_LATCHED"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1519,7 +1519,7 @@ onColor index 4
 offColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "MPS:ANALOG:BPM02_UNLATCH"
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
 pressValue "1"
 onLabel "Unlatch"
 offLabel "Unlatch"
@@ -1538,7 +1538,7 @@ x 622
 y 116
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_BYPV"
+controlPv "MPS:ANALOG:BPM01_BYPV"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1559,7 +1559,7 @@ x 722
 y 116
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_BYPS"
+controlPv "MPS:ANALOG:BPM01_BYPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1598,7 +1598,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=MPS:ANALOG:BPM02_Y_FAULT,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_FAULT"
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD4,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD4"
 }
 endObjectProperties
 
@@ -1637,7 +1637,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "2"
 }
 endObjectProperties
 
@@ -1656,7 +1656,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "1"
+  "0"
 }
 endObjectProperties
 
@@ -1668,6 +1668,5174 @@ minor 1
 release 1
 x 142
 y 132
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0020"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 132
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 X_THRSLD5"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 132
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 132
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 132
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_X_THRSLD5"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 132
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 132
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 132
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 132
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 132
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD5,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD5"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 148
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 148
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 148
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 148
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0040"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 148
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 X_THRSLD6"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 148
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 148
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 148
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_X_THRSLD6"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 148
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 148
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 148
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 148
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 148
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD6,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD6"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 164
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 164
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 164
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 164
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0080"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 164
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 X_THRSLD7"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 164
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 164
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 164
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_X_THRSLD7"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 164
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 164
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 164
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 164
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 164
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_X_THRSLD7,PV=MPS:ANALOG:BPM01,NAME=BPM01 X_THRSLD7"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 180
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 180
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 180
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 180
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0100"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 180
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD0"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 180
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 180
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 180
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD0"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 180
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 180
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 180
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 180
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 180
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD0,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD0"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 196
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 196
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 196
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 196
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0200"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 196
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 196
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 196
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 196
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD1"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 196
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 196
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 196
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 196
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 196
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD1,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD1"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 212
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 212
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 212
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 212
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0400"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 212
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD2"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 212
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 212
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 212
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD2"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 212
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 212
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 212
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 212
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 212
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD2,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD2"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 228
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 228
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 228
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 228
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0800"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 228
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD3"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 228
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 228
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 228
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD3"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 228
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 228
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 228
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 228
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 228
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD3,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD3"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 244
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 244
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 244
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 244
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x1000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 244
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD4"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 244
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 244
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 244
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD4"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 244
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 244
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 244
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 244
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 244
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD4,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD4"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 260
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 260
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 260
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 260
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x2000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 260
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD5"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 260
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 260
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 260
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD5"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 260
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 260
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 260
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 260
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 260
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD5,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD5"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 276
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 276
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 276
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 276
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x4000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 276
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD6"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 276
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 276
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 276
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD6"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 276
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 276
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 276
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 276
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 276
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD6,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD6"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 292
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 292
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 292
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 292
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x8000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 292
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 Y_THRSLD7"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 292
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 292
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 292
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_Y_THRSLD7"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 292
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 292
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 292
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 292
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 292
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_Y_THRSLD7,PV=MPS:ANALOG:BPM01,NAME=BPM01 Y_THRSLD7"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 308
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 308
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 308
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 308
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x10000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 308
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD0"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 308
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 308
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 308
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD0"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 308
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 308
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 308
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 308
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 308
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD0,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD0"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 324
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 324
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 324
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 324
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x20000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 324
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 324
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 324
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 324
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD1"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 324
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 324
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 324
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 324
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 324
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD1,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD1"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 340
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 340
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 340
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 340
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x40000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 340
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD2"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 340
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 340
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 340
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD2"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 340
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 340
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 340
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 340
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 340
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD2,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD2"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 356
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 356
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 356
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 356
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x80000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 356
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD3"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 356
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 356
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 356
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD3"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 356
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 356
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 356
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 356
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 356
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD3,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD3"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 372
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 372
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 372
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 372
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x100000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 372
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD4"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 372
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 372
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 372
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD4"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 372
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 372
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 372
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 372
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 372
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD4,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD4"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 388
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 388
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 388
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 388
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x200000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 388
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD5"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 388
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 388
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 388
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD5"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 388
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 388
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 388
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 388
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 388
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD5,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD5"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 404
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 404
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 404
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 404
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x400000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 404
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD6"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 404
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 404
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 404
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD6"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 404
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 404
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 404
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 404
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 404
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD6,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD6"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 420
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 420
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 420
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 420
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x800000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 420
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM01 T_THRSLD7"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 420
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 420
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM01_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 420
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_T_THRSLD7"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 420
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 420
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM01_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 420
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 420
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM01_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 420
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM01_T_THRSLD7,PV=MPS:ANALOG:BPM01,NAME=BPM01 T_THRSLD7"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 436
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 436
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 436
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 436
 w 50
 h 16
 font "helvetica-medium-r-12.0"
@@ -1686,7 +6854,7 @@ major 4
 minor 1
 release 1
 x 192
-y 132
+y 436
 w 150
 h 16
 font "helvetica-medium-r-12.0"
@@ -1694,7 +6862,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "BPM02 TMIT_FAULT"
+  "BPM02 X_THRSLD0"
 }
 endObjectProperties
 
@@ -1705,7 +6873,7 @@ major 4
 minor 0
 release 0
 x 614
-y 132
+y 436
 w 8
 h 16
 lineColor index 22
@@ -1723,7 +6891,7 @@ major 4
 minor 0
 release 0
 x 874
-y 132
+y 436
 w 8
 h 16
 lineColor index 22
@@ -1741,10 +6909,10 @@ major 10
 minor 0
 release 0
 x 342
-y 132
+y 436
 w 100
 h 16
-controlPv "MPS:ANALOG:BPM02_TMIT_FAULT"
+controlPv "MPS:ANALOG:BPM02_X_THRSLD0"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1762,7 +6930,7 @@ major 10
 minor 0
 release 0
 x 442
-y 132
+y 436
 w 100
 h 16
 controlPv "MPS:ANALOG:BPM02_LATCHED"
@@ -1783,7 +6951,7 @@ major 4
 minor 1
 release 0
 x 542
-y 132
+y 436
 w 60
 h 16
 fgColor index 14
@@ -1807,7 +6975,7 @@ major 10
 minor 0
 release 0
 x 622
-y 132
+y 436
 w 100
 h 16
 controlPv "MPS:ANALOG:BPM02_BYPV"
@@ -1828,7 +6996,7 @@ major 10
 minor 0
 release 0
 x 722
-y 132
+y 436
 w 100
 h 16
 controlPv "MPS:ANALOG:BPM02_BYPS"
@@ -1849,7 +7017,7 @@ major 4
 minor 4
 release 0
 x 822
-y 132
+y 436
 w 52
 h 16
 fgColor index 14
@@ -1870,7 +7038,6263 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=MPS:ANALOG:BPM02_TMIT_FAULT,PV=MPS:ANALOG:BPM02,NAME=BPM02 TMIT_FAULT"
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD0,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD0"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 452
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 452
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 452
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 452
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0002"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 452
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 452
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 452
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 452
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD1"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 452
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 452
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 452
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 452
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 452
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD1,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD1"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 468
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 468
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 468
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 468
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0004"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 468
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD2"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 468
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 468
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 468
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD2"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 468
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 468
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 468
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 468
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 468
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD2,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD2"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 484
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 484
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 484
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 484
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0008"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 484
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD3"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 484
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 484
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 484
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD3"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 484
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 484
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 484
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 484
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 484
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD3,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD3"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 500
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 500
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 500
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 500
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0010"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 500
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD4"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 500
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 500
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 500
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD4"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 500
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 500
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 500
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 500
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 500
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD4,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD4"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 516
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 516
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 516
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 516
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0020"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 516
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD5"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 516
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 516
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 516
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD5"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 516
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 516
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 516
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 516
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 516
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD5,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD5"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 532
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 532
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 532
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 532
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0040"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 532
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD6"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 532
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 532
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 532
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD6"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 532
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 532
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 532
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 532
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 532
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD6,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD6"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 548
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 548
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 548
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 548
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0080"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 548
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 X_THRSLD7"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 548
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 548
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 548
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_X_THRSLD7"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 548
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 548
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 548
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 548
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 548
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_X_THRSLD7,PV=MPS:ANALOG:BPM02,NAME=BPM02 X_THRSLD7"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 564
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 564
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 564
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 564
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0100"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 564
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD0"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 564
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 564
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 564
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD0"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 564
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 564
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 564
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 564
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 564
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD0,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD0"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 580
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 580
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 580
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 580
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0200"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 580
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 580
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 580
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 580
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD1"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 580
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 580
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 580
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 580
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 580
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD1,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD1"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 596
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 596
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 596
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 596
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0400"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 596
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD2"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 596
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 596
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 596
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD2"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 596
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 596
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 596
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 596
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 596
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD2,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD2"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 612
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 612
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 612
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 612
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x0800"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 612
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD3"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 612
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 612
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 612
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD3"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 612
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 612
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 612
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 612
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 612
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD3,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD3"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 628
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 628
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 628
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 628
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x1000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 628
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD4"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 628
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 628
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 628
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD4"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 628
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 628
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 628
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 628
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 628
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD4,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD4"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 644
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 644
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 644
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 644
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x2000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 644
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD5"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 644
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 644
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 644
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD5"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 644
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 644
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 644
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 644
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 644
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD5,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD5"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 660
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 660
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 660
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 660
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x4000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 660
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD6"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 660
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 660
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 660
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD6"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 660
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 660
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 660
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 660
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 660
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD6,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD6"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 676
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 676
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 676
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 676
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x8000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 676
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 Y_THRSLD7"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 676
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 676
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 676
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_Y_THRSLD7"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 676
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 676
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 676
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 676
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 676
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_Y_THRSLD7,PV=MPS:ANALOG:BPM02,NAME=BPM02 Y_THRSLD7"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 692
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 692
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 692
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 692
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x10000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 692
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD0"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 692
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 692
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 692
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD0"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 692
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 692
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 692
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 692
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 692
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD0,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD0"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 708
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 708
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 708
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 708
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x20000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 708
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD1"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 708
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 708
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 708
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD1"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 708
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 708
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 708
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 708
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 708
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD1,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD1"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 724
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 724
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 724
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 724
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x40000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 724
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD2"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 724
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 724
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 724
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD2"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 724
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 724
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 724
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 724
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 724
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD2,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD2"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 740
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 740
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 740
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 740
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x80000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 740
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD3"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 740
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 740
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 740
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD3"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 740
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 740
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 740
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 740
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 740
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD3,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD3"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 756
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 756
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 756
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 756
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x100000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 756
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD4"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 756
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 756
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 756
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD4"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 756
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 756
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 756
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 756
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 756
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD4,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD4"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 772
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 772
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 772
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 772
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x200000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 772
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD5"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 772
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 772
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 772
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD5"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 772
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 772
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 772
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 772
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 772
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD5,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD5"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 788
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 788
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 788
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 788
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x400000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 788
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD6"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 788
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 788
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 788
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD6"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 788
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 788
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 788
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 788
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 788
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD6,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD6"
+}
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 804
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 62
+y 804
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 102
+y 804
+w 40
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 142
+y 804
+w 50
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "0x800000"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 192
+y 804
+w 150
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "BPM02 T_THRSLD7"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 614
+y 804
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 874
+y 804
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "MPS:ANALOG:BPM02_BYPS"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 342
+y 804
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_T_THRSLD7"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 442
+y 804
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_LATCHED"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 804
+w 60
+h 16
+fgColor index 14
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "MPS:ANALOG:BPM02_UNLATCH"
+pressValue "1"
+onLabel "Unlatch"
+offLabel "Unlatch"
+3d
+useEnumNumeric
+font "helvetica-medium-r-10.0"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 622
+y 804
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPV"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 722
+y 804
+w 100
+h 16
+controlPv "MPS:ANALOG:BPM02_BYPS"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 822
+y 804
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "bypass_control_analog"
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "BITPV=MPS:ANALOG:BPM02_T_THRSLD7,PV=MPS:ANALOG:BPM02,NAME=BPM02 T_THRSLD7"
 }
 endObjectProperties
 
