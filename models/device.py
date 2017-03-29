@@ -13,9 +13,11 @@ class Device(Base):
     name: unique device name (possibly MAD device name)
     description: some extra information about this device
     z_position: linac Z position in ft
+    evaluation: define if device state is evaluated by fast(1) or slow(0) logic.
+                default value is slow(0)
 
   References:
-    application_id: application that owns this device
+    card_id: application card that owns this device
 
   """
   __tablename__ = 'devices'
@@ -24,7 +26,8 @@ class Device(Base):
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=False)
   z_position = Column(Float, nullable=False)
-  application_id = Column(Integer, ForeignKey('applications.id'), nullable=False)
+  evaluation = Column(Integer, nullable=False, default=0)
+  card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   fault_outputs = relationship("FaultInput", backref='device')
   __mapper_args__ = {'polymorphic_on': discriminator}

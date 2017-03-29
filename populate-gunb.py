@@ -10,8 +10,8 @@ conf.clear_all()
 session = conf.session
 
 #First lets define our mitigation devices.
-shutter = models.MitigationDevice(name="Shutter")
-aom = models.MitigationDevice(name="AOM")
+shutter = models.MitigationDevice(name="Shutter", destination_mask=0x01)
+aom = models.MitigationDevice(name="AOM", destination_mask=0x02)
 session.add_all([shutter, aom])
 
 #Make some beam classes.
@@ -26,32 +26,27 @@ crate = models.Crate(number=1, shelf_number=1, num_slots=8)
 session.add_all([crate])
 
 #Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)
-eic_link_node_type = models.ApplicationType(name="EIC Link Node", number=0,
+eic_digital_app = models.ApplicationType(name="Digital Card", number=0,
                                             digital_channel_count=9, digital_channel_size=1,
                                             analog_channel_count=4, analog_channel_size=1)
-bpm_app_type = models.ApplicationType(name="BPM Card", number=1,
+eic_bpm_app = models.ApplicationType(name="BPM Card", number=1,
                                       digital_channel_count=0, digital_channel_size=1,
                                       analog_channel_count=2, analog_channel_size=1)
-bcm_app_type = models.ApplicationType(name="BCM Card", number=2,
+eic_bcm_app = models.ApplicationType(name="Analog Card", number=2,
                                       digital_channel_count=0, digital_channel_size=1,
                                       analog_channel_count=2, analog_channel_size=1)
 
-
-session.add_all([eic_link_node_type])
-
-# Applications - an application is basically an analog or digital status
-# summary embedded in a link node message, which contains status from
-# all inputs connected to it (coming from wires or from the backplane)
-eic_digital_app = models.Application(global_id=0, name="EIC_Digital", description="EIC Digital Status")
-bpm_eic_app = models.Application(global_id=1,name="EIC_BPM",description="EIC BPM Status")
-toro_sol_app = models.Application(global_id=2,name="EIC_Analog",description="IM01/SOL1/SOL2/FC Status")
-session.add_all([eic_digital_app, bpm_eic_app, toro_sol_app])
+session.add_all([eic_digital_app])
 
 #Install a mixed-mode link node card in the crate.
-link_node_card = models.ApplicationCard(number=1, type=eic_link_node_type, slot_number=2)
-bpm_card = models.ApplicationCard(number=2, type=bpm_app_type, slot_number=3)
-toroid_card = models.ApplicationCard(number=2, type=bcm_app_type, slot_number=6)
-fc_card = models.ApplicationCard(number=2, type=bcm_app_type, slot_number=7)
+link_node_card = models.ApplicationCard(name="EIC Digital", number=1, type=eic_digital_app, slot_number=2,
+                                  global_id=0, description="EIC Digital Status")
+bpm_card = models.ApplicationCard(name="EIC BPM", number=2, type=eic_bpm_app, slot_number=3,
+                                  global_id=1, description="EIC BPM Status")
+toroid_card = models.ApplicationCard(name="EIC Toroid", number=2, type=eic_bcm_app, slot_number=6,
+                                     global_id=2, description="IM01/SOL1/SOL2/FC Status")
+fc_card = models.ApplicationCard(name="EIC Faraday Cup", number=2, type=eic_bcm_app, slot_number=7,
+                                 global_id=3, description="IM01/SOL1/SOL2/FC Status")
 crate.cards.append(link_node_card)
 crate.cards.append(bpm_card)
 crate.cards.append(toroid_card)
@@ -193,24 +188,24 @@ session.commit()
 
 #Add digital devices
 screen = models.DigitalDevice(name="YAG01", z_position=-28.061394, description="YAG Screen",
-                              device_type = profmon_device_type, application = eic_digital_app)
+                              device_type = profmon_device_type, card = link_node_card)
 gun_temp = models.DigitalDevice(name="Gun Temperature", device_type = temp_device_type,
-                                application = eic_digital_app, z_position = 0,
+                                card = link_node_card, z_position = 0,
                                 description = "Gun Temperature Summary Input")
 wg_temp = models.DigitalDevice(name="Waveguide Temperature", device_type = temp_device_type, 
-                               application = eic_digital_app, z_position = 0,
+                               card = link_node_card, z_position = 0,
                                description = "Waveguide Temperature Summary Input")
 buncher_temp = models.DigitalDevice(name="Buncher Temperature", device_type = temp_device_type,
-                                    application = eic_digital_app, z_position = -30.299721,
+                                    card = link_node_card, z_position = -30.299721,
                                     description = "Buncher Temperature Summary Input")
 sol01_temp = models.DigitalDevice(name="SOL01 Temp", z_position=-32.115049, description="SOL01 Temperature",
-                                  device_type = temp_device_type, application = eic_digital_app)
+                                  device_type = temp_device_type, card = link_node_card)
 sol02_temp = models.DigitalDevice(name="SOL02 Temp", z_position=-27.538278, description="SOL02 Temperature",
-                                  device_type = temp_device_type, application = eic_digital_app)
+                                  device_type = temp_device_type, card = link_node_card)
 vvr1 = models.DigitalDevice(name="VVR01", z_position=-31, description="Vacuum Gate Valve VVR01",
-                                  device_type = vvr_device_type, application = eic_digital_app)
+                                  device_type = vvr_device_type, card = link_node_card)
 vvr2 = models.DigitalDevice(name="VVR02", z_position=-26, description="Vacuum Gate Valve VVR02",
-                                  device_type = vvr_device_type, application = eic_digital_app)
+                                  device_type = vvr_device_type, card = link_node_card)
 
 session.add_all([screen, gun_temp, wg_temp, buncher_temp,
                  sol01_temp, sol02_temp, vvr1, vvr2])
@@ -225,9 +220,9 @@ session.add_all([screen, gun_temp, wg_temp, buncher_temp,
 #sol02_curr = models.AnalogDevice(name="SOL02", analog_device_type=im_device_type, channel=sol02_channel,
 #                                 application=global_app, z_position=-27.538278, description="SOL02 Current")
 bpm01 = models.AnalogDevice(name="BPM01", device_type = bpm_device_type, channel=bpm01_channel,
-                            application=bpm_eic_app, z_position=-31.349744, description="BPM01")
+                            card = bpm_card, z_position=-31.349744, description="BPM01", evaluation=1)
 bpm02 = models.AnalogDevice(name="BPM02", device_type = bpm_device_type, channel=bpm02_channel,
-                            application=bpm_eic_app, z_position=-26.772972, description="BPM02")
+                            card =bpm_card, z_position=-26.772972, description="BPM02", evaluation=1)
 
 # Give the device some inputs.  It has in and out limit switches.
 yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=0)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship, backref, validates
 from models import Base
 
@@ -33,6 +33,10 @@ class ApplicationCard(Base):
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)
   digital_channels = relationship("DigitalChannel", backref='card')
   analog_channels = relationship("AnalogChannel", backref='card')
+  global_id = Column(Integer, nullable=False, unique=True)
+  name = Column(String, unique=True, nullable=False)
+  description = Column(String, nullable=True)
+  devices = relationship("Device", backref='card')
   
   @validates('digital_channels')
   def validate_digital_channel(self, key, new_channel):
