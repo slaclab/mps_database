@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 from mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 #The MPSConfig object points to our database file.
 conf = MPSConfig()
+
 
 #Clear everything out of the database.
 conf.clear_all()
@@ -15,9 +17,12 @@ aom = models.MitigationDevice(name="AOM", destination_mask=0x02)
 session.add_all([shutter, aom])
 
 #Make some beam classes.
-class_0 = models.BeamClass(number=0,name="Power Class 0",description="No Beam")
-class_1 = models.BeamClass(number=1,name="Power Class 1",description="YAG Max Power")
-class_2 = models.BeamClass(number=2,name="Power Class 2",description="Full Power")
+class_0 = models.BeamClass(number=0,name="Power Class 0",description="No Beam",
+                              integration_window=10, total_charge=100, min_period=1)
+class_1 = models.BeamClass(number=1,name="Power Class 1",description="YAG Max Power",
+                              integration_window=10, total_charge=100, min_period=1)
+class_2 = models.BeamClass(number=2,name="Power Class 2",description="Full Power",
+                              integration_window=10, total_charge=100, min_period=1)
 session.add_all([class_0, class_1, class_2])
 
 # EIC Link Node - L2KA00-05 (Level 17)
@@ -43,15 +48,16 @@ link_node_card = models.ApplicationCard(name="EIC Digital", number=1, type=eic_d
                                   global_id=0, description="EIC Digital Status")
 bpm_card = models.ApplicationCard(name="EIC BPM", number=2, type=eic_bpm_app, slot_number=3,
                                   global_id=1, description="EIC BPM Status")
-toroid_card = models.ApplicationCard(name="EIC Toroid", number=2, type=eic_bcm_app, slot_number=6,
-                                     global_id=2, description="IM01/SOL1/SOL2/FC Status")
-fc_card = models.ApplicationCard(name="EIC Faraday Cup", number=2, type=eic_bcm_app, slot_number=7,
-                                 global_id=3, description="IM01/SOL1/SOL2/FC Status")
+#toroid_card = models.ApplicationCard(name="EIC Toroid", number=2, type=eic_bcm_app, slot_number=6,
+#                                     global_id=2, description="IM01/SOL1/SOL2/FC Status")
+#fc_card = models.ApplicationCard(name="EIC Faraday Cup", number=2, type=eic_bcm_app, slot_number=7,
+#                                 global_id=3, description="IM01/SOL1/SOL2/FC Status")
 crate.cards.append(link_node_card)
 crate.cards.append(bpm_card)
-crate.cards.append(toroid_card)
-crate.cards.append(fc_card)
-session.add_all([link_node_card,bpm_card,toroid_card,fc_card])
+#crate.cards.append(toroid_card)
+#crate.cards.append(fc_card)
+#session.add_all([link_node_card,bpm_card,toroid_card,fc_card])
+session.add_all([link_node_card,bpm_card])
 
 #Define some channels for the card.
 # channel 0 - YAG01 out switch

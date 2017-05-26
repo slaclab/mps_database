@@ -43,7 +43,7 @@ conf.clear_all()
 session = conf.session
 
 #First lets define our mitigation devices.
-shutter = models.MitigationDevice(name="Shutter")
+shutter = models.MitigationDevice(name="Shutter", destination_mask=1)
 session.add(shutter)
 
 #Make some beam classes.
@@ -62,21 +62,27 @@ mitigation_crate = models.Crate(number=2, shelf_number=1, num_slots=6)
 session.add(mitigation_crate)
 
 #Define a mixed-mode link node (One digital AMC only)
-mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0, digital_channel_count=9, digital_channel_size=1, analog_channel_count=0, analog_channel_size=1)
+mixed_link_node_type = models.ApplicationType(name="Mixed Mode Link Node", number=0,
+                                              digital_channel_count=9, digital_channel_size=1,
+                                              analog_channel_count=0, analog_channel_size=1)
 
 #Define a mitigation link node (no inputs?)
-mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2, digital_channel_count=0, digital_channel_size=0, analog_channel_count=0, analog_channel_size=0)
+mitigation_link_node_type = models.ApplicationType(name="Mitigation Link Node", number=2,
+                                                   digital_channel_count=0, digital_channel_size=0,
+                                                   analog_channel_count=0, analog_channel_size=0)
 
 session.add_all([mixed_link_node_type, mitigation_link_node_type])
 
 #Add one application for everything...
-global_app = models.Application(global_id=100,name="MyGlobalApp",description="Generic Application")
-session.add(global_app)
+#global_app = models.Application(global_id=100,name="MyGlobalApp",description="Generic Application")
+#session.add(global_app)
 
 #Install a mixed-mode link node card in the crate.
-link_node_card = models.ApplicationCard(number=1)
-link_node_card.type = mixed_link_node_type
-link_node_card.slot_number = 2
+link_node_card = models.ApplicationCard(name="SXRSS Card", number=1,
+                                        type=mixed_link_node_type, slot_number=2,
+                                        global_id=1, description="SXRSS Logic Test")
+#link_node_card.type = mixed_link_node_type
+#link_node_card.slot_number = 2
 ln_crate.cards.append(link_node_card)
 session.add(link_node_card)
 
@@ -101,6 +107,9 @@ for i in range(0,9):
   chan = models.DigitalChannel(number=i)
   chan.name =chan_name[i]
   chan.card = link_node_card
+  chan.z_name = "IS_FAULTED"
+  chan.o_name = "IS_OK"
+  chan.alarm_state = 0
   digital_chans.append(chan)
   session.add(chan)
 
@@ -130,27 +139,36 @@ session.add_all([device_out, device_in, device_moving, device_broken, power_on, 
 
 # add devices
 m1_device = models.DigitalDevice(name="M1", z_position=30, description="M1 Insertion Device",
-                                 device_type = insertion_device_type, application = global_app)
+                                 device_type = insertion_device_type, card = link_node_card)
 slit_device = models.DigitalDevice(name="SL", z_position=60, description="Slit Insertion Device",
-                                   device_type = insertion_device_type, application = global_app)
+                                   device_type = insertion_device_type, card = link_node_card)
 m2_device = models.DigitalDevice(name="M2", z_position=70, description="M2 Insertion Device",
-                                 device_type = insertion_device_type, application = global_app)
+                                 device_type = insertion_device_type, card = link_node_card)
 m3_device = models.DigitalDevice(name="M3", z_position=72, description="M3 Insertion Device",
-                                 device_type = insertion_device_type, application = global_app)
+                                 device_type = insertion_device_type, card = link_node_card)
 cp_device = models.DigitalDevice(name="CP", z_position=10, description="Chicane Power Device",
-                                 device_type = power_device_type, application = global_app)
+                                 device_type = power_device_type, card = link_node_card)
 session.add_all([m1_device, slit_device, m2_device, m3_device, cp_device])
 
 # Assign inputs to devices
-m1_in_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = m1_device)
-m1_out_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, digital_device = m1_device)
-slit_in_sw = models.DeviceInput(channel = digital_chans[2], bit_position = 0, digital_device = slit_device)
-slit_out_sw = models.DeviceInput(channel = digital_chans[3], bit_position = 1, digital_device = slit_device)
-m2_in_sw = models.DeviceInput(channel = digital_chans[4], bit_position = 0, digital_device = m2_device)
-m2_out_sw = models.DeviceInput(channel = digital_chans[5], bit_position = 1, digital_device = m2_device)
-m3_in_sw = models.DeviceInput(channel = digital_chans[6], bit_position = 0, digital_device = m3_device)
-m3_out_sw = models.DeviceInput(channel = digital_chans[7], bit_position = 1, digital_device = m3_device)
-cp_channel = models.DeviceInput(channel = digital_chans[8], bit_position = 0, digital_device = cp_device)
+m1_in_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0,
+                              digital_device = m1_device, fault_value = 0)
+m1_out_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, 
+                               digital_device = m1_device, fault_value = 0)
+slit_in_sw = models.DeviceInput(channel = digital_chans[2], bit_position = 0,
+                                digital_device = slit_device, fault_value = 0)
+slit_out_sw = models.DeviceInput(channel = digital_chans[3], bit_position = 1,
+                                 digital_device = slit_device, fault_value = 0)
+m2_in_sw = models.DeviceInput(channel = digital_chans[4], bit_position = 0,
+                              digital_device = m2_device, fault_value = 0)
+m2_out_sw = models.DeviceInput(channel = digital_chans[5], bit_position = 1,
+                               digital_device = m2_device, fault_value = 0)
+m3_in_sw = models.DeviceInput(channel = digital_chans[6], bit_position = 0,
+                              digital_device = m3_device, fault_value = 0)
+m3_out_sw = models.DeviceInput(channel = digital_chans[7], bit_position = 1,
+                               digital_device = m3_device, fault_value = 0)
+cp_channel = models.DeviceInput(channel = digital_chans[8], bit_position = 0, 
+                                digital_device = cp_device, fault_value = 0)
 session.add_all([m1_in_sw, m1_out_sw,
                  slit_in_sw, slit_out_sw,
                  m2_in_sw, m2_out_sw,
