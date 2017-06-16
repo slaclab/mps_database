@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, validates
 from models import Base
 
@@ -10,6 +10,9 @@ class Crate(Base):
     number: crate number (property or serial number)
     self_number: 
     num_slots: number of slots available (usually 2 or 7)
+    location: string containing sector/area where this crate is installed (e.g. LKG02, LKA01)
+    rack: string containing the rack identifier (usually a number)
+    elevation: elevation within the rack
 
   Relationships:
     cards: each ApplicationCard has a reference to a crate 
@@ -19,6 +22,9 @@ class Crate(Base):
   number = Column(Integer, unique=True, nullable=False)
   shelf_number = Column(Integer, nullable=False)
   num_slots = Column(Integer, nullable=False)
+  location = Column(String, nullable=False)
+  rack = Column(String, nullable=False)
+  elevation = Column(Integer, nullable=False, default=0)
   cards = relationship("ApplicationCard", backref='crate')
   
   @validates('cards')

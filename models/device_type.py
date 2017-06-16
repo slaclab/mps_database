@@ -9,7 +9,8 @@ class DeviceType(Base):
   Describe a class of devices, e.g. insertion device.
 
   Properties:
-    name: meaningful and descriptive device type name
+    name: base name for the PVs associated to this device
+    description: 
 
   Relationships:
     states: referanced by DeviceState, tells in which states this
@@ -19,5 +20,6 @@ class DeviceType(Base):
   __tablename__ = 'device_types'
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False, unique=True)
+  description = Column(String, nullable=False)
   states = relationship("DeviceState", backref='device_type')
   devices = relationship("Device", backref='device_type')

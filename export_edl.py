@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from Cheetah.Template import Template
 
 from mps_config import MPSConfig, models
@@ -78,8 +80,8 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs):
     bypv.append('MPS:DIGITAL:{0}_BYPV'.format(deviceInput.channel.name))
     names.append(deviceInput.channel.name)
     pvs.append('MPS:DIGITAL:{0}'.format(deviceInput.channel.name))
-    latched.append('MPS:DIGITAL:{0}_LATCHED'.format(deviceInput.channel.name))
-    unlatch.append('MPS:DIGITAL:{0}_UNLATCH'.format(deviceInput.channel.name))
+    latched.append('MPS:DIGITAL:{0}_MPS'.format(deviceInput.channel.name))
+    unlatch.append('MPS:DIGITAL:{0}_UNLH'.format(deviceInput.channel.name))
     
   nameSpace={'DEVICE_INPUTS': str(len(deviceInputs)),
              'DI_CRATE': crates,

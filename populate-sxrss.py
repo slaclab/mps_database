@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 
@@ -47,18 +48,22 @@ shutter = models.MitigationDevice(name="Shutter", destination_mask=1)
 session.add(shutter)
 
 #Make some beam classes.
-class_0 = models.BeamClass(number=0,name="0 Hz")
-class_1 = models.BeamClass(number=1,name="1 Hz")
-class_2 = models.BeamClass(number=2,name="10 Hz")
-class_3 = models.BeamClass(number=3,name="120 Hz")
+class_0 = models.BeamClass(number=0,name="0 Hz",
+                           integration_window=10, total_charge=100, min_period=1)
+class_1 = models.BeamClass(number=1,name="1 Hz",
+                           integration_window=10, total_charge=100, min_period=1)
+class_2 = models.BeamClass(number=2,name="10 Hz",
+                           integration_window=10, total_charge=100, min_period=1)
+class_3 = models.BeamClass(number=3,name="120 Hz",
+                           integration_window=10, total_charge=100, min_period=1)
 session.add_all([class_0, class_1, class_2, class_3])
 
 #Make a crate for LN with digital inputs
-ln_crate = models.Crate(number=1, shelf_number=1, num_slots=6)
+ln_crate = models.Crate(number=1, shelf_number=1, num_slots=6, location="L2KA00", rack="05", elevation=17)
 session.add(ln_crate)
 
 #Make a crate for mitigation LN
-mitigation_crate = models.Crate(number=2, shelf_number=1, num_slots=6)
+mitigation_crate = models.Crate(number=2, shelf_number=1, num_slots=6, location="L2KA00", rack="04", elevation=10)
 session.add(mitigation_crate)
 
 #Define a mixed-mode link node (One digital AMC only)
@@ -78,7 +83,7 @@ session.add_all([mixed_link_node_type, mitigation_link_node_type])
 #session.add(global_app)
 
 #Install a mixed-mode link node card in the crate.
-link_node_card = models.ApplicationCard(name="SXRSS Card", number=1,
+link_node_card = models.ApplicationCard(name="SXRSS Card", number=1, area="UND1",
                                         type=mixed_link_node_type, slot_number=2,
                                         global_id=1, description="SXRSS Logic Test")
 #link_node_card.type = mixed_link_node_type
@@ -114,9 +119,9 @@ for i in range(0,9):
   session.add(chan)
 
 # Add device types
-insertion_device_type = models.DeviceType(name="Insertion Device")
-power_device_type = models.DeviceType(name="Power Device")
-sxrss_device_type = models.DeviceType(name="SXRSS Protection Device")
+insertion_device_type = models.DeviceType(name="PROF",description="Insertion Device")
+power_device_type = models.DeviceType(name="POWR",description="Power Device")
+sxrss_device_type = models.DeviceType(name="SXSS",description="SXRSS Protection Device")
 session.add_all([insertion_device_type, power_device_type, sxrss_device_type])
 session.commit()
 
@@ -138,16 +143,16 @@ session.add_all([device_out, device_in, device_moving, device_broken, power_on, 
                  sxrss_default_state, sxrss_state_ss, sxrss_state_harmonic, sxrss_state_sase])
 
 # add devices
-m1_device = models.DigitalDevice(name="M1", z_position=30, description="M1 Insertion Device",
-                                 device_type = insertion_device_type, card = link_node_card)
-slit_device = models.DigitalDevice(name="SL", z_position=60, description="Slit Insertion Device",
-                                   device_type = insertion_device_type, card = link_node_card)
-m2_device = models.DigitalDevice(name="M2", z_position=70, description="M2 Insertion Device",
-                                 device_type = insertion_device_type, card = link_node_card)
-m3_device = models.DigitalDevice(name="M3", z_position=72, description="M3 Insertion Device",
-                                 device_type = insertion_device_type, card = link_node_card)
-cp_device = models.DigitalDevice(name="CP", z_position=10, description="Chicane Power Device",
-                                 device_type = power_device_type, card = link_node_card)
+m1_device = models.DigitalDevice(name="M1", position=30, description="M1 Insertion Device",
+                                 device_type = insertion_device_type, card = link_node_card, area="UND1")
+slit_device = models.DigitalDevice(name="SL", position=60, description="Slit Insertion Device",
+                                   device_type = insertion_device_type, card = link_node_card, area="UND1")
+m2_device = models.DigitalDevice(name="M2", position=70, description="M2 Insertion Device",
+                                 device_type = insertion_device_type, card = link_node_card, area="UND1")
+m3_device = models.DigitalDevice(name="M3", position=72, description="M3 Insertion Device",
+                                 device_type = insertion_device_type, card = link_node_card, area="UND1")
+cp_device = models.DigitalDevice(name="CP", position=10, description="Chicane Power Device",
+                                 device_type = power_device_type, card = link_node_card, area="UND1")
 session.add_all([m1_device, slit_device, m2_device, m3_device, cp_device])
 
 # Assign inputs to devices

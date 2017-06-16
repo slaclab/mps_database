@@ -10,7 +10,10 @@ class ApplicationCard(Base):
   crate and slot).
 
   Properties:
-   number: serial/property number
+   number: serial/property numbe
+   area: sector where the card is installed (e.g. GUNB, LI30, DMPB,...).
+             This is used for creating the LinkNode PVs (second field)
+   location: this is the location field to generate LinkNode PVs (third field)
    slot_number: number of slot within the ATCA crate where it is installed
 
   References:
@@ -28,6 +31,8 @@ class ApplicationCard(Base):
   __tablename__ = 'application_cards'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
+  area = Column(String, nullable=False)
+  location = Column(String, nullable=False, unique=True)
   slot_number = Column(Integer, nullable=False)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)

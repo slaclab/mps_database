@@ -12,7 +12,11 @@ class Device(Base):
   Properties:
     name: unique device name (possibly MAD device name)
     description: some extra information about this device
-    z_position: linac Z position in ft
+    position: 100 to 999 number that defines approximatelly where the device
+              is within the area. This field is used to create PVs
+    area: sector where the device is installed (e.g. GUNB, LI30, DMPB,...), this
+          is used to create the PVs (second field). This field is used
+          to create PVs.
     evaluation: define if device state is evaluated by fast(1) or slow(0) logic.
                 default value is slow(0)
 
@@ -25,7 +29,8 @@ class Device(Base):
   discriminator = Column('type', String(50))
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=False)
-  z_position = Column(Float, nullable=False)
+  position = Column(Integer, nullable=False)
+  area = Column(String, nullable=False)
   evaluation = Column(Integer, nullable=False, default=0)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
