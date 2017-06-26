@@ -50,7 +50,7 @@ Print database contents (Faults/Logic):
 
 Export EPICS databases for central node IOC:
 
-> $ ./export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
+> mps_database$ ./export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
 
 The command above generates three .db files:
 - device_inputs.db for the digital inputs
@@ -62,5 +62,5 @@ The source for the EPICS databases is the mps_gun_config.db file (sqlite format)
 
 Export EDM panels for central node IOC:
 
-> $ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
+> mps_database$ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
 
