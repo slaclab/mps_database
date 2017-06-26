@@ -31,7 +31,7 @@ Scripts
 
 Generate GUNB database - this creates the file mps_gun_config.db (sqlite file) that is used by other scripts to generate EPICS database and panels.
 
-$ python populate-gunb.py
+> mps_database$ ./populate-gunb.py
 
 Export sqlite database (mps_gun_config.db) to YAML (mps_gun_config.yaml) file:
 
@@ -44,9 +44,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> mps=MPSConfig("mps_gun_config.db")
 >>> ioc_tools.dump_db_to_yaml(mps, "mps_gun_config.yaml")
 
+Print database contents (Faults/Logic):
+
+> mps_database$ ./printdb mps_gun_config.db
+
 Export EPICS databases for central node IOC:
 
-$ python export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
+> $ ./export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
 
 The command above generates three .db files:
 - device_inputs.db for the digital inputs
@@ -58,5 +62,5 @@ The source for the EPICS databases is the mps_gun_config.db file (sqlite format)
 
 Export EDM panels for central node IOC:
 
-$ python export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
+> $ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
 
