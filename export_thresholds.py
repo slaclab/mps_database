@@ -51,7 +51,7 @@ def exportAnalogThresholds(file, analogDevices, session):
           fields.append(('DESC', 'High analog threshold for {0}'.
                          format(state.device_state.name)))
           fields.append(('DTYP', 'asynFloat64'))
-          fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 0)ANALOG_THRESHOLD'.format(analogDevice.channel.number, state.device_state.mask)))
+          fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 1)ANALOG_THRESHOLD'.format(analogDevice.channel.number, state.device_state.mask)))
           printRecord(file, 'ao', '{0}:{1}_HIHI'.format(name, state.device_state.name), fields)
 
           fields=[]
