@@ -31,7 +31,7 @@ Scripts
 
 Generate GUNB database - this creates the file mps_gun_config.db (sqlite file) that is used by other scripts to generate EPICS database and panels.
 
-> mps_database$ ./populate-gunb.py
+> [mps_database]$ ./populate-gunb.py
 
 Export sqlite database (mps_gun_config.db) to YAML (mps_gun_config.yaml) file:
 
@@ -46,11 +46,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 Print database contents (Faults/Logic):
 
-> mps_database$ ./printdb mps_gun_config.db
+> [mps_database]$ ./printdb mps_gun_config.db
 
 Export EPICS databases for central node IOC:
 
-> mps_database$ ./export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
+> [mps_database]$ ./export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db
 
 The command above generates three .db files:
 - device_inputs.db for the digital inputs
@@ -62,5 +62,30 @@ The source for the EPICS databases is the mps_gun_config.db file (sqlite format)
 
 Export EDM panels for central node IOC:
 
-> mps_database$ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
+> [mps_database]$ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
+
+Export EPICS databases for link node IOCs:
+
+> [mps_database]$ ./export_thresholds.py --app-id 2 --threshold-file threshold.template mps_gun_config.db
+>
+>[mps_database]$ head -18 threshold.template
+>record(ao, "BPMS:GUNB:201:X_T0_HIHI") {
+>  field(DESC, "High analog threshold for X_T0")
+>  field(DTYP, "asynFloat64")
+>  field(OUT, "@asynMask(LINK_NODE 0 1 0)ANALOG_THRESHOLD")
+>}
+>
+>record(ao, "BPMS:GUNB:201:X_T0_LOLO") {
+>  field(DESC, "Low analog threshold for X_T0")
+>  field(DTYP, "asynFloat64")
+>  field(OUT, "@asynMask(LINK_NODE 0 1 0)ANALOG_THRESHOLD")
+>}
+>
+>record(ao, "BPMS:GUNB:201:X_T1_HIHI") {
+>  field(DESC, "High analog threshold for X_T1")
+>  field(DTYP, "asynFloat64")
+>  field(OUT, "@asynMask(LINK_NODE 0 2 0)ANALOG_THRESHOLD")
+>}
+
+This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter).
 
