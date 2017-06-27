@@ -72,7 +72,7 @@ Export EPICS databases for link node IOCs:
 >record(ao, "BPMS:GUNB:201:X_T0_HIHI") {
 >  field(DESC, "High analog threshold for X_T0")
 >  field(DTYP, "asynFloat64")
->  field(OUT, "@asynMask(LINK_NODE 0 1 0)ANALOG_THRESHOLD")
+>  field(OUT, "@asynMask(LINK_NODE 0 1 1)ANALOG_THRESHOLD")
 >}
 >
 >record(ao, "BPMS:GUNB:201:X_T0_LOLO") {
@@ -84,7 +84,7 @@ Export EPICS databases for link node IOCs:
 >record(ao, "BPMS:GUNB:201:X_T1_HIHI") {
 >  field(DESC, "High analog threshold for X_T1")
 >  field(DTYP, "asynFloat64")
->  field(OUT, "@asynMask(LINK_NODE 0 2 0)ANALOG_THRESHOLD")
+>  field(OUT, "@asynMask(LINK_NODE 0 2 1)ANALOG_THRESHOLD")
 >}
 
 This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter).
