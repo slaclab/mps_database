@@ -47,6 +47,42 @@ def exportAnalogThresholds(file, analogDevices, session):
       for fa in faults:
         faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
         for state in faultStates:
+          if state.device_state.name.endswith("0"):
+            tname=state.device_state.name[:-1]
+
+            # Record for LCLS-I operation high threshold
+            fields=[]
+            fields.append(('DESC', 'High analog threshold for {0} LCLS-I'.
+                           format(state.device_state.name)))
+            fields.append(('DTYP', 'asynFloat64'))
+            fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 1)ANALOG_THRESHOLD_LCLSI'.format(analogDevice.channel.number, state.device_state.mask)))
+            printRecord(file, 'ao', '{0}:{1}_LCLSI_HIHI'.format(name, tname), fields)
+            
+            # Record for LCLS-I operation low threshold
+            fields=[]
+            fields.append(('DESC', 'Low analog threshold for {0} LCLS-I'.
+                           format(state.device_state.name)))
+            fields.append(('DTYP', 'asynFloat64'))
+            fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 0)ANALOG_THRESHOLD_LCLSI'.format(analogDevice.channel.number, state.device_state.mask)))
+            printRecord(file, 'ao', '{0}:{1}_LCLSI_LOLO'.format(name, tname), fields)
+
+            # Record for IDLE operation high threshold
+            fields=[]
+            fields.append(('DESC', 'High analog threshold for {0} LCLS-I'.
+                           format(state.device_state.name)))
+            fields.append(('DTYP', 'asynFloat64'))
+            fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 1)ANALOG_THRESHOLD_LCLSI'.format(analogDevice.channel.number, state.device_state.mask)))
+            printRecord(file, 'ao', '{0}:{1}_IDLE_HIHI'.format(name, tname), fields)
+            
+            # Record for IDLE operation low threshold
+            fields=[]
+            fields.append(('DESC', 'Low analog threshold for {0} LCLS-I'.
+                           format(state.device_state.name)))
+            fields.append(('DTYP', 'asynFloat64'))
+            fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 0)ANALOG_THRESHOLD_LCLSI'.format(analogDevice.channel.number, state.device_state.mask)))
+            printRecord(file, 'ao', '{0}:{1}_IDLE_LOLO'.format(name, tname), fields)
+
+          # Record for normal operation high threshold
           fields=[]
           fields.append(('DESC', 'High analog threshold for {0}'.
                          format(state.device_state.name)))
@@ -54,14 +90,30 @@ def exportAnalogThresholds(file, analogDevices, session):
           fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 1)ANALOG_THRESHOLD'.format(analogDevice.channel.number, state.device_state.mask)))
           printRecord(file, 'ao', '{0}:{1}_HIHI'.format(name, state.device_state.name), fields)
 
+          # Record for normal operation low threshold
           fields=[]
           fields.append(('DESC', 'Low analog threshold for {0}'.
                          format(state.device_state.name)))
           fields.append(('DTYP', 'asynFloat64'))
           fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 0)ANALOG_THRESHOLD'.format(analogDevice.channel.number, state.device_state.mask)))
           printRecord(file, 'ao', '{0}:{1}_LOLO'.format(name, state.device_state.name), fields)
-    
 
+          # Record for normal alternative high threshold
+          fields=[]
+          fields.append(('DESC', 'High analog threshold for {0} ALT'.
+                         format(state.device_state.name)))
+          fields.append(('DTYP', 'asynFloat64'))
+          fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 1)ANALOG_THRESHOLD_ALT'.format(analogDevice.channel.number, state.device_state.mask)))
+          printRecord(file, 'ao', '{0}:{1}_ALT_HIHI'.format(name, state.device_state.name), fields)
+
+          # Record for normal alternative low threshold
+          fields=[]
+          fields.append(('DESC', 'Low analog threshold for {0} ALT'.
+                         format(state.device_state.name)))
+          fields.append(('DTYP', 'asynFloat64'))
+          fields.append(('OUT', '@asynMask(LINK_NODE {0} {1} 0)ANALOG_THRESHOLD_ALT'.format(analogDevice.channel.number, state.device_state.mask)))
+          printRecord(file, 'ao', '{0}:{1}_ALT_LOLO'.format(name, state.device_state.name), fields)
+    
   file.close()
 
 def exportMitiagationDevices(file, mitigationDevices, beamClasses):

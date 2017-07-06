@@ -87,5 +87,5 @@ Export EPICS databases for link node IOCs:
 >  field(OUT, "@asynMask(LINK_NODE 0 2 1)ANALOG_THRESHOLD")
 >}
 
-This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter).
+This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter). The script also crates thresholds for the alternative, LCLS-I and idle modes. (LCLS-I and IDLE have a single HIHI/LOLO).
 
