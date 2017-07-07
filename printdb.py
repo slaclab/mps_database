@@ -6,12 +6,13 @@ import argparse
 
 
 def printDb(session):
-  print "+==================================================================+"
+  screen_width = 90 #sets uniform screen width
+  print "+" + (screen_width * "=") + "+"
   print "| Faults"
-  print "+==================================================================+"
+  print "+" + (screen_width * "=") + "+"
   for fault in session.query(models.Fault).all():
     print ""
-    print "+------------------------------------------------------------------+"
+    print "+" + (screen_width * "-") + "+"
     print "| [" + str(fault.id) + "] Fault: " + fault.name
     channelNames = []
     num_bits = 0
@@ -41,24 +42,31 @@ def printDb(session):
           channelNames.append(deviceState.name + " [crate: " + str(crate.number) +
                               ", slot: " + str(card.slot_number)+ ", channel: " + str(channel.number)+ "]")
 
+    #assigning sizes to column widths
+    state_width = 18
+    name_width = 18
+    mitigation_width = 52
 
-    print "+---------------+-----------------------+--------------------------+"
+    print "+" + (state_width  * "-") + "+" + (name_width * "-") + "+" + (mitigation_width * "-") + "+"
     print "| ",
     var = 'A'
     for b in range(0,num_bits):
       print var,
       var = chr(ord(var) + 1)
-    print "State\t| Name\t\t\t| Mitigation"
-    print "+---------------+-----------------------+--------------------------+"
+    if (num_bits < 4):
+      print "State\t   | Name\t      | Mitigation"
+    if (num_bits == 4):
+      print "State   | Name\t      | Mitigation"
+    print "+" + (state_width  * "-") + "+" + (name_width * "-") + "+" + (mitigation_width * "-") + "+"
 
     if (analog == False):
       for state in fault.states:
-        print "| ",
         deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==state.device_state_id).one()
+        print "| ",
         bits = []
         maskBits = []
         value = deviceState.value
-        mask = deviceState.mask
+	mask = deviceState.mask
         for b in range(0,num_bits):
           bits.append(value & 1)
           maskBits.append(mask & 1)
@@ -71,13 +79,20 @@ def printDb(session):
         if (state.default == True):
           print "default",
         else:
-          print "0x%0.4X" % deviceState.value, 
-        print "\t| " + deviceState.name + "\t|",
+          print "0x%0.4X" % deviceState.value,
+        #accounting for when state columns have either A or A and B to account for
+        if (num_bits == 1):
+          print "      ",
+        if (num_bits == 2):
+          print "    ",
         for c in state.allowed_classes:
           beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
           mitigationDevice = session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-          print "[" + mitigationDevice.name + "@" + beamClass.name + "] ",
-        print ""
+	givenState = deviceState.name
+        givenMitigator = "[" + mitigationDevice.name + "@" + beamClass.name + "] "
+        #sets boundaries in which states and mitigation labels must fit into
+        print ("| {:{key_pad}} | {:{value_pad}} |".format(givenState, givenMitigator,
+                                                          key_pad = 16,value_pad = 50))
     else:
       for state in fault.states:
         print "| ",
@@ -93,11 +108,9 @@ def printDb(session):
           anti_mask.append(mask & 1)
           value = (value >> 1)
           mask = (mask >> 1)
-
         for b in range(0, num_bits):
           bits.append(anti_bits[num_bits-b-1])
-          maskBits.append(anti_mask[num_bits-b-1])
-
+	maskBits.append(anti_mask[num_bits-b-1])
         for b in range(0,num_bits):
           if (maskBits[b] == 1):
             print '-',
@@ -106,19 +119,21 @@ def printDb(session):
         if (state.default == True):
           print "default",
         else:
-          print "0x%0.4X" % deviceState.value, 
-        print "\t| " + deviceState.name + "\t|",
+          print "0x%0.4X " % deviceState.value,
+        givenMitigator = ""
         for c in state.allowed_classes:
           beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
           mitigationDevice = session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-          print "[" + mitigationDevice.name + "@" + beamClass.name + "] ",
+          givenMitigator += "[" + mitigationDevice.name + "@" + beamClass.name + "] " #accounts for multiple mitigators
+        givenState = deviceState.name
+        print ("| {:{key_pad}} | {:{value_pad}} |".format(givenState, givenMitigator,
+                                                          key_pad = 16, value_pad = 50)),
         print ""
-    print "+---------------+-----------------------+--------------------------+"
-
+    print "+" + (state_width  * "-") + "+" + (name_width * "-") + "+" + (mitigation_width * "-") + "+"
     if (analog == False):
       print "\nInputs:"
       var = 'A'
-      for b in range(0,num_bits):
+ for b in range(0,num_bits):
         print " " + var + ": " + channelNames[b]
         var = chr(ord(var) + 1)
     else:
@@ -129,37 +144,36 @@ def printDb(session):
         var = chr(ord(var) + 1)
 
   print ""
-
-  print "+==================================================================+"
+  print "+" + (screen_width * "=") + "+"
   print "| Ignore Logic"
-  print "+==================================================================+"
+  print "+" + (screen_width * "=") + "+"
   for condition in session.query(models.Condition).all():
     print ""
-    print "+------------------------------------------------------------------+"
+    print "+" + (screen_width * "-") + "+"
     print "| Condition: " + condition.name + " value: ",
     print "0x%0.4X" % condition.value
-    print "+------------------------------------------------------------------+"
+    print "+" + (screen_width * "-") + "+"
     for inp in condition.condition_inputs:
       faultState = session.query(models.FaultState).filter(models.FaultState.id==inp.fault_state_id).one()
       deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
       print "| bit " + str(inp.bit_position) + ": " + inp.fault_state.fault.name + ", value: " + str(deviceState.value)
-    print "+------------------------------------------------------------------+"
+    print "+" + (screen_width * "-") + "+"
 
     print "| Ignored Faults:"
-    print "+------------------------------------------------------------------+"
+    print "+" + (screen_width * "-") + "+"
     for ignore_fault in condition.ignore_conditions:
       if (hasattr(ignore_fault.fault_state, 'fault_id')):
         print "| " + "[" + str(ignore_fault.fault_state.fault_id) + "]\t" + ignore_fault.fault_state.fault.name + " (digital)"
       else:
         print "| " + "[" + str(ignore_fault.fault_state.threshold_fault_id) + "]\t",
         print ignore_fault.fault_state.threshold_fault.name + " (threshold)"
-    print "+------------------------------------------------------------------+"
+    print "+" + (screen_width * "-") + "+"
 
 
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Print database inputs/logic')
-parser.add_argument('database', metavar='db', type=file, nargs=1, 
+parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
 
 args = parser.parse_args()
@@ -170,4 +184,3 @@ session = mps.session
 printDb(session)
 
 session.close()
-
