@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-#check for bash
-
 from mps_config import MPSConfig, models
 import sys
 import argparse
