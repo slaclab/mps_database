@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from mps_config import MPSConfig, models
+from mps_names import MpsName
 from sqlalchemy import func
 import sys
 import argparse
@@ -23,17 +24,17 @@ def printRecord(file, recType, recName, fields):
     file.write("  field({0}, \"{1}\")\n".format(name, value))
   file.write("}\n\n")
 
-def getDeviceInputName(session, deviceInput):
-  digitalChannel = session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
-  device = session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
-  deviceType = session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+#def getDeviceInputName(session, deviceInput):
+#  digitalChannel = session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
+#  device = session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
+#  deviceType = session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+#
+#  return deviceType.name + ":" + device.area + ":" + str(device.position) + ":" + digitalChannel.name
 
-  return deviceType.name + ":" + device.area + ":" + str(device.position) + ":" + digitalChannel.name
-
-def getAnalogDeviceName(session, analogDevice):
-  deviceType = session.query(models.DeviceType).filter(models.DeviceType.id==analogDevice.device_type_id).one()
-
-  return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)
+#def getAnalogDeviceName(session, analogDevice):
+#  deviceType = session.query(models.DeviceType).filter(models.DeviceType.id==analogDevice.device_type_id).one()
+#
+#  return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)
 
 #
 # Create one bi record for each device input (digital device)
@@ -44,8 +45,10 @@ def getAnalogDeviceName(session, analogDevice):
 #  ${DEV}_BYPEXP (bypass expiration date?)
 #
 def exportDeviceInputs(file, deviceInputs, session):
+  mpsName = MpsName(session)
   for deviceInput in deviceInputs:
-    name = getDeviceInputName(session, deviceInput)
+#    name = getDeviceInputName(session, deviceInput)
+    name = mpsName.getDeviceInputName(deviceInput)
     fields=[]
     fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}]'.
                    format(deviceInput.channel.card.crate.number,
@@ -146,20 +149,37 @@ def exportDeviceInputs(file, deviceInputs, session):
 # '@asynMask(PORT ADDR MASK TIMEOUT)' INP record field
 #
 def exportAnalogDevices(file, analogDevices, session):
+  mpsName = MpsName(session)
   for analogDevice in analogDevices:
-    name = getAnalogDeviceName(session, analogDevice)
-    print name
+#    name = getAnalogDeviceName(session, analogDevice)
+    name = mpsName.getAnalogDeviceName(analogDevice)
+#    print name
     
     # All these queries are to get the threshold faults
     faultInputs = session.query(models.FaultInput).filter(models.FaultInput.device_id==analogDevice.id).all()
     for fi in faultInputs:
       faults = session.query(models.Fault).filter(models.Fault.id==fi.fault_id).all()
       for fa in faults:
-        print fa.name
+#        print fa.name
         faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
         for state in faultStates:
 #          print state.device_state.name
-          print name + ":" + state.device_state.name
+          bitIndex=0
+          bitFound=False
+          while not bitFound:
+            b=(state.device_state.mask>>bitIndex) & 1
+            if b==1:
+              bitFound=True
+            else:
+              bitIndex=bitIndex+1
+              if bitIndex==32:
+                done=True
+                bitIndex=-1
+          if bitIndex==-1:
+            print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
+            exit(-1)
+
+#          print name + ":" + state.device_state.name + ", mask: " + str(bitIndex)
           fields=[]
           fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
                          format(analogDevice.channel.card.crate.number,
@@ -172,7 +192,7 @@ def exportAnalogDevices(file, analogDevices, session):
           fields.append(('ZSV', 'NO_ALARM'))
           fields.append(('OSV', 'MAJOR'))
           fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE'.format(analogDevice.id, state.device_state.mask)))
-          printRecord(file, 'bi', '{0}:{1}'.format(name, state.device_state.name), fields)
+          printRecord(file, 'bi', '{0}:{1}_MPSC'.format(name, state.device_state.name), fields)
     
           #=== Begin Latch records ====
           # Record for latched value
@@ -181,11 +201,13 @@ def exportAnalogDevices(file, analogDevices, session):
                          format(analogDevice.channel.card.crate.number,
                                 analogDevice.channel.card.number,
                                 analogDevice.channel.number)))
-          fields.append(('DTYP', 'asynInt32'))
+          fields.append(('DTYP', 'asynUInt32Digital'))
           fields.append(('HIHI', '1')) # Alarm if value is non-zero
           fields.append(('SCAN', '1 second'))
-          fields.append(('INP', '@asyn(CENTRAL_NODE {0} 1)ANALOG_DEVICE_LATCHED'.format(analogDevice.id)))
-          printRecord(file, 'longin', '{0}:{1}_MPS'.format(name, state.device_state.name), fields)
+          fields.append(('ZNAM', 'IS_OK'))
+          fields.append(('ONAM', 'IS_EXCEEDED'))
+          fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE_LATCHED'.format(analogDevice.id, state.device_state.mask)))
+          printRecord(file, 'bi', '{0}:{1}_MPS'.format(name, state.device_state.name), fields)
 
           # Record to process unlatch value
           fields=[]
@@ -202,12 +224,16 @@ def exportAnalogDevices(file, analogDevices, session):
           # Bypass Value: used while bypass is active
           fields=[]
           fields.append(('DESC', 'Threshold bypass value for {0}'.format(analogDevice.channel.name)))
-          fields.append(('DTYP', 'asynInt32'))
+          fields.append(('DTYP', 'asynUInt32Digital'))
           fields.append(('VAL', '0'))
           fields.append(('PINI', 'YES'))
+          fields.append(('ZNAM', 'IS_OK'))
+          fields.append(('ONAM', 'IS_EXCEEDED'))
+          fields.append(('ZSV', 'NO_ALARM'))
+          fields.append(('OSV', 'MAJOR'))
           fields.append(('HIHI', '1')) # Alarm if value is non-zero
-          fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPV'.format(analogDevice.id)))
-          printRecord(file, 'longout', '{0}:{1}_BYPV'.format(name, state.device_state.name), fields)
+          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 0 {1})ANALOG_DEVICE_BYPV'.format(analogDevice.id, state.device_state.mask)))
+          printRecord(file, 'bo', '{0}:{1}_BYPV'.format(name, state.device_state.name), fields)
 
           # Bypass Status: shows if bypass is currently active or not
           fields=[]
