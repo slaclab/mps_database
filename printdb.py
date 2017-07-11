@@ -4,6 +4,7 @@ from mps_config import MPSConfig, models
 import sys
 import argparse
 
+#testing fetch
 
 def printDb(session):
   screen_width = 90 #sets uniform screen width
