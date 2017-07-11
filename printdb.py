@@ -129,6 +129,8 @@ def printDb(session):
         if ("_T" in fault.name):
           value = (deviceState.value >> 16)
           mask = (deviceState.mask >> 16)
+        for b in range(0, 8 - num_bits):
+          maskBits.append(0)
         for b in range(0, 8):
           anti_bits.append(value & 1)
           anti_mask.append(mask & 1)
