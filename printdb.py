@@ -69,10 +69,10 @@ def printDb(session):
           maskBits.append(mask & 1)
           value = (value >> 1)
           mask = (mask >> 1)
-	  if (maskBits[b] == 0):
+	      if (maskBits[b] == 0):
             print '-',
           else:
- 	    print bits[b],
+ 	        print bits[b],
         if (state.default == True):
           print "default",
         #else:
@@ -124,7 +124,7 @@ def printDb(session):
           mask = deviceState.mask
         if ("_Y" in fault.name):
           value = (deviceState.value >> 8)
-	  mask = (deviceState.mask >> 8)
+	      mask = (deviceState.mask >> 8)
         if ("_T" in fault.name):
           value = (deviceState.value >> 16)
           mask = (deviceState.mask >> 16)
