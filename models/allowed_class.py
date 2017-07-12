@@ -4,7 +4,7 @@ from models import Base
 
 class AllowedClass(Base):
   """
-  AllewedClass class (allowed_classes table)
+  AllowedClass class (allowed_classes table)
 
   List of AllowedClasses for a given Fault (via fault_state_id)
 
