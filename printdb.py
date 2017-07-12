@@ -168,48 +168,6 @@ def printDb(session):
   print "| Ignore Logic"
   print "+" + (screen_width * "=") + "+"
   for condition in session.query(models.Condition).all():
-          mask = (deviceState.mask >> 8)
-        if ("_T" in fault.name):
-          value = (deviceState.value >> 16)
-          mask = (deviceState.mask >> 16)
-        for b in range(0, 8):
-          anti_bits.append(value & 1)
-          anti_mask.append(mask & 1)
-          value = (value >> 1)
-          mask = (mask >> 1)
-        for b in range(0, 8):
-          bits.append(anti_bits[num_bits-b-1])
-          maskBits.append(anti_mask[num_bits-b-1])
-        for b in range(0, 8):
-          if (maskBits[b] == 1):
-            print '1',
-          else:
-            print '-',
-        if (state.default == True):
- 	  print "default",
-        else:
-          print " ",
-        givenMitigator = ""
-        for c in state.allowed_classes:
-          beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
-          mitigationDevice = session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-          givenMitigator += "[" + mitigationDevice.name + "@" + beamClass.name + "] " #accounts for multiple mitigators
-        givenState = deviceState.name
-        print ("| {:{key_pad}} | {:{value_pad}} |".format(givenState, givenMitigator,
-                                                          key_pad = 10, value_pad = d_mitigation_width-2)),
-        print ""
-      print "+" + (d_state_width  * "-") + "+" + (d_name_width * "-") + "+" + (d_mitigation_width * "-") + "+"
-      print "\nThresholds:"
-      var = 'A'
-      for b in range(0, num_bits):
-        print " " + var + ": " + channelNames[b]
-        var = chr(ord(var) + 1)
-
-  print ""
-  print "+" + (screen_width * "=") + "+"
-  print "| Ignore Logic"
-  print "+" + (screen_width * "=") + "+"
-  for condition in session.query(models.Condition).all():
     print ""
     print "+" + (screen_width * "-") + "+"
     print "| Condition: " + condition.name + " value: ",
