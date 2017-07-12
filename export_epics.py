@@ -216,7 +216,7 @@ def exportAnalogDevices(file, analogDevices, session):
                                 analogDevice.channel.card.number,
                                 analogDevice.channel.number)))
           fields.append(('DTYP', 'asynUInt32Digital'))
-          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 1 0)ANALOG_DEVICE_UNLATCH'.format(analogDevice.id)))
+          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE_UNLATCH'.format(analogDevice.id, state.device_state.mask)))
           printRecord(file, 'bo', '{0}:{1}_UNLH'.format(name, state.device_state.name), fields)
           #=== End Latch records ====
 
