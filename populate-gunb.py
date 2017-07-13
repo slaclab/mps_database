@@ -243,8 +243,8 @@ bpm02 = models.AnalogDevice(name="BPM02", device_type = bpm_device_type, channel
                             card =bpm_card, position=601, description="BPM02", evaluation=1, area="GUNB")
 
 # Give the device some inputs.  It has in and out limit switches.
-yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=0)
-yag_in_lim_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, digital_device = screen, fault_value=0)
+yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=1)
+yag_in_lim_sw = models.DeviceInput(channel = digital_chans[1], bit_position = 1, digital_device = screen, fault_value=1)
 gun_temp_channel = models.DeviceInput(channel = digital_chans[2], bit_position = 0,
                                       digital_device = gun_temp, fault_value=0)
 wg_temp_channel = models.DeviceInput(channel = digital_chans[3], bit_position = 0, digital_device = wg_temp, fault_value=0)

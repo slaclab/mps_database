@@ -202,7 +202,6 @@ def exportAnalogDevices(file, analogDevices, session):
                                 analogDevice.channel.card.number,
                                 analogDevice.channel.number)))
           fields.append(('DTYP', 'asynUInt32Digital'))
-          fields.append(('HIHI', '1')) # Alarm if value is non-zero
           fields.append(('SCAN', '1 second'))
           fields.append(('ZNAM', 'IS_OK'))
           fields.append(('ONAM', 'IS_EXCEEDED'))
@@ -231,20 +230,19 @@ def exportAnalogDevices(file, analogDevices, session):
           fields.append(('ONAM', 'IS_EXCEEDED'))
           fields.append(('ZSV', 'NO_ALARM'))
           fields.append(('OSV', 'MAJOR'))
-          fields.append(('HIHI', '1')) # Alarm if value is non-zero
-          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 0 {1})ANALOG_DEVICE_BYPV'.format(analogDevice.id, state.device_state.mask)))
+          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 0 {1})ANALOG_DEVICE_BYPV'.format(analogDevice.id, bitIndex)))
           printRecord(file, 'bo', '{0}:{1}_BYPV'.format(name, state.device_state.name), fields)
 
           # Bypass Status: shows if bypass is currently active or not
           fields=[]
           fields.append(('DESC', 'Bypass Status'))
           fields.append(('SCAN', '1 second'))
-          fields.append(('DTYP', 'asynUInt32Digital'))    
+          fields.append(('DTYP', 'asynInt32'))    
           fields.append(('ZNAM', 'Not Bypassed'))
           fields.append(('ONAM', 'Bypassed'))
           fields.append(('ZSV', 'NO_ALARM'))
           fields.append(('OSV', 'MAJOR'))
-          fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)ANALOG_DEVICE_BYPS'.format(analogDevice.id)))
+          fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})ANALOG_DEVICE_BYPS'.format(analogDevice.id, bitIndex)))
           printRecord(file, 'bi', '{0}:{1}_BYPS'.format(name, state.device_state.name), fields)
 
           # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
@@ -253,7 +251,7 @@ def exportAnalogDevices(file, analogDevices, session):
           fields.append(('DTYP', 'asynInt32'))
           fields.append(('VAL', '0'))
           fields.append(('PINI', 'YES'))
-          fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id)))
+          fields.append(('OUT', '@asyn(CENTRAL_NODE {0} {1})ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id, bitIndex)))
           printRecord(file, 'longout', '{0}:{1}_BYPD'.format(name, state.device_state.name), fields)
 
           fields=[]
