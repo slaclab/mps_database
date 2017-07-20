@@ -48,7 +48,7 @@ link_node_card = models.ApplicationCard(name="EIC Digital", number=1, area="GUNB
                                         location="MP10",
                                         type=eic_digital_app, slot_number=2,
                                         global_id=0, description="EIC Digital Status")
-bpm_card = models.ApplicationCard(name="EIC BPM", number=2, area="GUNB", 
+bpm_card = models.ApplicationCard(name="EIC BPM", number=2, area="GUNB",
                                   location="MP11",
                                   type=eic_bpm_app, slot_number=3,
                                   global_id=1, description="EIC BPM Status")
@@ -181,23 +181,23 @@ state_value = 1
 for i in range(0,8):
   state_name = "X_T" + str(i)
   bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-  if (i < 4):
+  if (i < 8):
     bpm_x_states.append(bpm_threshold_state)
   session.add(bpm_threshold_state)
   state_value = (state_value << 1)
 # Y Thresholds - bits 8 through 15
-for i in range(0,4):
+for i in range(0,8):
   state_name = "Y_T" + str(i)
   bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-  if (i < 4):
+  if (i < 8):
     bpm_y_states.append(bpm_threshold_state)
   session.add(bpm_threshold_state)
   state_value = (state_value << 1)
 # TMIT Thresholds - bits 16 though 23
-for i in range(0,4):
+for i in range(0,8):
   state_name = "T_T" + str(i)
   bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-  if (i < 4):
+  if (i < 8):
     bpm_t_states.append(bpm_threshold_state)
   session.add(bpm_threshold_state)
   state_value = (state_value << 1)
@@ -210,7 +210,7 @@ screen = models.DigitalDevice(name="YAG01", position=855, description="YAG Scree
 gun_temp = models.DigitalDevice(name="Gun Temperature", device_type = temp_device_type,
                                 card = link_node_card, position = 100,
                                 description = "Gun Temperature Summary Input", area="GUNB")
-wg_temp = models.DigitalDevice(name="Waveguide Temperature", device_type = temp_device_type, 
+wg_temp = models.DigitalDevice(name="Waveguide Temperature", device_type = temp_device_type,
                                card = link_node_card, position = 150,
                                description = "Waveguide Temperature Summary Input", area="GUNB")
 buncher_temp = models.DigitalDevice(name="Buncher Temperature", device_type = temp_device_type,
@@ -250,7 +250,7 @@ gun_temp_channel = models.DeviceInput(channel = digital_chans[2], bit_position =
 wg_temp_channel = models.DeviceInput(channel = digital_chans[3], bit_position = 0, digital_device = wg_temp, fault_value=0)
 buncher_temp_channel = models.DeviceInput(channel = digital_chans[4], bit_position = 0,
                                           digital_device = buncher_temp, fault_value=0)
-sol01_temp_channel = models.DeviceInput(channel = digital_chans[5], bit_position = 0, 
+sol01_temp_channel = models.DeviceInput(channel = digital_chans[5], bit_position = 0,
                                         digital_device = sol01_temp, fault_value=0)
 sol02_temp_channel = models.DeviceInput(channel = digital_chans[6], bit_position = 0,
                                         digital_device = sol02_temp, fault_value=0)
@@ -335,12 +335,12 @@ session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken,
 # there are 24 of them (8 for X, 8 for Y and 8 for TMIT).
 #bpm01_fault_states=[]
 bpm01_x_fault_states=[]
-for i in range(0,4):
+for i in range(0,2):
   bpm01_x_fault_state = models.FaultState(fault = bpm01_x_fault, device_state = bpm_x_states[i])
   session.add(bpm01_x_fault_state)
   bpm01_x_fault_states.append(bpm01_x_fault_state)
 bpm01_y_fault_states=[]
-for i in range(0,4):
+for i in range(0,3):
   bpm01_y_fault_state = models.FaultState(fault = bpm01_y_fault, device_state = bpm_y_states[i])
   session.add(bpm01_y_fault_state)
   bpm01_y_fault_states.append(bpm01_y_fault_state)
@@ -353,17 +353,17 @@ for i in range(0,4):
 # BPM02 threshold fault states - there is one FaultState for each DeviceState,
 # there are 24 of them (8 for X, 8 for Y and 8 for TMIT).
 bpm02_x_fault_states=[]
-for i in range(0,4):
+for i in range(0,5):
   bpm02_x_fault_state = models.FaultState(fault = bpm02_x_fault, device_state = bpm_x_states[i])
   session.add(bpm02_x_fault_state)
   bpm02_x_fault_states.append(bpm02_x_fault_state)
 bpm02_y_fault_states=[]
-for i in range(0,4):
+for i in range(0,6):
   bpm02_y_fault_state = models.FaultState(fault = bpm02_y_fault, device_state = bpm_y_states[i])
   session.add(bpm02_y_fault_state)
   bpm02_y_fault_states.append(bpm02_y_fault_state)
 bpm02_t_fault_states=[]
-for i in range(0,4):
+for i in range(0,7):
   bpm02_t_fault_state = models.FaultState(fault = bpm02_t_fault, device_state = bpm_t_states[i])
   session.add(bpm02_t_fault_state)
   bpm02_t_fault_states.append(bpm02_t_fault_state)
