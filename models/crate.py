@@ -45,8 +45,8 @@ class Crate(Base):
       raise ValueError("Slot number must be positive.")
     
     #Ensure the slot isn't taken
-    if new_card.slot_number in [c.slot_number for c in self.cards]:
-      raise ValueError("Slot is already taken by another card.")
+    if [new_card.slot_number, new_card.amc] in [[c.slot_number, c.amc] for c in self.cards]:
+      raise ValueError("Slot is already taken by another card. New card:" + new_card.name + "; existing card: " + c.name)
     
     return new_card
   

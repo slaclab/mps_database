@@ -133,7 +133,7 @@ def printDb(session):
     if (analog == False):
       print "\nInputs:"
       var = 'A'
- for b in range(0,num_bits):
+    for b in range(0,num_bits):
         print " " + var + ": " + channelNames[b]
         var = chr(ord(var) + 1)
     else:

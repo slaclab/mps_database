@@ -205,6 +205,8 @@ def exportAnalogDevices(file, analogDevices, session):
           fields.append(('SCAN', '1 second'))
           fields.append(('ZNAM', 'IS_OK'))
           fields.append(('ONAM', 'IS_EXCEEDED'))
+          fields.append(('ZSV', 'NO_ALARM'))
+          fields.append(('OSV', 'MAJOR'))
           fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)ANALOG_DEVICE_LATCHED'.format(analogDevice.id, state.device_state.mask)))
           printRecord(file, 'bi', '{0}:{1}_MPS'.format(name, state.device_state.name), fields)
 
@@ -222,7 +224,7 @@ def exportAnalogDevices(file, analogDevices, session):
           #=== Begin Bypass records ====
           # Bypass Value: used while bypass is active
           fields=[]
-          fields.append(('DESC', 'Threshold bypass value for {0}'.format(analogDevice.channel.name)))
+          fields.append(('DESC', 'Bypass for {0}'.format(analogDevice.channel.name)))
           fields.append(('DTYP', 'asynUInt32Digital'))
           fields.append(('VAL', '0'))
           fields.append(('PINI', 'YES'))
@@ -266,50 +268,76 @@ def exportAnalogDevices(file, analogDevices, session):
 
   file.close()
 
-def exportMitiagationDevices(file, mitigationDevices, beamClasses):
+def exportMitigationDevices(file, mitigationDevices, beamClasses, session):
+  mpsName = MpsName(session)
+
   fields=[]
-  fields.append(('DESC', 'Number of beam classes'))
+  fields.append(('DESC', 'Total number of beam power classes'))
   fields.append(('PINI', 'YES'))
   fields.append(('VAL', '{0}'.format((len(beamClasses)))))
-  printRecord(file, 'longout', '$(BASE):NUM_BEAM_CLASSES', fields)
+  printRecord(file, 'longout', '$(BASE):NUM_PC', fields)
 
   for beamClass in beamClasses:
     fields=[]
     fields.append(('DESC', '{0}'.format(beamClass.description)))
     fields.append(('PINI', 'YES'))
     fields.append(('VAL', '{0}'.format(beamClass.number)))
-    printRecord(file, 'longout', '$(BASE):BEAM_CLASS_{0}'.format(beamClass.number), fields)
+    printRecord(file, 'longout', '$(BASE):PC_{0}'.format(beamClass.number), fields)
 
   for mitigationDevice in mitigationDevices:
+    name = mpsName.getMitigationDeviceName(mitigationDevice)
+
     fields=[]
-    fields.append(('DESC', 'Mitigation Device: {0}'.format(mitigationDevice.name)))
+    fields.append(('DESC', 'Power class at mitigation: {0}'.format(mitigationDevice.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MITIGATION_DEVICE'.format(mitigationDevice.id)))
-    printRecord(file, 'ai', '$(BASE):{0}_ALLOWED_CLASS'.format(mitigationDevice.name.upper()), fields)
+    printRecord(file, 'longin', '$(BASE):{0}_PC'.format(mitigationDevice.name.upper()), fields)
     
-
   file.close()
 
-def exportFaults(file, faults):
+def exportFaults(file, faults, session):
+  mpsName = MpsName(session)
   for fault in faults:
+    name = mpsName.getFaultName(fault)
     fields=[]
     fields.append(('DESC', '{0}'.format(fault.description)))
     fields.append(('DTYP', 'asynUInt32Digital'))
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', 'OK'))
     fields.append(('ONAM', 'FAULTED'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT'.format(fault.id)))
-    printRecord(file, 'bi', '$(BASE):{0}'.format(fault.name), fields)
+    printRecord(file, 'bi', '{0}'.format(name), fields)
 
     fields=[]
-    fields.append(('DESC', '{0} (ignore)'.format(fault.description)))
+    fields.append(('DESC', '{0}'.format(fault.description)))
     fields.append(('DTYP', 'asynUInt32Digital'))
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', 'Not Ignored'))
     fields.append(('ONAM', 'Ignored'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT_IGNORED'.format(fault.id)))
-    printRecord(file, 'bi', '$(BASE):{0}_IGNORED'.format(fault.name), fields)
+    printRecord(file, 'bi', '{0}_IGN'.format(name), fields)
+
+    fields=[]
+    fields.append(('DESC', '{0}'.format(fault.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'OK'))
+    fields.append(('ONAM', 'FAULTED'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT_LATCHED'.format(fault.id)))
+    printRecord(file, 'bi', '{0}_MPS'.format(name), fields)
+
+    fields=[]
+    fields.append(('DESC', '{0}'.format(fault.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 1 0)FAULT_UNLATCH'.format(fault.id)))
+    printRecord(file, 'bo', '{0}_UNLH'.format(name), fields)
 
   file.close()
 
@@ -339,12 +367,12 @@ if (args.analog_devices):
   exportAnalogDevices(args.analog_devices, session.query(models.AnalogDevice).all(), session)
 
 if (args.mitigation_devices):
-  exportMitiagationDevices(args.mitigation_devices,
-                           session.query(models.MitigationDevice).all(),
-                           session.query(models.BeamClass).all())
+  exportMitigationDevices(args.mitigation_devices,
+                          session.query(models.MitigationDevice).all(),
+                          session.query(models.BeamClass).all(), session)
 
 if (args.faults):
-  exportFaults(args.faults, session.query(models.Fault).all())
+  exportFaults(args.faults, session.query(models.Fault).all(), session)
 
 session.close()
 

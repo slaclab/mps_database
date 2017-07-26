@@ -15,7 +15,8 @@ class ApplicationCard(Base):
              This is used for creating the LinkNode PVs (second field)
    location: this is the location field to generate LinkNode PVs (third field)
    slot_number: number of slot within the ATCA crate where it is installed
-
+   amc: defines whether this card is a carrier, AMC #1 or AMC #2 card
+   
   References:
    crate_id: specifies the crate that contains this card
    type_id: specifies the type of this card (e.g. Mixed Mode Link Node type)
@@ -34,6 +35,7 @@ class ApplicationCard(Base):
   area = Column(String, nullable=False)
   location = Column(String, nullable=False, unique=True)
   slot_number = Column(Integer, nullable=False)
+  amc = Column(Integer, nullable=False, default=0)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)
   digital_channels = relationship("DigitalChannel", backref='card')
@@ -91,6 +93,6 @@ class ApplicationCard(Base):
       raise ValueError("Slot number must be <= the number of slots in the crate ({count})".format(count=self.crate.num_slots))
 
     if self.crate and new_slot in [c.slot_number for c in self.crate.cards]: 
-      raise ValueError("This slot is already taken by another card in the crate.")
+        raise ValueError("This slot is already taken by another card in the crate.")
 
     return new_slot
