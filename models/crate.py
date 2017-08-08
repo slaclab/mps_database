@@ -8,7 +8,7 @@ class Crate(Base):
   
   Describes an ATCA crate, properties are:
     number: crate number (property or serial number)
-    self_number: 
+    shelf_number: 
     num_slots: number of slots available (usually 2 or 7)
     location: string containing sector/area where this crate is installed (e.g. LKG02, LKA01)
     rack: string containing the rack identifier (usually a number)

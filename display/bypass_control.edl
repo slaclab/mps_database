@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 718
-y 50
+x 1544
+y 196
 w 288
 h 424
 font "helvetica-medium-r-10.0"
@@ -150,7 +150,7 @@ x 136
 y 100
 w 108
 h 16
-controlPv "$(PV)_BYPV"
+controlPv "$(BYPV)"
 precision 1
 fgColor index 16
 fgAlarm
@@ -171,7 +171,7 @@ x 136
 y 116
 w 108
 h 16
-controlPv "$(PV)_BYPS"
+controlPv "$(BYPS)"
 precision 1
 fgColor index 16
 fgAlarm
@@ -283,7 +283,7 @@ fill
 fillColor index 16
 fillAlarm
 lineWidth 0
-alarmPv "$(PV)_BYPV"
+alarmPv "$(BYPV)"
 endObjectProperties
 
 # (Choice Button)
@@ -302,8 +302,8 @@ selectColor index 4
 inconsistentColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "$(PV)_BYPV"
-indicatorPv "$(PV)_BYPV"
+controlPv "$(BYPV)"
+indicatorPv "$(BYPV)"
 font "helvetica-medium-r-10.0"
 endObjectProperties
 
@@ -341,7 +341,7 @@ x 44
 y 312
 w 140
 h 36
-controlPv "$(PV)_BYPEXPDATE"
+controlPv "$(BYPD)"
 fgColor index 14
 fgAlarm
 bgColor index 4
@@ -367,7 +367,7 @@ font "helvetica-medium-r-10.0"
 buttonLabel "Cancel"
 numCmds 1
 command {
-  0 "caput $(PV)_BYPEXPDATE 0"
+  0 "caput $(BYPD) 0"
 }
 endObjectProperties
 
@@ -414,7 +414,7 @@ x 56
 y 380
 w 172
 h 14
-controlPv "$(PV)_BYPEXPDATE_STR"
+controlPv "$(BYPD)_STR"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -430,7 +430,7 @@ endObjectProperties
 
 endGroup
 
-visPv "$(PV)_BYPS"
+visPv "$(BYPS)"
 visMin "1"
 visMax "2"
 endObjectProperties

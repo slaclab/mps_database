@@ -3,11 +3,12 @@
 from Cheetah.Template import Template
 
 from mps_config import MPSConfig, models
+from mps_names import MpsName
 from sqlalchemy import func
 import sys
 import argparse
 
-def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices):
+def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
   data=templateFile.read()
 
   crates=[]
@@ -15,6 +16,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices):
   channels=[]
   byps=[]
   bypv=[]
+  bypd=[]
   names=[]
   pvs=[]
   devpv=[]
@@ -24,19 +26,29 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices):
 
   bitCounter = 0
   for analogDevice in analogDevices:
-    for state in analogDevice.device_type.states:
-      crates.append(analogDevice.channel.card.crate.number)
-      cards.append(analogDevice.channel.card.number)
-      channels.append(analogDevice.channel.number)
-      byps.append('MPS:ANALOG:{0}_BYPS'.format(analogDevice.channel.name))
-      bypv.append('MPS:ANALOG:{0}_BYPV'.format(analogDevice.channel.name))
-      names.append('{0} {1}'.format(analogDevice.channel.name, state.name))
-      pvs.append('MPS:ANALOG:{0}_{1}'.format(analogDevice.channel.name, state.name))
-      devpv.append('MPS:ANALOG:{0}'.format(analogDevice.channel.name))
-      latched.append('MPS:ANALOG:{0}_LATCHED'.format(analogDevice.channel.name))
-      unlatch.append('MPS:ANALOG:{0}_UNLATCH'.format(analogDevice.channel.name))
-      bits.append("0x%0.4X" % state.mask)
-      bitCounter = bitCounter + 1
+    name = mpsName.getAnalogDeviceName(analogDevice)
+
+    faultInputs = session.query(models.FaultInput).filter(models.FaultInput.device_id==analogDevice.id).all()
+    for fi in faultInputs:
+      faults = session.query(models.Fault).filter(models.Fault.id==fi.fault_id).all()
+      for fa in faults:
+        faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
+        for state in faultStates:
+          print name + " " + state.device_state.name
+#    for state in analogDevice.device_type.states:
+          crates.append(analogDevice.channel.card.crate.number)
+          cards.append(analogDevice.channel.card.number)
+          channels.append(analogDevice.channel.number)
+          byps.append('{0}:{1}_BYPS'.format(name, state.device_state.name))
+          bypv.append('{0}:{1}_BYPV'.format(name, state.device_state.name))
+          bypd.append('{0}:{1}_BYPD'.format(name, state.device_state.name))
+          names.append('{0}:{1}'.format(name, state.device_state.name))
+          pvs.append('{0}:{1}_MPSC'.format(name, state.device_state.name))
+          devpv.append('{0}'.format(name))
+          latched.append('{0}:{1}_MPS'.format(name, state.device_state.name))
+          unlatch.append('{0}:{1}_UNLH'.format(name, state.device_state.name))
+          bits.append("0x%0.4X" % 0)#state.mask)
+          bitCounter = bitCounter + 1
     
   print "Found " + str(bitCounter) + " bits."
 
@@ -47,9 +59,10 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices):
              'AD_BIT': bits,
              'AD_BYPS': byps,
              'AD_BYPV': bypv,
+             'AD_BYPD': bypd,
              'AD_NAME': names,
              'AD_PV': pvs,
-             'AD_DEVPV': devpv, # PV of the whole device, not each threshold
+             'AD_DEVPV': pvs, #devpv, # PV of the whole device, not each threshold
              'AD_PV_LATCHED': latched,
              'AD_PV_UNLATCH': unlatch,
              }
@@ -59,7 +72,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices):
   templateFile.close()
   edlFile.close()
 
-def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs):
+def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
   data=templateFile.read()
 
   crates=[]
@@ -67,21 +80,25 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs):
   channels=[]
   byps=[]
   bypv=[]
+  bypd=[]
   names=[]
   pvs=[]
   latched=[]
   unlatch=[]
 
   for deviceInput in deviceInputs:
+    name = mpsName.getDeviceInputName(deviceInput)
+
     crates.append(deviceInput.channel.card.crate.number)
     cards.append(deviceInput.channel.card.number)
     channels.append(deviceInput.channel.number)
-    byps.append('MPS:DIGITAL:{0}_BYPS'.format(deviceInput.channel.name))
-    bypv.append('MPS:DIGITAL:{0}_BYPV'.format(deviceInput.channel.name))
-    names.append(deviceInput.channel.name)
-    pvs.append('MPS:DIGITAL:{0}'.format(deviceInput.channel.name))
-    latched.append('MPS:DIGITAL:{0}_MPS'.format(deviceInput.channel.name))
-    unlatch.append('MPS:DIGITAL:{0}_UNLH'.format(deviceInput.channel.name))
+    byps.append('{0}_BYPS'.format(name))
+    bypv.append('{0}_BYPV'.format(name))
+    bypd.append('{0}_BYPD'.format(name))
+    names.append(name)
+    pvs.append('{0}_MPSC'.format(name))
+    latched.append('{0}_MPS'.format(name))
+    unlatch.append('{0}_UNLH'.format(name))
     
   nameSpace={'DEVICE_INPUTS': str(len(deviceInputs)),
              'DI_CRATE': crates,
@@ -89,6 +106,7 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs):
              'DI_CHANNEL': channels,
              'DI_BYPS': byps,
              'DI_BYPV': bypv,
+             'DI_BYPD': bypd,
              'DI_NAME': names,
              'DI_PV': pvs,
              'DI_PV_LATCHED': latched,
@@ -118,14 +136,15 @@ args = parser.parse_args()
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
+mpsName = MpsName(session)
 
 if (args.device_inputs_edl and args.device_inputs_template):
   generateDeviceInputsEDL(args.device_inputs_edl, args.device_inputs_template,
-                          session.query(models.DeviceInput).all())
+                          session.query(models.DeviceInput).all(), mpsName)
 
 if (args.analog_devices_edl and args.analog_devices_template):
   generateAnalogDevicesEDL(args.analog_devices_edl, args.analog_devices_template,
-                           session.query(models.AnalogDevice).all())
+                           session.query(models.AnalogDevice).all(), mpsName)
 
 session.close()
 
