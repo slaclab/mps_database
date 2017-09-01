@@ -1520,7 +1520,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "TEMP:GUNB:400:SOL01_TEMP_BYPS"
+visPv "SOLN:GUNB:400:TEMP_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1538,7 +1538,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "TEMP:GUNB:400:SOL01_TEMP_BYPS"
+visPv "SOLN:GUNB:400:TEMP_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1596,7 +1596,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "TEMP:GUNB:400:SOL01_TEMP"
+  "SOLN:GUNB:400:TEMP"
 }
 endObjectProperties
 
@@ -1610,7 +1610,7 @@ x 342
 y 132
 w 100
 h 16
-controlPv "TEMP:GUNB:400:SOL01_TEMP_MPSC"
+controlPv "SOLN:GUNB:400:TEMP_MPSC"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1631,7 +1631,7 @@ x 442
 y 132
 w 100
 h 16
-controlPv "TEMP:GUNB:400:SOL01_TEMP_MPS"
+controlPv "SOLN:GUNB:400:TEMP_MPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1657,7 +1657,7 @@ onColor index 4
 offColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "TEMP:GUNB:400:SOL01_TEMP_UNLH"
+controlPv "SOLN:GUNB:400:TEMP_UNLH"
 pressValue "1"
 onLabel "Unlatch"
 offLabel "Unlatch"
@@ -1676,7 +1676,7 @@ x 622
 y 132
 w 100
 h 16
-controlPv "TEMP:GUNB:400:SOL01_TEMP_BYPV"
+controlPv "SOLN:GUNB:400:TEMP_BYPV"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1697,7 +1697,7 @@ x 722
 y 132
 w 100
 h 16
-controlPv "TEMP:GUNB:400:SOL01_TEMP_BYPS"
+controlPv "SOLN:GUNB:400:TEMP_BYPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1736,7 +1736,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "PV=TEMP:GUNB:400:SOL01_TEMP_MPSC,BYPV=TEMP:GUNB:400:SOL01_TEMP_BYPV,BYPS=TEMP:GUNB:400:SOL01_TEMP_BYPS,BYPD=TEMP:GUNB:400:SOL01_TEMP_BYPD,NAME=TEMP:GUNB:400:SOL01_TEMP"
+  0 "PV=SOLN:GUNB:400:TEMP_MPSC,BYPV=SOLN:GUNB:400:TEMP_BYPV,BYPS=SOLN:GUNB:400:TEMP_BYPS,BYPD=SOLN:GUNB:400:TEMP_BYPD,NAME=SOLN:GUNB:400:TEMP"
 }
 endObjectProperties
 
@@ -1773,7 +1773,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "TEMP:GUNB:900:SOL02_TEMP_BYPS"
+visPv "SOLN:GUNB:900:TEMP_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1791,7 +1791,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "TEMP:GUNB:900:SOL02_TEMP_BYPS"
+visPv "SOLN:GUNB:900:TEMP_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -1849,7 +1849,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "TEMP:GUNB:900:SOL02_TEMP"
+  "SOLN:GUNB:900:TEMP"
 }
 endObjectProperties
 
@@ -1863,7 +1863,7 @@ x 342
 y 148
 w 100
 h 16
-controlPv "TEMP:GUNB:900:SOL02_TEMP_MPSC"
+controlPv "SOLN:GUNB:900:TEMP_MPSC"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1884,7 +1884,7 @@ x 442
 y 148
 w 100
 h 16
-controlPv "TEMP:GUNB:900:SOL02_TEMP_MPS"
+controlPv "SOLN:GUNB:900:TEMP_MPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1910,7 +1910,7 @@ onColor index 4
 offColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "TEMP:GUNB:900:SOL02_TEMP_UNLH"
+controlPv "SOLN:GUNB:900:TEMP_UNLH"
 pressValue "1"
 onLabel "Unlatch"
 offLabel "Unlatch"
@@ -1929,7 +1929,7 @@ x 622
 y 148
 w 100
 h 16
-controlPv "TEMP:GUNB:900:SOL02_TEMP_BYPV"
+controlPv "SOLN:GUNB:900:TEMP_BYPV"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1950,7 +1950,7 @@ x 722
 y 148
 w 100
 h 16
-controlPv "TEMP:GUNB:900:SOL02_TEMP_BYPS"
+controlPv "SOLN:GUNB:900:TEMP_BYPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1989,7 +1989,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "PV=TEMP:GUNB:900:SOL02_TEMP_MPSC,BYPV=TEMP:GUNB:900:SOL02_TEMP_BYPV,BYPS=TEMP:GUNB:900:SOL02_TEMP_BYPS,BYPD=TEMP:GUNB:900:SOL02_TEMP_BYPD,NAME=TEMP:GUNB:900:SOL02_TEMP"
+  0 "PV=SOLN:GUNB:900:TEMP_MPSC,BYPV=SOLN:GUNB:900:TEMP_BYPV,BYPS=SOLN:GUNB:900:TEMP_BYPS,BYPD=SOLN:GUNB:900:TEMP_BYPD,NAME=SOLN:GUNB:900:TEMP"
 }
 endObjectProperties
 
@@ -2026,7 +2026,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "VVPR:GUNB:350:VVR01_VAC_BYPS"
+visPv "VVPR:GUNB:350:STATUS_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -2044,7 +2044,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "VVPR:GUNB:350:VVR01_VAC_BYPS"
+visPv "VVPR:GUNB:350:STATUS_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -2102,7 +2102,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "VVPR:GUNB:350:VVR01_VAC"
+  "VVPR:GUNB:350:STATUS"
 }
 endObjectProperties
 
@@ -2116,7 +2116,7 @@ x 342
 y 164
 w 100
 h 16
-controlPv "VVPR:GUNB:350:VVR01_VAC_MPSC"
+controlPv "VVPR:GUNB:350:STATUS_MPSC"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2137,7 +2137,7 @@ x 442
 y 164
 w 100
 h 16
-controlPv "VVPR:GUNB:350:VVR01_VAC_MPS"
+controlPv "VVPR:GUNB:350:STATUS_MPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2163,7 +2163,7 @@ onColor index 4
 offColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "VVPR:GUNB:350:VVR01_VAC_UNLH"
+controlPv "VVPR:GUNB:350:STATUS_UNLH"
 pressValue "1"
 onLabel "Unlatch"
 offLabel "Unlatch"
@@ -2182,7 +2182,7 @@ x 622
 y 164
 w 100
 h 16
-controlPv "VVPR:GUNB:350:VVR01_VAC_BYPV"
+controlPv "VVPR:GUNB:350:STATUS_BYPV"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2203,7 +2203,7 @@ x 722
 y 164
 w 100
 h 16
-controlPv "VVPR:GUNB:350:VVR01_VAC_BYPS"
+controlPv "VVPR:GUNB:350:STATUS_BYPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2242,7 +2242,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "PV=VVPR:GUNB:350:VVR01_VAC_MPSC,BYPV=VVPR:GUNB:350:VVR01_VAC_BYPV,BYPS=VVPR:GUNB:350:VVR01_VAC_BYPS,BYPD=VVPR:GUNB:350:VVR01_VAC_BYPD,NAME=VVPR:GUNB:350:VVR01_VAC"
+  0 "PV=VVPR:GUNB:350:STATUS_MPSC,BYPV=VVPR:GUNB:350:STATUS_BYPV,BYPS=VVPR:GUNB:350:STATUS_BYPS,BYPD=VVPR:GUNB:350:STATUS_BYPD,NAME=VVPR:GUNB:350:STATUS"
 }
 endObjectProperties
 
@@ -2279,7 +2279,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "VVPR:GUNB:400:VVR02_VAC_BYPS"
+visPv "VVPR:GUNB:400:STATUS_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -2297,7 +2297,7 @@ h 16
 lineColor index 22
 fill
 fillColor index 22
-visPv "VVPR:GUNB:400:VVR02_VAC_BYPS"
+visPv "VVPR:GUNB:400:STATUS_BYPS"
 visMin "1"
 visMax "2"
 endObjectProperties
@@ -2355,7 +2355,7 @@ fontAlign "center"
 fgColor index 16
 bgColor index 11
 value {
-  "VVPR:GUNB:400:VVR02_VAC"
+  "VVPR:GUNB:400:STATUS"
 }
 endObjectProperties
 
@@ -2369,7 +2369,7 @@ x 342
 y 180
 w 100
 h 16
-controlPv "VVPR:GUNB:400:VVR02_VAC_MPSC"
+controlPv "VVPR:GUNB:400:STATUS_MPSC"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2390,7 +2390,7 @@ x 442
 y 180
 w 100
 h 16
-controlPv "VVPR:GUNB:400:VVR02_VAC_MPS"
+controlPv "VVPR:GUNB:400:STATUS_MPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2416,7 +2416,7 @@ onColor index 4
 offColor index 4
 topShadowColor index 1
 botShadowColor index 11
-controlPv "VVPR:GUNB:400:VVR02_VAC_UNLH"
+controlPv "VVPR:GUNB:400:STATUS_UNLH"
 pressValue "1"
 onLabel "Unlatch"
 offLabel "Unlatch"
@@ -2435,7 +2435,7 @@ x 622
 y 180
 w 100
 h 16
-controlPv "VVPR:GUNB:400:VVR02_VAC_BYPV"
+controlPv "VVPR:GUNB:400:STATUS_BYPV"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2456,7 +2456,7 @@ x 722
 y 180
 w 100
 h 16
-controlPv "VVPR:GUNB:400:VVR02_VAC_BYPS"
+controlPv "VVPR:GUNB:400:STATUS_BYPS"
 precision 1
 fgColor index 16
 fgAlarm
@@ -2495,7 +2495,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "PV=VVPR:GUNB:400:VVR02_VAC_MPSC,BYPV=VVPR:GUNB:400:VVR02_VAC_BYPV,BYPS=VVPR:GUNB:400:VVR02_VAC_BYPS,BYPD=VVPR:GUNB:400:VVR02_VAC_BYPD,NAME=VVPR:GUNB:400:VVR02_VAC"
+  0 "PV=VVPR:GUNB:400:STATUS_MPSC,BYPV=VVPR:GUNB:400:STATUS_BYPV,BYPS=VVPR:GUNB:400:STATUS_BYPS,BYPD=VVPR:GUNB:400:STATUS_BYPD,NAME=VVPR:GUNB:400:STATUS"
 }
 endObjectProperties
 

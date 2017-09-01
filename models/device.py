@@ -19,9 +19,16 @@ class Device(Base):
           to create PVs.
     evaluation: define if device state is evaluated by fast(1) or slow(0) logic.
                 default value is slow(0)
+    measured_device_type_id: reference to the device_type where this device is located.
+                             For example, the sensor type is TEMP, but it is connected
+                             to a SOLN. This information is used to generate the proper
+                             PV name (e.g. SOLN:<area>:<position>:TEMP)
 
   References:
     card_id: application card that owns this device
+
+  The discriminator field is used to define whether the device is digital (digital_device)
+  or analog (analog_device)
 
   """
   __tablename__ = 'devices'
@@ -34,6 +41,7 @@ class Device(Base):
   evaluation = Column(Integer, nullable=False, default=0)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
+  measured_device_type_id = Column(Integer, ForeignKey('device_types.id'))
   fault_outputs = relationship("FaultInput", backref='device')
   __mapper_args__ = {'polymorphic_on': discriminator}
 

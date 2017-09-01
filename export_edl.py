@@ -118,19 +118,58 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
   templateFile.close()
   edlFile.close()
 
+def generateFaultsEDL(edlFile, templateFile, faults, mpsName):
+  data=templateFile.read()
+
+  desc=[]
+  fault_pv=[]
+  latched=[]
+  ignore=[]
+  unlatch=[]
+
+  for fault in faults:
+    name = mpsName.getFaultName(fault)
+
+    desc.append(fault.description)
+    fault_pv.append(name)
+    latched.append(name + "_MPS")
+    ignore.append(name + "_IGN")
+    unlatch.append(name + "_UNLH")
+    
+  nameSpace={'FAULTS': str(len(faults)),
+             'DESC': desc,
+             'FLT_PV': fault_pv,
+             'FLT_PV_LATCHED': latched,
+             'FLT_PV_IGNORE': ignore,
+             'FLT_PV_UNLATCH': unlatch,
+             }
+
+  t = Template(data, searchList=[nameSpace])
+  edlFile.write("%s" % t)
+  templateFile.close()
+  edlFile.close()
+
+
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
 parser.add_argument('database', metavar='db', type=file, nargs=1, 
                     help='database file name (e.g. mps_gun.db)')
+
 parser.add_argument('--device-inputs-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for digital channels (e.g. device_inputs.edl)')
 parser.add_argument('--device-inputs-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for digital channels (e.g. device_inputs.tmpl)')
+
 parser.add_argument('--analog-devices-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for analog channels (e.g. analog_devices.edl)')
 parser.add_argument('--analog-devices-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for analog channels (e.g. analog_devices.tmpl)')
+
+parser.add_argument('--faults-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
+                    help='epics template file name for faults (e.g. faults.edl)')
+parser.add_argument('--faults-template', metavar='file', type=argparse.FileType('r'), nargs='?',
+                    help='Cheetah template file name for faults (e.g. faults.tmpl)')
 
 args = parser.parse_args()
 
@@ -145,6 +184,10 @@ if (args.device_inputs_edl and args.device_inputs_template):
 if (args.analog_devices_edl and args.analog_devices_template):
   generateAnalogDevicesEDL(args.analog_devices_edl, args.analog_devices_template,
                            session.query(models.AnalogDevice).all(), mpsName)
+
+if (args.faults_edl and args.faults_template):
+  generateFaultsEDL(args.faults_edl, args.faults_template,
+                    session.query(models.Fault).all(), mpsName)
 
 session.close()
 

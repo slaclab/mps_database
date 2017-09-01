@@ -87,10 +87,10 @@ names.append(("IN_LMTSW", "IS_IN", "NOT_IN", 1))
 names.append(("GUN_TEMP", "IS_FAULTED", "IS_OK", 0))
 names.append(("WAVEGUIDE_TEMP", "IS_FAULTED", "IS_OK", 0))
 names.append(("BUNCHER_TEMP", "IS_FAULTED", "IS_OK", 0))
-names.append(("SOL01_TEMP", "IS_FAULTED", "IS_OK", 0))
-names.append(("SOL02_TEMP", "IS_FAULTED", "IS_OK", 0))
-names.append(("VVR01_VAC", "IS_FAULTED", "IS_OK", 0))
-names.append(("VVR02_VAC", "IS_FAULTED", "IS_OK", 0))
+names.append(("TEMP", "IS_FAULTED", "IS_OK", 0)) # SOL01 TEMP
+names.append(("TEMP", "IS_FAULTED", "IS_OK", 0)) # SOL02 TEMP
+names.append(("STATUS", "IS_FAULTED", "IS_OK", 0)) # VVR01
+names.append(("STATUS", "IS_FAULTED", "IS_OK", 0)) # VV01
 
 for i in range(0,9):
   chan = models.DigitalChannel(number=i)
@@ -252,9 +252,11 @@ buncher_temp = models.DigitalDevice(name="Buncher Temperature", device_type = te
                                     card = link_node_card, position = 200,
                                     description = "Buncher Temperature Summary Input", area="GUNB")
 sol01_temp = models.DigitalDevice(name="SOL01 Temp", position=400, description="SOL01 Temperature",
-                                  device_type = temp_device_type, card = link_node_card, area="GUNB")
+                                  device_type = temp_device_type, card = link_node_card, area="GUNB",
+                                  measured_device_type_id = sol_curr_device_type.id)
 sol02_temp = models.DigitalDevice(name="SOL02 Temp", position=900, description="SOL02 Temperature",
-                                  device_type = temp_device_type, card = link_node_card, area="GUNB")
+                                  device_type = temp_device_type, card = link_node_card, area="GUNB",
+                                  measured_device_type_id = sol_curr_device_type.id)
 vvr1 = models.DigitalDevice(name="VVR01", position=350, description="Vacuum Gate Valve VVR01",
                                   device_type = vvr_device_type, card = link_node_card, area="GUNB")
 vvr2 = models.DigitalDevice(name="VVR02", position=400, description="Vacuum Gate Valve VVR02",
@@ -315,25 +317,25 @@ session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
 #bpm02_fault = models.Fault(name="BPM02", description="BPM02 X/Y/TMIT Threshold Fault")
 #session.add_all([bpm01_fault, bpm02_fault])
 
-bpm01_x_fault = models.Fault(name="BPM01_X", description="BPM01 X Threshold Fault")
-bpm01_y_fault = models.Fault(name="BPM01_Y", description="BPM01 Y Threshold Fault")
-bpm01_t_fault = models.Fault(name="BPM01_T", description="BPM01 TMIT Threshold Fault")
+bpm01_x_fault = models.Fault(name="X", description="BPM01 X Threshold Fault")
+bpm01_y_fault = models.Fault(name="Y", description="BPM01 Y Threshold Fault")
+bpm01_t_fault = models.Fault(name="T", description="BPM01 TMIT Threshold Fault")
 session.add_all([bpm01_x_fault, bpm01_y_fault, bpm01_t_fault])
 
-bpm02_x_fault = models.Fault(name="BPM02_X", description="BPM02 X Threshold Fault")
-bpm02_y_fault = models.Fault(name="BPM02_Y", description="BPM02 Y Threshold Fault")
-bpm02_t_fault = models.Fault(name="BPM02_T", description="BPM02 TMIT Threshold Fault")
+bpm02_x_fault = models.Fault(name="X", description="BPM02 X Threshold Fault")
+bpm02_y_fault = models.Fault(name="Y", description="BPM02 Y Threshold Fault")
+bpm02_t_fault = models.Fault(name="T", description="BPM02 TMIT Threshold Fault")
 session.add_all([bpm02_x_fault, bpm02_y_fault, bpm02_t_fault])
 
-im01_int1_fault = models.Fault(name="IM01_I1", description="IM01 Integrator #1 Fault")
-im01_int2_fault = models.Fault(name="IM01_I2", description="IM01 Integrator #2 Fault")
-im01_int3_fault = models.Fault(name="IM01_I3", description="IM01 Integrator #3 Fault")
-im01_int4_fault = models.Fault(name="IM01_I4", description="IM01 Integrator #4 Fault")
+im01_int1_fault = models.Fault(name="I1", description="IM01 Integrator #1 Fault")
+im01_int2_fault = models.Fault(name="I2", description="IM01 Integrator #2 Fault")
+im01_int3_fault = models.Fault(name="I3", description="IM01 Integrator #3 Fault")
+im01_int4_fault = models.Fault(name="I4", description="IM01 Integrator #4 Fault")
 session.add_all([im01_int1_fault, im01_int2_fault, im01_int3_fault, im01_int4_fault])
 
-sol1_int1_fault = models.Fault(name="SOL01_I1", description="SOL01 Integrator #1 Fault")
-sol2_int1_fault = models.Fault(name="SOL02_I1", description="SOL01 Integrator #2 Fault")
-fc_int1_fault = models.Fault(name="FC_I1", description="FC01 Integrator #1 Fault")
+sol1_int1_fault = models.Fault(name="I1", description="SOL01 Integrator #1 Fault")
+sol2_int1_fault = models.Fault(name="I1", description="SOL01 Integrator #2 Fault")
+fc_int1_fault = models.Fault(name="I1", description="FC01 Integrator #1 Fault")
 session.add_all([sol1_int1_fault, sol2_int1_fault, fc_int1_fault])
 
 # Inputs for the digital faults

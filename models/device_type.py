@@ -22,4 +22,5 @@ class DeviceType(Base):
   name = Column(String, nullable=False, unique=True)
   description = Column(String, nullable=False)
   states = relationship("DeviceState", backref='device_type')
-  devices = relationship("Device", backref='device_type')
+  devices = relationship("Device", backref='device_type', foreign_keys='Device.device_type_id')
+

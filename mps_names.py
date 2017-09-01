@@ -11,14 +11,20 @@ class MpsName:
     def getDeviceInputBaseName(self, deviceInput):
         digitalChannel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
         device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
-        deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+        if device.measured_device_type_id == None:
+            deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+        else:
+            deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.measured_device_type_id).one()
 
         return deviceType.name + ":" + device.area + ":" + str(device.position)
 
     def getDeviceInputName(self, deviceInput):
         digitalChannel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
         device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
-        deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+        if device.measured_device_type_id == None:
+            deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+        else:
+            deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.measured_device_type_id).one()
 
         return deviceType.name + ":" + device.area + ":" + str(device.position) + ":" + digitalChannel.name
 

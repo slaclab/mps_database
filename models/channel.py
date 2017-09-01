@@ -27,7 +27,7 @@ class DigitalChannel(Base):
   __tablename__ = 'digital_channels'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False) #NOTE: Channel numbers need to start at 0, not 1.
-  name = Column(String, unique=True, nullable=False)
+  name = Column(String, nullable=False)
   z_name = Column(String, nullable=False)
   o_name = Column(String, nullable=False)
   alarm_state = Column(Integer, nullable=False, default=0)
