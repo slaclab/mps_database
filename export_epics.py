@@ -288,12 +288,26 @@ def exportMitigationDevices(file, mitigationDevices, beamClasses, session):
     name = mpsName.getMitigationDeviceName(mitigationDevice)
 
     fields=[]
-    fields.append(('DESC', 'Power class at mitigation: {0}'.format(mitigationDevice.name)))
+    fields.append(('DESC', 'Software mitigation for: {0}'.format(mitigationDevice.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MITIGATION_DEVICE'.format(mitigationDevice.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_PC'.format(mitigationDevice.name.upper()), fields)
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_SW_MITIGATION'.format(mitigationDevice.id))) # former MITIGATION_DEVICE
+    printRecord(file, 'longin', '$(BASE):{0}_SW_PC'.format(mitigationDevice.name.upper()), fields)
     
+    fields=[]
+    fields.append(('DESC', 'Fast mitigation for {0}'.format(mitigationDevice.name)))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_FW_MITIGATION'.format(mitigationDevice.id)))
+    printRecord(file, 'longin', '$(BASE):{0}_FW_PC'.format(mitigationDevice.name.upper()), fields)
+
+    fields=[]
+    fields.append(('DESC', 'Current mitigation for {0}'.format(mitigationDevice.name)))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_MITIGATION'.format(mitigationDevice.id)))
+    printRecord(file, 'longin', '$(BASE):{0}_PC'.format(mitigationDevice.name.upper()), fields)
+
   file.close()
 
 def exportFaults(file, faults, session):

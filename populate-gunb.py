@@ -474,14 +474,23 @@ for i in range(0,2):
 # Fault states allowed beam classes.
 yag_fault_in.add_allowed_class(beam_class=class_1, mitigation_device=aom)
 yag_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+yag_fault_moving.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 yag_fault_broken.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+yag_fault_broken.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 gun_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+gun_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 wg_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+wg_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 buncher_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+buncher_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 sol01_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+sol01_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 sol02_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+sol02_temp_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+vvr1_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+vvr2_fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 
 # Allowed beam classes for the BPM01/BPM02 FaultStates
 for fault_state in bpm01_x_fault_states:
@@ -528,6 +537,9 @@ for fault_state in sol2_int1_fault_states:
 for fault_state in fc_int1_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
+
+session.commit()
+exit()
 
 # Ignore logic
 # 1) If YAG01 is IN, ignore SOL01 Current and SOL02 Current faults, VVR01 and VVR02 faults
