@@ -46,19 +46,19 @@ session.add_all([eic_digital_app, eic_bpm_app, eic_analog_app])
 # Application Cards (one for digital inputs, three for analog inputs)
 link_node_card = models.ApplicationCard(name="EIC Digital Inputs", number=100, area="GUNB",
                                         location="MP10", type=eic_digital_app, slot_number=2,
-                                        global_id=0, description="EIC Digital Status")
+                                        global_id=2, description="EIC Digital Status")
 sol_card = models.ApplicationCard(name="EIC Analog Inputs", number=104, area="GUNB",
                                   location="MP11", type=eic_analog_app, slot_number=2, amc=1,
                                   global_id=1, description="EIC Analog Inputs")
 bpm_card = models.ApplicationCard(name="EIC BPM01/BPM02", number=101, area="GUNB", 
                                   location="MP12", type=eic_bpm_app, slot_number=3,
-                                  global_id=2, description="EIC BPM Status")
+                                  global_id=3, description="EIC BPM Status")
 im_card = models.ApplicationCard(name="EIC IM01", number=102, area="GUNB",
                                  location="MP13", type=eic_analog_app, slot_number=6,
-                                 global_id=3, description="EIC IM Status")
+                                 global_id=4, description="EIC IM Status")
 fc_card = models.ApplicationCard(name="EIC FC01", number=103, area="GUNB",
                                  location="MP14", type=eic_analog_app, slot_number=7,
-                                 global_id=4, description="EIC Faraday Cup Status")
+                                 global_id=5, description="EIC Faraday Cup Status")
 
 crate.cards.append(link_node_card)
 crate.cards.append(sol_card)

@@ -35,14 +35,8 @@ Generate GUNB database - this creates the file mps_gun_config.db (sqlite file) t
 
 Export sqlite database (mps_gun_config.db) to YAML (mps_gun_config.yaml) file:
 
-(venv)[lpiccoli@lcls-dev3 mps_database]$ python
-Python 2.7.9 (default, Apr 28 2015, 19:45:00)
-[GCC 4.4.7 20120313 (Red Hat 4.4.7-11)] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
->>> import ioc_tools
->>> from mps_config import models, MPSConfig
->>> mps=MPSConfig("mps_gun_config.db")
->>> ioc_tools.dump_db_to_yaml(mps, "mps_gun_config.yaml")
+(venv)[lpiccoli@lcls-dev3 mps_database]$ ./export_yaml.py mps_gun_config.db mps_gun_config.yaml
+Done.
 
 Print database contents (Faults/Logic):
 
