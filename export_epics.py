@@ -120,13 +120,23 @@ def exportDeviceInputs(file, deviceInputs, session):
 
     # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
     fields=[]
-    fields.append(('DESC', 'Bypass Expiration Date/Time'))
+    fields.append(('DESC', 'Bypass duration in seconds'))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('EGU', 'Seconds'))
     fields.append(('VAL', '0'))
     fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_BYPEXPDATE'.format(deviceInput.id)))
     printRecord(file, 'longout', '{0}_BYPD'.format(name), fields)
+
+    fields=[]
+    fields.append(('DESC', 'Remaining bypass duration is seconds'))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('EGU', 'Seconds'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_REMAINING_BYPTIME'.format(deviceInput.id)))
+    printRecord(file, 'longin', '{0}_BYPT'.format(name), fields)
 
     fields=[]
     fields.append(('DESC', 'Bypass Expiration Date/Time String'))
@@ -264,13 +274,23 @@ def exportAnalogDevices(file, analogDevices, session):
           
             # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
             fields=[]
-            fields.append(('DESC', 'Bypass Expiration Date/Time'))
+            fields.append(('DESC', 'Bypass duration in seconds'))
             fields.append(('DTYP', 'asynInt32'))
             fields.append(('VAL', '0'))
             fields.append(('PINI', 'YES'))
             fields.append(('OUT', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id, intIndex)))
             printRecord(file, 'longout', '{0}:{1}_BYPD'.format(name, fa.name), fields)
             
+            fields=[]
+            fields.append(('DESC', 'Remaining bypass duration is seconds'))
+            fields.append(('DTYP', 'asynInt32'))
+            fields.append(('EGU', 'Seconds'))
+            fields.append(('SCAN', '1 second'))
+            fields.append(('VAL', '0'))
+            fields.append(('PINI', 'YES'))
+            fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_REMAINING_BYPTIME'.format(analogDevice.id, intIndex)))
+            printRecord(file, 'longin', '{0}:{1}_BYPT'.format(name, fa.name), fields)
+
             fields=[]
             fields.append(('DESC', 'Bypass Expiration Date/Time String'))
             fields.append(('DTYP', 'asynOctetRead'))

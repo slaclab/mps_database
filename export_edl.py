@@ -17,6 +17,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
   byps=[]
   bypv=[]
   bypd=[]
+  bypt=[]
   names=[]
   pvs=[]
   devpv=[]
@@ -42,6 +43,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
           byps.append('{0}:{1}_BYPS'.format(name, fa.name))
           bypv.append('{0}:{1}_BYPV'.format(name, fa.name))
           bypd.append('{0}:{1}_BYPD'.format(name, fa.name))
+          bypt.append('{0}:{1}_BYPT'.format(name, fa.name))
           names.append('{0}:{1}'.format(name, state.device_state.name))
           pvs.append('{0}:{1}_MPSC'.format(name, state.device_state.name))
           devpv.append('{0}'.format(name))
@@ -60,6 +62,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
              'AD_BYPS': byps,
              'AD_BYPV': bypv,
              'AD_BYPD': bypd,
+             'AD_BYPT': bypt,
              'AD_NAME': names,
              'AD_PV': pvs,
              'AD_DEVPV': pvs, #devpv, # PV of the whole device, not each threshold
@@ -81,6 +84,7 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
   byps=[]
   bypv=[]
   bypd=[]
+  bypt=[]
   names=[]
   pvs=[]
   latched=[]
@@ -95,6 +99,7 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
     byps.append('{0}_BYPS'.format(name))
     bypv.append('{0}_BYPV'.format(name))
     bypd.append('{0}_BYPD'.format(name))
+    bypt.append('{0}_BYPT'.format(name))
     names.append(name)
     pvs.append('{0}_MPSC'.format(name))
     latched.append('{0}_MPS'.format(name))
@@ -107,6 +112,7 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
              'DI_BYPS': byps,
              'DI_BYPV': bypv,
              'DI_BYPD': bypd,
+             'DI_BYPT': bypt,
              'DI_NAME': names,
              'DI_PV': pvs,
              'DI_PV_LATCHED': latched,
