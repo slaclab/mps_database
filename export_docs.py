@@ -16,6 +16,23 @@ def writeHeader(f):
   f.write('   </author>\n')
   f.write('</bookinfo>\n')
 
+def writeMitigationTableHeader(f, session):
+  f.write('  <entry>Fault Name</entry>\n')
+  mitDevices={}
+  mitigationDevices = session.query(models.MitigationDevice).\
+      order_by(models.MitigationDevice.destination_mask.desc())
+  for mit in mitigationDevices:
+    mitDevices[mit.name] = '-'
+    f.write('  <entry>{0}</entry>\n'.format(mit.name))
+
+  return mitDevices
+
+def writeMitigationTableRows(f, faultName, mitigationDevices):
+  f.write('  <entry>{0}</entry>\n'.format(faultName))
+  for key in mitigationDevices:
+    f.write('  <entry>{0}</entry>\n'.format(mitigationDevices[key]))
+
+
 def writeDigitalFault(f, fault, device, session):
   channelName = []
   channelCrate = []
@@ -42,17 +59,18 @@ def writeDigitalFault(f, fault, device, session):
   d_name_width = 20
   d_mitigation_width = 78 - d_state_width
  
+  numMitDevices = session.query(models.MitigationDevice).count()
+
   f.write('<table>\n')
   f.write('<title>{0} Fault States</title>\n'.format(fault.name))
-  f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(num_bits+2))
+  f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(num_bits+numMitDevices+1))
   f.write('<thead>\n')
   f.write('<row>\n')
   var = 'A'
   for b in range(0, num_bits):
     f.write('  <entry>{0}</entry>\n'.format(var))
     var = chr(ord(var) + 1)
-  f.write('  <entry>Fault Name</entry>\n')
-  f.write('  <entry>Mitigation</entry>\n')
+  mitDevices = writeMitigationTableHeader(f, session)
   f.write('</row>\n')
   f.write('</thead>\n')
   f.write('<tbody>\n')
@@ -84,13 +102,15 @@ def writeDigitalFault(f, fault, device, session):
               filter(models.BeamClass.id==c.beam_class_id).one()
           mitigationDevice = session.query(models.MitigationDevice).\
               filter(models.MitigationDevice.id==c.mitigation_device_id).one()
+          
+          mitDevices[mitigationDevice.name] = beamClass.name
+
           givenState = deviceState.name
           givenMitigator += "[" + mitigationDevice.name + "@" + beamClass.name + "] "
 
         f.write('  <entry>{0}</entry>\n'.format(input_value))
     
-    f.write('  <entry>{0}</entry>\n'.format(deviceState.name))
-    f.write('  <entry>{0}</entry>\n'.format(givenMitigator))
+    writeMitigationTableRows(f, deviceState.name, mitDevices)
     f.write('</row>\n')
 
   f.write('</tbody>\n')
@@ -175,12 +195,13 @@ def writeAnalogFault(f, fault, device, session):
   for b in range(0, max_bits):
     f.write('  <entry>{0}</entry>\n'.format(var))
     var = chr(ord(var) + 1)
-  f.write('  <entry>Fault Name</entry>\n')
-  f.write('  <entry>Mitigation</entry>\n')
+  mitDevices = writeMitigationTableHeader(f, session)
   f.write('</row>\n')
   f.write('</thead>\n')
   f.write('<tbody>\n')
 
+  print fault.name
+  print len(fault.states)
   for state in fault.states:
     f.write('<row>\n')
 
@@ -208,10 +229,10 @@ def writeAnalogFault(f, fault, device, session):
         beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
         mitigationDevice = session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
         givenMitigator += "[" + mitigationDevice.name + "@" + beamClass.name + "] " #accounts for multiple mitigators
+        mitDevices[mitigationDevice.name] = beamClass.name
       givenState = deviceState.name
 
-    f.write('  <entry>{0}</entry>\n'.format(fault.name))
-    f.write('  <entry>{0}</entry>\n'.format(givenMitigator))
+    writeMitigationTableRows(f, fault.name, mitDevices)
     f.write('</row>\n')
   
 
