@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from mps_config import MPSConfig, models
+import os
 import sys
 import argparse
 from mps_names import MpsName
@@ -19,18 +20,18 @@ class Exporter:
     self.session.close()
 
   def writeHeader(self):
-    self.f.write('<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN">\n')
+#    self.f.write('<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN">\n')
 #    self.f.write('<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.5//EN"\n')
 #    self.f.write('               "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">\n')
 
-    self.f.write('<book>\n')
+    self.f.write('<article xmlns="http://docbook.org/ns/docbook" version="5.0">\n')
     self.f.write('\n')
-    self.f.write('<bookinfo>\n')
+    self.f.write('<info>\n')
     self.f.write('   <title>MpsDatabase</title>\n')
     self.f.write('   <author>\n')
     self.f.write('     <firstname>L.</firstname><surname>Piccoli</surname>\n')
     self.f.write('   </author>\n')
-    self.f.write('</bookinfo>\n')
+    self.f.write('</info>\n')
 
   def writeMitigationTableHeader(self):
     self.f.write('  <entry>Fault Name</entry>\n')
@@ -204,9 +205,10 @@ class Exporter:
       channelPv.append(self.mpsName.getAnalogDeviceName(device) + ":" + state.device_state.name)
 
     max_bits = 8 # max number of analog thresholds
+    numMitDevices = self.session.query(models.MitigationDevice).count()
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault States</title>\n'.format(fault.name))
-    self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(max_bits+2))
+    self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(max_bits+numMitDevices+1))
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     var = 'A'
@@ -259,7 +261,7 @@ class Exporter:
     # Fault Threshold Input Bits
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault Inputs (thresholds)</title>\n'.format(fault.name))
-    self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(5))
+    self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(7))
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Threshold</entry>\n')
@@ -291,10 +293,9 @@ class Exporter:
     self.f.write('</table>\n')
 
   def writeFault(self, fault, device):
-    self.f.write('<sect3>\n')
-#    self.f.write('<title><anchor id=\'fault.{0}\'>{1} Fault</anchor></title>\n'.format(fault.id, fault.name))
-    self.f.write('<title>{0} Fault</title>\n'.format(fault.name))
+    self.f.write('<section>\n')
     self.f.write('<anchor id=\'fault.{0}\'></anchor>\n'.format(fault.id))
+    self.f.write('<title>{0} Fault</title>\n'.format(fault.name))
     
     for inp in fault.inputs:
       digital = True
@@ -314,10 +315,10 @@ class Exporter:
           print("ERROR: can't find device for fault[{0}]:desc[{1}], device Id: {2}".format(fault.name, fault.description, inp.device_id))
           exit(-1)
 
-    self.f.write('</sect3>\n')
+    self.f.write('</section>\n')
 
   def writeDeviceFaults(self, device):
-    self.f.write('<sect2>\n')
+    self.f.write('<section>\n')
     self.f.write('<title>{0} Faults</title>\n'.format(device.name))
 
     self.f.write('<table>\n')
@@ -347,14 +348,13 @@ class Exporter:
     for fault_input in device.fault_outputs:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
       self.writeFault(fault, device)
-    self.f.write('</sect2>\n')
+    self.f.write('</section>\n')
 
   def writeDeviceInfo(self, device):
     keys = ['name', 'description', 'area', 'position']
-    self.f.write('<sect1>\n')
-#    self.f.write('<title><anchor id=\'device.{0}\'>{1}</anchor></title>\n'.format(device.id, device.name))
-    self.f.write('<title>{0}</title>\n'.format(device.name))
+    self.f.write('<section>\n')
     self.f.write('<anchor id=\'device.{0}\'></anchor>\n'.format(device.id))
+    self.f.write('<title>{0}</title>\n'.format(device.name))
     self.f.write('<table>\n')
     self.f.write('<title>{0} properties</title>\n'.format(device.name))
     self.f.write('<tgroup cols=\'2\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
@@ -386,12 +386,11 @@ class Exporter:
 
     self.writeDeviceFaults(device)
     
-    self.f.write('</sect1>\n')
+    self.f.write('</section>\n')
 
   def writeAppCard(self, card):
-#    self.f.write('<sect1><title><anchor id=\'card.{0}\'>{1}</anchor></title>\n'.format(card.id, card.name))
-    self.f.write('<sect1><title>{0}</title>\n'.format(card.name))
-#    self.f.write('<para>bla bla<anchor id=\'card.{0}\'/></para>\n'.format(card.id))
+    self.f.write('<anchor id=\'card.{0}\'/>\n'.format(card.id))
+    self.f.write('<section><title>{0}</title>\n'.format(card.name))
 
     crate = self.session.query(models.Crate).filter(models.Crate.id==card.crate_id).one()
     crate_name = crate.location + crate.rack + '-' + str(crate.elevation)
@@ -452,7 +451,7 @@ class Exporter:
     # Application Card Channels
     self.f.write('<table>\n')
     self.f.write('<title>{0} channels</title>\n'.format(card.name))
-    self.f.write('<tgroup cols=\'2\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Channel #</entry>\n')
@@ -492,19 +491,18 @@ class Exporter:
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
 
-    self.f.write('</sect1>\n')
+    self.f.write('</section>\n')
 
   def writeAppCards(self):
-    self.f.write('<chapter><title>Application Cards</title>\n')
+    self.f.write('<section><title>Application Cards</title>\n')
     for card in self.session.query(models.ApplicationCard).all():
       self.writeAppCard(card)
-    self.f.write('</chapter>\n')
+    self.f.write('</section>\n')
     
   def writeCrate(self, crate):
     name = crate.location + crate.rack + '-' + str(crate.elevation)
-#    self.f.write('<sect1><title><anchor id=\'crate.{0}\'>{1}</anchor></title>\n'.format(crate.id, name))
-    self.f.write('<sect1><title>{0}</title>\n'.format(name))
     self.f.write('<anchor id=\'crate.{0}\'></anchor>\n'.format(crate.id))
+    self.f.write('<section><title>{0}</title>\n'.format(name))
 
     # Application Cards
     self.f.write('<table>\n')
@@ -531,13 +529,26 @@ class Exporter:
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
 
-    self.f.write('</sect1>\n')
+    self.f.write('</section>\n')
 
   def writeCrates(self):
-    self.f.write('<chapter><title>ATCA Crates</title>\n')
+    self.f.write('<section><title>ATCA Crates</title>\n')
     for crate in self.session.query(models.Crate).all():
       self.writeCrate(crate)
-    self.f.write('</chapter>\n')      
+    self.f.write('</section>\n')      
+
+  def exportHtml(self, fileName):
+    cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/html/docbook.xsl {0} > {1}.html'.format(fileName, fileName.split(".")[0])
+    os.system(cmd)
+
+  def exportPdf(self, fileName):
+    print fileName + " -> " + fileName.split(".")[0]
+    cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.format(fileName, fileName.split(".")[0])
+    os.system(cmd)
+    cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(fileName.split(".")[0])
+    os.system(cmd)
+    cmd = '\rm {0}.fo'.format(fileName.split(".")[0])
+    os.system(cmd)
 
   def exportDocBook(self, fileName):
     self.f = open(fileName, "w")
@@ -548,13 +559,16 @@ class Exporter:
 
     self.writeAppCards()
 
-    self.f.write('<chapter><title>MPS Devices</title>\n')
+    self.f.write('<section><title>MPS Devices</title>\n')
 
     for device in self.session.query(models.Device).all():
       self.writeDeviceInfo(device)
-    self.f.write('</chapter>\n')
-    self.f.write('</book>\n')
+    self.f.write('</section>\n')
+    self.f.write('</article>\n')
     self.f.close()
+
+    self.exportHtml(fileName)
+    self.exportPdf(fileName)
 
 # --- Main ---
 
@@ -565,5 +579,5 @@ parser.add_argument('database', metavar='db', type=file, nargs=1,
 args = parser.parse_args()
 
 e = Exporter(args.database[0].name)
-e.exportDocBook("./test.doc")
+e.exportDocBook("mpsdb.xml")
 
