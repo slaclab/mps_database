@@ -4,14 +4,18 @@ from mps_config import MPSConfig, models
 import os
 import sys
 import argparse
+import subprocess
+import time
 from mps_names import MpsName
 
 class Exporter:
+  databaseFileName=""
   mpsName=0
   session=0
   f=0
 
   def __init__(self, dbFileName):
+    self.databaseFileName = dbFileName
     mps = MPSConfig(args.database[0].name)
     self.session = mps.session
     self.mpsName = MpsName(self.session)
@@ -19,22 +23,93 @@ class Exporter:
   def __del__(self):
     self.session.close()
 
-  def writeHeader(self):
-#    self.f.write('<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN">\n')
-#    self.f.write('<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.5//EN"\n')
-#    self.f.write('               "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">\n')
+  def getAuthor(self):
+    proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
+    user = proc.stdout.readline().rstrip()
+    email = ""
+    name = ""
+    first_name = "unknown"
+    last_name = "unknown"
+    proc = subprocess.Popen(['person', '-tag', '-search', 'email', user], stdout=subprocess.PIPE)
+    while True:
+      line = proc.stdout.readline()
+      if line != '':
+        if line.startswith("email") and email == "":
+          email = line.split(':')[1].rstrip() + "@slac.stanford.edu"
+        elif line.startswith("name") and name == "":
+          name = line.split(':')[1].rstrip()
+          first_name = name.split(', ')[1]
+          last_name = name.split(', ')[0]
+      else:
+        break
 
+    return [user, email, first_name, last_name]
+
+  def writeHeader(self):
+    info = self.getAuthor()
+    
     self.f.write('<article xmlns="http://docbook.org/ns/docbook" version="5.0">\n')
     self.f.write('\n')
     self.f.write('<info>\n')
     self.f.write('   <title>MpsDatabase</title>\n')
     self.f.write('   <author>\n')
-    self.f.write('     <firstname>L.</firstname><surname>Piccoli</surname>\n')
+    self.f.write('     <firstname>{0}</firstname><surname>{1}</surname>\n'.format(info[2], info[3]))
     self.f.write('   </author>\n')
     self.f.write('</info>\n')
 
+    self.f.write('<section><title>Database Information</title>\n')
+
+    self.f.write('<table>\n')
+    self.f.write('<title>Database Information</title>\n')
+    self.f.write('<tgroup cols=\'2\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.5*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
+    self.f.write('<tbody>\n')
+    
+    self.f.write('<row>\n')
+    self.f.write('  <entry>Generated on</entry>\n')
+    self.f.write('  <entry>{0}</entry>\n'.format(time.asctime(time.localtime(time.time()))))
+    self.f.write('</row>\n')
+
+    self.f.write('<row>\n')
+    self.f.write('  <entry>Author</entry>\n')
+    self.f.write('  <entry>{0}, {1}</entry>\n'.format(info[3], info[2]))
+    self.f.write('</row>\n')
+
+    self.f.write('<row>\n')
+    self.f.write('  <entry>E-mail</entry>\n')
+    self.f.write('  <entry>{0}</entry>\n'.format(info[1]))
+    self.f.write('</row>\n')
+
+    self.f.write('<row>\n')
+    self.f.write('  <entry>Username</entry>\n')
+    self.f.write('  <entry>{0}</entry>\n'.format(info[0]))
+    self.f.write('</row>\n')
+
+    self.f.write('<row>\n')
+    self.f.write('  <entry>Database source</entry>\n')
+    self.f.write('  <entry>{0}</entry>\n'.format(self.databaseFileName))
+    self.f.write('</row>\n')
+
+    cmd = "md5sum {0}".format(self.databaseFileName)
+    process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+    md5sum_output, error = process.communicate()
+    
+    md5sum_tokens = md5sum_output.split()
+
+    self.f.write('<row>\n')
+    self.f.write('  <entry>Database file MD5SUM</entry>\n')
+    self.f.write('  <entry>{0}</entry>\n'.format(md5sum_tokens[0].strip()))
+    self.f.write('</row>\n')
+
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+    self.f.write('</section>\n')
+
+
   def writeMitigationTableHeader(self):
-    self.f.write('  <entry>Fault Name</entry>\n')
+#    self.f.write('  <entry>Fault Name</entry>\n')
     mitDevices={}
     mitigationDevices = self.session.query(models.MitigationDevice).\
         order_by(models.MitigationDevice.destination_mask.desc())
@@ -45,12 +120,13 @@ class Exporter:
     return mitDevices
 
   def writeMitigationTableRows(self, faultName, mitigationDevices):
-    self.f.write('  <entry>{0}</entry>\n'.format(faultName))
+#    self.f.write('  <entry>{0}</entry>\n'.format(faultName))
     for key in mitigationDevices:
       self.f.write('  <entry>{0}</entry>\n'.format(mitigationDevices[key]))
 
   def writeDigitalFault(self, fault, device):
     channelName = []
+    channelCrateId = []
     channelCrate = []
     channelSlot = []
     channelNumber = []
@@ -68,13 +144,15 @@ class Exporter:
       num_bits = num_bits + 1
 
       channelName.append(channel.name)
-      channelCrate.append(str(crate.number))
+      channelCrateId.append(crate.id)
+      channelCrate.append(crate.location + crate.rack + '-' + str(crate.elevation))
       channelSlot.append(str(card.slot_number))
       channelNumber.append(str(channel.number))
-      channelPv.append(self.mpsName.getDeviceInputName(ddi))
+      channelPv.append(self.mpsName.getDeviceInputName(ddi) + "_MPSC")
 
     numMitDevices = self.session.query(models.MitigationDevice).count()
 
+    # Fault Table
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault States</title>\n'.format(fault.name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(num_bits+numMitDevices+1))
@@ -84,6 +162,7 @@ class Exporter:
     for b in range(0, num_bits):
       self.f.write('  <entry>{0}</entry>\n'.format(var))
       var = chr(ord(var) + 1)
+    self.f.write('  <entry>Fault Name</entry>\n')
     mitDevices = self.writeMitigationTableHeader()
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
@@ -99,7 +178,6 @@ class Exporter:
       value = deviceState.value
       mask = deviceState.mask
       for b in range(0, num_bits):
-        givenMitigator = ""
         bits.append(value & 1)
         maskBits.append(mask & 1)
         value = (value >> 1)
@@ -118,13 +196,11 @@ class Exporter:
                 filter(models.MitigationDevice.id==c.mitigation_device_id).one()
             
             mitDevices[mitigationDevice.name] = beamClass.name
-            
-            givenState = deviceState.name
-            givenMitigator += "[" + mitigationDevice.name + "@" + beamClass.name + "] "
           # end for
 
           self.f.write('  <entry>{0}</entry>\n'.format(input_value))
     
+      self.f.write('  <entry>{0}</entry>\n'.format(deviceState.name))
       self.writeMitigationTableRows(deviceState.name, mitDevices)
       self.f.write('</row>\n')
 
@@ -136,14 +212,20 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault Inputs</title>\n'.format(fault.name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(6))
+    self.f.write('<colspec colname=\'c1\' colwidth="0.08*"/>')
+    self.f.write('<colspec colname=\'c2\' colwidth="0.25*"/>')
+    self.f.write('<colspec colname=\'c3\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c4\' colwidth="0.08*"/>')
+    self.f.write('<colspec colname=\'c5\' colwidth="0.08*"/>')
+    self.f.write('<colspec colname=\'c6\' colwidth="0.50*"/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Input</entry>\n')
     self.f.write('  <entry>Name</entry>\n')
     self.f.write('  <entry>Crate</entry>\n')
     self.f.write('  <entry>Slot</entry>\n')
-    self.f.write('  <entry>Channel Number</entry>\n')
-    self.f.write('  <entry>PV Name</entry>\n')
+    self.f.write('  <entry>Ch #</entry>\n')
+    self.f.write('  <entry>PV</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
@@ -153,7 +235,7 @@ class Exporter:
       self.f.write('<row>\n')
       self.f.write('  <entry>{0}</entry>\n'.format(var))
       self.f.write('  <entry>{0}</entry>\n'.format(channelName[b]))
-      self.f.write('  <entry>{0}</entry>\n'.format(channelCrate[b]))
+      self.f.write('  <entry><link linkend=\'crate.{0}\'>{1}</link></entry>\n'.format(channelCrateId[b], channelCrate[b]))
       self.f.write('  <entry>{0}</entry>\n'.format(channelSlot[b]))
       self.f.write('  <entry>{0}</entry>\n'.format(channelNumber[b]))
       self.f.write('  <entry>{0}</entry>\n'.format(channelPv[b]))
@@ -163,6 +245,38 @@ class Exporter:
     self.f.write('</tbody>\n')
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
+
+    # Fault Checkout Table
+    self.f.write('<table>\n')
+    self.f.write('<title>{0} Fault Checkout</title>\n'.format(fault.name))
+    self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(numMitDevices+2))
+    self.f.write('<colspec colname=\'fault1\' colwidth="0.10*"/>')
+    self.f.write('<colspec colname=\'fault2\' colwidth="0.50*"/>')
+    for i in range(0, numMitDevices):
+      self.f.write('<colspec colname=\'m{0}\' colwidth="0.10*"/>'.format(i))
+    self.f.write('<thead>\n')
+    self.f.write('<row>\n')
+    self.f.write('  <entry namest="fault1" nameend="fault2">Fault Name</entry>\n')
+    mitDevices = self.writeMitigationTableHeader()
+    self.f.write('</row>\n')
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+
+    for state in fault.states:
+      self.f.write('<row>\n')
+      deviceState = self.session.query(models.DeviceState).\
+          filter(models.DeviceState.id==state.device_state_id).one()
+
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('  <entry>{0}</entry>\n'.format(deviceState.name))    
+      for key in mitDevices:
+        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('</row>\n')
+
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+
 
   def writeAnalogFault(self, fault, device):
     num_bits = 0
@@ -204,17 +318,24 @@ class Exporter:
       channelMask.append(str(hex((deviceState.mask >> integratorShift) & 0xFF)))
       channelPv.append(self.mpsName.getAnalogDeviceName(device) + ":" + state.device_state.name)
 
+    # Fault States
     max_bits = 8 # max number of analog thresholds
     numMitDevices = self.session.query(models.MitigationDevice).count()
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault States</title>\n'.format(fault.name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(max_bits+numMitDevices+1))
+    for b in range(0, max_bits):
+      self.f.write('<colspec colname=\'b1\' colwidth="0.05*"/>'.format(b))
+    self.f.write('<colspec colname=\'f2\' colwidth="0.30*"/>')
+    for m in range(0, numMitDevices):
+      self.f.write('<colspec colname=\'m{0}\' colwidth="0.20*"/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     var = 'A'
     for b in range(0, max_bits):
       self.f.write('  <entry>{0}</entry>\n'.format(var))
       var = chr(ord(var) + 1)
+    self.f.write('  <entry>Fault Name</entry>\n')
     mitDevices = self.writeMitigationTableHeader()
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
@@ -242,18 +363,16 @@ class Exporter:
           self.f.write('  <entry>-</entry>\n')
         v = (v >> 1)
 
-        givenMitigator = ""
         for c in state.allowed_classes:
           beamClass = self.session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
           mitigationDevice = self.session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-          givenMitigator += "[" + mitigationDevice.name + "@" + beamClass.name + "] " #accounts for multiple mitigators
           mitDevices[mitigationDevice.name] = beamClass.name
-        givenState = deviceState.name
-      #end for b
+        # end for c
+      # end for b
+      self.f.write('  <entry>{0}</entry>\n'.format(fault.name))
       self.writeMitigationTableRows(fault.name, mitDevices)
       self.f.write('</row>\n')
     # end for state
-  
     self.f.write('</tbody>\n')
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
@@ -262,15 +381,21 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault Inputs (thresholds)</title>\n'.format(fault.name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(7))
+    self.f.write('<colspec colname=\'c1\' colwidth="0.08*"/>')
+    self.f.write('<colspec colname=\'c2\' colwidth="0.25*"/>')
+    self.f.write('<colspec colname=\'c3\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'c4\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'c5\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'c6\' colwidth="0.50*"/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
-    self.f.write('  <entry>Threshold</entry>\n')
+    self.f.write('  <entry>Bit</entry>\n')
     self.f.write('  <entry>Name</entry>\n')
     self.f.write('  <entry>Crate</entry>\n')
     self.f.write('  <entry>Slot</entry>\n')
-    self.f.write('  <entry>Channel Number</entry>\n')
-    self.f.write('  <entry>Threshold Mask</entry>\n')
-    self.f.write('  <entry>PV Name</entry>\n')
+    self.f.write('  <entry>Ch #</entry>\n')
+    self.f.write('  <entry>Mask</entry>\n')
+    self.f.write('  <entry>PV</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
@@ -284,13 +409,69 @@ class Exporter:
       self.f.write('  <entry>{0}</entry>\n'.format(channelSlot[b]))
       self.f.write('  <entry>{0}</entry>\n'.format(channelNumber[b]))
       self.f.write('  <entry>{0}</entry>\n'.format(channelMask[b]))
-      self.f.write('  <entry>{0}</entry>\n'.format(channelPv[b]))
+      self.f.write('  <entry>{0}_MPSC</entry>\n'.format(channelPv[b]))
       self.f.write('</row>\n')
       var = chr(ord(var) - 1)
 
     self.f.write('</tbody>\n')
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
+
+    # Fault Checkout Table
+    self.f.write('<table>\n')
+    self.f.write('<title>{0} Fault Checkout</title>\n'.format(fault.name))
+    self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(numMitDevices+4))
+    self.f.write('<colspec colname=\'fault1\' colwidth="0.12*"/>')
+    self.f.write('<colspec colname=\'fault2\' colwidth="0.35*"/>')
+    self.f.write('<colspec colname=\'threshold1\' colwidth="0.65*"/>')
+    self.f.write('<colspec colname=\'threshold2\' colwidth="0.25*"/>')
+    for m in range(0, numMitDevices):
+      self.f.write('<colspec colname=\'m{0}\' colwidth="0.15*"/>')
+    self.f.write('<thead>\n')
+    self.f.write('<row>\n')
+    self.f.write('  <entry namest="fault1" nameend="fault2">Fault</entry>\n')
+    self.f.write('  <entry namest="threshold1" nameend="threshold2">Threshold (PV, Value)</entry>\n')
+    mitDevices = self.writeMitigationTableHeader()
+    self.f.write('</row>\n')
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+
+    for state in fault.states:
+      deviceState = self.session.query(models.DeviceState).\
+          filter(models.DeviceState.id==state.device_state_id).one()
+
+      thresholdPv = self.mpsName.getAnalogDeviceName(device) + ":" + deviceState.name
+
+      # Low threshold
+      self.f.write('<row>\n')
+      self.f.write('  <entry>___</entry>\n')
+#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('  <entry>{0} (Low)</entry>\n'.format(deviceState.name))    
+      self.f.write('  <entry>{0}_LOLO</entry>\n'.format(thresholdPv))
+      self.f.write('  <entry>_____</entry>\n')
+#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentdepth="1cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject></entry>\n')
+      for key in mitDevices:
+        self.f.write('  <entry>_____</entry>\n')
+#        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('</row>\n')
+
+      # High threshold
+      self.f.write('<row>\n')
+      self.f.write('  <entry>_____</entry>\n')
+#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('  <entry>{0} (High)</entry>\n'.format(deviceState.name))    
+      self.f.write('  <entry>{0}_HIHI</entry>\n'.format(thresholdPv))
+      self.f.write('  <entry>_____</entry>\n')
+#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentdepth="1cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject></entry>\n')
+      for key in mitDevices:
+        self.f.write('  <entry>_____</entry>\n')
+#        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('</row>\n')
+
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+
 
   def writeFault(self, fault, device):
     self.f.write('<section>\n')
@@ -312,7 +493,7 @@ class Exporter:
               filter(models.AnalogDevice.id==inp.device_id).one()
           self.writeAnalogFault(fault, analogDevice)
         except:
-          print("ERROR: can't find device for fault[{0}]:desc[{1}], device Id: {2}".format(fault.name, fault.description, inp.device_id))
+          print("ERROR: Can't find device for fault[{0}]:desc[{1}], device Id: {2}".format(fault.name, fault.description, inp.device_id))
           exit(-1)
 
     self.f.write('</section>\n')
@@ -324,6 +505,9 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} properties</title>\n'.format(device.name))
     self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.35*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
+    self.f.write('<colspec colname=\'c3\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Name</entry>\n')
@@ -358,6 +542,8 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} properties</title>\n'.format(device.name))
     self.f.write('<tgroup cols=\'2\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.25*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Property</entry>\n')
@@ -375,7 +561,7 @@ class Exporter:
     # end for k
 
     self.f.write('<row>\n')
-    self.f.write('  <entry>Type</entry>\n'.format(k))
+    self.f.write('  <entry>type</entry>\n'.format(k))
     dt = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
     self.f.write('  <entry>{0}</entry>\n'.format(dt.name))
     self.f.write('</row>\n')
@@ -387,6 +573,44 @@ class Exporter:
     self.writeDeviceFaults(device)
     
     self.f.write('</section>\n')
+
+  def writeDigitalCheckoutTable(self, channels):
+    self.f.write('<table>\n')
+    self.f.write('<title>Checkout table for digital inputs</title>\n')
+    self.f.write('<tgroup cols=\'6\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'channel\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'zero1\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'zero2\' colwidth="0.40*"/>')
+    self.f.write('<colspec colname=\'one1\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'one2\' colwidth="0.40*"/>')
+    self.f.write('<colspec colname=\'pv\'/>')
+    self.f.write('<thead>\n')
+    self.f.write('<row>\n')
+    self.f.write('  <entry>Ch #</entry>\n')
+    self.f.write('  <entry namest="zero1" nameend="zero2">Low State (0V)</entry>\n')
+    self.f.write('  <entry namest="one1" nameend="one2">High State (24V)</entry>\n')
+    self.f.write('  <entry>PV</entry>\n')
+    self.f.write('</row>\n')
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+
+    for c in channels:
+      ddi = self.session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==c.id).one()
+      device = self.session.query(models.Device).filter(models.Device.id==ddi.digital_device.id).one()
+
+      self.f.write('<row>\n')
+      self.f.write('  <entry>{0}</entry>\n'.format(c.number))
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('  <entry>{0}</entry>\n'.format(c.z_name))
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+      self.f.write('  <entry>{0}</entry>\n'.format(c.o_name))
+      self.f.write('  <entry>{0}_MPSC</entry>\n'.format(self.mpsName.getDeviceInputName(ddi)))
+      self.f.write('</row>\n')
+    # end for c
+
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
 
   def writeAppCard(self, card):
     self.f.write('<anchor id=\'card.{0}\'/>\n'.format(card.id))
@@ -400,6 +624,8 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} properties</title>\n'.format(card.name))
     self.f.write('<tgroup cols=\'2\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.25*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Property</entry>\n')
@@ -429,6 +655,8 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} devices</title>\n'.format(card.name))
     self.f.write('<tgroup cols=\'2\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.25*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Name</entry>\n')
@@ -452,9 +680,12 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} channels</title>\n'.format(card.name))
     self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
+    self.f.write('<colspec colname=\'c3\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
-    self.f.write('  <entry>Channel #</entry>\n')
+    self.f.write('  <entry>Ch #</entry>\n')
     self.f.write('  <entry>Input Device</entry>\n')
     self.f.write('  <entry>Signal</entry>\n')
     self.f.write('</row>\n')
@@ -491,6 +722,9 @@ class Exporter:
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
 
+    if digital:
+      self.writeDigitalCheckoutTable(channels)
+
     self.f.write('</section>\n')
 
   def writeAppCards(self):
@@ -508,6 +742,9 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0} cards</title>\n'.format(name))
     self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'c2\'/>')
+    self.f.write('<colspec colname=\'c3\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>\n')
     self.f.write('  <entry>Slot #</entry>\n')
