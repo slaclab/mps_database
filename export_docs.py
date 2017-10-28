@@ -289,9 +289,9 @@ class Exporter:
     channelPv = []
 
     integratorShift = 0
-    if ("X" in fault.name or "I0" in fault.name):
+    if ("X" in fault.name or "I0" in fault.name or "CHARGE" in fault.name):
       integratorShift = 0
-    elif ("Y" in fault.name or "I1" in fault.name):
+    elif ("Y" in fault.name or "I1" in fault.name or "DIFF" in fault.name):
       integratorShift = 8
     elif ("TMIT" in fault.name or "I2" in fault.name):
       integratorShift = 16

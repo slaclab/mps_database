@@ -188,10 +188,14 @@ session.commit()
 # Other device states for analog devices, they are all grouped here.
 # Defining two comparators for each of the four integrators for IM01
 # Only two comparators for the first integrator for devices SOL01, SOL02 and FC
-im_int1_states=[]
-im_int2_states=[]
-im_int3_states=[]
-im_int4_states=[]
+#im_int1_states=[]
+#im_int2_states=[]
+#im_int3_states=[]
+#im_int4_states=[]
+
+im_charge_states=[] # Integrator #0 
+im_diff_states=[] # Integrator #1
+
 sol1_int1_states=[]
 sol2_int1_states=[]
 fc_int1_states=[]
@@ -200,16 +204,20 @@ state_value = 1
 # Integrator #1 - bits 0 through 7
 for i in range(0,8):
   state_name = "I0_T" + str(i)
-  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
+  im_state_name = "CHARGE_T" + str(i)
+  im_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value, device_type = im_device_type)
+#  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   sol1_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   sol2_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   fc_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   if (i < 2):
-    im_int1_states.append(threshold_state)
+ #   im_int1_states.append(threshold_state)
+    im_charge_states.append(im_state)
     sol1_int1_states.append(sol1_int1_state)
     sol2_int1_states.append(sol2_int1_state)
     fc_int1_states.append(fc_int1_state)
-  session.add(threshold_state)
+#  session.add(threshold_state)
+  session.add(im_state)
   session.add(sol1_int1_state)
   session.add(sol2_int1_state)
   session.add(fc_int1_state)
@@ -217,26 +225,30 @@ for i in range(0,8):
 # Integrator #2 - bits 8 through 15
 for i in range(0,8):
   state_name = "I1_T" + str(i)
-  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
+  im_state_name = "DIFF_T" + str(i)
+  im_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value, device_type = im_device_type)
+#  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   if (i < 2):
-    im_int2_states.append(threshold_state)
-  session.add(threshold_state)
+#    im_int2_states.append(threshold_state)
+    im_diff_states.append(im_state)
+#  session.add(threshold_state)
+  session.add(im_state)
   state_value = (state_value << 1)
 # Integrator #3 - bits 16 though 23
 for i in range(0,8):
   state_name = "I2_T" + str(i)
-  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
-  if (i < 2):
-    im_int3_states.append(threshold_state)
-  session.add(threshold_state)
+#  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
+#  if (i < 2):
+#    im_int3_states.append(threshold_state)
+#  session.add(threshold_state)
   state_value = (state_value << 1)
 # Integrator #4 - bits 24 though 32
 for i in range(0,8):
   state_name = "I3_T" + str(i)
-  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
-  if (i < 2):
-    im_int4_states.append(threshold_state)
-  session.add(threshold_state)
+#  threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
+#  if (i < 2):
+#    im_int4_states.append(threshold_state)
+#  session.add(threshold_state)
   state_value = (state_value << 1)
 
 session.commit()
@@ -332,11 +344,9 @@ bpm02_y_fault = models.Fault(name="Y", description="BPM2B Y Threshold Fault")
 bpm02_t_fault = models.Fault(name="TMIT", description="BPM2B TMIT Threshold Fault")
 session.add_all([bpm02_x_fault, bpm02_y_fault, bpm02_t_fault])
 
-im01_int1_fault = models.Fault(name="I0", description="IM01 Integrator #0 Fault")
-im01_int2_fault = models.Fault(name="I1", description="IM01 Integrator #1 Fault")
-im01_int3_fault = models.Fault(name="I2", description="IM01 Integrator #2 Fault")
-im01_int4_fault = models.Fault(name="I3", description="IM01 Integrator #3 Fault")
-session.add_all([im01_int1_fault, im01_int2_fault, im01_int3_fault, im01_int4_fault])
+im01_charge_fault = models.Fault(name="CHARGE", description="IM01B Charge Fault")
+im01_diff_fault = models.Fault(name="DIFF", description="IM01B/BPM1B Difference Fault")
+session.add_all([im01_charge_fault, im01_diff_fault])
 
 sol1_int1_fault = models.Fault(name="I0", description="SOL01 Integrator #0 Fault")
 sol2_int1_fault = models.Fault(name="I0", description="SOL02 Integrator #0 Fault")
@@ -369,13 +379,9 @@ bpm02_t_fault_input = models.FaultInput(bit_position = 0, device = bpm02, fault 
 session.add_all([bpm01_x_fault_input, bpm01_y_fault_input, bpm01_t_fault_input,
                  bpm02_x_fault_input, bpm02_y_fault_input, bpm02_t_fault_input])
 
-im01_int1_fault_input = models.FaultInput(bit_position = 0, device = im01, fault = im01_int1_fault)
-im01_int2_fault_input = models.FaultInput(bit_position = 0, device = im01, fault = im01_int2_fault)
-im01_int3_fault_input = models.FaultInput(bit_position = 0, device = im01, fault = im01_int3_fault)
-im01_int4_fault_input = models.FaultInput(bit_position = 0, device = im01, fault = im01_int4_fault)
-
-session.add_all([im01_int1_fault_input, im01_int2_fault_input,
-                 im01_int3_fault_input, im01_int4_fault_input])
+im01_charge_fault_input = models.FaultInput(bit_position = 0, device = im01, fault = im01_charge_fault)
+im01_diff_fault_input = models.FaultInput(bit_position = 0, device = im01, fault = im01_diff_fault)
+session.add_all([im01_charge_fault_input, im01_diff_fault_input])
 
 sol1_int1_fault_input = models.FaultInput(bit_position = 0, device = sol01, fault = sol1_int1_fault)
 sol2_int1_fault_input = models.FaultInput(bit_position = 0, device = sol02, fault = sol2_int1_fault)
@@ -437,26 +443,26 @@ for i in range(0,7):
 
 # IM01 threshold fault states - there is one FaultState for each DeviceState,
 # there are 32 of them (8 for INT1, 8 for INT2, 8 for INT3 and 8 for INT4).
-im01_int1_fault_states=[]
+im01_charge_fault_states=[]
 for i in range(0,2):
-  im01_int1_fault_state = models.FaultState(fault = im01_int1_fault, device_state = im_int1_states[i])
-  session.add(im01_int1_fault_state)
-  im01_int1_fault_states.append(im01_int1_fault_state)
-im01_int2_fault_states=[]
+  im01_charge_fault_state = models.FaultState(fault = im01_charge_fault, device_state = im_charge_states[i])
+  session.add(im01_charge_fault_state)
+  im01_charge_fault_states.append(im01_charge_fault_state)
+im01_diff_fault_states=[]
 for i in range(0,2):
-  im01_int2_fault_state = models.FaultState(fault = im01_int2_fault, device_state = im_int2_states[i])
-  session.add(im01_int2_fault_state)
-  im01_int2_fault_states.append(im01_int2_fault_state)
+  im01_diff_fault_state = models.FaultState(fault = im01_diff_fault, device_state = im_diff_states[i])
+  session.add(im01_diff_fault_state)
+  im01_diff_fault_states.append(im01_diff_fault_state)
 im01_int3_fault_states=[]
-for i in range(0,2):
-  im01_int3_fault_state = models.FaultState(fault = im01_int3_fault, device_state = im_int3_states[i])
-  session.add(im01_int3_fault_state)
-  im01_int3_fault_states.append(im01_int3_fault_state)
-im01_int4_fault_states=[]
-for i in range(0,2):
-  im01_int4_fault_state = models.FaultState(fault = im01_int4_fault, device_state = im_int4_states[i])
-  session.add(im01_int4_fault_state)
-  im01_int4_fault_states.append(im01_int4_fault_state)
+#for i in range(0,2):
+#  im01_int3_fault_state = models.FaultState(fault = im01_int3_fault, device_state = im_int3_states[i])
+#  session.add(im01_int3_fault_state)
+#  im01_int3_fault_states.append(im01_int3_fault_state)
+#im01_int4_fault_states=[]
+#for i in range(0,2):
+#  im01_int4_fault_state = models.FaultState(fault = im01_int4_fault, device_state = im_int4_states[i])
+#  session.add(im01_int4_fault_state)
+#  im01_int4_fault_states.append(im01_int4_fault_state)
 
 # SOL1, SOL2, FC fault states
 sol1_int1_fault_states=[]
@@ -518,18 +524,18 @@ for fault_state in bpm02_t_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 
-for fault_state in im01_int1_fault_states:
+for fault_state in im01_charge_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
-for fault_state in im01_int2_fault_states:
+for fault_state in im01_diff_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
-for fault_state in im01_int3_fault_states:
-  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
-for fault_state in im01_int4_fault_states:
-  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
-  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
+#for fault_state in im01_int3_fault_states:
+#  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+#  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
+#for fault_state in im01_int4_fault_states:
+#  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
+#  fault_state.add_allowed_class(beam_class=class_0, mitigation_device=aom)
 
 for fault_state in sol1_int1_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, mitigation_device=shutter)
