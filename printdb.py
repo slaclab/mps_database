@@ -4,7 +4,6 @@ from mps_config import MPSConfig, models
 import sys
 import argparse
 
-
 def printDb(session):
   screen_width = 100 #sets uniform screen width
 
@@ -184,6 +183,7 @@ def printDb(session):
         for b in range(0, num_bits):
           print " " + var + ": " + channelNames[b]
           var = chr(ord(var) + 1)
+  
 
   print ""
   print "+" + (screen_width * "=") + "+"

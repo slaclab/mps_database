@@ -289,13 +289,13 @@ class Exporter:
     channelPv = []
 
     integratorShift = 0
-    if ("X" in fault.name or "I1" in fault.name):
+    if ("X" in fault.name or "I0" in fault.name):
       integratorShift = 0
-    elif ("Y" in fault.name or "I2" in fault.name):
+    elif ("Y" in fault.name or "I1" in fault.name):
       integratorShift = 8
-    elif ("TMIT" in fault.name or "I3" in fault.name):
+    elif ("TMIT" in fault.name or "I2" in fault.name):
       integratorShift = 16
-    elif ("I4" in fault.name):
+    elif ("I3" in fault.name):
       integratorShift = 24
     else:
       print "ERROR: Can't recognize fault name {0}".format(fault.name)
@@ -493,7 +493,8 @@ class Exporter:
               filter(models.AnalogDevice.id==inp.device_id).one()
           self.writeAnalogFault(fault, analogDevice)
         except:
-          print("ERROR: Can't find device for fault[{0}]:desc[{1}], device Id: {2}".format(fault.name, fault.description, inp.device_id))
+          print("ERROR: Can't find device for fault[{0}]:desc[{1}], device Id: {2}, fault_input id: {3}".\
+                  format(fault.name, fault.description, inp.device_id, inp.id))
           exit(-1)
 
     self.f.write('</section>\n')

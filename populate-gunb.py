@@ -50,10 +50,10 @@ link_node_card = models.ApplicationCard(name="EIC Digital Inputs", number=100, a
 sol_card = models.ApplicationCard(name="EIC Analog Inputs", number=104, area="GUNB",
                                   location="MP11", type=eic_analog_app, slot_number=2, amc=1,
                                   global_id=1, description="EIC Analog Inputs")
-bpm_card = models.ApplicationCard(name="EIC BPM01/BPM02", number=101, area="GUNB", 
+bpm_card = models.ApplicationCard(name="EIC BPM1B/BPM2B", number=101, area="GUNB", 
                                   location="MP12", type=eic_bpm_app, slot_number=3,
                                   global_id=3, description="EIC BPM Status")
-im_card = models.ApplicationCard(name="EIC IM01", number=102, area="GUNB",
+im_card = models.ApplicationCard(name="EIC IM01B", number=102, area="GUNB",
                                  location="MP13", type=eic_analog_app, slot_number=6,
                                  global_id=4, description="EIC IM Status")
 fc_card = models.ApplicationCard(name="EIC FC01", number=103, area="GUNB",
@@ -103,12 +103,12 @@ for i in range(0,9):
   digital_chans.append(chan)
   session.add(chan)
 
-im01_channel = models.AnalogChannel(name="IM01 Charge", number=0, card = im_card)
+im01_channel = models.AnalogChannel(name="IM01B Charge", number=0, card = im_card)
 fc_channel = models.AnalogChannel(name="Faraday Cup Current", number=0, card = fc_card)
 sol01_channel = models.AnalogChannel(name="SOL01 Current", number=0, card = sol_card)
 sol02_channel = models.AnalogChannel(name="SOL02 Current", number=1, card = sol_card)
-bpm01_channel = models.AnalogChannel(name="BPM01", number=0, card = bpm_card)
-bpm02_channel = models.AnalogChannel(name="BPM02", number=1, card = bpm_card)
+bpm01_channel = models.AnalogChannel(name="BPM1B", number=0, card = bpm_card)
+bpm02_channel = models.AnalogChannel(name="BPM2B", number=1, card = bpm_card)
 
 session.add_all([im01_channel, fc_channel,
                  sol01_channel, sol02_channel, 
@@ -199,7 +199,7 @@ fc_int1_states=[]
 state_value = 1
 # Integrator #1 - bits 0 through 7
 for i in range(0,8):
-  state_name = "I1_T" + str(i)
+  state_name = "I0_T" + str(i)
   threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   sol1_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   sol2_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
@@ -216,7 +216,7 @@ for i in range(0,8):
   state_value = (state_value << 1)
 # Integrator #2 - bits 8 through 15
 for i in range(0,8):
-  state_name = "I2_T" + str(i)
+  state_name = "I1_T" + str(i)
   threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   if (i < 2):
     im_int2_states.append(threshold_state)
@@ -224,7 +224,7 @@ for i in range(0,8):
   state_value = (state_value << 1)
 # Integrator #3 - bits 16 though 23
 for i in range(0,8):
-  state_name = "I3_T" + str(i)
+  state_name = "I2_T" + str(i)
   threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   if (i < 2):
     im_int3_states.append(threshold_state)
@@ -232,7 +232,7 @@ for i in range(0,8):
   state_value = (state_value << 1)
 # Integrator #4 - bits 24 though 32
 for i in range(0,8):
-  state_name = "I4_T" + str(i)
+  state_name = "I3_T" + str(i)
   threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = im_device_type)
   if (i < 2):
     im_int4_states.append(threshold_state)
@@ -282,6 +282,7 @@ sol01 = models.AnalogDevice(name="SOL1B", device_type=sol_curr_device_type, chan
                             card=sol_card, position=212, description="SOL01 Current", evaluation=1, area="GUNB")
 sol02 = models.AnalogDevice(name="SOL2B", device_type=sol_curr_device_type, channel=sol02_channel,
                             card=sol_card, position=823, description="SOL02 Current", evaluation=1, area="GUNB")
+session.add_all([bpm01, bpm02, im01, fc, sol01, sol02])
 
 # Give the device some inputs.  It has in and out limit switches.
 yag_out_lim_sw = models.DeviceInput(channel = digital_chans[0], bit_position = 0, digital_device = screen, fault_value=1)
@@ -321,25 +322,25 @@ session.add_all([yag_fault, gun_temp_fault, wg_temp_fault,
 #bpm02_fault = models.Fault(name="BPM02", description="BPM02 X/Y/TMIT Threshold Fault")
 #session.add_all([bpm01_fault, bpm02_fault])
 
-bpm01_x_fault = models.Fault(name="X", description="BPM01 X Threshold Fault")
-bpm01_y_fault = models.Fault(name="Y", description="BPM01 Y Threshold Fault")
-bpm01_t_fault = models.Fault(name="TMIT", description="BPM01 TMIT Threshold Fault")
+bpm01_x_fault = models.Fault(name="X", description="BPM1B X Threshold Fault")
+bpm01_y_fault = models.Fault(name="Y", description="BPM1B Y Threshold Fault")
+bpm01_t_fault = models.Fault(name="TMIT", description="BPM1B TMIT Threshold Fault")
 session.add_all([bpm01_x_fault, bpm01_y_fault, bpm01_t_fault])
 
-bpm02_x_fault = models.Fault(name="X", description="BPM02 X Threshold Fault")
-bpm02_y_fault = models.Fault(name="Y", description="BPM02 Y Threshold Fault")
-bpm02_t_fault = models.Fault(name="TMIT", description="BPM02 TMIT Threshold Fault")
+bpm02_x_fault = models.Fault(name="X", description="BPM2B X Threshold Fault")
+bpm02_y_fault = models.Fault(name="Y", description="BPM2B Y Threshold Fault")
+bpm02_t_fault = models.Fault(name="TMIT", description="BPM2B TMIT Threshold Fault")
 session.add_all([bpm02_x_fault, bpm02_y_fault, bpm02_t_fault])
 
-im01_int1_fault = models.Fault(name="I1", description="IM01 Integrator #1 Fault")
-im01_int2_fault = models.Fault(name="I2", description="IM01 Integrator #2 Fault")
-im01_int3_fault = models.Fault(name="I3", description="IM01 Integrator #3 Fault")
-im01_int4_fault = models.Fault(name="I4", description="IM01 Integrator #4 Fault")
+im01_int1_fault = models.Fault(name="I0", description="IM01 Integrator #0 Fault")
+im01_int2_fault = models.Fault(name="I1", description="IM01 Integrator #1 Fault")
+im01_int3_fault = models.Fault(name="I2", description="IM01 Integrator #2 Fault")
+im01_int4_fault = models.Fault(name="I3", description="IM01 Integrator #3 Fault")
 session.add_all([im01_int1_fault, im01_int2_fault, im01_int3_fault, im01_int4_fault])
 
-sol1_int1_fault = models.Fault(name="I1", description="SOL01 Integrator #1 Fault")
-sol2_int1_fault = models.Fault(name="I1", description="SOL01 Integrator #2 Fault")
-fc_int1_fault = models.Fault(name="I1", description="FC01 Integrator #1 Fault")
+sol1_int1_fault = models.Fault(name="I0", description="SOL01 Integrator #0 Fault")
+sol2_int1_fault = models.Fault(name="I0", description="SOL02 Integrator #0 Fault")
+fc_int1_fault = models.Fault(name="I0", description="FC01 Integrator #0 Fault")
 session.add_all([sol1_int1_fault, sol2_int1_fault, fc_int1_fault])
 
 # Inputs for the digital faults
