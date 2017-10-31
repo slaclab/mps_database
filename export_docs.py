@@ -800,14 +800,16 @@ class Exporter:
     # Application Cards
     self.f.write('<table>\n')
     self.f.write('<title>{0} cards</title>\n'.format(name))
-    self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
+    self.f.write('<tgroup cols=\'4\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
     self.f.write('<colspec colname=\'c1\' colwidth="0.15*"/>')
     self.f.write('<colspec colname=\'c2\'/>')
-    self.f.write('<colspec colname=\'c3\'/>')
+    self.f.write('<colspec colname=\'c3\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c4\'/>')
     self.f.write('<thead>\n')
     self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Slot #</entry>\n')
     self.f.write('  <entry>Application Card</entry>\n')
+    self.f.write('  <entry>Global Id</entry>\n')
     self.f.write('  <entry>Card Description</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
@@ -819,6 +821,7 @@ class Exporter:
       rowIndex=rowIndex+1
       self.f.write('  <entry><link linkend=\'card.{0}\'>{1}</link></entry>\n'.format(card.id, card.slot_number))
       self.f.write('  <entry>{0}</entry>\n'.format(card.name))
+      self.f.write('  <entry>{0}</entry>\n'.format(card.global_id))
       self.f.write('  <entry>{0}</entry>\n'.format(card.description))
       self.f.write('</row>\n')
     # end for d
