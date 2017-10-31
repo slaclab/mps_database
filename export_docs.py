@@ -13,6 +13,10 @@ class Exporter:
   mpsName=0
   session=0
   f=0
+  tableHeaderColor='<?dbhtml bgcolor="#EE6060" ?><?dbfo bgcolor="#EE6060" ?>'
+  tableRowColor=  ['<?dbhtml bgcolor="#EEEEEE" ?><?dbfo bgcolor="#EEEEEE" ?>',
+                   '<?dbhtml bgcolor="#DDDDDD" ?><?dbfo bgcolor="#DDDDDD" ?>']
+  siocPv='SIOC:SYS0:MP01'
 
   def __init__(self, dbFileName):
     self.databaseFileName = dbFileName
@@ -66,27 +70,33 @@ class Exporter:
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<tbody>\n')
     
-    self.f.write('<row>\n')
+    rowIndex = 0
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>Generated on</entry>\n')
     self.f.write('  <entry>{0}</entry>\n'.format(time.asctime(time.localtime(time.time()))))
     self.f.write('</row>\n')
 
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>Author</entry>\n')
     self.f.write('  <entry>{0}, {1}</entry>\n'.format(info[3], info[2]))
     self.f.write('</row>\n')
 
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>E-mail</entry>\n')
     self.f.write('  <entry>{0}</entry>\n'.format(info[1]))
     self.f.write('</row>\n')
 
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>Username</entry>\n')
     self.f.write('  <entry>{0}</entry>\n'.format(info[0]))
     self.f.write('</row>\n')
 
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>Database source</entry>\n')
     self.f.write('  <entry>{0}</entry>\n'.format(self.databaseFileName))
     self.f.write('</row>\n')
@@ -97,7 +107,8 @@ class Exporter:
     
     md5sum_tokens = md5sum_output.split()
 
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>Database file MD5SUM</entry>\n')
     self.f.write('  <entry>{0}</entry>\n'.format(md5sum_tokens[0].strip()))
     self.f.write('</row>\n')
@@ -153,11 +164,12 @@ class Exporter:
     numMitDevices = self.session.query(models.MitigationDevice).count()
 
     # Fault Table
-    self.f.write('<table>\n')
-    self.f.write('<title>{0} Fault States</title>\n'.format(fault.name))
+    table_name = '{0} Fault States'.format(fault.name)
+    self.f.write('<table id="fault_state_table_{0}" xreflabel="{1}">\n'.format(fault.id, table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(num_bits+numMitDevices+1))
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     var = 'A'
     for b in range(0, num_bits):
       self.f.write('  <entry>{0}</entry>\n'.format(var))
@@ -168,8 +180,10 @@ class Exporter:
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
+    rowIndex = 0
     for state in fault.states:
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       deviceState = self.session.query(models.DeviceState).\
           filter(models.DeviceState.id==state.device_state_id).one()
 
@@ -209,8 +223,9 @@ class Exporter:
     self.f.write('</table>\n')
 
     # Fault Inputs
-    self.f.write('<table>\n')
-    self.f.write('<title>{0} Fault Inputs</title>\n'.format(fault.name))
+    table_name = '{0} Fault Inputs'.format(fault.name)
+    self.f.write('<table id="fault_input_table_{0}" xreflabel="{1}">\n'.format(fault.id, table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(6))
     self.f.write('<colspec colname=\'c1\' colwidth="0.08*"/>')
     self.f.write('<colspec colname=\'c2\' colwidth="0.25*"/>')
@@ -219,7 +234,7 @@ class Exporter:
     self.f.write('<colspec colname=\'c5\' colwidth="0.08*"/>')
     self.f.write('<colspec colname=\'c6\' colwidth="0.50*"/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Input</entry>\n')
     self.f.write('  <entry>Name</entry>\n')
     self.f.write('  <entry>Crate</entry>\n')
@@ -231,8 +246,10 @@ class Exporter:
     self.f.write('<tbody>\n')
     
     var = 'A'
+    rowIndex = 0
     for b in range(0, num_bits):
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry>{0}</entry>\n'.format(var))
       self.f.write('  <entry>{0}</entry>\n'.format(channelName[b]))
       self.f.write('  <entry><link linkend=\'crate.{0}\'>{1}</link></entry>\n'.format(channelCrateId[b], channelCrate[b]))
@@ -247,6 +264,17 @@ class Exporter:
     self.f.write('</table>\n')
 
     # Fault Checkout Table
+
+# <sect1 id="install_packages" xreflabel="installing the needed packages"> 
+# Later you can refer to that section using::
+# See <xref linkend="install_packages"/> for more information. 
+
+
+    self.f.write('<section>\n')
+    self.f.write('<title>{0} Checkout</title>\n'.format(fault.name))
+    self.f.write('<para>Check all fault input combinations listed in tables "<xref linkend="fault_state_table_{0}"/>" and "<xref linkend="fault_input_table_{0}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table_{1}"/>"). Write down the power class for each mitigation device. The power levels must match the ones listed in the "<xref linkend="fault_state_table_{0}"/>" table.\n'.format(fault.id, device.id))
+    self.f.write('</para>\n')
+
     self.f.write('<table>\n')
     self.f.write('<title>{0} Fault Checkout</title>\n'.format(fault.name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(numMitDevices+2))
@@ -255,15 +283,17 @@ class Exporter:
     for i in range(0, numMitDevices):
       self.f.write('<colspec colname=\'m{0}\' colwidth="0.10*"/>'.format(i))
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry namest="fault1" nameend="fault2">Fault Name</entry>\n')
     mitDevices = self.writeMitigationTableHeader()
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
+    rowIndex = 0
     for state in fault.states:
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       deviceState = self.session.query(models.DeviceState).\
           filter(models.DeviceState.id==state.device_state_id).one()
 
@@ -276,7 +306,7 @@ class Exporter:
     self.f.write('</tbody>\n')
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
-
+    self.f.write('</section>\n')
 
   def writeAnalogFault(self, fault, device):
     num_bits = 0
@@ -330,7 +360,7 @@ class Exporter:
     for m in range(0, numMitDevices):
       self.f.write('<colspec colname=\'m{0}\' colwidth="0.20*"/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     var = 'A'
     for b in range(0, max_bits):
       self.f.write('  <entry>{0}</entry>\n'.format(var))
@@ -340,9 +370,11 @@ class Exporter:
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
-    
+
+    rowIndex = 0
     for state in fault.states:
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
 
       num_bits = num_bits + 1
       deviceState = self.session.query(models.DeviceState).\
@@ -388,7 +420,7 @@ class Exporter:
     self.f.write('<colspec colname=\'c5\' colwidth="0.15*"/>')
     self.f.write('<colspec colname=\'c6\' colwidth="0.50*"/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Bit</entry>\n')
     self.f.write('  <entry>Name</entry>\n')
     self.f.write('  <entry>Crate</entry>\n')
@@ -401,8 +433,10 @@ class Exporter:
     self.f.write('<tbody>\n')
 
     var = 'H'
+    rowIndex = 0
     for b in range(0, num_bits):
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry>{0}</entry>\n'.format(var))
       self.f.write('  <entry>{0}</entry>\n'.format(channelName[b]))
       self.f.write('  <entry>{0}</entry>\n'.format(channelCrate[b]))
@@ -428,7 +462,7 @@ class Exporter:
     for m in range(0, numMitDevices):
       self.f.write('<colspec colname=\'m{0}\' colwidth="0.15*"/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry namest="fault1" nameend="fault2">Fault</entry>\n')
     self.f.write('  <entry namest="threshold1" nameend="threshold2">Threshold (PV, Value)</entry>\n')
     mitDevices = self.writeMitigationTableHeader()
@@ -436,6 +470,7 @@ class Exporter:
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
+    rowIndex = 0
     for state in fault.states:
       deviceState = self.session.query(models.DeviceState).\
           filter(models.DeviceState.id==state.device_state_id).one()
@@ -443,7 +478,8 @@ class Exporter:
       thresholdPv = self.mpsName.getAnalogDeviceName(device) + ":" + deviceState.name
 
       # Low threshold
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry>___</entry>\n')
 #      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry>{0} (Low)</entry>\n'.format(deviceState.name))    
@@ -456,7 +492,8 @@ class Exporter:
       self.f.write('</row>\n')
 
       # High threshold
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry>_____</entry>\n')
 #      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry>{0} (High)</entry>\n'.format(deviceState.name))    
@@ -503,14 +540,16 @@ class Exporter:
     self.f.write('<section>\n')
     self.f.write('<title>{0} Faults</title>\n'.format(device.name))
 
-    self.f.write('<table>\n')
-    self.f.write('<title>{0} properties</title>\n'.format(device.name))
+#    self.f.write('<table>\n')
+    table_name = '{0} Faults'.format(device.name)
+    self.f.write('<table id="device_faults_table_{0}" xreflabel="{1}">\n'.format(device.id, table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
     self.f.write('<colspec colname=\'c1\' colwidth="0.35*"/>')
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<colspec colname=\'c3\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Name</entry>\n')
     self.f.write('  <entry>Description</entry>\n')
     self.f.write('  <entry>Fault PV</entry>\n')
@@ -518,9 +557,11 @@ class Exporter:
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
+    rowIndex = 0
     for fault_input in device.fault_outputs:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry><link linkend=\'fault.{0}\'>{1}</link></entry>\n'.format(fault.id, fault.name))
       self.f.write('  <entry>{0}</entry>\n'.format(fault.description))
       self.f.write('  <entry>{0}</entry>\n'.format(self.mpsName.getFaultName(fault)))
@@ -546,22 +587,25 @@ class Exporter:
     self.f.write('<colspec colname=\'c1\' colwidth="0.25*"/>')
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Property</entry>\n')
     self.f.write('  <entry>Value</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
+    rowIndex = 0
     for k in keys:
       if not k.startswith('_'):
-        self.f.write('<row>\n')
+        self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+        rowIndex=rowIndex+1
         self.f.write('  <entry>{0}</entry>\n'.format(k))
         self.f.write('  <entry>{0}</entry>\n'.format(getattr(device, k)))
         self.f.write('</row>\n')
     # end for k
 
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>type</entry>\n'.format(k))
     dt = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
     self.f.write('  <entry>{0}</entry>\n'.format(dt.name))
@@ -575,7 +619,11 @@ class Exporter:
     
     self.f.write('</section>\n')
 
-  def writeDigitalCheckoutTable(self, channels):
+  def writeDigitalCheckoutTable(self, card_name, channels):
+    self.f.write('<section>\n')
+    self.f.write('<title>{0} Checkout</title>\n'.format(card_name))
+    self.f.write('<para>For every signal in the checkout table change it using the respective subsystem (e.g. Profile Monitor for inserting/removing screen) and verify if the input state changes. Check mark the states making sure they reflect the device state.\n')
+    self.f.write('</para>\n')
     self.f.write('<table>\n')
     self.f.write('<title>Checkout table for digital inputs</title>\n')
     self.f.write('<tgroup cols=\'6\' align=\'left\' colsep=\'1\' rowsep=\'1\'>\n')
@@ -586,7 +634,7 @@ class Exporter:
     self.f.write('<colspec colname=\'one2\' colwidth="0.40*"/>')
     self.f.write('<colspec colname=\'pv\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Ch #</entry>\n')
     self.f.write('  <entry namest="zero1" nameend="zero2">Low State (0V)</entry>\n')
     self.f.write('  <entry namest="one1" nameend="one2">High State (24V)</entry>\n')
@@ -595,11 +643,13 @@ class Exporter:
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
+    rowIndex = 0
     for c in channels:
       ddi = self.session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==c.id).one()
       device = self.session.query(models.Device).filter(models.Device.id==ddi.digital_device.id).one()
 
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry>{0}</entry>\n'.format(c.number))
       self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry>{0}</entry>\n'.format(c.z_name))
@@ -612,6 +662,7 @@ class Exporter:
     self.f.write('</tbody>\n')
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
+    self.f.write('</section>\n')
 
   def writeAppCard(self, card):
     self.f.write('<anchor id=\'card.{0}\'/>\n'.format(card.id))
@@ -628,21 +679,24 @@ class Exporter:
     self.f.write('<colspec colname=\'c1\' colwidth="0.25*"/>')
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Property</entry>\n')
     self.f.write('  <entry>Value</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
-    self.f.write('<row>\n')
+    rowIndex = 0
+    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+    rowIndex=rowIndex+1
     self.f.write('  <entry>Crate</entry>\n')
     self.f.write('  <entry><link linkend=\'crate.{0}\'>{1}</link></entry>\n'.format(crate.id, crate_name))
     self.f.write('</row>\n')
 
     for k in keys:
       if not k.startswith('_'):
-        self.f.write('<row>\n')
+        self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+        rowIndex=rowIndex+1
         self.f.write('  <entry>{0}</entry>\n'.format(k))
         self.f.write('  <entry>{0}</entry>\n'.format(getattr(card, k)))
         self.f.write('</row>\n')
@@ -659,15 +713,17 @@ class Exporter:
     self.f.write('<colspec colname=\'c1\' colwidth="0.25*"/>')
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Name</entry>\n')
     self.f.write('  <entry>Description</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
     
+    rowIndex = 0
     for d in card.devices:
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry><link linkend=\'device.{0}\'>{1}</link></entry>\n'.format(d.id, d.name))
       self.f.write('  <entry>{0}</entry>\n'.format(d.description))
       self.f.write('</row>\n')
@@ -685,7 +741,7 @@ class Exporter:
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<colspec colname=\'c3\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Ch #</entry>\n')
     self.f.write('  <entry>Input Device</entry>\n')
     self.f.write('  <entry>Signal</entry>\n')
@@ -703,6 +759,7 @@ class Exporter:
       print "ERROR"
       exit(-1)
 
+    rowIndex = 0
     for c in channels:
       if digital:
         ddi = self.session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==c.id).one()
@@ -712,7 +769,8 @@ class Exporter:
         device = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==c.id).one()
         signal_name = c.name + ' thresholds'
 
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry>{0}</entry>\n'.format(c.number))
       self.f.write('  <entry>{0}</entry>\n'.format(device.name))
       self.f.write('  <entry>{0}</entry>\n'.format(signal_name))
@@ -724,7 +782,7 @@ class Exporter:
     self.f.write('</table>\n')
 
     if digital:
-      self.writeDigitalCheckoutTable(channels)
+      self.writeDigitalCheckoutTable(card.name, channels)
 
     self.f.write('</section>\n')
 
@@ -747,16 +805,18 @@ class Exporter:
     self.f.write('<colspec colname=\'c2\'/>')
     self.f.write('<colspec colname=\'c3\'/>')
     self.f.write('<thead>\n')
-    self.f.write('<row>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Slot #</entry>\n')
     self.f.write('  <entry>Application Card</entry>\n')
     self.f.write('  <entry>Card Description</entry>\n')
     self.f.write('</row>\n')
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
-    
+
+    rowIndex = 0
     for card in crate.cards:
-      self.f.write('<row>\n')
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
       self.f.write('  <entry><link linkend=\'card.{0}\'>{1}</link></entry>\n'.format(card.id, card.slot_number))
       self.f.write('  <entry>{0}</entry>\n'.format(card.name))
       self.f.write('  <entry>{0}</entry>\n'.format(card.description))
@@ -769,6 +829,108 @@ class Exporter:
 
     self.f.write('</section>\n')
 
+  def writeMitigationDevices(self):
+    self.f.write('<section>\n')
+    self.f.write('<title>Mitigation Devices</title>\n')
+
+    # Mitigation Devices Table
+    table_name = 'Mitigation Devices'
+    self.f.write('<table id="mitigation_devices_table" xreflabel="{0}">\n'.format(table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
+    self.f.write('<tgroup cols=\'4\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c2\' colwidth="0.35*"/>')
+    self.f.write('<colspec colname=\'c3\' colwidth="0.15*"/>')
+    self.f.write('<colspec colname=\'c4\' colwidth="0.55*"/>')
+    self.f.write('<thead>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
+    self.f.write('  <entry>Name</entry>\n')
+    self.f.write('  <entry>Description</entry>\n')
+    self.f.write('  <entry>Mask</entry>\n')
+    self.f.write('  <entry>PV</entry>\n')
+    self.f.write('</row>\n')
+
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+    rowIndex = 0
+    for mitigation in self.session.query(models.MitigationDevice).all():
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
+      pvName = self.siocPv + ":" + mitigation.name + "_PC"
+      self.f.write('  <entry>{0}</entry>\n'.format(mitigation.name))
+      self.f.write('  <entry>{0}</entry>\n'.format(mitigation.description))
+      self.f.write('  <entry>{0}</entry>\n'.format(str(hex(mitigation.destination_mask))))
+      self.f.write('  <entry>{0}</entry>\n'.format(pvName))
+      self.f.write('</row>\n')
+
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
+      pvName = self.siocPv + ":" + mitigation.name + "_FW_PC"
+      self.f.write('  <entry></entry>\n')
+      self.f.write('  <entry></entry>\n')
+      self.f.write('  <entry></entry>\n')
+      self.f.write('  <entry>{0}</entry>\n'.format(pvName))
+      self.f.write('</row>\n')
+
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
+      pvName = self.siocPv + ":" + mitigation.name + "_SW_PC"
+      self.f.write('  <entry></entry>\n')
+      self.f.write('  <entry></entry>\n')
+      self.f.write('  <entry></entry>\n')
+      self.f.write('  <entry>{0}</entry>\n'.format(pvName))
+      self.f.write('</row>\n')
+
+
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+    self.f.write('</section>\n')
+    
+  def writePowerClasses(self):
+    self.f.write('<section>\n')
+    self.f.write('<title>Beam Power Classes</title>\n')
+
+    # Beam Power Classes Table
+    table_name = 'Beam Power Classes'
+    self.f.write('<table id="power_classes_table" xreflabel="{0}">\n'.format(table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
+    self.f.write('<tgroup cols=\'6\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.05*"/>')
+    self.f.write('<colspec colname=\'c2\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c3\' colwidth="0.25*"/>')
+    self.f.write('<colspec colname=\'c4\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c5\' colwidth="0.20*"/>')
+    self.f.write('<colspec colname=\'c6\' colwidth="0.20*"/>')
+    self.f.write('<thead>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
+    self.f.write('  <entry>Id</entry>\n')
+    self.f.write('  <entry>Name</entry>\n')
+    self.f.write('  <entry>Description</entry>\n')
+    self.f.write('  <entry>Int Window (usec)</entry>\n')
+    self.f.write('  <entry>Min Period (usec)</entry>\n')
+    self.f.write('  <entry>Max Charge</entry>\n')
+    self.f.write('</row>\n')
+
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+    rowIndex = 0
+    for powerClass in self.session.query(models.BeamClass).all():
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
+      self.f.write('  <entry>{0}</entry>\n'.format(powerClass.number))
+      self.f.write('  <entry>{0}</entry>\n'.format(powerClass.name))
+      self.f.write('  <entry>{0}</entry>\n'.format(powerClass.description))
+      self.f.write('  <entry>{0}</entry>\n'.format(powerClass.integration_window))
+      self.f.write('  <entry>{0}</entry>\n'.format(powerClass.min_period))
+      self.f.write('  <entry>{0}</entry>\n'.format(powerClass.total_charge))
+      self.f.write('</row>\n')
+
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+    self.f.write('</section>\n')
+ 
   def writeCrates(self):
     self.f.write('<section><title>ATCA Crates</title>\n')
     for crate in self.session.query(models.Crate).all():
@@ -792,6 +954,10 @@ class Exporter:
     self.f = open(fileName, "w")
 
     self.writeHeader()
+
+    self.writeMitigationDevices()
+
+    self.writePowerClasses()
 
     self.writeCrates()
 
