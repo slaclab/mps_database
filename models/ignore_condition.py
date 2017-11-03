@@ -14,4 +14,5 @@ class IgnoreCondition(Base):
   __tablename__ = 'ignore_conditions'
   id = Column(Integer, primary_key=True)
   condition_id = Column(Integer, ForeignKey('conditions.id'), nullable=False)
-  fault_state_id = Column(Integer, ForeignKey('fault_states.id'), nullable=False)
+  fault_state_id = Column(Integer, ForeignKey('fault_states.id'))
+  analog_device_id = Column(Integer, ForeignKey('analog_devices.id'))

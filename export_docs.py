@@ -934,6 +934,86 @@ class Exporter:
     self.f.write('</table>\n')
     self.f.write('</section>\n')
  
+  def writeDevices(self):
+    self.f.write('<section><title>MPS Devices</title>\n')
+
+    for device in self.session.query(models.Device).all():
+      self.writeDeviceInfo(device)
+    self.f.write('</section>\n')
+
+  def writeLogicCondition(self, condition):
+    self.f.write('<section><title>{0}: {1}</title>\n'.format(condition.name, condition.description))
+
+    table_name = 'Condition Inputs'
+    self.f.write('<table>\n')
+    self.f.write('<title>{0}</title>\n'.format(table_name))
+    self.f.write('<tgroup cols=\'3\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.35*"/>')
+    self.f.write('<colspec colname=\'c2\' colwidth="0.35*"/>')
+    self.f.write('<colspec colname=\'c3\' colwidth="0.25*"/>')
+    self.f.write('<thead>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
+    self.f.write('  <entry>Fault</entry>\n')
+    self.f.write('  <entry>State</entry>\n')
+    self.f.write('  <entry>Bit Position</entry>\n')
+    self.f.write('</row>\n')
+    
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+
+    rowIndex = 0
+    for input in condition.condition_inputs:
+      faultState = self.session.query(models.FaultState).\
+          filter(models.FaultState.id==input.fault_state_id).one()
+      deviceState = self.session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
+      fault = self.session.query(models.Fault).filter(models.Fault.id==faultState.fault_id).one()
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
+      self.f.write('  <entry><link linkend=\'fault.{0}\'>{1}</link></entry>\n'.format(fault.id, fault.name))
+      self.f.write('  <entry>{0}</entry>\n'.format(deviceState.name))
+      self.f.write('  <entry>{0}</entry>\n'.format(input.bit_position))
+      self.f.write('</row>\n')
+        
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+
+    table_name = 'Ignored Devices'
+    self.f.write('<table>\n')
+    self.f.write('<title>{0}</title>\n'.format(table_name))
+    self.f.write('<tgroup cols=\'1\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n')
+    self.f.write('<colspec colname=\'c1\'/>')
+    self.f.write('<thead>\n')
+    self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
+    self.f.write('  <entry>Device</entry>\n')
+    self.f.write('</row>\n')
+    
+    self.f.write('</thead>\n')
+    self.f.write('<tbody>\n')
+
+    rowIndex = 0
+    for ignoreCondition in condition.ignore_conditions:
+      device = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==ignoreCondition.analog_device_id).one()
+      self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+      rowIndex=rowIndex+1
+      self.f.write('  <entry><link linkend=\'device.{0}\'>{1}</link></entry>\n'.format(device.id, device.name))
+      self.f.write('</row>\n')
+        
+    self.f.write('</tbody>\n')
+    self.f.write('</tgroup>\n')
+    self.f.write('</table>\n')
+    self.f.write('</section>')
+
+
+
+  def writeIgnoreLogic(self):
+    self.f.write('<section><title>Ignore Logic</title>\n')
+
+    for condition in self.session.query(models.Condition).all():
+      self.writeLogicCondition(condition)
+
+    self.f.write('</section>\n')
+
   def writeCrates(self):
     self.f.write('<section><title>ATCA Crates</title>\n')
     for crate in self.session.query(models.Crate).all():
@@ -966,11 +1046,10 @@ class Exporter:
 
     self.writeAppCards()
 
-    self.f.write('<section><title>MPS Devices</title>\n')
+    self.writeDevices()
 
-    for device in self.session.query(models.Device).all():
-      self.writeDeviceInfo(device)
-    self.f.write('</section>\n')
+    self.writeIgnoreLogic()
+
     self.f.write('</article>\n')
     self.f.close()
 

@@ -76,4 +76,5 @@ class AnalogDevice(Device):
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
 #  analog_device_type_id = Column(Integer, ForeignKey('analog_device_types.id'), nullable=False)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
+  ignore_conditions = relationship("IgnoreCondition", backref='analog_device')
 #  threshold_faults = relationship("ThresholdFault", backref='analog_device')
