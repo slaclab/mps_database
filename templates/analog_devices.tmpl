@@ -8,7 +8,7 @@ minor 0
 release 1
 x 153
 y 179
-w 900
+w 800
 h $WINDOW_HEIGHT
 font "helvetica-medium-r-10.0"
 ctlFont "helvetica-medium-r-10.0"
@@ -36,7 +36,7 @@ minor 0
 release 0
 x 16
 y 20
-w 872
+w 772
 h $BOX_HEIGHT
 lineColor index 3
 fill
@@ -218,26 +218,6 @@ fgColor index 14
 bgColor index 4
 useDisplayBg
 value {
-  "Bypass Value"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 722
-y 34
-w 100
-h 16
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
   "Bypass Status"
 }
 endObjectProperties
@@ -367,7 +347,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 874
+x 774
 y $WIDGET_Y
 w 8
 h 16
@@ -455,27 +435,6 @@ x 622
 y $WIDGET_Y
 w 100
 h 16
-controlPv "$AD_BYPV[$i]"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 11
-fill
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-lineWidth 0
-endObjectProperties
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 722
-y $WIDGET_Y
-w 100
-h 16
 controlPv "$AD_BYPS[$i]"
 precision 1
 fgColor index 16
@@ -493,7 +452,7 @@ beginObjectProperties
 major 4
 minor 4
 release 0
-x 822
+x 722
 y $WIDGET_Y
 w 52
 h 16
@@ -506,7 +465,7 @@ buttonLabel "Bypass"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "mps2_bypass_control"
+  0 "mps2_bypass_control_analog"
 }
 menuLabel {
   0 "Bypass"
@@ -515,7 +474,7 @@ setPosition {
   0 "button"
 }
 symbols {
-  0 "BITPV=$AD_PV[$i],PV=$AD_DEVPV[$i],BYPV=$AD_BYPV[$i],BYPS=$AD_BYPS[$i],BYPD=$AD_BYPD[$i],BYPT=$AD_BYPT[$i],NAME=$AD_NAME[$i]"
+  0 "BITPV=$AD_PV[$i],PV=$AD_DEVPV[$i],BYPS=$AD_BYPS[$i],BYPD=$AD_BYPD[$i],BYPT=$AD_BYPT[$i],NAME=$AD_NAME[$i]"
 }
 endObjectProperties
 

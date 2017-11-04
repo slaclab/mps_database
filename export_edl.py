@@ -15,7 +15,6 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
   cards=[]
   channels=[]
   byps=[]
-  bypv=[]
   bypd=[]
   bypt=[]
   names=[]
@@ -41,7 +40,6 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
           cards.append(analogDevice.channel.card.number)
           channels.append(analogDevice.channel.number)
           byps.append('{0}:{1}_BYPS'.format(name, fa.name))
-          bypv.append('{0}:{1}_BYPV'.format(name, fa.name))
           bypd.append('{0}:{1}_BYPD'.format(name, fa.name))
           bypt.append('{0}:{1}_BYPT'.format(name, fa.name))
           names.append('{0}:{1}'.format(name, state.device_state.name))
@@ -60,7 +58,6 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
              'AD_CHANNEL': channels,
              'AD_BIT': bits,
              'AD_BYPS': byps,
-             'AD_BYPV': bypv,
              'AD_BYPD': bypd,
              'AD_BYPT': bypt,
              'AD_NAME': names,

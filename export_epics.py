@@ -246,20 +246,8 @@ def exportAnalogDevices(file, analogDevices, session):
 
           #=== Begin Bypass records (One PV per fault type)  ====
           # produce only one set of bypass pvs per analog fault (one bypass control for all thresholds within an integrator)
-          if (bypassPvs==False):
-            # Bypass Value: used while bypass is active
-            fields=[]
-            fields.append(('DESC', 'Bypass for {0}'.format(analogDevice.channel.name)))
-            fields.append(('DTYP', 'asynUInt32Digital'))
-            fields.append(('VAL', '0'))
-            fields.append(('PINI', 'YES'))
-            fields.append(('ZNAM', 'IS_OK'))
-            fields.append(('ONAM', 'IS_EXCEEDED'))
-            fields.append(('ZSV', 'NO_ALARM'))
-            fields.append(('OSV', 'MAJOR'))
-            fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 0 {1})MPS_ANALOG_DEVICE_BYPV'.format(analogDevice.id, intIndex)))
-            printRecord(file, 'bo', '{0}:{1}_BYPV'.format(name, fa.name), fields)
-            
+          # there is no BYPV PV for analog devices
+          if (bypassPvs==False):            
             # Bypass Status: shows if bypass is currently active or not
             fields=[]
             fields.append(('DESC', 'Bypass Status'))

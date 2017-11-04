@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 727
-y 137
+x 730
+y 166
 w 288
-h 424
+h 320
 font "helvetica-medium-r-10.0"
 ctlFont "helvetica-medium-r-10.0"
 btnFont "helvetica-medium-r-10.0"
@@ -34,7 +34,7 @@ release 0
 x 16
 y 20
 w 252
-h 144
+h 108
 lineColor index 3
 fill
 fillColor index 3
@@ -95,26 +95,6 @@ fgColor index 14
 bgColor index 4
 useDisplayBg
 value {
-  "Bypass Value: "
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 36
-y 116
-w 100
-h 16
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
   "Bypass Status: "
 }
 endObjectProperties
@@ -148,27 +128,6 @@ minor 0
 release 0
 x 136
 y 100
-w 108
-h 16
-controlPv "$(BYPV)"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 11
-fill
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-lineWidth 0
-endObjectProperties
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 136
-y 116
 w 108
 h 16
 controlPv "$(BYPS)"
@@ -208,9 +167,9 @@ major 4
 minor 0
 release 0
 x 16
-y 180
+y 144
 w 252
-h 232
+h 168
 lineColor index 3
 fill
 fillColor index 3
@@ -223,7 +182,7 @@ major 4
 minor 1
 release 1
 x 16
-y 172
+y 136
 w 116
 h 16
 font "helvetica-medium-r-12.0"
@@ -242,28 +201,7 @@ major 4
 minor 1
 release 1
 x 44
-y 200
-w 192
-h 28
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Bypass Value in hex"
-  "(all bits for device)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 44
-y 296
+y 160
 w 192
 h 16
 font "helvetica-medium-r-12.0"
@@ -283,7 +221,7 @@ major 10
 minor 0
 release 0
 x 44
-y 312
+y 176
 w 140
 h 36
 controlPv "$(BYPD)"
@@ -301,7 +239,7 @@ major 4
 minor 3
 release 0
 x 188
-y 312
+y 176
 w 68
 h 36
 fgColor index 14
@@ -323,7 +261,7 @@ major 4
 minor 0
 release 0
 x 44
-y 360
+y 224
 w 192
 h 34
 
@@ -336,7 +274,7 @@ major 4
 minor 1
 release 1
 x 44
-y 360
+y 224
 w 192
 h 16
 font "helvetica-medium-r-12.0"
@@ -356,7 +294,7 @@ major 4
 minor 7
 release 0
 x 56
-y 380
+y 244
 w 172
 h 14
 controlPv "$(BYPD)_STR"
@@ -387,50 +325,60 @@ major 4
 minor 0
 release 0
 x 44
-y 232
-w 200
-h 60
+y 268
+w 192
+h 34
 
 beginGroup
 
-# (Rectangle)
-object activeRectangleClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 44
-y 232
-w 200
-h 60
-lineColor index 14
-fill
-fillColor index 16
-fillAlarm
-lineWidth 0
-alarmPv "$(PV)_BYPV"
+y 268
+w 192
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bypass Remaining Time (sec):"
+}
 endObjectProperties
 
-# (Text Entry)
-object TextentryClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 7
 release 0
-x 60
-y 244
-w 168
-h 36
-controlPv "$(PV)_BYPV"
-displayMode "hex"
+x 56
+y 288
+w 172
+h 14
+controlPv "$(BYPT)"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
-fgAlarm
 bgColor index 4
-fill
-font "helvetica-medium-r-12.0"
+useDisplayBg
+autoHeight
+limitsFromDb
+nullColor index 18
+useHexPrefix
+newPos
+objType "monitors"
 endObjectProperties
 
 endGroup
 
+visPv "$(BYPS)"
+visMin "1"
+visMax "2"
 endObjectProperties
 
