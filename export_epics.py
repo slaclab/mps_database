@@ -288,6 +288,17 @@ def exportAnalogDevices(file, analogDevices, session):
             fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id)))
             printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
 
+            fields=[]
+            fields.append(('DESC', 'Ignored status'))
+            fields.append(('DTYP', 'asynUInt32Digital'))
+            fields.append(('SCAN', '1 second'))
+            fields.append(('ZNAM', 'Not Ignored'))
+            fields.append(('ONAM', 'Ignored'))
+            fields.append(('ZSV', 'NO_ALARM'))
+            fields.append(('OSV', 'MAJOR'))
+            fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)))
+            printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
+            
             bypassPvs=True
           #=== End Bypass records ====
   file.close()

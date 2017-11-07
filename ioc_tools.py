@@ -37,13 +37,17 @@ def model_representer(dumper, obj):
   node = MappingNode(tag=u'tag:yaml.org,2002:map', value=[], flow_style=False)
   for column in obj.__table__.columns:
     if isinstance(column.type, String):
-      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:str', value=unicode(getattr(obj, column.name)), style='"')))
+      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                         dumper.represent_scalar(tag=u'tag:yaml.org,2002:str', value=unicode(getattr(obj, column.name)), style='"')))
     elif isinstance(column.type, Integer):
-      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:int', value=unicode(getattr(obj, column.name)), style='')))
+      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                         dumper.represent_scalar(tag=u'tag:yaml.org,2002:int', value=unicode(getattr(obj, column.name)), style='')))
     elif isinstance(column.type, Float):
-      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:float', value=unicode(getattr(obj, column.name)), style='')))
+      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                         dumper.represent_scalar(tag=u'tag:yaml.org,2002:float', value=unicode(getattr(obj, column.name)), style='')))
     elif isinstance(column.type, Boolean):
-      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:bool', value=unicode(getattr(obj, column.name)), style='')))
+      node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                         dumper.represent_scalar(tag=u'tag:yaml.org,2002:bool', value=unicode(getattr(obj, column.name)), style='')))
     else:
       raise TypeError("No scalar representation is implemented for SQLAlchemy column type {col_type}".format(column.type))
 
@@ -53,13 +57,17 @@ def model_representer(dumper, obj):
       for column in obj.__class__.__bases__[0].__table__.columns:
         if (column.name != "type"):
           if isinstance(column.type, String):
-            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:str', value=unicode(getattr(obj, column.name)), style='"')))
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                               dumper.represent_scalar(tag=u'tag:yaml.org,2002:str', value=unicode(getattr(obj, column.name)), style='"')))
           elif isinstance(column.type, Integer):
-            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:int', value=unicode(getattr(obj, column.name)), style='')))
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                               dumper.represent_scalar(tag=u'tag:yaml.org,2002:int', value=unicode(getattr(obj, column.name)), style='')))
           elif isinstance(column.type, Float):
-            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:float', value=unicode(getattr(obj, column.name)), style='')))
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                               dumper.represent_scalar(tag=u'tag:yaml.org,2002:float', value=unicode(getattr(obj, column.name)), style='')))
           elif isinstance(column.type, Boolean):
-            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), dumper.represent_scalar(tag=u'tag:yaml.org,2002:bool', value=unicode(getattr(obj, column.name)), style='')))
+            node.value.append((ScalarNode(tag=u'tag:yaml.org,2002:str', value=column.name), 
+                               dumper.represent_scalar(tag=u'tag:yaml.org,2002:bool', value=unicode(getattr(obj, column.name)), style='')))
           else:
             raise TypeError("No scalar representation is implemented for SQLAlchemy column type {col_type}".format(column.type))
  
