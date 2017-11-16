@@ -9,8 +9,10 @@ Instructions
 On lcls-dev3, after cloning the repo (git clone git@github.com:slaclab/mps_database.git)
 you need to use a python that has sqlite support:
 
-> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/afs/slac/g/lcls/package/python/python2.7.9/linux-x86_64/lib
-> export PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/bin/:$PATH
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/afs/slac/g/lcls/package/python/python2.7.9/linux-x86_64/lib
+export PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/bin/:$PATH
+```
 
 You probably want to make a virtual environment for this project, to keep its module
 dependencies separate from your global python install.  If you don’t already have
