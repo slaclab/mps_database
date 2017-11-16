@@ -168,6 +168,15 @@ class Exporter:
     self.f.write('<table id="fault_state_table_{0}" xreflabel="{1}">\n'.format(fault.id, table_name))
     self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(num_bits+numMitDevices+1))
+
+    for b in range (0, num_bits):
+      self.f.write('<colspec colname=\'b{0}\' colwidth="0.05*"/>'.format(b))
+
+    self.f.write('<colspec colname=\'f1\' colwidth="0.25*"/>')
+
+    for d in range (0, numMitDevices):
+      self.f.write('<colspec colname=\'m{0}\' colwidth="0.10*"/>'.format(d))
+
     self.f.write('<thead>\n')
     self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     var = 'A'
@@ -297,6 +306,7 @@ class Exporter:
       deviceState = self.session.query(models.DeviceState).\
           filter(models.DeviceState.id==state.device_state_id).one()
 
+#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry>{0}</entry>\n'.format(deviceState.name))    
       for key in mitDevices:
@@ -347,12 +357,16 @@ class Exporter:
       channelNumber.append(str(channel.number))
       channelMask.append(str(hex((deviceState.mask >> integratorShift) & 0xFF)))
       channelPv.append(self.mpsName.getAnalogDeviceName(device) + ":" + state.device_state.name)
+      
+    self.f.write('<para>Table "<xref linkend="fault_states.{1}"/>" lists the {0} fault input bits for the {2} device. MPS supports up to eight comparators for {0}, this database version {3} \n'.format(fault.name, fault.id, device.name, len(fault.states)))
+    self.f.write('</para>\n')
 
     # Fault States
     max_bits = 8 # max number of analog thresholds
     numMitDevices = self.session.query(models.MitigationDevice).count()
-    self.f.write('<table>\n')
-    self.f.write('<title>{0} Fault States</title>\n'.format(fault.name))
+    table_name = '{0} Fault States'.format(fault.name)
+    self.f.write('<table id="fault_states.{0}" xreflabel="{1}">\n'.format(fault.id, table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(max_bits+numMitDevices+1))
     for b in range(0, max_bits):
       self.f.write('<colspec colname=\'b1\' colwidth="0.05*"/>'.format(b))
@@ -361,10 +375,12 @@ class Exporter:
       self.f.write('<colspec colname=\'m{0}\' colwidth="0.20*"/>')
     self.f.write('<thead>\n')
     self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
-    var = 'A'
+#    var = 'A'
+    var = '7'
     for b in range(0, max_bits):
       self.f.write('  <entry>{0}</entry>\n'.format(var))
-      var = chr(ord(var) + 1)
+#      var = chr(ord(var) + 1)
+      var = chr(ord(var) - 1)
     self.f.write('  <entry>Fault Name</entry>\n')
     mitDevices = self.writeMitigationTableHeader()
     self.f.write('</row>\n')
@@ -432,7 +448,7 @@ class Exporter:
     self.f.write('</thead>\n')
     self.f.write('<tbody>\n')
 
-    var = 'H'
+    var = '0'
     rowIndex = 0
     for b in range(0, num_bits):
       self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
@@ -445,15 +461,21 @@ class Exporter:
       self.f.write('  <entry>{0}</entry>\n'.format(channelMask[b]))
       self.f.write('  <entry>{0}_MPSC</entry>\n'.format(channelPv[b]))
       self.f.write('</row>\n')
-      var = chr(ord(var) - 1)
+      var = chr(ord(var) + 1)
 
     self.f.write('</tbody>\n')
     self.f.write('</tgroup>\n')
     self.f.write('</table>\n')
 
+    self.f.write('<para>Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}"/>" table are defined in this database.\n'.format(fault.name, fault.id))
+    self.f.write('</para>\n')
+
+    self.f.write('<para>Table "<xref linkend="fault_checkout.{0}"/>" lists the PVs that should be changed to test the faults. Set the LOLO/HIHI PVs with values that cause MPS mitigation actions and write down the power classes.</para>\n'.format(fault.id))
+
     # Fault Checkout Table
-    self.f.write('<table>\n')
-    self.f.write('<title>{0} Fault Checkout</title>\n'.format(fault.name))
+    table_name = '{0} Fault Checkout'.format(fault.name)
+    self.f.write('<table id="fault_checkout.{0}" xreflabel="{1}">\n'.format(fault.id, table_name))
+    self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(numMitDevices+4))
     self.f.write('<colspec colname=\'fault1\' colwidth="0.12*"/>')
     self.f.write('<colspec colname=\'fault2\' colwidth="0.35*"/>')
@@ -480,29 +502,29 @@ class Exporter:
       # Low threshold
       self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
       rowIndex=rowIndex+1
-      self.f.write('  <entry>___</entry>\n')
-#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+#      self.f.write('  <entry>___</entry>\n')
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry>{0} (Low)</entry>\n'.format(deviceState.name))    
       self.f.write('  <entry>{0}_LOLO</entry>\n'.format(thresholdPv))
-      self.f.write('  <entry>_____</entry>\n')
-#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentdepth="1cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject></entry>\n')
+#      self.f.write('  <entry>_____</entry>\n')
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject></entry>\n')
       for key in mitDevices:
-        self.f.write('  <entry>_____</entry>\n')
-#        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+#        self.f.write('  <entry>_____</entry>\n')
+        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('</row>\n')
 
       # High threshold
       self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
       rowIndex=rowIndex+1
-      self.f.write('  <entry>_____</entry>\n')
-#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+#      self.f.write('  <entry>_____</entry>\n')
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('  <entry>{0} (High)</entry>\n'.format(deviceState.name))    
       self.f.write('  <entry>{0}_HIHI</entry>\n'.format(thresholdPv))
-      self.f.write('  <entry>_____</entry>\n')
-#      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentdepth="1cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject></entry>\n')
+#      self.f.write('  <entry>_____</entry>\n')
+      self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject></entry>\n')
       for key in mitDevices:
-        self.f.write('  <entry>_____</entry>\n')
-#        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
+#        self.f.write('  <entry>_____</entry>\n')
+        self.f.write('  <entry><mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject></entry>\n')
       self.f.write('</row>\n')
 
     self.f.write('</tbody>\n')
@@ -984,7 +1006,8 @@ class Exporter:
     self.f.write('<table>\n')
     self.f.write('<title>{0}</title>\n'.format(table_name))
     self.f.write('<tgroup cols=\'1\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n')
-    self.f.write('<colspec colname=\'c1\'/>')
+    self.f.write('<colspec colname=\'c1\' colwidth="0.9*"/>')
+
     self.f.write('<thead>\n')
     self.f.write('<row>{0}\n'.format(self.tableHeaderColor))
     self.f.write('  <entry>Device</entry>\n')
@@ -1030,10 +1053,16 @@ class Exporter:
     print fileName + " -> " + fileName.split(".")[0]
     cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.format(fileName, fileName.split(".")[0])
     os.system(cmd)
+
+    cmd = 'fop -fo {0}.fo -rtf {0}.rtf'.format(fileName.split(".")[0])
+    os.system(cmd)
+
     cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(fileName.split(".")[0])
     os.system(cmd)
+
     cmd = '\rm {0}.fo'.format(fileName.split(".")[0])
     os.system(cmd)
+
 
   def exportDocBook(self, fileName):
     self.f = open(fileName, "w")
@@ -1067,5 +1096,5 @@ parser.add_argument('database', metavar='db', type=file, nargs=1,
 args = parser.parse_args()
 
 e = Exporter(args.database[0].name)
-e.exportDocBook("mpsdb.xml")
+e.exportDocBook('{0}.xml'.format(args.database[0].name.split('.')[0]))
 

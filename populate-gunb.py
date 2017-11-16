@@ -406,19 +406,18 @@ session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken,
 
 # BPM01 threshold fault states - there is one FaultState for each DeviceState,
 # there are 24 of them (8 for X, 8 for Y and 8 for TMIT).
-#bpm01_fault_states=[]
 bpm01_x_fault_states=[]
 for i in range(0,2):
   bpm01_x_fault_state = models.FaultState(fault = bpm01_x_fault, device_state = bpm_x_states[i])
   session.add(bpm01_x_fault_state)
   bpm01_x_fault_states.append(bpm01_x_fault_state)
 bpm01_y_fault_states=[]
-for i in range(0,3):
+for i in range(0,2):
   bpm01_y_fault_state = models.FaultState(fault = bpm01_y_fault, device_state = bpm_y_states[i])
   session.add(bpm01_y_fault_state)
   bpm01_y_fault_states.append(bpm01_y_fault_state)
 bpm01_t_fault_states=[]
-for i in range(0,4):
+for i in range(0,2):
   bpm01_t_fault_state = models.FaultState(fault = bpm01_t_fault, device_state = bpm_t_states[i])
   session.add(bpm01_t_fault_state)
   bpm01_t_fault_states.append(bpm01_t_fault_state)
@@ -426,17 +425,17 @@ for i in range(0,4):
 # BPM02 threshold fault states - there is one FaultState for each DeviceState,
 # there are 24 of them (8 for X, 8 for Y and 8 for TMIT).
 bpm02_x_fault_states=[]
-for i in range(0,5):
+for i in range(0,2):
   bpm02_x_fault_state = models.FaultState(fault = bpm02_x_fault, device_state = bpm_x_states[i])
   session.add(bpm02_x_fault_state)
   bpm02_x_fault_states.append(bpm02_x_fault_state)
 bpm02_y_fault_states=[]
-for i in range(0,6):
+for i in range(0,2):
   bpm02_y_fault_state = models.FaultState(fault = bpm02_y_fault, device_state = bpm_y_states[i])
   session.add(bpm02_y_fault_state)
   bpm02_y_fault_states.append(bpm02_y_fault_state)
 bpm02_t_fault_states=[]
-for i in range(0,7):
+for i in range(0,2):
   bpm02_t_fault_state = models.FaultState(fault = bpm02_t_fault, device_state = bpm_t_states[i])
   session.add(bpm02_t_fault_state)
   bpm02_t_fault_states.append(bpm02_t_fault_state)

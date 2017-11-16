@@ -172,7 +172,7 @@ def exportAnalogDevices(file, analogDevices, session):
       for fa in faults:
         # produce only one set of bypass pvs per analog fault (one bypass control for all thresholds within an integrator)
         bypassPvs=False 
-        print fa.name
+#        print fa.name
         faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
         for state in faultStates:
 #          print state.device_state.name
@@ -202,7 +202,7 @@ def exportAnalogDevices(file, analogDevices, session):
           elif (bitIndex >= 24 and bitIndex <= 31):
             intIndex = 3
 
-          print name + ":" + state.device_state.name + ", mask: " + str(bitIndex) + ", fault name: " + fa.name + ", intIndex: " + str(intIndex)
+#          print name + ":" + state.device_state.name + ", mask: " + str(bitIndex) + ", fault name: " + fa.name + ", intIndex: " + str(intIndex)
           fields=[]
           fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
                          format(analogDevice.channel.card.crate.number,
