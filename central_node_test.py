@@ -27,10 +27,13 @@ class App:
           else:
               self.is_digital = False
 
+          self.set_good_state()
+
+  def set_good_state(self):
       if self.is_digital:
           self.was_low_bits = bytearray(192*[0])
           self.was_high_bits = bytearray(192*[1])
-          if app != None:
+          if self.app != None:
               self.write_digital_devices()
       else:
           self.was_low_bits = bytearray(192*[1])
@@ -135,14 +138,26 @@ class Simulator:
   device_inputs=[]
   digital_device = None
   test_value = 0
+  debug = 0
+  highest_app_id = 0
 
-  def __init__(self, dbFileName):
+  def __init__(self, dbFileName, debug):
     self.databaseFileName = dbFileName
     mps = MPSConfig(args.database[0].name)
     self.session = mps.session
-    self.write_update_buffer()
-    self.init_expected_mitigation()
-#    self.show_mitigation()
+    self.debug = debug
+    apps = self.session.query(models.ApplicationCard).\
+        order_by(models.ApplicationCard.global_id.desc())
+    self.highest_app_id = apps[0].global_id
+
+    for id in range(0, self.highest_app_id):
+        try:
+            app = self.session.query(models.ApplicationCard).\
+                filter(models.ApplicationCard.global_id == id).one()
+        except:
+            app = None
+            
+        self.apps.append(App(app, self.session))
 
   def __del__(self):
     self.session.close()
@@ -154,8 +169,18 @@ class Simulator:
     except:
         print 'ERROR: Failed to find digital device with id={0}'.format(device_id)
         exit(1) 
-    print '[SIM] Set test device to {0}'.format(self.digital_device.name)
 
+    for index in range(0, len(self.apps)):
+        self.apps[index].set_good_state()
+
+    self.write_update_buffer()
+    self.init_expected_mitigation()
+
+    if self.debug >= 1:
+        sys.stdout.write('+'+60*'-'+'+\n')
+        print 'Device {0}'.format(self.digital_device.name)
+
+    self.device_inputs=[]
     self.device_inputs=list(range(len(self.digital_device.inputs)))
     for inp in self.digital_device.inputs:
         channel = self.session.query(models.DigitalChannel).\
@@ -168,31 +193,41 @@ class Simulator:
 
         if inp.bit_position < len(self.device_inputs):
             self.device_inputs[inp.bit_position]={'input':inp, 'app_index':app_index, 'channel':channel}
-    
-    self.write_update_buffer()
-    self.init_expected_mitigation()
 
     self.test_value = 0
+
+    return self.digital_device.name
 
   # Start the device_input possible combinations
   # @return True: continue tests, False: stop test - all combinations tested
   def set_next_state(self):
-      for d in range(0, len(self.device_inputs)):
-          if (self.test_value >> d) & 1:
-              bit_value = 1
+      if self.test_value < 2**len(self.device_inputs):
+          if self.debug >= 1:
+              sys.stdout.write('Device value    : {:02X}\n'.format(self.test_value))
+              sys.stdout.write('Inputs          : ')
+
+          for d in range(0, len(self.device_inputs)):
+              if (self.test_value >> d) & 1:
+                  bit_value = 1
+              else:
+                  bit_value = 0
+
+              self.apps[self.device_inputs[d]['app_index']].\
+                  set_channel_value(self.device_inputs[d]['channel'].number, bit_value);
+
+              if self.debug >= 1:
+                  sys.stdout.write('{0}={1:01X} '.format(self.device_inputs[d]['channel'].name, bit_value))
+          if self.debug >=1:
+              sys.stdout.write('\n')
+
+          self.write_update_buffer()
+          self.set_expected_mitigation()
+          self.test_value = self.test_value + 1
+          if self.test_value > 2**len(self.device_inputs):
+              return False
           else:
-              bit_value = 0
-
-          self.apps[self.device_inputs[d]['app_index']].\
-              set_channel_value(self.device_inputs[d]['channel'].number, bit_value);
-
-      self.write_update_buffer()
-      self.set_expected_mitigation()
-      self.test_value = self.test_value + 1
-      if self.test_value > 2**len(self.device_inputs):
-          return False
-      else:
-          return True
+              return True
+      return False
 
   def set_expected_mitigation(self):
       self.init_expected_mitigation()
@@ -212,6 +247,31 @@ class Simulator:
             
                   index = self.mask_to_index(mitigation_device.destination_mask)
                   self.expected_mitigation[index]=beam_class.number
+
+      if self.debug >= 1:
+          self.show_mitigation()
+
+  def check_mitigation(self, mitigation):
+    passed = True
+
+    if self.debug >= 1:
+        sys.stdout.write('Recvd Mitigation: ')
+        for i in range(0, len(self.mitigation_devices)):
+            if self.mitigation_devices[i] != None:
+                sys.stdout.write('{0}={1} '.format(self.mitigation_devices[i].name,
+                                                   mitigation[i]))
+        sys.stdout.write('\n')
+
+
+    if mitigation != self.expected_mitigation:
+        i = 0
+        for m, e in zip(mitigation, self.expected_mitigation):
+            i = i + 1
+            if m != e:
+#                print "ERROR: expected power class " + str(e) + " for mitigation device #" + str(i) + ", got " + str(m) + " instead."
+                passed = False
+    return passed
+
 
   def get_update_buffer(self):
       return self.update_buffer
@@ -250,13 +310,13 @@ class Simulator:
       return index
 
   def show_mitigation(self):
+      sys.stdout.write('Mitigation      : ')
+
       for index in range(0, len(self.mitigation_devices)):
           if self.mitigation_devices[index] != None:
-              sys.stdout.write('{0}\t'.format(self.mitigation_devices[index].name))
-      sys.stdout.write('\n')
-      for index in range(0, len(self.mitigation_devices)):
-          if self.mitigation_devices[index] != None:
-              sys.stdout.write('{0}\t'.format(self.expected_mitigation[index]))
+              sys.stdout.write('{0}={1} '.format(self.mitigation_devices[index].name,
+                                                 self.expected_mitigation[index]))
+
       sys.stdout.write('\n')
 
   def init_expected_mitigation(self):
@@ -264,6 +324,9 @@ class Simulator:
           order_by(models.BeamClass.number.desc())
       highest_class = beam_classes[0].number
 
+      for i in range(0, len(self.expected_mitigation)):
+          self.expected_mitigation[i] = 0
+      
       devices = self.session.query(models.MitigationDevice).\
           order_by(models.MitigationDevice.destination_mask.asc())
       for mit in devices:
@@ -273,28 +336,19 @@ class Simulator:
       
 
   def write_update_buffer(self):
+#    self.apps=[]
     header = bytearray([1, 2, 3, 4, 0, 0, 0, 0, # 64 bits for junk
                         0, 0, 0, 0, 0, 0, 0, 0, # 64 bits for timestamp
                         0, 0, 0, 0, 0, 0, 0, 0xAA]) # Zeroes
 
+    update_buffer = bytearray() 
     self.update_buffer = header
 
-    apps = self.session.query(models.ApplicationCard).\
-        order_by(models.ApplicationCard.global_id.desc())
-    highest_id = apps[0].global_id
-#    print 'Highest AppId={0}'.format(highest_id)
-
-    for id in range(0, highest_id):
-        try:
-            app = self.session.query(models.ApplicationCard).\
-                filter(models.ApplicationCard.global_id == id).one()
-        except:
-            app = None
-            
-        self.apps.append(App(app, self.session))
+    for id in range(0, self.highest_app_id):
         self.update_buffer = self.update_buffer + self.apps[id].get_data()
 
-#    self.dump(self.update_buffer)
+  def get_all_devices(self):
+      return self.session.query(models.DigitalDevice).all()
 
 class Tester:
   simulator = None
@@ -316,14 +370,31 @@ class Tester:
         print 'Failed to create socket'
         sys.exit()
 
+  def test_all(self):
+      devices = self.simulator.get_all_devices()
+      for device in devices:
+          self.test(device.id)
+
   def test(self, device_id):
-      self.simulator.set_device(device_id)
-      
+      passed = True
+      device_name = self.simulator.set_device(device_id)
+
+      if self.debug >= 1:
+          sys.stdout.write('+'+60*'-'+'+\n')
+
       while self.simulator.set_next_state():
           if self.debug > 2:
               self.simulator.dump_update_buffer()
           self.sendUpdate()
-          self.receiveMitigation()
+          if not self.receiveMitigation():
+              passed = False
+          if self.debug >= 1:
+              sys.stdout.write('+'+60*'-'+'+\n')
+      
+      if passed:
+          print '{0} PASSED'.format(device_name)
+      else:
+          print '{0} FAILED'.format(device_name)
 
   def sendUpdate(self):
     appdata = self.simulator.get_update_buffer()
@@ -353,23 +424,14 @@ class Tester:
         mitigation.append(x & 0xF)
         mitigation.append((x >> 4) & 0xF) 
 
-    if mitigation != expectedMitigation:
-        i = 0
-        for m, e in zip(mitigation, expectedMitigation):
-            i = i + 1
-            if m != e:
-                print "ERROR: expected power class " + str(e) + " for mitigation device #" + str(i) + ", got " + str(m) + " instead."
-
-#  def test(self):
-#      self.sendUpdate()
-#      self.receiveMitigation()
+    return self.simulator.check_mitigation(mitigation)
 
 
 parser = argparse.ArgumentParser(description='Send link node update to central_node_engine server')
 parser.add_argument('--host', metavar='hostname', type=str, nargs=1, help='Central node hostname')
 parser.add_argument('--port', metavar='size', type=int, nargs='?', help='server port (default=4356)')
 parser.add_argument('--debug', metavar='debug', type=int, nargs='?', help='set debug level output (default level 0)')
-parser.add_argument('--device', metavar='device', type=int, nargs='?', help='device id (from database)')
+parser.add_argument('--device', metavar='device', type=int, nargs='?', help='device id (default - test all digital devices)')
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
 
@@ -388,12 +450,15 @@ debug = 0
 if args.debug:
     debug = args.debug
 
-device_id = 1
+device_id = -1
 if args.device:
     device_id = args.device
 
-s = Simulator(args.database[0].name)
+s = Simulator(args.database[0].name, debug)
 t = Tester(s, host, port, debug)
-t.test(device_id)
 
-#t.test()
+if device_id == -1:
+    t.test_all()
+else:
+    t.test(device_id)
+
