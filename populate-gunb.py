@@ -55,10 +55,10 @@ bpm_card = models.ApplicationCard(name="EIC BPM1B/BPM2B", number=101, area="GUNB
                                   global_id=3, description="EIC BPM Status")
 im_card = models.ApplicationCard(name="EIC IM01B", number=102, area="GUNB",
                                  location="MP13", type=eic_analog_app, slot_number=6,
-                                 global_id=4, description="EIC IM Status")
+                                 global_id=0, description="EIC IM Status")
 fc_card = models.ApplicationCard(name="EIC FC01", number=103, area="GUNB",
                                  location="MP14", type=eic_analog_app, slot_number=7,
-                                 global_id=5, description="EIC Faraday Cup Status")
+                                 global_id=6, description="EIC Faraday Cup Status")
 
 crate.cards.append(link_node_card)
 crate.cards.append(sol_card)

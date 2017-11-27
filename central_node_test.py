@@ -62,6 +62,28 @@ class App:
       self.was_low_bits[channel_number] = was_low
       self.was_high_bits[channel_number] = was_high
 
+  # value is has 24 or 32 bits
+  # channel_number is the analog channel index (from 0 to 5)
+  def set_analog_channel_value(self, channel_number, value):
+      was_high = value # threshold fault for high bits
+      was_low = (value ^ 0xFFFFFFFF) # remaining bits are set low
+
+#      print 'set_analog_channel_value: ch={0} val={1:X}'.format(channel_number, value)
+#      print 'low_bits={0}'.format(bin(was_low))
+#      print 'high_bits={0}'.format(bin(was_high))
+
+      channel_offset = channel_number * 32
+      for bit_index in range(0, 32):
+          was_low_bit = was_low & 1
+          was_low = was_low >> 1
+          self.was_low_bits[channel_offset + bit_index] = was_low_bit
+
+          was_high_bit = was_high & 1
+          was_high = was_high >> 1
+          self.was_high_bits[channel_offset + bit_index] = was_high_bit
+
+#      for bit_index in range(0, 32):
+
   def write_digital_devices(self):
       # Look for the devices, find a device_state that is not a fault_state
       # and then translate into digital_channel values
@@ -137,7 +159,10 @@ class Simulator:
   apps=[]
   device_inputs=[]
   digital_device = None
+  analog_device = None
   test_value = 0
+  analog_test_value = []
+  analog_test_value_index = 0
   debug = 0
   highest_app_id = 0
 
@@ -149,8 +174,7 @@ class Simulator:
     apps = self.session.query(models.ApplicationCard).\
         order_by(models.ApplicationCard.global_id.desc())
     self.highest_app_id = apps[0].global_id
-
-    for id in range(0, self.highest_app_id):
+    for id in range(0, self.highest_app_id + 1):
         try:
             app = self.session.query(models.ApplicationCard).\
                 filter(models.ApplicationCard.global_id == id).one()
@@ -162,13 +186,43 @@ class Simulator:
   def __del__(self):
     self.session.close()
 
-  def set_device(self, device_id):
-    try:
-        self.digital_device = self.session.query(models.DigitalDevice).\
-            filter(models.DigitalDevice.id==device_id).one()
-    except:
-        print 'ERROR: Failed to find digital device with id={0}'.format(device_id)
-        exit(1) 
+  def set_device(self, device_id, device_type='digital'):
+    if device_type == 'digital':
+        try:
+            self.digital_device = self.session.query(models.DigitalDevice).\
+                filter(models.DigitalDevice.id==device_id).one()
+        except:
+            print 'ERROR: Failed to find digital device with id={0}'.format(device_id)
+            exit(1) 
+        self.test_value = 0
+    else:
+        try:
+            self.analog_device = self.session.query(models.AnalogDevice).\
+                filter(models.AnalogDevice.id==device_id).one()
+            device_type = self.session.query(models.DeviceType).\
+                filter(models.DeviceType.id==self.analog_device.device_type_id).one()
+        except:
+            print 'ERROR: Failed to find analog device with id={0}'.format(device_id)
+            exit(1) 
+
+        for inp in self.analog_device.fault_outputs:
+            fault = self.session.query(models.Fault).\
+                filter(models.Fault.id==inp.fault_id).one()
+            for s in fault.states:
+                try:
+                    device_state = self.session.query(models.DeviceState).\
+                        filter(models.DeviceState.id==s.device_state_id).one()
+                except:
+                    print 'ERROR: Failed to find device_state'
+                    exit(1)
+
+#                print device_state
+#                print '{0}={1:X}'.format(device_state.name, device_state.value)
+                self.analog_test_value.append({'name':device_state.name,
+                                               'value':device_state.value,
+                                               'fault_state':s})
+
+        self.analog_test_value_index = 0
 
     for index in range(0, len(self.apps)):
         self.apps[index].set_good_state()
@@ -178,29 +232,47 @@ class Simulator:
 
     if self.debug >= 1:
         sys.stdout.write('+'+60*'-'+'+\n')
-        print 'Device {0}'.format(self.digital_device.name)
+        if device_type == 'digital':
+            print 'Device {0}'.format(self.digital_device.name)
+        else:
+            print 'Device {0}'.format(self.analog_device.name)
 
-    self.device_inputs=[]
-    self.device_inputs=list(range(len(self.digital_device.inputs)))
-    for inp in self.digital_device.inputs:
-        channel = self.session.query(models.DigitalChannel).\
-            filter(models.DigitalChannel.id==inp.channel_id).one()
+    if device_type == 'digital':
+        self.device_inputs=[]
+        self.device_inputs=list(range(len(self.digital_device.inputs)))
+        for inp in self.digital_device.inputs:
+            channel = self.session.query(models.DigitalChannel).\
+                filter(models.DigitalChannel.id==inp.channel_id).one()
+            app_index = 0
+            for index in range(0, len(self.apps)):
+                if self.apps[index].get_id() == channel.card_id:
+                    app_index = index
+                index = index + 1
+
+            if inp.bit_position < len(self.device_inputs):
+                self.device_inputs[inp.bit_position]={'input':inp, 'app_index':app_index, 'channel':channel}
+        return self.digital_device.name
+    else:
+        channel = self.session.query(models.AnalogChannel).\
+            filter(models.AnalogChannel.id==self.analog_device.channel_id).one()
         app_index = 0
         for index in range(0, len(self.apps)):
             if self.apps[index].get_id() == channel.card_id:
                 app_index = index
             index = index + 1
-
-        if inp.bit_position < len(self.device_inputs):
-            self.device_inputs[inp.bit_position]={'input':inp, 'app_index':app_index, 'channel':channel}
-
-    self.test_value = 0
-
-    return self.digital_device.name
+        self.device_inputs=[]
+        self.device_inputs.append({'input':None, 'app_index':app_index, 'channel':channel})
+        return channel.name
 
   # Start the device_input possible combinations
   # @return True: continue tests, False: stop test - all combinations tested
   def set_next_state(self):
+      if self.digital_device != None:
+          return self.set_next_digital_state()
+      else:
+          return self.set_next_analog_state()
+
+  def set_next_digital_state(self):
       if self.test_value < 2**len(self.device_inputs):
           if self.debug >= 1:
               sys.stdout.write('Device value    : {:02X}\n'.format(self.test_value))
@@ -229,24 +301,57 @@ class Simulator:
               return True
       return False
 
+  def set_next_analog_state(self):
+      if self.analog_test_value_index >= len(self.analog_test_value):
+          return False
+
+      t = self.analog_test_value[self.analog_test_value_index]
+
+      if self.debug >= 1:
+          sys.stdout.write('Device value    : {:08X}\n'.format(t['value']))
+          sys.stdout.write('Inputs          : ')
+          sys.stdout.write('{0}\n'.format(t['name']))
+
+      self.apps[self.device_inputs[0]['app_index']].\
+          set_analog_channel_value(self.device_inputs[0]['channel'].number,
+                                   self.analog_test_value[self.analog_test_value_index]['value'])
+
+
+      self.write_update_buffer()
+      self.set_expected_mitigation()
+      self.analog_test_value_index = self.analog_test_value_index + 1
+      return True
+
   def set_expected_mitigation(self):
       self.init_expected_mitigation()
 
-      for fault_input in self.digital_device.fault_outputs:
-          fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
+      if self.digital_device != None:
+          for fault_input in self.digital_device.fault_outputs:
+              fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
 
-      for state in fault.states:
-          device_state = self.session.query(models.DeviceState).\
-              filter(models.DeviceState.id==state.device_state_id).one()
-          if self.test_value == device_state.value:
-              for c in state.allowed_classes:
-                  beam_class = self.session.query(models.BeamClass).\
-                      filter(models.BeamClass.id==c.beam_class_id).one()
-                  mitigation_device = self.session.query(models.MitigationDevice).\
-                      filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-            
-                  index = self.mask_to_index(mitigation_device.destination_mask)
-                  self.expected_mitigation[index]=beam_class.number
+          for state in fault.states:
+              device_state = self.session.query(models.DeviceState).\
+                  filter(models.DeviceState.id==state.device_state_id).one()
+              if self.test_value == device_state.value:
+                  for c in state.allowed_classes:
+                      beam_class = self.session.query(models.BeamClass).\
+                          filter(models.BeamClass.id==c.beam_class_id).one()
+                      mitigation_device = self.session.query(models.MitigationDevice).\
+                          filter(models.MitigationDevice.id==c.mitigation_device_id).one()
+
+                      index = self.mask_to_index(mitigation_device.destination_mask)
+                      self.expected_mitigation[index]=beam_class.number
+      else:
+#          print 'huh'
+#          print self.analog_test_value[self.analog_test_value_index]['fault_state'].id
+          for c in self.analog_test_value[self.analog_test_value_index]['fault_state'].allowed_classes:
+              beam_class = self.session.query(models.BeamClass).\
+                  filter(models.BeamClass.id==c.beam_class_id).one()
+              mitigation_device = self.session.query(models.MitigationDevice).\
+                  filter(models.MitigationDevice.id==c.mitigation_device_id).one()
+              
+              index = self.mask_to_index(mitigation_device.destination_mask)
+              self.expected_mitigation[index]=beam_class.number
 
       if self.debug >= 1:
           self.show_mitigation()
@@ -344,7 +449,7 @@ class Simulator:
     update_buffer = bytearray() 
     self.update_buffer = header
 
-    for id in range(0, self.highest_app_id):
+    for id in range(0, self.highest_app_id + 1):
         self.update_buffer = self.update_buffer + self.apps[id].get_data()
 
   def get_all_devices(self):
@@ -375,9 +480,9 @@ class Tester:
       for device in devices:
           self.test(device.id)
 
-  def test(self, device_id):
+  def test(self, device_id, device_type='digital'):
       passed = True
-      device_name = self.simulator.set_device(device_id)
+      device_name = self.simulator.set_device(device_id, device_type)
 
       if self.debug >= 1:
           sys.stdout.write('+'+60*'-'+'+\n')
@@ -432,6 +537,8 @@ parser.add_argument('--host', metavar='hostname', type=str, nargs=1, help='Centr
 parser.add_argument('--port', metavar='size', type=int, nargs='?', help='server port (default=4356)')
 parser.add_argument('--debug', metavar='debug', type=int, nargs='?', help='set debug level output (default level 0)')
 parser.add_argument('--device', metavar='device', type=int, nargs='?', help='device id (default - test all digital devices)')
+parser.add_argument('--analog', action="store_true", help='analog device')
+
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
 
@@ -454,11 +561,15 @@ device_id = -1
 if args.device:
     device_id = args.device
 
+device_type = 'digital'
+if args.analog:
+    device_type = 'analog'
+
 s = Simulator(args.database[0].name, debug)
 t = Tester(s, host, port, debug)
 
 if device_id == -1:
     t.test_all()
 else:
-    t.test(device_id)
+    t.test(device_id, device_type)
 
