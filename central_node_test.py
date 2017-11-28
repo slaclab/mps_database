@@ -6,6 +6,7 @@ import sys
 import os
 import argparse
 import time
+import subprocess
 
 class App:
   app=None
@@ -455,6 +456,15 @@ class Simulator:
   def get_all_devices(self):
       return self.session.query(models.DigitalDevice).all()
 
+  def get_md5sum(self):
+      cmd = "md5sum {0}".format(self.databaseFileName)
+      process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+      md5sum_output, error = process.communicate()
+      md5sum_tokens = md5sum_output.split()
+      md5sum = md5sum_tokens[0].strip()
+
+      return md5sum
+
 class Tester:
   simulator = None
   sock = None
@@ -473,6 +483,41 @@ class Tester:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     except socket.error:
         print 'Failed to create socket'
+        sys.exit()
+
+  def get_database_info(self):
+      request = bytearray(['I', 'N', 'F', 'O', '?'])
+      try:
+          self.sock.sendto(request, (self.host, self.port))
+
+      except socket.error, msg:
+        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+        print 'Failed to send database info request message'
+        sys.exit()
+
+      try:
+        database_info, addr = self.sock.recvfrom(128+64+64+64)
+        source = str(database_info[0:127])
+        date = str(database_info[128:191])
+        user = str(database_info[192:255])
+        md5sum = str(database_info[256:288])
+                           
+        print 'Central Node Database Info:'
+        print 'Source: {0}'.format(source)
+        print 'Date: {0}'.format(date)
+        print 'User: {0}'.format(user)
+        print 'md5sum: {0}'.format(md5sum)
+
+        db_md5sum = self.simulator.get_md5sum()
+        if (db_md5sum != md5sum):
+            print 'ERROR: Mismatched database md5sum:'
+            print 'Test database  : {0}'.format(md5sum)
+            print 'Server database: {0}'.format(db_md5sum)
+            sys.exit()
+
+      except socket.error, msg:
+        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+        print 'Failed to receive database info message'
         sys.exit()
 
   def test_all(self):
@@ -567,6 +612,8 @@ if args.analog:
 
 s = Simulator(args.database[0].name, debug)
 t = Tester(s, host, port, debug)
+
+t.get_database_info()
 
 if device_id == -1:
     t.test_all()
