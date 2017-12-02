@@ -368,7 +368,7 @@ class Exporter:
 
     self.docbook.para('Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}"/>" table are defined in this database.'.format(fault.name, fault.id))
 
-    self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}"/>" lists the PVs that should be changed to test the faults. Set the LOLO/HIHI PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id))
+    self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}"/>" lists the PVs that should be changed to test the faults. Set the LOW/HIGH PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id))
 
     # Fault Checkout Table
     table_name = '{0} Fault Checkout'.format(fault.name)
@@ -404,7 +404,7 @@ class Exporter:
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       row.append('{0} (Low)'.format(deviceState.name))
-      row.append('{0}_LOLO'.format(thresholdPv))
+      row.append('{0}_L'.format(thresholdPv))
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
       for key in mitDevices:
@@ -417,7 +417,7 @@ class Exporter:
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       row.append('{0} (High)'.format(deviceState.name))
-      row.append('{0}_HIHI'.format(thresholdPv))
+      row.append('{0}_H'.format(thresholdPv))
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
       for key in mitDevices:

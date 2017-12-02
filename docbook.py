@@ -7,6 +7,8 @@ class DocBook:
     tableHeaderColor='<?dbhtml bgcolor="#EE6060" ?><?dbfo bgcolor="#EE6060" ?>'
     tableRowColor=  ['<?dbhtml bgcolor="#EEEEEE" ?><?dbfo bgcolor="#EEEEEE" ?>',
                      '<?dbhtml bgcolor="#DDDDDD" ?><?dbfo bgcolor="#DDDDDD" ?>']
+    tableRedColor='<?dbhtml bgcolor="#FF8888" ?><?dbfo bgcolor="#FF8888" ?>'
+    tableGreenColor='<?dbhtml bgcolor="#88FF88" ?><?dbfo bgcolor="#88FF88" ?>'
 
     def __init__(self, file_name):
         self.file_name = file_name
@@ -40,6 +42,32 @@ class DocBook:
 
         cmd = '\rm {0}.fo'.format(self.file_name.split(".")[0])
         os.system(cmd)
+        
+    def getAuthor(self):
+        proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
+        user = proc.stdout.readline().rstrip()
+        email = ""
+        name = ""
+        first_name = "unknown"
+        last_name = "unknown"
+        proc = subprocess.Popen(['person', '-tag', '-search', 'email', user], stdout=subprocess.PIPE)
+        while True:
+          line = proc.stdout.readline()
+          if line != '':
+            if line.startswith("email") and email == "":
+              email = line.split(':')[1].rstrip() + "@slac.stanford.edu"
+            elif line.startswith("name") and name == "":
+              name = line.split(':')[1].rstrip()
+              first_name = name.split(', ')[1]
+              last_name = name.split(', ')[0]
+          else:
+            break
+
+        return [user, email, first_name, last_name]
+
+    def writeHeaderAuthor(self, title):
+        info = self.getAuthor()
+        self.writeHeader(title, info[2], info[3])
 
     def writeHeader(self, title, first_name, last_name):
         self.f.write('<article xmlns="http://docbook.org/ns/docbook" version="5.0">\n')
@@ -68,12 +96,17 @@ class DocBook:
     def para(self, text):
         self.f.write('<para>{0}</para>\n'.format(text))
 
-    def table(self, title, cols, header, rows, table_id):
+    def table(self, title, cols, header, rows, table_id, color='gray'):
         if table_id != None:
             self.f.write('<table id="{0}" xreflabel="{1}">\n'.format(table_id, title))
         else:
-            self.f.write('<table xreflabel="{0}">\n'.format(title))
-        self.f.write('<title>{0}</title>\n'.format(title))
+            if title != None:
+                self.f.write('<table xreflabel="{0}">\n'.format(title))
+            else:
+                self.f.write('<table>\n')
+            
+        if title != None:
+            self.f.write('<title>{0}</title>\n'.format(title))
         self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(len(cols)))
 
         for i in range(0, len(cols)):
@@ -95,8 +128,22 @@ class DocBook:
 
         self.f.write('<tbody>\n')
         for i in range(0, len(rows)):
-            self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+            if color == 'gray':
+                if len(rows[i]) > len(cols):
+                    if rows[i][len(rows[i])-1] == 'red':
+                        self.f.write('<row>{0}\n'.format(self.tableRedColor))
+                    elif rows[i][len(rows[i])-1] == 'green':
+                        self.f.write('<row>{0}\n'.format(self.tableGreenColor))
+                    else:
+                        self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+                else:
+                    self.f.write('<row>{0}\n'.format(self.tableRowColor[rowIndex%2]))
+            elif color == 'red':
+                self.f.write('<row>{0}\n'.format(self.tableRedColor))
+            else:
+                self.f.write('<row>{0}\n'.format(self.tableGreenColor))
             rowIndex=rowIndex+1
+
             for j in range(0, len(cols)):
                 self.f.write('  <entry>{0}</entry>\n'.format(rows[i][j]))
             self.f.write('</row>\n')        

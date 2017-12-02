@@ -7,6 +7,7 @@ import os
 import argparse
 import time
 import subprocess
+from docbook import DocBook
 
 class App:
   app=None
@@ -166,8 +167,14 @@ class Simulator:
   analog_test_value_index = 0
   debug = 0
   highest_app_id = 0
+  docbook = None
+  cols=[]
+  header=None
+  rows=[]
+  test_counter=0
 
-  def __init__(self, dbFileName, debug):
+  def __init__(self, dbFileName, debug, docbook):
+    self.docbook = docbook
     self.databaseFileName = dbFileName
     mps = MPSConfig(args.database[0].name)
     self.session = mps.session
@@ -189,6 +196,7 @@ class Simulator:
 
   def set_device(self, device_id, device_type='digital'):
     if device_type == 'digital':
+        self.analog_device = None
         try:
             self.digital_device = self.session.query(models.DigitalDevice).\
                 filter(models.DigitalDevice.id==device_id).one()
@@ -197,6 +205,7 @@ class Simulator:
             exit(1) 
         self.test_value = 0
     else:
+        self.digital_device = None
         try:
             self.analog_device = self.session.query(models.AnalogDevice).\
                 filter(models.AnalogDevice.id==device_id).one()
@@ -205,6 +214,8 @@ class Simulator:
         except:
             print 'ERROR: Failed to find analog device with id={0}'.format(device_id)
             exit(1) 
+
+        self.analog_test_value = []
 
         for inp in self.analog_device.fault_outputs:
             fault = self.session.query(models.Fault).\
@@ -231,12 +242,18 @@ class Simulator:
     self.write_update_buffer()
     self.init_expected_mitigation()
 
+    if device_type == 'digital':
+        name = self.digital_device.name
+    else:
+        name = self.analog_device.name
+        
+    if self.docbook != None:
+        self.docbook.openSection('Device {0}'.format(name), name)
+        self.docbook.closeSection()
+
     if self.debug >= 1:
         sys.stdout.write('+'+60*'-'+'+\n')
-        if device_type == 'digital':
-            print 'Device {0}'.format(self.digital_device.name)
-        else:
-            print 'Device {0}'.format(self.analog_device.name)
+        print 'Device {0}'.format(name)
 
     if device_type == 'digital':
         self.device_inputs=[]
@@ -252,7 +269,7 @@ class Simulator:
 
             if inp.bit_position < len(self.device_inputs):
                 self.device_inputs[inp.bit_position]={'input':inp, 'app_index':app_index, 'channel':channel}
-        return self.digital_device.name
+        return [self.digital_device.name, None]
     else:
         channel = self.session.query(models.AnalogChannel).\
             filter(models.AnalogChannel.id==self.analog_device.channel_id).one()
@@ -263,22 +280,33 @@ class Simulator:
             index = index + 1
         self.device_inputs=[]
         self.device_inputs.append({'input':None, 'app_index':app_index, 'channel':channel})
-        return channel.name
+        return [self.analog_device.name, channel.name]
 
   # Start the device_input possible combinations
   # @return True: continue tests, False: stop test - all combinations tested
-  def set_next_state(self):
-      if self.digital_device != None:
+  def set_next_state(self, device_type = 'digital'):
+      self.test_counter = self.test_counter + 1
+
+      self.cols=[{'name':'c1', 'width':'0.5*'},
+                 {'name':'c2', 'width':'0.5*'}]
+
+#      print self.digital_device
+      if device_type == 'digital':
           return self.set_next_digital_state()
       else:
           return self.set_next_analog_state()
 
   def set_next_digital_state(self):
       if self.test_value < 2**len(self.device_inputs):
+
+          self.rows=[]
+          self.rows.append(['Device value','{:02X}\n'.format(self.test_value)])
+
           if self.debug >= 1:
               sys.stdout.write('Device value    : {:02X}\n'.format(self.test_value))
               sys.stdout.write('Inputs          : ')
 
+          row_text = ''
           for d in range(0, len(self.device_inputs)):
               if (self.test_value >> d) & 1:
                   bit_value = 1
@@ -288,8 +316,13 @@ class Simulator:
               self.apps[self.device_inputs[d]['app_index']].\
                   set_channel_value(self.device_inputs[d]['channel'].number, bit_value);
 
+              text = '{0}={1:01X} '.format(self.device_inputs[d]['channel'].name, bit_value)
+              row_text = row_text + text
               if self.debug >= 1:
-                  sys.stdout.write('{0}={1:01X} '.format(self.device_inputs[d]['channel'].name, bit_value))
+                  sys.stdout.write(text)
+
+          self.rows.append(['Inputs', row_text])
+ 
           if self.debug >=1:
               sys.stdout.write('\n')
 
@@ -307,6 +340,10 @@ class Simulator:
           return False
 
       t = self.analog_test_value[self.analog_test_value_index]
+
+      self.rows=[]
+      self.rows.append(['Device value','{:08X}'.format(t['value'])])
+      self.rows.append(['Inputs',t['name']])
 
       if self.debug >= 1:
           sys.stdout.write('Device value    : {:08X}\n'.format(t['value']))
@@ -330,10 +367,15 @@ class Simulator:
           for fault_input in self.digital_device.fault_outputs:
               fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
 
+          row=['Device Fault State', 'None']
+          self.test_name = 'No Fault'
           for state in fault.states:
               device_state = self.session.query(models.DeviceState).\
                   filter(models.DeviceState.id==state.device_state_id).one()
               if self.test_value == device_state.value:
+                  self.test_name = device_state.name
+                  self.docbook.para(self.test_name)
+                  row=['Device Fault State', self.test_name]
                   for c in state.allowed_classes:
                       beam_class = self.session.query(models.BeamClass).\
                           filter(models.BeamClass.id==c.beam_class_id).one()
@@ -342,9 +384,10 @@ class Simulator:
 
                       index = self.mask_to_index(mitigation_device.destination_mask)
                       self.expected_mitigation[index]=beam_class.number
+          self.rows.append(row)
       else:
-#          print 'huh'
-#          print self.analog_test_value[self.analog_test_value_index]['fault_state'].id
+          self.test_name = self.analog_test_value[self.analog_test_value_index]['name']
+          row=['Device Fault State', self.test_name]
           for c in self.analog_test_value[self.analog_test_value_index]['fault_state'].allowed_classes:
               beam_class = self.session.query(models.BeamClass).\
                   filter(models.BeamClass.id==c.beam_class_id).one()
@@ -353,28 +396,45 @@ class Simulator:
               
               index = self.mask_to_index(mitigation_device.destination_mask)
               self.expected_mitigation[index]=beam_class.number
+          self.rows.append(row)
 
-      if self.debug >= 1:
-          self.show_mitigation()
+      self.show_mitigation()
 
-  def check_mitigation(self, mitigation):
+  def check_mitigation(self, mitigation, device_type):
     passed = True
 
+    row_text = ''
     if self.debug >= 1:
         sys.stdout.write('Recvd Mitigation: ')
-        for i in range(0, len(self.mitigation_devices)):
-            if self.mitigation_devices[i] != None:
-                sys.stdout.write('{0}={1} '.format(self.mitigation_devices[i].name,
-                                                   mitigation[i]))
+        
+    for i in range(0, len(self.mitigation_devices)):
+        if self.mitigation_devices[i] != None:
+            text = '{0}={1} '.format(self.mitigation_devices[i].name,
+                                     mitigation[i])
+            row_text = row_text + text
+            if self.debug >= 1:
+                sys.stdout.write(text)
+                
+    self.rows.append(['Recvd Mitigation', row_text])
+
+    if self.debug >= 1:
         sys.stdout.write('\n')
 
+    if device_type == 'digital':
+        table_name = self.digital_device.name + ": " + self.test_name
+        table_id = 'device.{0}.{1}'.format(self.digital_device.id, self.test_counter)
+    else:
+        table_name = self.analog_device.name + ' ' + str(self.analog_test_value[self.analog_test_value_index-1]['name'])
+        table_id = 'device.{0}.{1}'.format(self.analog_device.id, self.test_counter)
+
+    if self.docbook != None:
+        self.docbook.table(table_name, self.cols, None, self.rows, table_id)
 
     if mitigation != self.expected_mitigation:
         i = 0
         for m, e in zip(mitigation, self.expected_mitigation):
             i = i + 1
             if m != e:
-#                print "ERROR: expected power class " + str(e) + " for mitigation device #" + str(i) + ", got " + str(m) + " instead."
                 passed = False
     return passed
 
@@ -416,14 +476,21 @@ class Simulator:
       return index
 
   def show_mitigation(self):
-      sys.stdout.write('Mitigation      : ')
+      if self.debug >= 1:
+          sys.stdout.write('Mitigation      : ')
 
+      row_text = ''
       for index in range(0, len(self.mitigation_devices)):
           if self.mitigation_devices[index] != None:
-              sys.stdout.write('{0}={1} '.format(self.mitigation_devices[index].name,
-                                                 self.expected_mitigation[index]))
+              text = '{0}={1} '.format(self.mitigation_devices[index].name,
+                                       self.expected_mitigation[index])
+              row_text = row_text + text
+              if self.debug >= 1:
+                  sys.stdout.write(text)
+      self.rows.append(['Mitigation',row_text])
 
-      sys.stdout.write('\n')
+      if self.debug >= 1:
+          sys.stdout.write('\n')
 
   def init_expected_mitigation(self):
       beam_classes = self.session.query(models.BeamClass).\
@@ -456,6 +523,9 @@ class Simulator:
   def get_all_devices(self):
       return self.session.query(models.DigitalDevice).all()
 
+  def get_all_analog_devices(self):
+      return self.session.query(models.AnalogDevice).all()
+
   def get_md5sum(self):
       cmd = "md5sum {0}".format(self.databaseFileName)
       process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
@@ -471,12 +541,15 @@ class Tester:
   host = None
   port = None
   debug = 0
+  docbook = None
+  resultRows=[]
 
-  def __init__(self, simulator, host, port, debug):
+  def __init__(self, simulator, host, port, debug, docbook):
     self.simulator = simulator
     self.host = host
     self.port = port
     self.debug = debug
+    self.docbook = docbook
 
     # create dgram udp socket
     try:
@@ -484,6 +557,14 @@ class Tester:
     except socket.error:
         print 'Failed to create socket'
         sys.exit()
+
+    if self.docbook != None:
+        self.docbook.writeHeaderAuthor("Test Report")
+
+  def __del__(self):
+      if self.docbook != None:
+          self.docbook.writeFooter()
+          self.docbook.exportPdf()
 
   def get_database_info(self):
       request = bytearray(['I', 'N', 'F', 'O', '?'])
@@ -520,30 +601,60 @@ class Tester:
         print 'Failed to receive database info message'
         sys.exit()
 
+      if self.docbook != None:
+          test_date = time.asctime(time.localtime(time.time()))
+          self.docbook.openSection('Test Information')
+          self.cols=[{'name':'c1', 'width':'0.25*'},
+                     {'name':'c2', 'width':'0.75*'}]
+          self.rows=[]
+          self.rows.append(['Db Source',source.strip('\0')])
+          self.rows.append(['Db Date', date.strip('\0')])
+          self.rows.append(['Db User', user.strip('\0')])
+          self.rows.append(['Db md5sum', md5sum.strip('\0')])
+          self.rows.append(['Test Date', test_date])
+          self.rows.append(['Central Node Host', self.host])
+          self.rows.append(['Central Node Port', self.port])
+          self.docbook.table('Test Information', self.cols, None, self.rows, 'info')
+          self.docbook.closeSection()
+
   def test_all(self):
       devices = self.simulator.get_all_devices()
       for device in devices:
           self.test(device.id)
 
+      devices = self.simulator.get_all_analog_devices()
+      self.digital_device = None
+      for device in devices:
+          self.test(device.id, 'analog')
+
   def test(self, device_id, device_type='digital'):
       passed = True
-      device_name = self.simulator.set_device(device_id, device_type)
+      [device_name, channel_name] = self.simulator.set_device(device_id, device_type)
+      self.test_counter = 0
 
       if self.debug >= 1:
           sys.stdout.write('+'+60*'-'+'+\n')
-
-      while self.simulator.set_next_state():
+      
+      while self.simulator.set_next_state(device_type):
           if self.debug > 2:
               self.simulator.dump_update_buffer()
           self.sendUpdate()
-          if not self.receiveMitigation():
+          if not self.receiveMitigation(device_type):
               passed = False
           if self.debug >= 1:
               sys.stdout.write('+'+60*'-'+'+\n')
       
       if passed:
+          self.rows=[]
+          self.rows.append(['Result','PASSED'])
+          self.resultRows.append(['<link linkend=\'{0}\'>{0}</link>'.format(device_name), 'PASSED', 'green'])
+          self.docbook.table('Result', self.cols, None, self.rows, None, 'green')
           print '{0} PASSED'.format(device_name)
       else:
+          self.rows=[]
+          self.rows.append(['Result','FAILED'])
+          self.resultRows.append(['<link linkend=\'{0}\'>{0}</link>'.format(device_name), 'FAILED', 'red'])
+          self.docbook.table('Result', self.cols, None, self.rows, None, 'red')
           print '{0} FAILED'.format(device_name)
 
   def sendUpdate(self):
@@ -557,7 +668,7 @@ class Tester:
         print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
         sys.exit()
 
-  def receiveMitigation(self):
+  def receiveMitigation(self, device_type):
     expectedMitigation = self.simulator.get_expected_mitigation()
 
     try:
@@ -574,8 +685,14 @@ class Tester:
         mitigation.append(x & 0xF)
         mitigation.append((x >> 4) & 0xF) 
 
-    return self.simulator.check_mitigation(mitigation)
+    return self.simulator.check_mitigation(mitigation, device_type)
 
+  def writeResults(self):
+      self.docbook.openSection('Results')
+      header=[{'name':'Device', 'namest':None, 'nameend':None},
+              {'name':'Result', 'namest':None, 'nameend':None}]
+      self.docbook.table('Test Results', self.cols, header, self.resultRows, 'result')
+      self.docbook.closeSection()
 
 parser = argparse.ArgumentParser(description='Send link node update to central_node_engine server')
 parser.add_argument('--host', metavar='hostname', type=str, nargs=1, help='Central node hostname')
@@ -583,6 +700,7 @@ parser.add_argument('--port', metavar='size', type=int, nargs='?', help='server 
 parser.add_argument('--debug', metavar='debug', type=int, nargs='?', help='set debug level output (default level 0)')
 parser.add_argument('--device', metavar='device', type=int, nargs='?', help='device id (default - test all digital devices)')
 parser.add_argument('--analog', action="store_true", help='analog device')
+parser.add_argument('--report', action="store_true", help='generate pdf report')
 
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
@@ -610,8 +728,13 @@ device_type = 'digital'
 if args.analog:
     device_type = 'analog'
 
-s = Simulator(args.database[0].name, debug)
-t = Tester(s, host, port, debug)
+docbook = None
+if args.report:
+    report = True
+    docbook = DocBook('{0}-report.xml'.format(args.database[0].name.split('.')[0]))
+
+s = Simulator(args.database[0].name, debug, docbook)
+t = Tester(s, host, port, debug, docbook)
 
 t.get_database_info()
 
@@ -619,4 +742,6 @@ if device_id == -1:
     t.test_all()
 else:
     t.test(device_id, device_type)
+
+t.writeResults()
 
