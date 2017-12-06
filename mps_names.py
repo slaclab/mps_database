@@ -77,3 +77,21 @@ class MpsName:
             base = self.getAnalogDeviceName(device)
 
         return base + ":" + fault.name + "_FLT"
+
+    #
+    # Figure out the PV base name for the Link Node, given a crate_id. There is
+    # one Link Node IOC per ATCA crate. The PV base name is:
+    #
+    #   MPLN:<LOCA>:MP<NUM>
+    #
+    # where:
+    #   LOCA: is the sector where the crate is installed (e.g. LI00, LI10, LTU...)
+    #   NUM: index of the Link Node within LOCA (following LCLS-I convention)
+    #        example, for LI01 sector there are four crates:
+    #        L2KG01-1925 -> MPLN:LI01:MP01 (lowest elevation within rack)
+    #        L2KG01-1931 -> MPLN:LI01:MP02
+    #        L2KG01-1937 -> MPLN:LI01:MP03 (highest elevation within rack)
+    #        L2KG01-2037 -> MPLN:LI01:MP11
+    #
+    def getLinkNodePv(self, crate_id):
+        return "MPLN:LI00:MP01"

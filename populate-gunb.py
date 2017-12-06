@@ -27,7 +27,7 @@ session.add_all([class_0, class_1, class_2])
 
 # EIC Link Node - L2KA00-05 (Level 17)
 # Make a crate for BPMs, and for the mitigation LN
-crate = models.Crate(number=1, shelf_number=1, num_slots=8, location="L2KA00", rack="05", elevation=17)
+crate = models.Crate(number=1, shelf_number=1, num_slots=8, location="L2KA00", sector="LI00", rack="05", elevation=17)
 session.add_all([crate])
 
 #Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)
