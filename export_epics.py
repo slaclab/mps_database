@@ -451,7 +451,7 @@ def exportApps(file, apps, session):
     crate = session.query(models.Crate).filter(models.Crate.id==app.crate_id).one()
 #    name = mpsName.getFaultName(fault)
     fields=[]
-    fields.append(('DESC', '{0} [{1}-{2}{3} S{4}]'.format(app.name, crate.location, crate.rack, crate.elevation, app.slot_number)))
+    fields.append(('DESC', '{0} [{1}-{2}{3} S{4} ID{5}]'.format(app.name, crate.location, crate.rack, crate.elevation, app.slot_number, app.global_id)))
     fields.append(('DTYP', 'asynUInt32Digital'))
     fields.append(('SCAN', '1 second'))
     fields.append(('ZNAM', 'OFFLINE'))

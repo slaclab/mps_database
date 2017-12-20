@@ -28,7 +28,7 @@ class DocBook:
         cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(self.file_name.split(".")[0])
         os.system(cmd)
 
-        cmd = '\rm {0}.fo'.format(self.file_name.split(".")[0])
+        cmd = 'rm {0}.fo'.format(self.file_name.split(".")[0])
         os.system(cmd)
 
     def exportRtf(self):

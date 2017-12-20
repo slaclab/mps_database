@@ -15,6 +15,8 @@ class App:
   was_high_bits=bytearray()
   is_digital=True
   session=None
+  num_integrators=1
+  app_type=None
 
   def __init__(self, app, session):
       self.app = app
@@ -23,13 +25,40 @@ class App:
       if app != None:
           appType = self.session.query(models.ApplicationType).\
               filter(models.ApplicationType.id==app.type_id).one()
+          self.app_type = appType
 
           if appType.name == 'Digital Card':
               self.is_digital = True
           else:
               self.is_digital = False
+              id = app.analog_channels[0].analog_device.device_type_id
+              device_type = self.session.query(models.DeviceType).\
+                  filter(models.DeviceType.id==id).one()
+              self.num_integrators = device_type.num_integrators
+#              print appType.name + " " + str(appType.number) + " " + str(app.number)
+#              print "Integrators: " + str(self.num_integrators)
 
           self.set_good_state()
+
+  def get_integrator(self, value):
+    if value < 0x100:
+      return 0
+    elif value < 0x10000:
+      return 1
+    elif value < 0x1000000:
+      return 2
+    else:
+      return 3
+
+  def get_integrator_value(self, integrator, value):
+    if integrator == 0:
+      return value & 0xFF
+    elif integrator == 1:
+      return (value >> 8) & 0xFF
+    elif integrator == 2:
+      return (value >> 16) & 0xFF
+    else:
+      return (value >> 24) & 0xFF
 
   def set_good_state(self):
       if self.is_digital:
@@ -67,24 +96,28 @@ class App:
   # value is has 24 or 32 bits
   # channel_number is the analog channel index (from 0 to 5)
   def set_analog_channel_value(self, channel_number, value):
-      was_high = value # threshold fault for high bits
-      was_low = (value ^ 0xFFFFFFFF) # remaining bits are set low
+      integrator_index = self.get_integrator(value) # return value from 0 to 3
+      actual_value = self.get_integrator_value(integrator_index, value)
+#      print "Integrator: {0}; Value: {1:X}; Full: {2:X}".format(integrator_index, actual_value, value)
 
-#      print 'set_analog_channel_value: ch={0} val={1:X}'.format(channel_number, value)
-#      print 'low_bits={0}'.format(bin(was_low))
-#      print 'high_bits={0}'.format(bin(was_high))
+      for i in range(0, 4): # loop over 4 max possible integrators 
+        if i == integrator_index:
+          was_high = actual_value # threshold fault for high bits
+          was_low = (actual_value ^ 0xFF) # remaining bits are set low
+        else:
+          was_high = 0
+          was_low = 0xFF
 
-      channel_offset = channel_number * 32
-      for bit_index in range(0, 32):
+        integrator_offset = self.app_type.analog_channel_count * 8 * i
+#        print "Offset={0}".format(integrator_offset)
+        for bit_index in range(0, 8): # set the 8-bits for the current integrator
           was_low_bit = was_low & 1
           was_low = was_low >> 1
-          self.was_low_bits[channel_offset + bit_index] = was_low_bit
+          self.was_low_bits[integrator_offset + bit_index] = was_low_bit
 
           was_high_bit = was_high & 1
           was_high = was_high >> 1
-          self.was_high_bits[channel_offset + bit_index] = was_high_bit
-
-#      for bit_index in range(0, 32):
+          self.was_high_bits[integrator_offset + bit_index] = was_high_bit
 
   def write_digital_devices(self):
       # Look for the devices, find a device_state that is not a fault_state
@@ -228,7 +261,7 @@ class Simulator:
                     print 'ERROR: Failed to find device_state'
                     exit(1)
 
-#                print device_state
+#                print ">>>> DeviceState: " + device_state.name
 #                print '{0}={1:X}'.format(device_state.name, device_state.value)
                 self.analog_test_value.append({'name':device_state.name,
                                                'value':device_state.value,
@@ -244,11 +277,13 @@ class Simulator:
 
     if device_type == 'digital':
         name = self.digital_device.name
+        device_id = self.digital_device.id
     else:
         name = self.analog_device.name
+        device_id = self.analog_device.id
         
     if self.docbook != None:
-        self.docbook.openSection('Device {0}'.format(name), name)
+        self.docbook.openSection('Device {0} [id={1}]'.format(name, device_id), name)
         self.docbook.closeSection()
 
     if self.debug >= 1:
@@ -374,7 +409,6 @@ class Simulator:
                   filter(models.DeviceState.id==state.device_state_id).one()
               if self.test_value == device_state.value:
                   self.test_name = device_state.name
-                  self.docbook.para(self.test_name)
                   row=['Device Fault State', self.test_name]
                   for c in state.allowed_classes:
                       beam_class = self.session.query(models.BeamClass).\
@@ -648,13 +682,15 @@ class Tester:
           self.rows=[]
           self.rows.append(['Result','PASSED'])
           self.resultRows.append(['<link linkend=\'{0}\'>{0}</link>'.format(device_name), 'PASSED', 'green'])
-          self.docbook.table('Result', self.cols, None, self.rows, None, 'green')
+          if self.docbook != None:
+              self.docbook.table('Result', self.cols, None, self.rows, None, 'green')
           print '{0} PASSED'.format(device_name)
       else:
           self.rows=[]
           self.rows.append(['Result','FAILED'])
           self.resultRows.append(['<link linkend=\'{0}\'>{0}</link>'.format(device_name), 'FAILED', 'red'])
-          self.docbook.table('Result', self.cols, None, self.rows, None, 'red')
+          if self.docbook != None:
+              self.docbook.table('Result', self.cols, None, self.rows, None, 'red')
           print '{0} FAILED'.format(device_name)
 
   def sendUpdate(self):
@@ -662,12 +698,11 @@ class Tester:
 
     try:
         self.sock.sendto(appdata, (self.host, self.port))
-#        print 'Update sent.'
 
     except socket.error, msg:
         print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
         sys.exit()
-
+      
   def receiveMitigation(self, device_type):
     expectedMitigation = self.simulator.get_expected_mitigation()
 
@@ -679,8 +714,10 @@ class Tester:
         sys.exit()
 
     a = bytearray(data)
+
     mitIndex = 0;
-    mitigation = bytearray()
+    mitigation = []
+
     for x in a:
         mitigation.append(x & 0xF)
         mitigation.append((x >> 4) & 0xF) 
@@ -688,11 +725,12 @@ class Tester:
     return self.simulator.check_mitigation(mitigation, device_type)
 
   def writeResults(self):
-      self.docbook.openSection('Results')
-      header=[{'name':'Device', 'namest':None, 'nameend':None},
-              {'name':'Result', 'namest':None, 'nameend':None}]
-      self.docbook.table('Test Results', self.cols, header, self.resultRows, 'result')
-      self.docbook.closeSection()
+      if self.docbook != None:
+          self.docbook.openSection('Results')
+          header=[{'name':'Device', 'namest':None, 'nameend':None},
+                  {'name':'Result', 'namest':None, 'nameend':None}]
+          self.docbook.table('Test Results', self.cols, header, self.resultRows, 'result')
+          self.docbook.closeSection()
 
 parser = argparse.ArgumentParser(description='Send link node update to central_node_engine server')
 parser.add_argument('--host', metavar='hostname', type=str, nargs=1, help='Central node hostname')
