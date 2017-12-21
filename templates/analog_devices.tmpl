@@ -8,7 +8,7 @@ minor 0
 release 1
 x 153
 y 179
-w 800
+w 915
 h $WINDOW_HEIGHT
 font "helvetica-medium-r-10.0"
 ctlFont "helvetica-medium-r-10.0"
@@ -36,7 +36,7 @@ minor 0
 release 0
 x 16
 y 20
-w 772
+w 880
 h $BOX_HEIGHT
 lineColor index 3
 fill
@@ -219,6 +219,26 @@ bgColor index 4
 useDisplayBg
 value {
   "Bypass Status"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 780
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Ignored?"
 }
 endObjectProperties
 
@@ -476,6 +496,27 @@ setPosition {
 symbols {
   0 "BITPV=$AD_PV[$i],PV=$AD_DEVPV[$i],BYPS=$AD_BYPS[$i],BYPD=$AD_BYPD[$i],BYPT=$AD_BYPT[$i],NAME=$AD_NAME[$i]"
 }
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 790
+y $WIDGET_Y
+w 100
+h 16
+controlPv "$AD_IGN[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
 endObjectProperties
 
 #end for

@@ -463,6 +463,23 @@ def exportApps(file, apps, session):
 
   file.close()
 
+def exportConditions(file, conditions, session):
+  mpsName = MpsName(session)
+  for cond in conditions:
+    name = mpsName.getConditionName(cond)
+    fields=[]
+    fields.append(('DESC', '{0}'.format(cond.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'False'))
+    fields.append(('ONAM', 'True'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_CONDITION'.format(cond.id)))
+    printRecord(file, 'bi', '{0}'.format(name), fields)
+
+  file.close()
+
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
@@ -478,6 +495,8 @@ parser.add_argument('--faults', metavar='file', type=argparse.FileType('w'), nar
                     help='epics template file name for faults (e.g. faults.template)')
 parser.add_argument('--apps', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for application cards (e.g. apps.template)')
+parser.add_argument('--conditions', metavar='file', type=argparse.FileType('w'), nargs='?',
+                    help='epics template file name for ignore conditions (e.g. conditions.template)')
 
 args = parser.parse_args()
 
@@ -500,6 +519,9 @@ if (args.faults):
 
 if (args.apps):
   exportApps(args.apps, session.query(models.ApplicationCard).all(), session)
+
+if (args.conditions):
+  exportConditions(args.conditions, session.query(models.Condition).all(), session)
 
 session.close()
 

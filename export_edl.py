@@ -23,6 +23,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
   latched=[]
   unlatch=[]
   bits=[]
+  ign=[]
 
   bitCounter = 0
   for analogDevice in analogDevices:
@@ -49,6 +50,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
           unlatch.append('{0}:{1}_UNLH'.format(name, state.device_state.name))
           bits.append("0x%0.4X" % 0)#state.mask)
           bitCounter = bitCounter + 1
+          ign.append('{0}:{1}_IGN'.format(name, fa.name))
     
   print "Found " + str(bitCounter) + " bits."
 
@@ -60,6 +62,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
              'AD_BYPS': byps,
              'AD_BYPD': bypd,
              'AD_BYPT': bypt,
+             'AD_IGN': ign,
              'AD_NAME': names,
              'AD_PV': pvs,
              'AD_DEVPV': pvs, #devpv, # PV of the whole device, not each threshold

@@ -78,6 +78,9 @@ class MpsName:
 
         return base + ":" + fault.name + "_FLT"
 
+    def getConditionName(self, condition):
+        return "$(BASE):" + condition.name.upper() + "_COND"
+
     #
     # Figure out the PV base name for the Link Node, given a crate_id. There is
     # one Link Node IOC per ATCA crate. The PV base name is:
