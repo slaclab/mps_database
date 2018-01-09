@@ -9,6 +9,7 @@ import time
 import subprocess
 from docbook import DocBook
 
+# Simulates a application card update message
 class App:
   app=None
   was_low_bits=bytearray()
@@ -93,12 +94,12 @@ class App:
       self.was_low_bits[channel_number] = was_low
       self.was_high_bits[channel_number] = was_high
 
-  # value is has 24 or 32 bits
+  # value has 24 or 32 bits
   # channel_number is the analog channel index (from 0 to 5)
   def set_analog_channel_value(self, channel_number, value):
       integrator_index = self.get_integrator(value) # return value from 0 to 3
       actual_value = self.get_integrator_value(integrator_index, value)
-#      print "Integrator: {0}; Value: {1:X}; Full: {2:X}".format(integrator_index, actual_value, value)
+#      print "Ch: {3}; Integrator: {0}; Value: {1:X}; Full: {2:X}".format(integrator_index, actual_value, value, channel_number)
 
       for i in range(0, 4): # loop over 4 max possible integrators 
         if i == integrator_index:
@@ -108,7 +109,7 @@ class App:
           was_high = 0
           was_low = 0xFF
 
-        integrator_offset = self.app_type.analog_channel_count * 8 * i
+        integrator_offset = self.app_type.analog_channel_count * 8 * i + 8 * channel_number
 #        print "Offset={0}".format(integrator_offset)
         for bit_index in range(0, 8): # set the 8-bits for the current integrator
           was_low_bit = was_low & 1
@@ -576,14 +577,16 @@ class Tester:
   port = None
   debug = 0
   docbook = None
+  delay = False
   resultRows=[]
 
-  def __init__(self, simulator, host, port, debug, docbook):
+  def __init__(self, simulator, host, port, debug, docbook, delay):
     self.simulator = simulator
     self.host = host
     self.port = port
     self.debug = debug
     self.docbook = docbook
+    self.delay = delay
 
     # create dgram udp socket
     try:
@@ -677,6 +680,8 @@ class Tester:
               passed = False
           if self.debug >= 1:
               sys.stdout.write('+'+60*'-'+'+\n')
+          if self.delay:
+            time.sleep(2)
       
       if passed:
           self.rows=[]
@@ -739,6 +744,7 @@ parser.add_argument('--debug', metavar='debug', type=int, nargs='?', help='set d
 parser.add_argument('--device', metavar='device', type=int, nargs='?', help='device id (default - test all digital devices)')
 parser.add_argument('--analog', action="store_true", help='analog device')
 parser.add_argument('--report', action="store_true", help='generate pdf report')
+parser.add_argument('--delay', action="store_true", help='add 1 second delay between tests')
 
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
@@ -766,13 +772,17 @@ device_type = 'digital'
 if args.analog:
     device_type = 'analog'
 
+delay = False
+if args.delay:
+  delay = True
+
 docbook = None
 if args.report:
     report = True
     docbook = DocBook('{0}-report.xml'.format(args.database[0].name.split('.')[0]))
 
 s = Simulator(args.database[0].name, debug, docbook)
-t = Tester(s, host, port, debug, docbook)
+t = Tester(s, host, port, debug, docbook, delay)
 
 t.get_database_info()
 
