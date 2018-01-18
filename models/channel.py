@@ -2,6 +2,27 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from models import Base
 
+class DigitalOutChannel(Base):
+  """
+  DigitalOutChannnel class (digital_out_channels table)
+  
+  Properties:
+   number: position of this channel in the card - starts at 0. The
+           ApplicationCard checks if there are duplicate numbers and
+           if the number does not exceed the maximum number of channels
+   name: string identification for channel, this is used to compose PVs
+         (e.g. PROF:GUNB:855:IN_LMTSW, where IN_LMTSW is the channel name)
+
+  References:
+   card_id: specifies the card that contains this channel
+  """
+  __tablename__ = 'digital_out_channels'
+  id = Column(Integer, primary_key=True)
+  number = Column(Integer, nullable=False) #NOTE: Channel numbers need to start at 0, not 1.
+  name = Column(String, nullable=False)
+  card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
+  mitigation_devices = relationship("MitigationDevice", backref='digital_out_channel')
+
 class DigitalChannel(Base):
   """
   DigitalChannnel class (digital_channels table)

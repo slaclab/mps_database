@@ -38,13 +38,13 @@ class MpsName:
         
         return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)
 
-    def getMitigationDeviceNameFromId(self, mitigationDeviceId):
-        mitigationDevice = self.session.query(models.MitigationDevice).filter(models.MitigationDevice.id==mitigationDeviceId).one()
+    def getBeamDestinationNameFromId(self, beamDestinationId):
+        beamDestination = self.session.query(models.BeamDestination).filter(models.BeamDestination.id==beamDestinationId).one()
         
-        return self.getMitigationDeviceName(mitigationDevice)
+        return self.getBeamDestinationName(beamDestination)
 
-    def getMitigationDeviceName(self, mitigationDevice):
-        return "$(BASE):" + mitigationDevice.name.upper() + "_PC"
+    def getBeamDestinationName(self, beamDestination):
+        return "$(BASE):" + beamDestination.name.upper() + "_PC"
 
     def getFaultNameFromId(self, faultId):
         fault = self.session.query(models.Fault).filter(models.Fault.id==fauldId).one()

@@ -24,16 +24,16 @@ class FaultState(Base):
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
   device_state_id = Column(Integer, ForeignKey('device_states.id'), nullable=False)
 
-  def add_allowed_class(self, beam_class, mitigation_device):
+  def add_allowed_class(self, beam_class, beam_destination):
     ac = AllowedClass()
     ac.beam_class = beam_class
-    ac.mitigation_device = mitigation_device
+    ac.beam_destination = beam_destination
     self.allowed_classes.append(ac)
     return ac
   
-  def add_allowed_classes(self, beam_classes, mitigation_device):
+  def add_allowed_classes(self, beam_classes, beam_destination):
     acs = []
     for c in beam_classes:
-      acs.append(self.add_allowed_class(c, mitigation_device))
+      acs.append(self.add_allowed_class(c, beam_destination))
     return acs
 

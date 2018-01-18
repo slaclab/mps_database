@@ -10,12 +10,13 @@ class MitigationDevice(Base):
     name: mitigation device name (e.g. AOM)
     description:
     
-  Relationships:
-    allowed_classes: list of AllowedClasses for this mitigation device
+  References:
+    beam_destination_id: beam destination for this mitigation device
+    channel_id: digital_out_channel connected to the mitigation device
   """
   __tablename__ = 'mitigation_devices'
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False, unique=True)
   description = Column(String, nullable=False)
-  destination_mask = Column(Integer, nullable=False, unique=True)
-  allowed_classes = relationship("AllowedClass", backref='mitigation_device')
+  beam_destination_id = Column(Integer, ForeignKey('beam_destinations.id'), nullable=False)
+  digital_out_channel_id = Column(Integer, ForeignKey('digital_out_channels.id'), nullable=False)

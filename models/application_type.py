@@ -22,6 +22,8 @@ class ApplicationType(Base):
    analog_channel_size: number of bits used by each analog channel
    digital_channel_count: number of digital channels
    digital_channel_size: number of bits used by each digital channel
+   digital_out_channel_count
+   digital_out_channel_size
    double_slot: indicates if this application card type uses two slots
    i.e. it really is composed of two cards (FIXME: not implemented yet, only added to comments)
 
@@ -36,12 +38,17 @@ class ApplicationType(Base):
   analog_channel_size = Column(Integer, nullable=False)
   digital_channel_count = Column(Integer, nullable=False)
   digital_channel_size = Column(Integer, nullable=False)
+  digital_out_channel_count = Column(Integer, nullable=False)
+  digital_out_channel_size = Column(Integer, nullable=False)
   cards = relationship("ApplicationCard", backref='type')
   
   @validates('cards')
   def validate_cards(self, key, card):
     if self.digital_channel_count < len(card.digital_channels):
       raise ValueError("Card cannot have a type with digital_channel_count < the number of digital_channels connected to the card.")
+    
+    if self.digital_out_channel_count < len(card.digital_out_channels):
+      raise ValueError("Card cannot have a type with digital_out_channel_count < the number of digital_out_channels connected to the card.")
     
     if self.analog_channel_count < len(card.analog_channels):
       raise ValueError("Card cannot have a type with analog_channel_count < the number of analog_channels connected to the card.")
@@ -54,6 +61,17 @@ class ApplicationType(Base):
     #This is slow and bad.
     for c in self.cards:
       if len(c.digital_channels) > new_count:
+        raise ValueError("New number of channels would not be compatible with existing card(s).")
+    
+    return new_count
+  
+  @validates('digital_out_channel_count')
+  def validate_digital_out_channel_count(self, key, new_count):
+    self.validate_positive_channel_count('digital_out', new_count)
+    
+    #This is slow and bad.
+    for c in self.cards:
+      if len(c.digital_out_channels) > new_count:
         raise ValueError("New number of channels would not be compatible with existing card(s).")
     
     return new_count

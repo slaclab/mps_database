@@ -93,19 +93,19 @@ class Exporter:
 
       channelName.append(channel.name)
       channelCrateId.append(crate.id)
-      channelCrate.append(crate.location + crate.rack + '-' + str(crate.elevation))
+      channelCrate.append(crate.location + '-' + crate.rack + str(crate.elevation))
       channelSlot.append(str(card.slot_number))
       channelNumber.append(str(channel.number))
       channelPv.append(self.mpsName.getDeviceInputName(ddi) + "_MPSC")
 
-    numMitDevices = self.session.query(models.MitigationDevice).count()
+    numBeamDestinations = self.session.query(models.BeamDestination).count()
 
     # Fault Table
     cols=[]
     for b in range (0, num_bits):
       cols.append({'name':'b{0}'.format(b), 'width':'0.05*'})
     cols.append({'name':'f1', 'width':'0.25*'})
-    for d in range (0, numMitDevices):
+    for d in range (0, numBeamDestinations):
       cols.append({'name':'m{0}'.format(d), 'width':'0.10*'})
 
     header=[]
@@ -114,11 +114,11 @@ class Exporter:
       header.append({'name':var, 'namest':None, 'nameend':None})
       var = chr(ord(var) + 1)
     header.append({'name':'Fault Name', 'namest':None, 'nameend':None})
-    mitigationDevices = self.session.query(models.MitigationDevice).\
-        order_by(models.MitigationDevice.destination_mask.desc())
-    mitDevices={}
-    for m in mitigationDevices:
-      mitDevices[m.name] = '-'
+    beamDestinations = self.session.query(models.BeamDestination).\
+        order_by(models.BeamDestination.destination_mask.desc())
+    beamDest={}
+    for m in beamDestinations:
+      beamDest[m.name] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -145,20 +145,20 @@ class Exporter:
           for c in state.allowed_classes:
             beamClass = self.session.query(models.BeamClass).\
                 filter(models.BeamClass.id==c.beam_class_id).one()
-            mitigationDevice = self.session.query(models.MitigationDevice).\
-                filter(models.MitigationDevice.id==c.mitigation_device_id).one()
+            beamDestination = self.session.query(models.BeamDestination).\
+                filter(models.BeamDestination.id==c.beam_destination_id).one()
             
-            mitDevices[mitigationDevice.name] = beamClass.name
+            beamDest[beamDestination.name] = beamClass.name
           # end for
           row.append(input_value)
     
       row.append(deviceState.name)
-      for key in mitDevices:
-        row.append(mitDevices[key])
+      for key in beamDest:
+        row.append(beamDest[key])
       rows.append(row)
 
     table_name = '{0} Fault States'.format(device.name)
-    table_id = 'fault_state_table.{0}'.format(device.id)
+    table_id = 'fault_state_table.{0}'.format(fault.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     # Fault Inputs
@@ -192,7 +192,7 @@ class Exporter:
     # Fault Checkout Table
     self.docbook.openSection('{0} Checkout'.format(fault.name))
 
-    self.docbook.para('Check all fault input combinations listed in tables "<xref linkend="fault_state_table.{0}"/>" and "<xref linkend="fault_input_table.{0}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table.{1}"/>"). Write down the power class for each mitigation device. The power levels must match the ones listed in the "<xref linkend="fault_state_table.{0}"/>" table.'.format(fault.id, device.id))
+    self.docbook.para('Check all fault input combinations listed in tables "<xref linkend="fault_state_table.{0}"/>" and "<xref linkend="fault_input_table.{0}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table.{1}"/>"). Write down the power class for each beam destination. The power levels must match the ones listed in the "<xref linkend="fault_state_table.{0}"/>" table.'.format(fault.id, device.id))
 
     table_name = '{0} Fault Checkout'.format(fault.name)
     table_id = 'fault_checkout_table.{0}'.format(fault.id)
@@ -200,16 +200,16 @@ class Exporter:
     cols=[]
     cols.append({'name':'fault1', 'width':'0.10*'})
     cols.append({'name':'fault2', 'width':'0.50*'})
-    for i in range(0, numMitDevices):
+    for i in range(0, numBeamDestinations):
       cols.append({'name':'m{0}'.format(i), 'width':'0.10*'})
 
     header=[]
     header.append({'name':'Fault Name', 'namest':'fault1', 'nameend':'fault2'})
-    mitigationDevices = self.session.query(models.MitigationDevice).\
-        order_by(models.MitigationDevice.destination_mask.desc())
-    mitDevices={}
-    for m in mitigationDevices:
-      mitDevices[m.name] = '-'
+    beamDestinations = self.session.query(models.BeamDestination).\
+        order_by(models.BeamDestination.destination_mask.desc())
+    beamDest={}
+    for m in beamDestinations:
+      beamDest[m.name] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -220,7 +220,7 @@ class Exporter:
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       row.append(deviceState.name)
-      for key in mitDevices:
+      for key in beamDest:
         row.append('X')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
 
@@ -276,13 +276,13 @@ class Exporter:
     table_id = 'fault_states.{0}'.format(fault.id)
           
     max_bits = 8 # max number of analog thresholds
-    numMitDevices = self.session.query(models.MitigationDevice).count()
+    numBeamDestinations = self.session.query(models.BeamDestination).count()
 
     cols=[]
     for b in range(0, max_bits):
       cols.append({'name':'b{0}'.format(b), 'width':'0.05*'})
     cols.append({'name':'f2', 'width':'0.30*'})
-    for m in range(0, numMitDevices):
+    for m in range(0, numBeamDestinations):
       cols.append({'name':'m{0}'.format(m), 'width':'0.20*'})
 
     header=[]
@@ -291,11 +291,11 @@ class Exporter:
       header.append({'name':var, 'namest':None, 'nameend':None})
       var = chr(ord(var) - 1)
     header.append({'name':'Fault Name', 'namest':None, 'nameend':None})
-    mitDevices={}
-    mitigationDevices = self.session.query(models.MitigationDevice).\
-        order_by(models.MitigationDevice.destination_mask.desc())
-    for m in mitigationDevices:
-      mitDevices[m.name] = '-'
+    beamDest={}
+    beamDestinations = self.session.query(models.BeamDestination).\
+        order_by(models.BeamDestination.destination_mask.desc())
+    for m in beamDestinations:
+      beamDest[m.name] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -324,12 +324,12 @@ class Exporter:
 
         for c in state.allowed_classes:
           beamClass = self.session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
-          mitigationDevice = self.session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-          mitDevices[mitigationDevice.name] = beamClass.name
+          beamDestination = self.session.query(models.BeamDestination).filter(models.BeamDestination.id==c.beam_destination_id).one()
+          beamDest[beamDestination.name] = beamClass.name
         # end for c
       # end for b
       row.append(fault.name)
-      for key in mitDevices:
+      for key in beamDest:
         row.append('X')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
@@ -379,17 +379,17 @@ class Exporter:
     cols.append({'name':'fault2', 'width':'0.35*'})
     cols.append({'name':'threshold1', 'width':'0.65*'})
     cols.append({'name':'threshold2', 'width':'0.25*'})
-    for i in range(0, numMitDevices):
+    for i in range(0, numBeamDestinations):
       cols.append({'name':'m{0}'.format(i), 'width':'0.15*'})
 
     header=[]
     header.append({'name':'Fault', 'namest':'fault1', 'nameend':'fault2'})
     header.append({'name':'Threshold [PV, Value]', 'namest':'threshold1', 'nameend':'threshold2'})
-    mitDevices={}
-    mitigationDevices = self.session.query(models.MitigationDevice).\
-        order_by(models.MitigationDevice.destination_mask.desc())
-    for m in mitigationDevices:
-      mitDevices[m.name] = '-'
+    beamDest={}
+    beamDestinations = self.session.query(models.BeamDestination).\
+        order_by(models.BeamDestination.destination_mask.desc())
+    for m in beamDestinations:
+      beamDest[m.name] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -407,7 +407,7 @@ class Exporter:
       row.append('{0}_L'.format(thresholdPv))
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
-      for key in mitDevices:
+      for key in beamDest:
         row.append('X')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
@@ -420,7 +420,7 @@ class Exporter:
       row.append('{0}_H'.format(thresholdPv))
       row.append('X')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
-      for key in mitDevices:
+      for key in beamDest:
         row.append('X')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
@@ -540,7 +540,7 @@ class Exporter:
     self.docbook.openSection(card.name, 'card.{0}'.format(card.id))
 
     crate = self.session.query(models.Crate).filter(models.Crate.id==card.crate_id).one()
-    crate_name = crate.location + crate.rack + '-' + str(crate.elevation)
+    crate_name = crate.location + '-' + crate.rack + str(crate.elevation)
 
     keys = ['name', 'description', 'area', 'global_id', 'slot_number']
 
@@ -563,16 +563,20 @@ class Exporter:
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     # Application Card Devices
-    cols=[{'name':'c1', 'width':'0.25*'},
-          {'name':'c2', 'width':'0.75*'}]
+    cols=[{'name':'c1', 'width':'0.20*'},
+          {'name':'c2', 'width':'0.20*'},
+          {'name':'c3', 'width':'0.60*'}]
 
     header=[{'name':'Name', 'namest':None, 'nameend':None},
+            {'name':'Type', 'namest':None, 'nameend':None},
             {'name':'Description', 'namest':None, 'nameend':None}]
 
     rows=[]
-    rows.append(['Crate', '<link linkend=\'crate.{0}\'>{1}</link>'.format(crate.id, crate_name)])
     for d in card.devices:
-      rows.append(['<link linkend=\'device.{0}\'>{1}</link>'.format(d.id, d.name), d.description])
+      if (d.discriminator != 'mitigation_device'):
+        rows.append(['<link linkend=\'device.{0}\'>{1}</link>'.format(d.id, d.name), d.discriminator, d.description])
+      else:
+        rows.append([d.name, d.discriminator, d.description])
 
     table_name = '{0} Devices'.format(card.name)
     table_id = 'card_devices_table.{0}'.format(card.id)
@@ -609,11 +613,37 @@ class Exporter:
 
       rows.append([c.number, device.name, signal_name])
 
-    table_name = '{0} Channels'.format(card.name)
+    table_name = '{0} Input Channels'.format(card.name)
     table_id = 'card_channels_table.{0}'.format(card.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     if digital:
+      if (len(card.digital_out_channels) > 0):
+
+        # Application Card Channels
+        cols=[{'name':'c1', 'width':'0.1*'},
+              {'name':'c2', 'width':'0.4*'},
+              {'name':'c3', 'width':'0.4*'}]
+
+        header=[{'name':'Ch #', 'namest':None, 'nameend':None},
+                {'name':'Output Device', 'namest':None, 'nameend':None},
+                {'name':'Signal', 'namest':None, 'nameend':None}]
+
+        out_channels = card.digital_out_channels
+
+        rows=[]
+        for c in out_channels:
+          mitigation_device = c.mitigation_devices[0]
+#          ddi = self.session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==c.id).one()
+#          device = self.session.query(models.Device).filter(models.Device.id==ddi.digital_device.id).one()
+#          signal_name = c.name
+
+          rows.append([c.number, mitigation_device.name, c.name])
+
+        table_name = '{0} Output Channels (Mitigation)'.format(card.name)
+        table_id = 'card_output_channels_table.{0}'.format(card.id)
+        self.docbook.table(table_name, cols, header, rows, table_id)
+
       self.writeDigitalCheckoutTable(card.name, channels)
 
     self.docbook.closeSection()
@@ -627,7 +657,7 @@ class Exporter:
     self.docbook.closeSection()
     
   def writeCrate(self, crate):
-    name = crate.location + crate.rack + '-' + str(crate.elevation)
+    name = crate.location + '-' + crate.rack + str(crate.elevation)
 
     self.docbook.openSection(name, 'crate.{0}'.format(crate.id))
 
@@ -653,9 +683,35 @@ class Exporter:
 
     self.docbook.closeSection()
 
-  def writeMitigationDevices(self):
+  def writeMitigationDevices(self, destination):
+    self.docbook.openSection('{0}: Mitigation Devices'.format(destination.name))
 
-    self.docbook.openSection('Mitigation Devices')
+    cols=[{'name':'c1', 'width':'0.15*'},
+          {'name':'c2', 'width':'0.55*'},
+          {'name':'c3', 'width':'0.25*'},
+          {'name':'c4', 'width':'0.35*'}]
+
+    header=[{'name':'Name', 'namest':None, 'nameend':None},
+            {'name':'Description', 'namest':None, 'nameend':None},
+            {'name':'Crate', 'namest':None, 'nameend':None},
+            {'name':'Card', 'namest':None, 'nameend':None}]
+
+    rows=[]
+    for m in destination.mitigation_devices:
+      crate = self.session.query(models.Crate).\
+          filter(models.Crate.id==m.card.crate_id).one()
+      crate_name = crate.location + '-' + crate.rack + str(crate.elevation)
+      rows.append([m.name, m.description, '<link linkend=\'crate.{0}\'>{1}</link>\n'.format(crate.id, crate_name),
+                   '<link linkend=\'card.{0}\'>{1} (slot {2})</link>\n'.format(m.card.id, m.card.name, m.card.slot_number)])
+
+    table_name = 'Mitigation Devices for {0}'.format(destination.name)
+    self.docbook.table(table_name, cols, header, rows, 'mitigation_devices.{0}'.format(destination.id))
+
+    self.docbook.closeSection()
+
+  def writeBeamDestinations(self):
+
+    self.docbook.openSection('Beam Destinations')
 
     cols=[{'name':'c1', 'width':'0.2*'},
           {'name':'c2', 'width':'0.35*'},
@@ -668,19 +724,22 @@ class Exporter:
             {'name':'PV', 'namest':None, 'nameend':None}]
 
     rows=[]
-    for mitigation in self.session.query(models.MitigationDevice).all():
-      pvName = self.siocPv + ":" + mitigation.name + "_PC"
-      rows.append([mitigation.name, mitigation.description,
-                   str(hex(mitigation.destination_mask)), pvName])
+    for destination in self.session.query(models.BeamDestination).all():
+      pvName = self.siocPv + ":" + destination.name + "_PC"
+      rows.append([destination.name, destination.description,
+                   str(hex(destination.destination_mask)), pvName])
 
-      pvName = self.siocPv + ":" + mitigation.name + "_FW_PC"
+      pvName = self.siocPv + ":" + destination.name + "_FW_PC"
       rows.append(['', '', '', pvName])
 
-      pvName = self.siocPv + ":" + mitigation.name + "_SW_PC"
+      pvName = self.siocPv + ":" + destination.name + "_SW_PC"
       rows.append(['', '', '', pvName])
 
-    table_name = 'Mitigation Devices'
-    self.docbook.table(table_name, cols, header, rows, "mitigation_devices_table")
+    table_name = 'Beam Destinations'
+    self.docbook.table(table_name, cols, header, rows, "beam_destination_table")
+
+    for destination in self.session.query(models.BeamDestination).all():
+      self.writeMitigationDevices(destination)
 
     self.docbook.closeSection()
     
@@ -717,7 +776,8 @@ class Exporter:
   def writeDevices(self):
     self.docbook.openSection('MPS Devices')
     for device in self.session.query(models.Device).all():
-      self.writeDeviceInfo(device)
+      if (device.name != "AOM" and device.name != "MS"):
+        self.writeDeviceInfo(device)
     self.docbook.closeSection()
 
   def writeLogicCondition(self, condition):
@@ -781,7 +841,7 @@ class Exporter:
 
     self.writeDatabaseInfo()
 
-    self.writeMitigationDevices()
+    self.writeBeamDestinations()
 
     self.writePowerClasses()
 

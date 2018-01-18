@@ -27,7 +27,7 @@ def showStats(name, session):
 
   print "Beam Classes      : " + str(session.query(func.count(models.BeamClass.id)).scalar())
   print "Allowed Classes   : " + str(session.query(func.count(models.AllowedClass.id)).scalar())
-  print "Mitigation Devices: " + str(session.query(func.count(models.MitigationDevice.id)).scalar())
+  print "Beam Destinations : " + str(session.query(func.count(models.BeamDestination.id)).scalar())
 
   return
 
@@ -120,8 +120,8 @@ for fault in session.query(models.Fault).all():
       print "\t| " + deviceState.name + "\t|",
       for c in state.allowed_classes:
         beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
-        mitigationDevice = session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-        print "[" + mitigationDevice.name + "@" + beamClass.name + "] ",
+        beamDestination = session.query(models.BeamDestination).filter(models.BeamDestination.id==c.beam_destination_id).one()
+        print "[" + beamDestination.name + "@" + beamClass.name + "] ",
       print ""
   else:
     for state in fault.states:
@@ -155,8 +155,8 @@ for fault in session.query(models.Fault).all():
       print "\t| " + deviceState.name + "\t|",
       for c in state.allowed_classes:
         beamClass = session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
-        mitigationDevice = session.query(models.MitigationDevice).filter(models.MitigationDevice.id==c.mitigation_device_id).one()
-        print "[" + mitigationDevice.name + "@" + beamClass.name + "] ",
+        beamDestination = session.query(models.BeamDestination).filter(models.BeamDestination.id==c.beam_destination_id).one()
+        print "[" + beamDestination.name + "@" + beamClass.name + "] ",
       print ""
   print "+---------------+-----------------------+--------------------------+"
 

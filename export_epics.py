@@ -351,7 +351,7 @@ def exportAnalogDevices(file, analogDevices, session):
           #=== End Bypass records ====
 '''
 
-def exportMitigationDevices(file, mitigationDevices, beamClasses, session):
+def exportBeamDestinations(file, beamDestinations, beamClasses, session):
   mpsName = MpsName(session)
 
   fields=[]
@@ -367,36 +367,36 @@ def exportMitigationDevices(file, mitigationDevices, beamClasses, session):
     fields.append(('VAL', '{0}'.format(beamClass.number)))
     printRecord(file, 'longout', '$(BASE):PC_{0}'.format(beamClass.number), fields)
 
-  for mitigationDevice in mitigationDevices:
-    name = mpsName.getMitigationDeviceName(mitigationDevice)
+  for beamDestination in beamDestinations:
+    name = mpsName.getBeamDestinationName(beamDestination)
 
     fields=[]
-    fields.append(('DESC', 'Software mitigation for: {0}'.format(mitigationDevice.name)))
+    fields.append(('DESC', 'Software mitigation for: {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_SW_MITIGATION'.format(mitigationDevice.id))) # former MITIGATION_DEVICE
-    printRecord(file, 'longin', '$(BASE):{0}_SW_PC'.format(mitigationDevice.name.upper()), fields)
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_SW_MITIGATION'.format(beamDestination.id))) # former MITIGATION_DEVICE
+    printRecord(file, 'longin', '$(BASE):{0}_SW_PC'.format(beamDestination.name.upper()), fields)
     
     fields=[]
-    fields.append(('DESC', 'Fast mitigation for {0}'.format(mitigationDevice.name)))
+    fields.append(('DESC', 'Fast mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_FW_MITIGATION'.format(mitigationDevice.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_FW_PC'.format(mitigationDevice.name.upper()), fields)
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_FW_MITIGATION'.format(beamDestination.id)))
+    printRecord(file, 'longin', '$(BASE):{0}_FW_PC'.format(beamDestination.name.upper()), fields)
 
     fields=[]
-    fields.append(('DESC', 'Current mitigation for {0}'.format(mitigationDevice.name)))
+    fields.append(('DESC', 'Current mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_MITIGATION'.format(mitigationDevice.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_PC'.format(mitigationDevice.name.upper()), fields)
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_MITIGATION'.format(beamDestination.id)))
+    printRecord(file, 'longin', '$(BASE):{0}_PC'.format(beamDestination.name.upper()), fields)
 
     fields=[]
-    fields.append(('DESC', 'Latched mitigation for {0}'.format(mitigationDevice.name)))
+    fields.append(('DESC', 'Latched mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
-    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_LATCHED_MITIGATION'.format(mitigationDevice.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_LATCHED_PC'.format(mitigationDevice.name.upper()), fields)
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_LATCHED_MITIGATION'.format(beamDestination.id)))
+    printRecord(file, 'longin', '$(BASE):{0}_LATCHED_PC'.format(beamDestination.name.upper()), fields)
 
   file.close()
 
@@ -489,8 +489,8 @@ parser.add_argument('--device-inputs', metavar='file', type=argparse.FileType('w
                     help='epics template file name for digital channels (e.g. device-inputs.template)')
 parser.add_argument('--analog-devices', metavar='file', type=argparse.FileType('w'), nargs='?', 
                     help='epics template file name for analog channels (e.g. analog-devices.template)')
-parser.add_argument('--mitigation-devices', metavar='file', type=argparse.FileType('w'), nargs='?', 
-                    help='epics template file name for mitigation devices and beam classes (e.g. mitigation.template)')
+parser.add_argument('--beam-destinations', metavar='file', type=argparse.FileType('w'), nargs='?', 
+                    help='epics template file name for beam destinations and beam classes (e.g. destinations.template)')
 parser.add_argument('--faults', metavar='file', type=argparse.FileType('w'), nargs='?', 
                     help='epics template file name for faults (e.g. faults.template)')
 parser.add_argument('--apps', metavar='file', type=argparse.FileType('w'), nargs='?',
@@ -509,10 +509,10 @@ if (args.device_inputs):
 if (args.analog_devices):
   exportAnalogDevices(args.analog_devices, session.query(models.AnalogDevice).all(), session)
 
-if (args.mitigation_devices):
-  exportMitigationDevices(args.mitigation_devices,
-                          session.query(models.MitigationDevice).all(),
-                          session.query(models.BeamClass).all(), session)
+if (args.beam_destinations):
+  exportBeamDestinations(args.beam_destinations,
+                         session.query(models.BeamDestination).all(),
+                         session.query(models.BeamClass).all(), session)
 
 if (args.faults):
   exportFaults(args.faults, session.query(models.Fault).all(), session)

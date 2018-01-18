@@ -21,6 +21,7 @@ def dump_db_to_yaml(mps_config, filename):
                   models.FaultState,
                   models.AnalogDevice,
                   models.MitigationDevice,
+                  models.BeamDestination,
                   models.BeamClass,
                   models.AllowedClass,
                    models.Condition,

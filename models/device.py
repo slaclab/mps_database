@@ -45,6 +45,24 @@ class Device(Base):
   fault_outputs = relationship("FaultInput", backref='device')
   __mapper_args__ = {'polymorphic_on': discriminator}
 
+class MitigationDevice(Device):
+  """
+  MitigationDevice class (mitigation_devices table)
+
+  Properties:
+    name: mitigation device name (e.g. AOM)
+    description:
+    
+  References:
+    beam_destination_id: beam destination for this mitigation device
+    channel_id: digital_out_channel connected to the mitigation device
+  """
+  __tablename__ = 'mitigation_devices'
+  __mapper_args__ = {'polymorphic_identity': 'mitigation_device'}
+  id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
+  beam_destination_id = Column(Integer, ForeignKey('beam_destinations.id'), nullable=False)
+  digital_out_channel_id = Column(Integer, ForeignKey('digital_out_channels.id'), nullable=False)
+
 class DigitalDevice(Device):  
   """
   DigitalDevice class (digital_devices table)

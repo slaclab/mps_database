@@ -25,6 +25,7 @@ class ApplicationCard(Base):
    digital_channels: there are zero or more entries in the
                      digital_channels table pointing to an application_card
                      entry.
+   digital_out_channels: 
    analog_channels: there are zero or more entries in the
                     digital_channels table pointing to an application_card
                     entry.
@@ -39,6 +40,7 @@ class ApplicationCard(Base):
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)
   digital_channels = relationship("DigitalChannel", backref='card')
+  digital_out_channels = relationship("DigitalOutChannel", backref='card')
   analog_channels = relationship("AnalogChannel", backref='card')
   global_id = Column(Integer, nullable=False, unique=True)
   name = Column(String, unique=True, nullable=False)

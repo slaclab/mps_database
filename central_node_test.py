@@ -191,7 +191,7 @@ class Simulator:
   session=0
   update_buffer=bytearray() 
   expected_mitigation=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  mitigation_devices=[None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+  beam_destinations=[None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
   apps=[]
   device_inputs=[]
   digital_device = None
@@ -414,10 +414,10 @@ class Simulator:
                   for c in state.allowed_classes:
                       beam_class = self.session.query(models.BeamClass).\
                           filter(models.BeamClass.id==c.beam_class_id).one()
-                      mitigation_device = self.session.query(models.MitigationDevice).\
-                          filter(models.MitigationDevice.id==c.mitigation_device_id).one()
+                      beam_destination = self.session.query(models.BeamDestination).\
+                          filter(models.BeamDestination.id==c.beam_destination_id).one()
 
-                      index = self.mask_to_index(mitigation_device.destination_mask)
+                      index = self.mask_to_index(beam_destination.destination_mask)
                       self.expected_mitigation[index]=beam_class.number
           self.rows.append(row)
       else:
@@ -426,10 +426,10 @@ class Simulator:
           for c in self.analog_test_value[self.analog_test_value_index]['fault_state'].allowed_classes:
               beam_class = self.session.query(models.BeamClass).\
                   filter(models.BeamClass.id==c.beam_class_id).one()
-              mitigation_device = self.session.query(models.MitigationDevice).\
-                  filter(models.MitigationDevice.id==c.mitigation_device_id).one()
+              beam_destination = self.session.query(models.BeamDestination).\
+                  filter(models.BeamDestination.id==c.beam_destination_id).one()
               
-              index = self.mask_to_index(mitigation_device.destination_mask)
+              index = self.mask_to_index(beam_destination.destination_mask)
               self.expected_mitigation[index]=beam_class.number
           self.rows.append(row)
 
@@ -442,9 +442,9 @@ class Simulator:
     if self.debug >= 1:
         sys.stdout.write('Recvd Mitigation: ')
         
-    for i in range(0, len(self.mitigation_devices)):
-        if self.mitigation_devices[i] != None:
-            text = '{0}={1} '.format(self.mitigation_devices[i].name,
+    for i in range(0, len(self.beam_destinations)):
+        if self.beam_destinations[i] != None:
+            text = '{0}={1} '.format(self.beam_destinations[i].name,
                                      mitigation[i])
             row_text = row_text + text
             if self.debug >= 1:
@@ -515,9 +515,9 @@ class Simulator:
           sys.stdout.write('Mitigation      : ')
 
       row_text = ''
-      for index in range(0, len(self.mitigation_devices)):
-          if self.mitigation_devices[index] != None:
-              text = '{0}={1} '.format(self.mitigation_devices[index].name,
+      for index in range(0, len(self.beam_destinations)):
+          if self.beam_destinations[index] != None:
+              text = '{0}={1} '.format(self.beam_destinations[index].name,
                                        self.expected_mitigation[index])
               row_text = row_text + text
               if self.debug >= 1:
@@ -535,12 +535,12 @@ class Simulator:
       for i in range(0, len(self.expected_mitigation)):
           self.expected_mitigation[i] = 0
       
-      devices = self.session.query(models.MitigationDevice).\
-          order_by(models.MitigationDevice.destination_mask.asc())
+      devices = self.session.query(models.BeamDestination).\
+          order_by(models.BeamDestination.destination_mask.asc())
       for mit in devices:
           index = self.mask_to_index(mit.destination_mask)
           self.expected_mitigation[index] = highest_class
-          self.mitigation_devices[index] = mit
+          self.beam_destinations[index] = mit
       
 
   def write_update_buffer(self):
