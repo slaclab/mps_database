@@ -126,27 +126,29 @@ class App:
       for device in self.app.devices:
           device_type = self.session.query(models.DeviceType).\
               filter(models.DeviceType.id==device.device_type_id).one()
-          inputs=[None]*len(device.inputs)
-          for input in device.inputs:
-              channel = self.session.query(models.DigitalChannel).\
-                  filter(models.DigitalChannel.id==input.channel_id).one()
-#              print 'Bit pos={0}, num={1}'.format(input.bit_position, channel.number)
-              inputs[input.bit_position]=channel
-          for state in device_type.states:
-              fault_states = self.session.query(models.FaultState).\
-                  filter(models.FaultState.device_state_id==state.id).all()
-              if (len(fault_states) == 0):
-#                  print '{0}={1}'.format(state.name, state.value)
-#                  print len(inputs)
-                  for b in range(0, len(inputs)):
-                      bit_value = (state.value >> b) & 1
-#                      print 'bit {0}={1}'.format(b, bit_value)
-                      if bit_value == 0:
-                          self.was_low_bits[inputs[b].number]=1
-                          self.was_high_bits[inputs[b].number]=0
-                      else:
-                          self.was_low_bits[inputs[b].number]=0
-                          self.was_high_bits[inputs[b].number]=1
+#          print device_type.name + ' ' + device.name + ' ' + device.discriminator
+          if device.discriminator == 'digital_device':
+            inputs=[None]*len(device.inputs)
+            for input in device.inputs:
+                channel = self.session.query(models.DigitalChannel).\
+                    filter(models.DigitalChannel.id==input.channel_id).one()
+  #              print 'Bit pos={0}, num={1}'.format(input.bit_position, channel.number)
+                inputs[input.bit_position]=channel
+            for state in device_type.states:
+                fault_states = self.session.query(models.FaultState).\
+                    filter(models.FaultState.device_state_id==state.id).all()
+                if (len(fault_states) == 0):
+  #                  print '{0}={1}'.format(state.name, state.value)
+  #                  print len(inputs)
+                    for b in range(0, len(inputs)):
+                        bit_value = (state.value >> b) & 1
+  #                      print 'bit {0}={1}'.format(b, bit_value)
+                        if bit_value == 0:
+                            self.was_low_bits[inputs[b].number]=1
+                            self.was_high_bits[inputs[b].number]=0
+                        else:
+                            self.was_low_bits[inputs[b].number]=0
+                            self.was_high_bits[inputs[b].number]=1
 
   def get_data(self):
       was_low_bytes = bytearray([0, 0, 0, 0, 0, 0, 0, 0,
@@ -229,6 +231,14 @@ class Simulator:
     self.session.close()
 
   def set_device(self, device_id, device_type='digital'):
+
+    device = self.session.query(models.Device).\
+        filter(models.Device.id == device_id).one()
+    if device.discriminator == 'mitigation_device':
+      print 'ERROR: cannot test mitigation device'
+      print 'Device {0} ({1}) is a mitigation device'.format(device.id, device.name)
+      exit(1)
+
     if device_type == 'digital':
         self.analog_device = None
         try:
@@ -666,6 +676,7 @@ class Tester:
 
   def test(self, device_id, device_type='digital'):
       passed = True
+
       [device_name, channel_name] = self.simulator.set_device(device_id, device_type)
       self.test_counter = 0
 

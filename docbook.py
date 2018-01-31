@@ -3,6 +3,7 @@ import os
 
 class DocBook:
     file_name = 'docbook.xml'
+    txt_file_name = 'database.txt'
     f = None
     tableHeaderColor='<?dbhtml bgcolor="#EE6060" ?><?dbfo bgcolor="#EE6060" ?>'
     tableRowColor=  ['<?dbhtml bgcolor="#EEEEEE" ?><?dbfo bgcolor="#EEEEEE" ?>',
@@ -28,8 +29,11 @@ class DocBook:
         cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(self.file_name.split(".")[0])
         os.system(cmd)
 
-#        cmd = 'rm {0}.fo'.format(self.file_name.split(".")[0])
-#        os.system(cmd)
+        cmd = 'rm {0}.fo'.format(self.file_name.split(".")[0])
+        os.system(cmd)
+
+        cmd = 'rm {0}.xml'.format(self.file_name.split(".")[0])
+        os.system(cmd)
 
     def exportRtf(self):
         print self.file_name + " -> " + self.file_name.split(".")[0]
@@ -142,6 +146,7 @@ class DocBook:
                 self.f.write('<row>{0}\n'.format(self.tableRedColor))
             else:
                 self.f.write('<row>{0}\n'.format(self.tableGreenColor))
+
             rowIndex=rowIndex+1
 
             for j in range(0, len(cols)):

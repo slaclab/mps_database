@@ -52,17 +52,20 @@ class MpsName:
         return self.getFaultName(fault)
 
     def getFaultName(self, fault):
+        is_digital = True
+
+        if len(fault.inputs) <= 0:
+            print 'ERROR: Fault {0} (id={1}) has no inputs, can\'t proceed. exiting...'.format(fault.name, fault.id)
+            exit(1)
+
         for fault_input in fault.inputs:
             if fault_input.bit_position == 0:
-                is_digital = True
                 try:
                     device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==fault_input.device_id).one()
                     for input in device.inputs:
                         if input.bit_position == 0:
                             device_input = input
-#                    print device.name
                 except:
-                    #print "Device " + str(fault_input.device_id) + " is not digital"
                     is_digital = False
 
                 if not is_digital:

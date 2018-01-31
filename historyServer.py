@@ -138,7 +138,7 @@ class HistoryLogger:
 
   def printMitigation(self, message):
     try:
-        device = self.session.query(models.MitigationDevice).filter(models.MitigationDevice.id==message.id).first()
+        device = self.session.query(models.BeamDestination).filter(models.BeamDestination.id==message.id).first()
         bc1 = self.session.query(models.BeamClass).filter(models.BeamClass.id==message.oldValue).first()
         bc2 = self.session.query(models.BeamClass).filter(models.BeamClass.id==message.newValue).first()
 

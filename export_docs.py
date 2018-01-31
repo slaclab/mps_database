@@ -74,15 +74,23 @@ class Exporter:
     self.docbook.openSection('{0} Faults'.format(device.name))
 
     channelName = []
+    channelBitPos = []
     channelCrateId = []
     channelCrate = []
     channelSlot = []
     channelNumber = []
     channelPv = []
+    channelDeviceInput = []
 
     num_bits = 0
 
-    for ddi in device.inputs:
+    inp = device.inputs
+    ins = sorted(inp, key=lambda i: i.bit_position, reverse=True)
+#    print device.name
+#    for i in ins:
+#      print i.bit_position
+
+    for ddi in ins: #device.inputs:
       channel = self.session.query(models.DigitalChannel).\
           filter(models.DigitalChannel.id==ddi.channel_id).one()
       card = self.session.query(models.ApplicationCard).\
@@ -90,13 +98,16 @@ class Exporter:
       crate = self.session.query(models.Crate).\
           filter(models.Crate.id==card.crate_id).one()
       num_bits = num_bits + 1
+      print '{0}: {1}'.format(channel.name, ddi.bit_position)
 
       channelName.append(channel.name)
+      channelBitPos.append(ddi.bit_position)
       channelCrateId.append(crate.id)
       channelCrate.append(crate.location + '-' + crate.rack + str(crate.elevation))
       channelSlot.append(str(card.slot_number))
       channelNumber.append(str(channel.number))
       channelPv.append(self.mpsName.getDeviceInputName(ddi) + "_MPSC")
+      channelDeviceInput.append(ddi)
 
     numBeamDestinations = self.session.query(models.BeamDestination).count()
 
@@ -104,15 +115,19 @@ class Exporter:
     cols=[]
     for b in range (0, num_bits):
       cols.append({'name':'b{0}'.format(b), 'width':'0.05*'})
+    cols.append({'name':'v1', 'width':'0.05*'})
     cols.append({'name':'f1', 'width':'0.25*'})
     for d in range (0, numBeamDestinations):
       cols.append({'name':'m{0}'.format(d), 'width':'0.10*'})
 
     header=[]
     var = 'A'
+    ivar = num_bits - 1
     for b in range(0, num_bits):
-      header.append({'name':var, 'namest':None, 'nameend':None})
+      header.append({'name':'{0}'.format(var), 'namest':None, 'nameend':None})
       var = chr(ord(var) + 1)
+      ivar = ivar - 1
+    header.append({'name':'Value', 'namest':None, 'nameend':None})
     header.append({'name':'Fault Name', 'namest':None, 'nameend':None})
     beamDestinations = self.session.query(models.BeamDestination).\
         order_by(models.BeamDestination.destination_mask.desc())
@@ -130,11 +145,10 @@ class Exporter:
       maskBits = []
       value = deviceState.value
       mask = deviceState.mask
+#      print('{0}; val={1}, mask={2}'.format(deviceState.name, hex(deviceState.value), hex(deviceState.mask)))
       for b in range(0, num_bits):
-        bits.append(value & 1)
-        maskBits.append(mask & 1)
-        value = (value >> 1)
-        mask = (mask >> 1)
+        bits.append((value & (1 << (num_bits - 1 - b))) >> (num_bits -1 -b))
+        maskBits.append((mask & (1 << (num_bits - 1 - b))) >> (num_bits -1 -b))
         if (maskBits[b] == 0):
           input_value = "-"
         else:
@@ -149,13 +163,23 @@ class Exporter:
                 filter(models.BeamDestination.id==c.beam_destination_id).one()
             
             beamDest[beamDestination.name] = beamClass.name
+
           # end for
           row.append(input_value)
-    
+
+      row.append(hex(deviceState.value))
       row.append(deviceState.name)
       for key in beamDest:
         row.append(beamDest[key])
       rows.append(row)
+
+      self.tf.write('[FaultState {0} : Fault {1} : DeviceState {2}] Name: {3}; Value: {4}; Mask: {5}; Desc: {6}'.\
+                      format(state.id, fault.id, deviceState.id,
+                             deviceState.name, hex(deviceState.value),
+                             hex(deviceState.mask), deviceState.description))
+      for key in beamDest:
+        self.tf.write('; {0}: {1}'.format(key, beamDest[key]))
+      self.tf.write('\n')
 
     table_name = '{0} Fault States'.format(device.name)
     table_id = 'fault_state_table.{0}'.format(fault.id)
@@ -166,6 +190,7 @@ class Exporter:
     table_id = 'fault_input_table.{0}'.format(fault.id)
     
     cols=[{'name':'c1', 'width':'0.08*'},
+          {'name':'b1', 'width':'0.08*'},
           {'name':'c2', 'width':'0.25*'},
           {'name':'c3', 'width':'0.20*'},
           {'name':'c4', 'width':'0.08*'},
@@ -173,6 +198,7 @@ class Exporter:
           {'name':'c6', 'width':'0.50*'}]
 
     header=[{'name':'Input', 'namest':None, 'nameend':None},
+            {'name':'Bit', 'namest':None, 'nameend':None},
             {'name':'Name', 'namest':None, 'nameend':None},
             {'name':'Crate', 'namest':None, 'nameend':None},
             {'name':'Slot', 'namest':None, 'nameend':None},
@@ -182,9 +208,12 @@ class Exporter:
     rows=[]
     var = 'A'
     for b in range(0, num_bits):
-      rows.append([var, channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
+      rows.append([var, channelBitPos[b], channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
                    channelSlot[b], channelNumber[b], channelPv[b]])
       var = chr(ord(var) + 1)
+#      self.tf.write('aoeu[FaultInput {0} : Fault {1}] Name:{2}; Value: {3}; Mask: {4}\n'.\
+#                      format(state.id, fault.id, deviceState.name,
+#                             hex(deviceState.value), hex(deviceState.mask)))
 
     self.docbook.table(table_name, cols, header, rows, table_id)
     self.docbook.closeSection()
@@ -238,6 +267,9 @@ class Exporter:
     channelNumber = []
     channelMask = []
     channelPv = []
+    channelId = []
+    channelFaultState = []
+    channelDeviceState = []
 
     integratorShift = 0
     if ("X" in fault.name or "I0" in fault.name or "CHARGE" in fault.name):
@@ -262,12 +294,15 @@ class Exporter:
       crate = self.session.query(models.Crate).\
           filter(models.Crate.id==card.crate_id).one()
 
+      channelId.append(str(channel.id))
       channelName.append(deviceState.name)
       channelCrate.append(str(crate.number))
       channelSlot.append(str(card.slot_number))
       channelNumber.append(str(channel.number))
       channelMask.append(str(hex((deviceState.mask >> integratorShift) & 0xFF)))
       channelPv.append(self.mpsName.getAnalogDeviceName(device) + ":" + state.device_state.name)
+      channelFaultState.append(state)
+      channelDeviceState.append(deviceState)
 
     self.docbook.para('Table "<xref linkend="fault_states.{1}"/>" lists the {0} fault input bits for the {2} device. MPS supports up to eight comparators for {0}, this database version {3}.'.format(fault.name, fault.id, device.name, len(fault.states)))
 
@@ -333,6 +368,16 @@ class Exporter:
         row.append('X')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
+
+      self.tf.write('[FaultState {0} : Fault {1} : DeviceState {2}] Name: {3}; Value: {4}; Mask: {5}; Desc: {6}'.\
+                      format(state.id, fault.id, deviceState.id,
+                             deviceState.name, hex(deviceState.value),
+                             hex(deviceState.mask), deviceState.description))
+      for key in beamDest:
+        self.tf.write('; {0}: {1}'.format(key, beamDest[key]))
+      self.tf.write('\n')
+
+
     # end for state
     self.docbook.table(table_name, cols, header, rows, table_id)
 
@@ -363,6 +408,8 @@ class Exporter:
                    channelSlot[b], channelNumber[b],
                    channelMask[b], channelPv[b]])
       var = chr(ord(var) + 1)
+      self.tf.write('[AnalogChannel {0}] GID: {1}; Ch: {2}; Device: {3}; Desc: {4}; PV: {5}\n'.\
+                      format(channelId[b], card.global_id, channelNumber[b], device.name, device.description, channelPv[b]))
 
     self.docbook.table(table_name, cols, header, rows, table_id)
 
@@ -467,6 +514,9 @@ class Exporter:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
       rows.append(['<link linkend=\'fault.{0}\'>{1}</link>'.format(fault.id, fault.name),
                    fault.description, self.mpsName.getFaultName(fault)])
+      self.tf.write('[Fault {0}] Name: {1}; DeviceId: {2}; DeviceName: {3}\n'.
+                    format(fault.id, fault.name, device.id, device.name))
+
 
     table_name = '{0} Faults'.format(device.name)
     table_id = 'device_faults_table.{0}'.format(device.id)
@@ -489,10 +539,14 @@ class Exporter:
     header=[{'name':'Property', 'namest':None, 'nameend':None},
             {'name':'Value', 'namest':'zero1', 'nameend':'zero2'}]
 
+    self.tf.write('[Device {0}] '.format(device.id))
     rows=[]
     for k in keys:
       if not k.startswith('_'):
-        rows.append([k, getattr(device, k)])
+        rows.append([k.title(), getattr(device, k)])
+        self.tf.write('{0}: {1}; '.format(k.title(), getattr(device, k)))
+    self.tf.write('\n')
+
     dt = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
     rows.append(['type', dt.name])
 
@@ -504,8 +558,8 @@ class Exporter:
     
     self.docbook.closeSection()
 
-  def writeDigitalCheckoutTable(self, card_name, channels):
-    self.docbook.openSection('{0} Checkout'.format(card_name))
+  def writeDigitalCheckoutTable(self, card, channels):
+    self.docbook.openSection('{0} Checkout'.format(card.name))
 
     self.docbook.para('For every signal in the checkout table change it using the respective subsystem (e.g. Profile Monitor for inserting/removing screen) and verify if the input state changes. Check mark the states making sure they reflect the device state.')
 
@@ -529,9 +583,15 @@ class Exporter:
 
 #      rows.append([c.number, '<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>', c.z_name, '<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>', c.o_name, '{0}_MPSC'.format(self.mpsName.getDeviceInputName(ddi))])
       rows.append([c.number, 'X', c.z_name, 'X', c.o_name, '{0}_MPSC'.format(self.mpsName.getDeviceInputName(ddi))])
+      self.tf.write('[DigitalChannel {0}] GID: {1}; Ch: {2}; Device: {3}; Desc: {4}; BitPos: {5}; PV: {6}; Zero: {7}; One: {8};\n'.\
+                      format(c.id, card.global_id, c.number, device.name, 
+                             device.description, ddi.bit_position,
+                             '{0}_MPSC'.format(self.mpsName.getDeviceInputName(ddi)),
+                             c.z_name, c.o_name))
+
 
     table_name = 'Checkout table for digital inputs'
-    table_id = 'checkout_table.{0}'.format(card_name)
+    table_id = 'checkout_table.{0}'.format(card.name)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     self.docbook.closeSection()
@@ -612,6 +672,8 @@ class Exporter:
         signal_name = c.name + ' thresholds'
 
       rows.append([c.number, device.name, signal_name])
+#      self.tf.write('Ch: {0}; Device: {1}; Signal: {2}\n'.\
+#                      format(c.number, device.name, signal_name))
 
     table_name = '{0} Input Channels'.format(card.name)
     table_id = 'card_channels_table.{0}'.format(card.id)
@@ -644,7 +706,7 @@ class Exporter:
         table_id = 'card_output_channels_table.{0}'.format(card.id)
         self.docbook.table(table_name, cols, header, rows, table_id)
 
-      self.writeDigitalCheckoutTable(card.name, channels)
+      self.writeDigitalCheckoutTable(card, channels)
 
     self.docbook.closeSection()
 
@@ -660,6 +722,7 @@ class Exporter:
     name = crate.location + '-' + crate.rack + str(crate.elevation)
 
     self.docbook.openSection(name, 'crate.{0}'.format(crate.id))
+    self.tf.write('Crate: {0}\n'.format(name))
 
     # Application Cards
     cols=[{'name':'c1', 'width':'0.15*'},
@@ -676,6 +739,8 @@ class Exporter:
     for card in crate.cards:
       slot_info = '<link linkend=\'card.{0}\'>{1}</link>'.format(card.id, card.slot_number)
       rows.append([slot_info, card.name, card.global_id, card.description])
+      self.tf.write('[Card {0}] Slot: {1}; Name: {2}; GID: {3}; Desc: {4}\n'.\
+                      format(card.id, card.slot_number,card.name, card.global_id, card.description))
 
     table_name = '{0} Cards'.format(name)
     table_id = 'crate_table.{0}'.format(crate.id)
@@ -830,12 +895,14 @@ class Exporter:
 
   def writeCrates(self):
     self.docbook.openSection('ATCA Crates')
+    self.tf.write('# Crates\n')
     for crate in self.session.query(models.Crate).all():
       self.writeCrate(crate)
     self.docbook.closeSection()
 
-  def exportDocBook(self, fileName):
+  def exportDocBook(self, fileName, fileNameTxt):
     info = self.getAuthor()
+    self.tf = open(fileNameTxt, 'w')
     self.docbook = DocBook(fileName)
     self.docbook.writeHeader('MpsDatabase', info[2], info[3])
 
@@ -867,5 +934,9 @@ parser.add_argument('database', metavar='db', type=file, nargs=1,
 args = parser.parse_args()
 
 e = Exporter(args.database[0].name)
-e.exportDocBook('{0}.xml'.format(args.database[0].name.split('.')[0]))
+#split('/')[len(name2.split('/'))-1].split('.')[0]
+doc_name = args.database[0].name.split('/')[len(args.database[0].name.split('/'))-1].split('.')[0]
+#e.exportDocBook('{0}.xml'.format(args.database[0].name.split('.')[0]),
+#                '{0}.txt'.format(args.database[0].name.split('.')[0]))
+e.exportDocBook('{0}.xml'.format(doc_name), '{0}.txt'.format(doc_name))
 
