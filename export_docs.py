@@ -930,13 +930,22 @@ class Exporter:
 parser = argparse.ArgumentParser(description='Print database inputs/logic')
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
+parser.add_argument('--output', metavar='output', type=str, nargs='?', 
+                    help='directory where the documentation is generated')
 
 args = parser.parse_args()
+
+output_dir = './'
+if args.output:
+  output_dir = args.output
+  if (not os.path.isdir(output_dir)):
+    print 'ERROR: Invalid output directory {0}'.format(output_dir)
+    exit(-1)
 
 e = Exporter(args.database[0].name)
 #split('/')[len(name2.split('/'))-1].split('.')[0]
 doc_name = args.database[0].name.split('/')[len(args.database[0].name.split('/'))-1].split('.')[0]
 #e.exportDocBook('{0}.xml'.format(args.database[0].name.split('.')[0]),
 #                '{0}.txt'.format(args.database[0].name.split('.')[0]))
-e.exportDocBook('{0}.xml'.format(doc_name), '{0}.txt'.format(doc_name))
+e.exportDocBook('{0}/{1}.xml'.format(output_dir,doc_name), '{0}/{1}.txt'.format(output_dir, doc_name))
 

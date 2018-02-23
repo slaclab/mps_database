@@ -16,35 +16,51 @@ class DocBook:
         self.f = open(file_name, "w")
         
     def exportHtml(self):
+        base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
+        location = self.file_name.split(base_name)[0]
+
+        output_file_name = '{0}{1}'.format(location, base_name.split('.')[0])
+
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/html/docbook.xsl {0} > {1}.html'.\
-            format(self.file_name, self.file_name.split(".")[0])
+            format(self.file_name, output_file_name)
         os.system(cmd)
 
     def exportPdf(self):
-        print self.file_name + " -> " + self.file_name.split(".")[0]
+        base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
+        location = self.file_name.split(base_name)[0]
+
+        output_file_name = '{0}{1}'.format(location, base_name.split('.')[0])
+
+#        print '>>>>> ' + self.file_name + " -> " + self.file_name.split(".")[0]
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.\
-            format(self.file_name, self.file_name.split(".")[0])
+            format(self.file_name, output_file_name)
         os.system(cmd)
 
-        cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(self.file_name.split(".")[0])
+        cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(output_file_name)
+        print 'FOP: {0}'.format(cmd)
         os.system(cmd)
 
-        cmd = 'rm {0}.fo'.format(self.file_name.split(".")[0])
+        cmd = 'rm {0}.fo'.format(output_file_name)
         os.system(cmd)
 
-        cmd = 'rm {0}.xml'.format(self.file_name.split(".")[0])
+        cmd = 'rm {0}.xml'.format(output_file_name)
         os.system(cmd)
 
     def exportRtf(self):
-        print self.file_name + " -> " + self.file_name.split(".")[0]
+        base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
+        location = self.file_name.split(base_name)[0]
+
+        output_file_name = '{0}{1}'.format(location, base_name.split('.')[0])
+
+#        print self.file_name + " -> " + self.file_name.split(".")[0]
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.\
-            format(self.file_name, self.file_name.split(".")[0])
+            format(self.file_name, output_file_name)
         os.system(cmd)
 
-        cmd = 'fop -fo {0}.fo -rtf {0}.rtf'.format(self.file_name.split(".")[0])
+        cmd = 'fop -fo {0}.fo -rtf {0}.rtf'.format(output_file_name)
         os.system(cmd)
 
-        cmd = '\rm {0}.fo'.format(self.file_name.split(".")[0])
+        cmd = '\rm {0}.fo'.format(output_file_name)
         os.system(cmd)
         
     def getAuthor(self):
