@@ -47,8 +47,11 @@ def printRecord(file, recType, recName, fields):
 #  ${DEV}_BYPEXP (bypass expiration date?)
 #
 def exportDeviceInputs(file, deviceInputs, session):
-  saveBypassFile = file.name.split('/')[len(file.name.split('/'))-1].split('.')[0] + '.save'
-  restoreBypassFile = file.name.split('/')[len(file.name.split('/'))-1].split('.')[0] + '.restore'
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  location = file.name.split(base_name)[0]
+
+  saveBypassFile = '{0}{1}.save'.format(location, base_name.split('.')[0])
+  restoreBypassFile = '{0}{1}.restore'.format(location, base_name.split('.')[0])
 
   sf = open(saveBypassFile, 'w')
 
@@ -229,8 +232,11 @@ def exportDeviceInputs(file, deviceInputs, session):
 def exportAnalogDevices(file, analogDevices, session):
   mpsName = MpsName(session)
 
-  saveBypassFile = file.name.split('/')[len(file.name.split('/'))-1].split('.')[0] + '.save'
-  restoreBypassFile = file.name.split('/')[len(file.name.split('/'))-1].split('.')[0] + '.restore'
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  location = file.name.split(base_name)[0]
+
+  saveBypassFile = '{0}{1}.save'.format(location, base_name.split('.')[0])
+  restoreBypassFile = '{0}{1}.restore'.format(location, base_name.split('.')[0])
 
   sf = open(saveBypassFile, 'w')
 
