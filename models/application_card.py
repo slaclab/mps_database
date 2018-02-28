@@ -15,7 +15,7 @@ class ApplicationCard(Base):
              This is used for creating the LinkNode PVs (second field)
    location: this is the location field to generate LinkNode PVs (third field)
    slot_number: number of slot within the ATCA crate where it is installed
-   amc: defines whether this card is a carrier, AMC #1 or AMC #2 card
+   amc: defines whether this card is a carrier (0), an AMC (1) card or RTM (2)
    
   References:
    crate_id: specifies the crate that contains this card
@@ -34,7 +34,7 @@ class ApplicationCard(Base):
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
   area = Column(String, nullable=False)
-  location = Column(String, nullable=False, unique=True)
+  location = Column(String, nullable=False, unique=False)
   slot_number = Column(Integer, nullable=False)
   amc = Column(Integer, nullable=False, default=0)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
@@ -43,10 +43,14 @@ class ApplicationCard(Base):
   digital_out_channels = relationship("DigitalOutChannel", backref='card')
   analog_channels = relationship("AnalogChannel", backref='card')
   global_id = Column(Integer, nullable=False, unique=True)
-  name = Column(String, unique=True, nullable=False)
+  name = Column(String, unique=False, nullable=False)
   description = Column(String, nullable=True)
   devices = relationship("Device", backref='card')
   
+  def show(self):
+    print '> Name: {0}'.format(self.name)
+    print '> Number: {0}'.format(self.number)
+
   @validates('digital_channels')
   def validate_digital_channel(self, key, new_channel):
     """

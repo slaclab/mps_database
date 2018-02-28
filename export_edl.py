@@ -37,8 +37,15 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
         for state in faultStates:
           print name + " " + state.device_state.name
 #    for state in analogDevice.device_type.states:
-          crates.append(analogDevice.channel.card.crate.number)
-          cards.append(analogDevice.channel.card.number)
+          crates.append(analogDevice.channel.card.crate.get_name())#number)
+          slot=str(analogDevice.channel.card.slot_number)
+          if (analogDevice.channel.card.amc == 0):
+            slot=slot+':AMC0'
+          elif (analogDevice.channel.card.amc == 1):
+            slot=slot+':AMC1'
+          else:
+            slot=slot+':?'
+          cards.append(slot)
           channels.append(analogDevice.channel.number)
           byps.append('{0}:{1}_BYPS'.format(name, fa.name))
           bypd.append('{0}:{1}_BYPD'.format(name, fa.name))
@@ -93,8 +100,17 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
   for deviceInput in deviceInputs:
     name = mpsName.getDeviceInputName(deviceInput)
 
-    crates.append(deviceInput.channel.card.crate.number)
-    cards.append(deviceInput.channel.card.number)
+    crates.append(deviceInput.channel.card.crate.get_name())#number)
+    slot=str(deviceInput.channel.card.slot_number)
+    if (deviceInput.channel.card.amc == 0):
+      slot=slot+':AMC0'
+    elif (deviceInput.channel.card.amc == 1):
+      slot=slot+':AMC1'
+    else:
+      slot=slot+':RTM'
+    cards.append(slot)
+
+#    cards.append(deviceInput.channel.card.number)
     channels.append(deviceInput.channel.number)
     byps.append('{0}_BYPS'.format(name))
     bypv.append('{0}_BYPV'.format(name))

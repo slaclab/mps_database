@@ -8,7 +8,7 @@ minor 0
 release 1
 x 153
 y 179
-w 900
+w 980
 h $WINDOW_HEIGHT
 font "helvetica-medium-r-10.0"
 ctlFont "helvetica-medium-r-10.0"
@@ -36,7 +36,7 @@ minor 0
 release 0
 x 16
 y 20
-w 872
+w 952
 h $BOX_HEIGHT
 lineColor index 3
 fill
@@ -70,7 +70,7 @@ minor 1
 release 1
 x 22
 y 34
-w 44
+w 84
 h 16
 font "helvetica-medium-r-12.0"
 fontAlign "center"
@@ -88,7 +88,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 76
+x 116
 y 34
 w 44
 h 16
@@ -98,7 +98,7 @@ fgColor index 14
 bgColor index 4
 useDisplayBg
 value {
-  "Card"
+  "Slot"
 }
 endObjectProperties
 
@@ -108,7 +108,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 110
+x 170
 y 34
 w 60
 h 16
@@ -128,9 +128,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 170
+x 230
 y 34
-w 172
+w 192
 h 16
 font "helvetica-medium-r-12.0"
 fontAlign "center"
@@ -148,7 +148,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 342
+x 422
 y 34
 w 100
 h 16
@@ -168,7 +168,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 442
+x 522
 y 34
 w 100
 h 16
@@ -188,7 +188,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 622
+x 702
 y 34
 w 100
 h 16
@@ -208,7 +208,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 722
+x 802
 y 34
 w 100
 h 16
@@ -236,7 +236,7 @@ minor 1
 release 1
 x 22
 y $WIDGET_Y
-w 44
+w 84
 h 16
 font "helvetica-medium-r-12.0"
 fontAlign "center"
@@ -247,51 +247,15 @@ value {
 }
 endObjectProperties
 
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 614
-y $WIDGET_Y
-w 8
-h 16
-lineColor index 22
-fill
-fillColor index 22
-visPv "$DI_BYPS[$i]"
-visMin "1"
-visMax "2"
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 874
-y $WIDGET_Y
-w 8
-h 16
-lineColor index 22
-fill
-fillColor index 22
-visPv "$DI_BYPS[$i]"
-visMin "1"
-visMax "2"
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 1
-x 66
+x 106
 y $WIDGET_Y
-w 44
+w 64
 h 16
 font "helvetica-medium-r-12.0"
 fontAlign "center"
@@ -308,7 +272,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 110
+x 170
 y $WIDGET_Y
 w 60
 h 16
@@ -327,9 +291,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 170
+x 230
 y $WIDGET_Y
-w 172
+w 192
 h 16
 font "helvetica-medium-r-12.0"
 fontAlign "center"
@@ -340,13 +304,49 @@ value {
 }
 endObjectProperties
 
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 694
+y $WIDGET_Y
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "$DI_BYPS[$i]"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 954
+y $WIDGET_Y
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "$DI_BYPS[$i]"
+visMin "1"
+visMax "2"
+endObjectProperties
+
 # (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
 minor 0
 release 0
-x 342
+x 422
 y $WIDGET_Y
 w 100
 h 16
@@ -367,7 +367,7 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 442
+x 522
 y $WIDGET_Y
 w 100
 h 16
@@ -388,7 +388,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 542
+x 622
 y $WIDGET_Y
 w 60
 h 16
@@ -412,7 +412,7 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 622
+x 702
 y $WIDGET_Y
 w 100
 h 16
@@ -433,7 +433,7 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 722
+x 802
 y $WIDGET_Y
 w 100
 h 16
@@ -454,7 +454,7 @@ beginObjectProperties
 major 4
 minor 4
 release 0
-x 822
+x 902
 y $WIDGET_Y
 w 52
 h 16

@@ -28,6 +28,9 @@ class Crate(Base):
   rack = Column(String, nullable=False)
   elevation = Column(Integer, nullable=False, default=0)
   cards = relationship("ApplicationCard", backref='crate')
+
+  def get_name(self):
+    return self.location + '-' + self.rack + str(self.elevation)
   
   @validates('cards')
   def validate_card(self, key, new_card):
@@ -43,12 +46,15 @@ class Crate(Base):
     if new_card.slot_number > self.num_slots:
       raise ValueError("Card cannot use slot_number > num_slots.")
     
+    if new_card.slot_number == None:
+      raise ValueError('Slot number is None')
+
     if new_card.slot_number < 0:
-      raise ValueError("Slot number must be positive.")
+      raise ValueError('Slot number must be positive (slot_number={0}).'.format(new_card.slot_number))
     
     #Ensure the slot isn't taken
     if [new_card.slot_number, new_card.amc] in [[c.slot_number, c.amc] for c in self.cards]:
-      raise ValueError("Slot is already taken by another card. New card:" + new_card.name + "; existing card: " + c.name)
+      raise ValueError("Slot is already taken by another card. New card:" + new_card.name + " New amc:" + str(new_card.amc) + "; existing card: " + c.name + " amc: " + str(c.amc))
     
     return new_card
   
