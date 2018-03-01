@@ -1,0 +1,4 @@
+Name,Number,Description,Integration_Window,Total_Charge,Min_Period
+PC0,1,No Beam,10,0,1
+PC1,2,YAG Max Power,10,100,1
+PC2,3,Full Power,10,10000,1
