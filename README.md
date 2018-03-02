@@ -1,4 +1,5 @@
 LCLS-II MPS Database 
+--------------------
 
 This package contains SQLAlchemy python classes that provide access to the
 MPS sqlite3 database. The classes are listed under the models subdirectory
