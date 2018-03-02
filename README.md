@@ -162,3 +162,8 @@ Recvd Mitigation: MS=0 AOM=0
 +------------------------------------------------------------+
 YAG01B PASSED
 ```
+
+Import CSV data
+---------------
+
+The script import/import-csv.py generates a database using csv exported files from the MPSInputList.xlsx (available from sharepoint). Currently it only populates some database tables, the devices/faults are not yet created. The generated database name is mps_config_imported.db.
