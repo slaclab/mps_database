@@ -39,7 +39,7 @@ class Device(Base):
   position = Column(Integer, nullable=False)
   area = Column(String, nullable=False)
   evaluation = Column(Integer, nullable=False, default=0)
-  drawing = Column(String, unique=False, nullable=True)
+#  drawing = Column(String, unique=False, nullable=True)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   measured_device_type_id = Column(Integer, ForeignKey('device_types.id'))
