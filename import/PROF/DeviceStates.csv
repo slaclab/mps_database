@@ -1,0 +1,5 @@
+Name,Number,Description,Value,Mask,Fault,Fault_Description
+Out,1,Screen out,1,4294967295,NONE,NONE
+In,2,Screen in,2,4294967295,SCREEN,Screen Fault
+Moving,3,Screen moving,0,4294967295,SCREEN,Screen Fault
+Broken,4,Screen broken,3,4294967295,SCREEN,Screen Fault

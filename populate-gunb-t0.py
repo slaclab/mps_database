@@ -383,7 +383,7 @@ buncher_temp = models.DigitalDevice(name="BUN1B Buncher Temperature", device_typ
                                     description = "Buncher Temperature Summary Input", area="GUNB",
                                     measured_device_type_id = buncher_device_type.id)
 fc_temp = models.DigitalDevice(name="Faraday Cup Temperature", device_type = temp_device_type,
-                               card = link_node_card, position = 1414,
+                               card = link_node_card, position = 530,
                                description = "Faraday Cup Temperature Summary Input", area="DIAG",
                                measured_device_type_id = fc_device_type.id)
 sol01_temp = models.DigitalDevice(name="SOL01B Temp", position=212, description="SOL01B Temperature",
@@ -433,7 +433,7 @@ if not two_apps:
   im01 = models.AnalogDevice(name="IM01B", device_type=im_device_type, channel=im01_channel,
                              card=im_card, position=360, description="Toroid, ICT Charge", evaluation=1, area="GUNB")
   fc = models.AnalogDevice(name="FCDG0DU", device_type=fc_device_type, channel=fc_channel,
-                             card=fc_card, position=1414, description="Faraday Cup Current", evaluation=1, area="DIAG")
+                             card=fc_card, position=530, description="Faraday Cup Current", evaluation=1, area="DIAG")
   session.add_all([bpm01, bpm02, im01, fc])
 
 # Give the device some inputs.  It has in and out limit switches.
