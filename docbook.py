@@ -36,15 +36,15 @@ class DocBook:
             format(self.file_name, output_file_name)
         os.system(cmd)
 
-        cmd = 'fop -fo {0}.fo -pdf {0}.pdf'.format(output_file_name)
+        cmd = 'fop -fo {0}.fo -param setStrictValidation false -pdf {0}.pdf'.format(output_file_name)
         print 'FOP: {0}'.format(cmd)
         os.system(cmd)
 
         cmd = 'rm {0}.fo'.format(output_file_name)
-        os.system(cmd)
+#        os.system(cmd)
 
         cmd = 'rm {0}.xml'.format(output_file_name)
-        os.system(cmd)
+#        os.system(cmd)
 
     def exportRtf(self):
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]

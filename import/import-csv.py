@@ -65,6 +65,8 @@ class DatabaseImporter:
           app_type_info[fields[field_index]]=property
           field_index = field_index + 1
 
+
+#        print app_type_info
         app_type = models.ApplicationType(number=app_type_info['number'],
                                           name=app_type_info['name'],
                                           digital_channel_count=app_type_info['digital_channel_count'],
@@ -209,16 +211,7 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
 
-  #(venv)[lpiccoli@lcls-dev3 PROF]$ ll
-  #
-  # DeviceStates.csv
-  # DeviceType.csv
-  # Devices.csv
-  # DigitalChannels.csv
-  # Mitigation.csv
-  def add_digital_device(self, directory):
-    # Find the device type
-    file_name = directory + '/DeviceType.csv'
+  def check_device_type(self, file_name):
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
@@ -240,11 +233,11 @@ class DatabaseImporter:
               filter(models.DeviceType.name==type_info['name']).one()
         except:
           print('ERROR: Cannot find device type with name {0}, exiting...'.format(type_info['name']))
-          return
+          return None
     f.close()
+    return device_type
 
-    # Add DeviceStates
-    file_name = directory + '/DeviceStates.csv'
+  def add_device_states(self, file_name, device_type):
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
@@ -265,14 +258,43 @@ class DatabaseImporter:
         device_state = models.DeviceState(name=state_info['name'],
                                           device_type=device_type,
                                           description=state_info['description'],
-                                          value=int(state_info['value']))
+                                          value=int(state_info['value']),
+                                          mask=int(state_info['mask']))
         device_states[state_info['name']]=device_state#state_info
 
         self.session.add(device_state)
 
 #    print device_states
-    self.session.commit()
+#    self.session.commit()
     f.close()
+    return device_states
+
+  def add_analog_device(self, directory):
+    file_name = directory + '/DeviceType.csv'
+    device_type = self.check_device_type(file_name)
+    if device_type == None:
+      return
+
+    file_name = directory + '/DeviceStates.csv'
+    device_states = self.add_device_states(file_name, device_type)
+
+  #(venv)[lpiccoli@lcls-dev3 PROF]$ ll
+  #
+  # DeviceStates.csv
+  # DeviceType.csv
+  # Devices.csv
+  # DigitalChannels.csv
+  # Mitigation.csv
+  def add_digital_device(self, directory):
+    # Find the device type
+    file_name = directory + '/DeviceType.csv'
+    device_type = self.check_device_type(file_name)
+    if device_type == None:
+      return
+
+    # Add DeviceStates
+    file_name = directory + '/DeviceStates.csv'
+    device_states = self.add_device_states(file_name, device_type)
 
     # Add DigitalChannels, first read the channels for one device
     file_name = directory + '/DigitalChannels.csv'
@@ -326,10 +348,10 @@ class DatabaseImporter:
           location = mitigation_info['device_location']
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
 
-    for k in mitigation:
-      print k
-      for i in mitigation[k]:
-        print i
+#    for k in mitigation:
+#      print k
+#      for i in mitigation[k]:
+#        print i
 #    print mitigation['Linac']
 
     # Read list of devices
@@ -378,8 +400,6 @@ class DatabaseImporter:
                                                   o_name=channel[key]['o_name'],
                                                   alarm_state=channel[key]['alarm_state'],
                                                   card_id=app_card.id)
-#                                                  card=app_card)
-
           self.session.add(digital_channel)
           self.session.commit()
 
@@ -388,55 +408,39 @@ class DatabaseImporter:
                                             digital_device = device,
                                             fault_value = int(channel[key]['alarm_state']))
           self.session.add(device_input)
-          self.session.commit()
 
         # For each device - create a Fault, FaultInputs, FaultStates and the AllowedClasses
-        # yag_fault = models.Fault(name="TGT", description="YAG01 Profile Monitor Screen Fault")
         device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
         self.session.add(device_fault)
-        self.session.commit()
 
-        #yag_fault_input = models.FaultInput(bit_position = 0, device = screen, fault = yag_fault)
         device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
         self.session.add(device_fault_input)
-        self.session.commit()
 
         # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
-#        print mitigation['Linac']['Broken']
-        
-#        print device_info['device']
         for k in mitigation:
           if device_info['mitigation'] == k:
-#            print k
             for m in mitigation[device_info['mitigation']]:
-#              print m
               fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
               self.session.add(fault_state)
-              self.session.commit()
 
               # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
-#              print device_info['device'] + ' state: ' + m
               for d in self.beam_destinations:
                 power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
                 if (power_class_str != '-'):
-#                 print d + ': ' + mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
-                
                   beam_class = self.session.query(models.BeamClass).\
                       filter(models.BeamClass.id==int(power_class_str)).one()
 
                   beam_destination = self.session.query(models.BeamDestination).\
                       filter(models.BeamDestination.name==d).one()
-
                   fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
-
-#yag_fault_in.add_allowed_class(beam_class=class_1, beam_destination=linac)
-#yag_fault_moving.add_allowed_class(beam_class=class_0, beam_destination=linac)
-#yag_fault_broken.add_allowed_class(beam_class=class_0, beam_destination=linac)
-
 
     self.session.commit()
     f.close()
 
+  def check(self):
+    card = self.session.query(models.ApplicationCard).\
+        filter(models.ApplicationCard.id==1).one()
+    print len(card.digital_channels)
 
 importer = DatabaseImporter("mps_config_imported.db")
 
@@ -448,6 +452,10 @@ importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
 importer.add_digital_device('import/PROF')
+importer.add_analog_device('import/BLEN')
+
+
+importer.check()
 
 #link_node_card = models.ApplicationCard(name="EIC Digital Card", number=100, area="GUNB",
 #                                        location="MP10", type=eic_digital_app, slot_number=2, amc=2, #amc=2 -> RTM

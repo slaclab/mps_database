@@ -15,12 +15,17 @@ class Exporter:
   session=0
   f=0
   siocPv='SIOC:SYS0:MP01'
-
+  beamDestinationNames=[]
+  
   def __init__(self, dbFileName):
     self.databaseFileName = dbFileName
     mps = MPSConfig(args.database[0].name)
     self.session = mps.session
     self.mpsName = MpsName(self.session)
+    beamDestinations = self.session.query(models.BeamDestination).\
+        order_by(models.BeamDestination.destination_mask.asc())
+    for d in beamDestinations:
+      self.beamDestinationNames.append(d.name.lower())
   
   def __del__(self):
     self.session.close()
@@ -130,10 +135,10 @@ class Exporter:
     header.append({'name':'Value', 'namest':None, 'nameend':None})
     header.append({'name':'Fault Name', 'namest':None, 'nameend':None})
     beamDestinations = self.session.query(models.BeamDestination).\
-        order_by(models.BeamDestination.destination_mask.desc())
+        order_by(models.BeamDestination.destination_mask.asc())
     beamDest={}
     for m in beamDestinations:
-      beamDest[m.name] = '-'
+      beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -161,15 +166,15 @@ class Exporter:
                 filter(models.BeamClass.id==c.beam_class_id).one()
             beamDestination = self.session.query(models.BeamDestination).\
                 filter(models.BeamDestination.id==c.beam_destination_id).one()
-            
-            beamDest[beamDestination.name] = beamClass.name
+#            print device.name + ' - ' + beamDestination.name + ': ' + beamClass.name
+            beamDest[beamDestination.name.lower()] = beamClass.name
 
           # end for
           row.append(input_value)
 
       row.append(hex(deviceState.value))
       row.append(deviceState.name)
-      for key in beamDest:
+      for key in self.beamDestinationNames:
         row.append(beamDest[key])
       rows.append(row)
 
@@ -238,7 +243,7 @@ class Exporter:
         order_by(models.BeamDestination.destination_mask.desc())
     beamDest={}
     for m in beamDestinations:
-      beamDest[m.name] = '-'
+      beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -330,7 +335,7 @@ class Exporter:
     beamDestinations = self.session.query(models.BeamDestination).\
         order_by(models.BeamDestination.destination_mask.desc())
     for m in beamDestinations:
-      beamDest[m.name] = '-'
+      beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -360,7 +365,7 @@ class Exporter:
         for c in state.allowed_classes:
           beamClass = self.session.query(models.BeamClass).filter(models.BeamClass.id==c.beam_class_id).one()
           beamDestination = self.session.query(models.BeamDestination).filter(models.BeamDestination.id==c.beam_destination_id).one()
-          beamDest[beamDestination.name] = beamClass.name
+          beamDest[beamDestination.name.lower()] = beamClass.name
         # end for c
       # end for b
       row.append(fault.name)
@@ -436,7 +441,7 @@ class Exporter:
     beamDestinations = self.session.query(models.BeamDestination).\
         order_by(models.BeamDestination.destination_mask.desc())
     for m in beamDestinations:
-      beamDest[m.name] = '-'
+      beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
 
     rows=[]
@@ -591,16 +596,16 @@ class Exporter:
 
 
     table_name = 'Checkout table for digital inputs'
-    table_id = 'checkout_table.{0}'.format(card.name)
+    table_id = 'checkout_table.{0}{1}'.format(card.name, card.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     self.docbook.closeSection()
 
   def writeAppCard(self, card):
-    self.docbook.openSection(card.name, 'card.{0}'.format(card.id))
+    self.docbook.openSection(card.crate.location + ' Slot ' + str(card.slot_number) + ' - '+ card.name, 'card.{0}'.format(card.id))
 
     crate = self.session.query(models.Crate).filter(models.Crate.id==card.crate_id).one()
-    crate_name = crate.location + '-' + crate.rack + str(crate.elevation)
+    crate_name = crate.location# + '-' + crate.rack + str(crate.elevation)
 
     keys = ['name', 'description', 'area', 'global_id', 'slot_number']
 
@@ -623,6 +628,22 @@ class Exporter:
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     # Application Card Devices
+    digital = True
+    if (len(card.digital_channels) > 0):
+      channels = card.digital_channels
+    elif (len(card.analog_channels) > 0):
+      channels = card.analog_channels
+      digital = False
+    else:
+      print 'WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
+          format(card.name, card.crate.location, card.slot_number, card.amc)
+#      print 'ERROR: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}" can\'t proceed.'.\
+#          format(card.name, card.crate.location, card.slot_number, card.amc)
+#      card.show()
+      self.docbook.closeSection()
+      return
+#      exit(-1)
+
     cols=[{'name':'c1', 'width':'0.20*'},
           {'name':'c2', 'width':'0.20*'},
           {'name':'c3', 'width':'0.60*'}]
@@ -651,15 +672,6 @@ class Exporter:
             {'name':'Input Device', 'namest':None, 'nameend':None},
             {'name':'Signal', 'namest':None, 'nameend':None}]
 
-    digital = True
-    if (len(card.digital_channels) > 0):
-      channels = card.digital_channels
-    elif (len(card.analog_channels) > 0):
-      channels = card.analog_channels
-      digital = False
-    else:
-      print "ERROR"
-      exit(-1)
 
     rows=[]
     for c in channels:
@@ -719,37 +731,42 @@ class Exporter:
     self.docbook.closeSection()
     
   def writeCrate(self, crate):
-    name = crate.location + '-' + crate.rack + str(crate.elevation)
+    name = crate.location
 
     self.docbook.openSection(name, 'crate.{0}'.format(crate.id))
     self.tf.write('Crate: {0}\n'.format(name))
 
     # Application Cards
-    cols=[{'name':'c1', 'width':'0.15*'},
-          {'name':'c2', 'width':'0.5*'},
-          {'name':'c3', 'width':'0.25*'},
-          {'name':'c4', 'width':'0.5*'}]
+    if (len(crate.cards) > 0):
+      cols=[{'name':'c1', 'width':'0.15*'},
+            {'name':'c2', 'width':'0.5*'},
+            {'name':'c3', 'width':'0.25*'},
+            {'name':'c4', 'width':'0.5*'}]
 
-    header=[{'name':'Slot #', 'namest':None, 'nameend':None},
-            {'name':'Application Card', 'namest':None, 'nameend':None},
-            {'name':'Global Id', 'namest':None, 'nameend':None},
-            {'name':'Card Description', 'namest':None, 'nameend':None}]
+      header=[{'name':'Slot #', 'namest':None, 'nameend':None},
+              {'name':'Application Card', 'namest':None, 'nameend':None},
+              {'name':'Global Id', 'namest':None, 'nameend':None},
+              {'name':'Card Description', 'namest':None, 'nameend':None}]
 
-    rows=[]
-    for card in crate.cards:
-      slot_info = '<link linkend=\'card.{0}\'>{1}</link>'.format(card.id, card.slot_number)
-      rows.append([slot_info, card.name, card.global_id, card.description])
-      self.tf.write('[Card {0}] Slot: {1}; Name: {2}; GID: {3}; Desc: {4}\n'.\
-                      format(card.id, card.slot_number,card.name, card.global_id, card.description))
+      rows=[]
+      for card in crate.cards:
+        slot_info = '<link linkend=\'card.{0}\'>{1}</link>'.format(card.id, card.slot_number)
+        rows.append([slot_info, card.name, card.global_id, card.description])
+        self.tf.write('[Card {0}] Slot: {1}; Name: {2}; GID: {3}; Desc: {4}\n'.\
+                        format(card.id, card.slot_number,card.name, card.global_id, card.description))
 
-    table_name = '{0} Cards'.format(name)
-    table_id = 'crate_table.{0}'.format(crate.id)
-    self.docbook.table(table_name, cols, header, rows, table_id)
+      table_name = '{0} Cards'.format(name)
+      table_id = 'crate_table.{0}'.format(crate.id)
+      self.docbook.table(table_name, cols, header, rows, table_id)
 
     self.docbook.closeSection()
 
   def writeMitigationDevices(self, destination):
     self.docbook.openSection('{0}: Mitigation Devices'.format(destination.name))
+
+    if len(destination.mitigation_devices) == 0:
+      self.docbook.closeSection()
+      return 
 
     cols=[{'name':'c1', 'width':'0.15*'},
           {'name':'c2', 'width':'0.55*'},

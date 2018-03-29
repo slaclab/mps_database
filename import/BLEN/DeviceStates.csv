@@ -1,0 +1,2 @@
+Name,Number,Description,Value,Mask,Fault,Fault_Description
+IMAX,1,Current,1,1,IMAX,BLEN IMAX Fault (T0)
