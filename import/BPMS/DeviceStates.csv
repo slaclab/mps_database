@@ -1,0 +1,4 @@
+Name,Number,Description,Value,Mask,Fault,Fault_Description,
+X_T0,1,X,1,1,X_T0,X Fault,
+Y_T0,2,Y,256,256,Y_T0,Y Fault,
+TMIT_T0,3,TMIT,65536,65536,TMIT_T0,TMIT Fault,

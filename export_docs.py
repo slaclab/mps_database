@@ -240,8 +240,9 @@ class Exporter:
     header=[]
     header.append({'name':'Fault Name', 'namest':'fault1', 'nameend':'fault2'})
     beamDestinations = self.session.query(models.BeamDestination).\
-        order_by(models.BeamDestination.destination_mask.desc())
+        order_by(models.BeamDestination.destination_mask.asc())
     beamDest={}
+
     for m in beamDestinations:
       beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
@@ -333,7 +334,7 @@ class Exporter:
     header.append({'name':'Fault Name', 'namest':None, 'nameend':None})
     beamDest={}
     beamDestinations = self.session.query(models.BeamDestination).\
-        order_by(models.BeamDestination.destination_mask.desc())
+        order_by(models.BeamDestination.destination_mask.asc())
     for m in beamDestinations:
       beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})
@@ -370,7 +371,8 @@ class Exporter:
       # end for b
       row.append(fault.name)
       for key in beamDest:
-        row.append('X')
+#        row.append('+')
+        row.append(beamDest[key])
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
 
@@ -439,7 +441,7 @@ class Exporter:
     header.append({'name':'Threshold [PV, Value]', 'namest':'threshold1', 'nameend':'threshold2'})
     beamDest={}
     beamDestinations = self.session.query(models.BeamDestination).\
-        order_by(models.BeamDestination.destination_mask.desc())
+        order_by(models.BeamDestination.destination_mask.asc())
     for m in beamDestinations:
       beamDest[m.name.lower()] = '-'
       header.append({'name':m.name, 'namest':None, 'nameend':None})

@@ -269,6 +269,31 @@ class DatabaseImporter:
     f.close()
     return device_states
 
+  def read_mitigation(self, file_name):
+    f = open(file_name)
+    line = f.readline().strip()
+    fields = []
+    for field in line.split(','):
+      fields.append(str(field).lower())
+    location = None
+    mitigation={}
+    while line:
+      mitigation_info={}
+      line = f.readline().strip()
+      if line:
+        field_index = 0
+        for property in line.split(','):
+          mitigation_info[fields[field_index]]=property
+          field_index = field_index + 1
+
+        if location != mitigation_info['device_location']:
+          mitigation[mitigation_info['device_location']]={}
+          location = mitigation_info['device_location']
+        mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
+
+    f.close()
+    return mitigation
+
   def add_analog_device(self, directory):
     file_name = directory + '/DeviceType.csv'
     device_type = self.check_device_type(file_name)
@@ -277,6 +302,144 @@ class DatabaseImporter:
 
     file_name = directory + '/DeviceStates.csv'
     device_states = self.add_device_states(file_name, device_type)
+
+    # Read AnalogChannels, each device has one channel
+    file_name = directory + '/AnalogChannels.csv'
+    f = open(file_name)
+    line = f.readline().strip()
+    fields=[]
+    for field in line.split(','):
+      fields.append(str(field).lower())
+
+    channel={}
+    while line:
+      channel_info={}
+      line = f.readline().strip()
+
+      if line:
+        field_index = 0
+        for property in line.split(','):
+          channel_info[fields[field_index]]=property
+          field_index = field_index + 1
+          
+        channel[channel_info['name']]=channel_info
+
+    f.close()
+
+    # Read Mitigation list
+    file_name = directory + '/Mitigation.csv'
+    mitigation = self.read_mitigation(file_name)
+
+    # Devices!
+    file_name = directory + '/Devices.csv'
+    f = open(file_name)
+    line = f.readline().strip()
+    fields=[]
+    for field in line.split(','):
+      fields.append(str(field).lower())
+
+    while line:
+      device_info={}
+      line = f.readline().strip()
+
+      if line:
+        field_index = 0
+        for property in line.split(','):
+          device_info[fields[field_index]]=property
+          field_index = field_index + 1
+          
+        try:
+          app_card = self.session.query(models.ApplicationCard).\
+              filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
+        except:
+          print('ERROR: Cannot find application_card with id {0}, exiting...'.format(device_info['application_card_number']))
+          return
+
+        # there must be only one channel
+        if len(channel) != 1:
+          print 'ERROR: too many channels defined for AnalogDevice'
+          return
+
+        for key in channel:
+          channel_name = key
+        mps_channel_index = channel[channel_name]['mps_channel_#']
+        channel_number = int(device_info['mps_channel_#' + mps_channel_index])
+
+        analog_channel = models.AnalogChannel(name=channel[key]['name'],
+                                              number=channel_number, card_id=app_card.id)
+        self.session.add(analog_channel)
+
+        device = models.AnalogDevice(name=device_info['device'],
+                                     device_type=device_type,
+                                     channel=analog_channel,
+                                     card=app_card,
+                                     position=device_info['position'],
+                                     description=device_info['device'] + ' ' + device_type.description,
+                                     area=device_info['area'],
+                                     evaluation=1)
+
+        self.session.add(device)
+#        self.session.commit()
+
+        # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
+        if device_info['fault'] != 'all':
+          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
+          self.session.add(device_fault)
+
+          device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
+          self.session.add(device_fault_input)
+
+          # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
+          for k in mitigation:
+            if device_info['mitigation'] == k:
+              for m in mitigation[device_info['mitigation']]:
+                fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
+                self.session.add(fault_state)
+
+                # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
+                for d in self.beam_destinations:
+                  power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
+                  if (power_class_str != '-'):
+                    beam_class = self.session.query(models.BeamClass).\
+                        filter(models.BeamClass.id==int(power_class_str)).one()
+
+                    beam_destination = self.session.query(models.BeamDestination).\
+                        filter(models.BeamDestination.name==d).one()
+                    fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+        else:
+#          print "MIT: "
+#          print mitigation[device_info['mitigation']]
+          mit_location = device_info['mitigation']
+          for k in mitigation[mit_location]:
+            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
+                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
+            self.session.add(device_fault)
+
+            device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
+            self.session.add(device_fault_input)
+
+
+            for key in mitigation:
+              if device_info['mitigation'] == key:
+                for m in mitigation[device_info['mitigation']]:
+                  if m == mitigation[mit_location][k]['state_name']:
+#                    print m
+                    fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
+                    self.session.add(fault_state)
+
+                    # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
+                    for d in self.beam_destinations:
+                      power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
+                      if (power_class_str != '-'):
+                        beam_class = self.session.query(models.BeamClass).\
+                            filter(models.BeamClass.id==int(power_class_str)).one()
+
+                        beam_destination = self.session.query(models.BeamDestination).\
+                            filter(models.BeamDestination.name==d).one()
+                        fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+
+
+    f.close()
 
   #(venv)[lpiccoli@lcls-dev3 PROF]$ ll
   #
@@ -325,36 +488,9 @@ class DatabaseImporter:
 
     # Read Mitigation list
     file_name = directory + '/Mitigation.csv'
-    f = open(file_name)
-    line = f.readline().strip()
-    fields = []
-    for field in line.split(','):
-      fields.append(str(field).lower())
-    location = None
-    mitigation={}
-    while line:
-      mitigation_info={}
-      line = f.readline().strip()
-      if line:
-        field_index = 0
-        for property in line.split(','):
-          mitigation_info[fields[field_index]]=property
-#          print property
-          field_index = field_index + 1
+    mitigation = self.read_mitigation(file_name)
 
-        if location != mitigation_info['device_location']:
-          mitigation[mitigation_info['device_location']]={}
-#          print mitigation_info['device_location']
-          location = mitigation_info['device_location']
-        mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
-
-#    for k in mitigation:
-#      print k
-#      for i in mitigation[k]:
-#        print i
-#    print mitigation['Linac']
-
-    # Read list of devices
+    # Read list of devices, create Faults, FaultStates, etc...
     file_name = directory + '/Devices.csv'
     f = open(file_name)
     line = f.readline().strip()
@@ -440,7 +576,7 @@ class DatabaseImporter:
   def check(self):
     card = self.session.query(models.ApplicationCard).\
         filter(models.ApplicationCard.id==1).one()
-    print len(card.digital_channels)
+#    print len(card.digital_channels)
 
 importer = DatabaseImporter("mps_config_imported.db")
 
@@ -453,7 +589,8 @@ importer.add_beam_classes('import/BeamClasses.csv')
 
 importer.add_digital_device('import/PROF')
 importer.add_analog_device('import/BLEN')
-
+importer.add_analog_device('import/SOLN')
+importer.add_analog_device('import/BPMS')
 
 importer.check()
 

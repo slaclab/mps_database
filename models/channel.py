@@ -76,6 +76,6 @@ class AnalogChannel(Base):
   __tablename__ = 'analog_channels'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
-  name = Column(String, unique=True, nullable=False)
+  name = Column(String, nullable=False)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   analog_device = relationship("AnalogDevice", uselist=False, backref="channel")
