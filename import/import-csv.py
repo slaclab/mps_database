@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 
