@@ -48,11 +48,11 @@ class ApplicationCard(Base):
   devices = relationship("Device", backref='card')
   
   def show(self):
-    print '> Name: {0}'.format(self.name)
-    print '> Number: {0}'.format(self.number)
-    print '> Digital: {0}'.format(len(self.digital_channels))
-    print '> Analog: {0}'.format(len(self.analog_channels))
-    print '> Digital Out: {0}'.format(len(self.digital_out_channels))
+    print('> Name: {0}'.format(self.name))
+    print('> Number: {0}'.format(self.number))
+    print('> Digital: {0}'.format(len(self.digital_channels)))
+    print('> Analog: {0}'.format(len(self.analog_channels)))
+    print('> Digital Out: {0}'.format(len(self.digital_out_channels)))
 
   @validates('digital_channels')
   def validate_digital_channel(self, key, new_channel):
@@ -63,7 +63,7 @@ class ApplicationCard(Base):
     """
     channel_list = self.digital_channels
     channel_count = self.type.digital_channel_count
-    print 'added digital channel'
+    print('added digital channel')
     return self.validate_generic_channel(new_channel, channel_list, channel_count)
     
   @validates('analog_channels')

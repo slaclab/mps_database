@@ -10,21 +10,21 @@ meta = MetaData(naming_convention={
         "pk": "pk_%(table_name)s"
       })
 
-from crate import Crate
-from application_type import ApplicationType
-from application_card import ApplicationCard
-from channel import DigitalChannel, DigitalOutChannel, AnalogChannel
-from device_type import DeviceType
-from device import Device, MitigationDevice, DigitalDevice, AnalogDevice
-from device import DigitalDevice
-from device_state import DeviceState
-from device_input import DeviceInput
-from fault import Fault
-from fault_state import FaultState
-from fault_input import FaultInput
-from beam_class import BeamClass
-from allowed_class import AllowedClass
-from condition import Condition
-from ignore_condition import IgnoreCondition
-from condition_input import ConditionInput
-from beam_destination import BeamDestination
+from models.crate import Crate
+from models.application_type import ApplicationType
+from models.application_card import ApplicationCard
+from models.channel import DigitalChannel, DigitalOutChannel, AnalogChannel
+from models.device_type import DeviceType
+from models.device import Device, MitigationDevice, DigitalDevice, AnalogDevice
+from models.device import DigitalDevice
+from models.device_state import DeviceState
+from models.device_input import DeviceInput
+from models.fault import Fault
+from models.fault_state import FaultState
+from models.fault_input import FaultInput
+from models.beam_class import BeamClass
+from models.allowed_class import AllowedClass
+from models.condition import Condition
+from models.ignore_condition import IgnoreCondition
+from models.condition_input import ConditionInput
+from models.beam_destination import BeamDestination
