@@ -13,5 +13,5 @@ else
   fi
 fi
 
-export LD_LIBRARY_PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/lib:$LD_LIBRARY_PATH
-export PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/bin:$PATH
+#export LD_LIBRARY_PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/lib:$LD_LIBRARY_PATH
+#export PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/bin:$PATH
