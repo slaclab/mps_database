@@ -252,11 +252,11 @@ class Exporter:
       deviceState = self.session.query(models.DeviceState).\
           filter(models.DeviceState.id==state.device_state_id).one()
       row=[]
-      row.append('X')
+      row.append(' ')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       row.append(deviceState.name)
       for key in beamDest:
-        row.append('X')
+        row.append(' ')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
 
       rows.append(row)
@@ -370,9 +370,11 @@ class Exporter:
         # end for c
       # end for b
       row.append(fault.name)
-      for key in beamDest:
+      for m in beamDestinations:
+        row.append(beamDest[m.name.lower()])
+#      for key in beamDest:
 #        row.append('+')
-        row.append(beamDest[key])
+#        row.append(beamDest[key])
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
 
@@ -455,27 +457,27 @@ class Exporter:
 
       # Low threshold
       row=[]
-      row.append('X')
+      row.append(' ')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       row.append('{0} (Low)'.format(deviceState.name))
       row.append('{0}_L'.format(thresholdPv))
-      row.append('X')
+      row.append(' ')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
       for key in beamDest:
-        row.append('X')
+        row.append(' ')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
 
       # High threshold
       row=[]
-      row.append('X')
+      row.append(' ')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       row.append('{0} (High)'.format(deviceState.name))
       row.append('{0}_H'.format(thresholdPv))
-      row.append('X')
+      row.append(' ')
 #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
       for key in beamDest:
-        row.append('X')
+        row.append(' ')
 #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
       rows.append(row)
 
@@ -589,7 +591,7 @@ class Exporter:
       device = self.session.query(models.Device).filter(models.Device.id==ddi.digital_device.id).one()
 
 #      rows.append([c.number, '<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>', c.z_name, '<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>', c.o_name, '{0}_MPSC'.format(self.mpsName.getDeviceInputName(ddi))])
-      rows.append([c.number, 'X', c.z_name, 'X', c.o_name, '{0}_MPSC'.format(self.mpsName.getDeviceInputName(ddi))])
+      rows.append([c.number, ' ', c.z_name, ' ', c.o_name, '{0}_MPSC'.format(self.mpsName.getDeviceInputName(ddi))])
       self.tf.write('[DigitalChannel {0}] GID: {1}; Ch: {2}; Device: {3}; Desc: {4}; BitPos: {5}; PV: {6}; Zero: {7}; One: {8};\n'.\
                       format(c.id, card.global_id, c.number, device.name, 
                              device.description, ddi.bit_position,
@@ -832,18 +834,18 @@ class Exporter:
     self.docbook.openSection('Beam Power Classes')
 
     cols=[{'name':'c1', 'width':'0.05*'},
-          {'name':'c2', 'width':'0.20*'},
+          {'name':'c2', 'width':'0.15*'},
           {'name':'c3', 'width':'0.25*'},
-          {'name':'c4', 'width':'0.20*'},
+          {'name':'c4', 'width':'0.25*'},
           {'name':'c5', 'width':'0.20*'},
-          {'name':'c6', 'width':'0.20*'}]
+          {'name':'c6', 'width':'0.25*'}]
 
     header=[{'name':'Id', 'namest':None, 'nameend':None},
             {'name':'Name', 'namest':None, 'nameend':None},
             {'name':'Description', 'namest':None, 'nameend':None},
-            {'name':'Int Window', 'namest':None, 'nameend':None},
-            {'name':'Min Period', 'namest':None, 'nameend':None},
-            {'name':'Max Charge', 'namest':None, 'nameend':None}]
+            {'name':'Int. Window (uS)', 'namest':None, 'nameend':None},
+            {'name':'Min. Period (uS)', 'namest':None, 'nameend':None},
+            {'name':'Max. Charge (nC)', 'namest':None, 'nameend':None}]
 
     rows=[]
     for powerClass in self.session.query(models.BeamClass).all():
