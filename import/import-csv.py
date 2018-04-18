@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 from mps_config import MPSConfig, models
 from sqlalchemy import MetaData
+import argparse
 
 class DatabaseImporter:
   conf = None # MPSConfig
   session = None
   beam_destinations = []
+  verbose = False
 
-  def __init__(self, file_name):
+  def __init__(self, file_name, verbose):
     self.conf = MPSConfig(file_name)
     self.conf.clear_all()
     self.session = self.conf.session
     self.session.autoflush=False
+    self.verbose = verbose
 
   def __del__(self):
     self.session.commit()
@@ -295,6 +298,7 @@ class DatabaseImporter:
     return mitigation
 
   def add_analog_device(self, directory):
+    print 'Adding ' + directory
     file_name = directory + '/DeviceType.csv'
     device_type = self.check_device_type(file_name)
     if device_type == None:
@@ -377,6 +381,8 @@ class DatabaseImporter:
                                      description=device_info['device'] + ' ' + device_type.description,
                                      area=device_info['area'],
                                      evaluation=1)
+        if (self.verbose):
+          print 'Analog Channel: ' + device_info['device']
 
         self.session.add(device)
 #        self.session.commit()
@@ -449,6 +455,7 @@ class DatabaseImporter:
   # DigitalChannels.csv
   # Mitigation.csv
   def add_digital_device(self, directory):
+    print 'Adding ' + directory
     # Find the device type
     file_name = directory + '/DeviceType.csv'
     device_type = self.check_device_type(file_name)
@@ -578,7 +585,17 @@ class DatabaseImporter:
         filter(models.ApplicationCard.id==1).one()
 #    print len(card.digital_channels)
 
-importer = DatabaseImporter("mps_config_imported.db")
+### MAIN
+
+parser = argparse.ArgumentParser(description='Import MPS database from .csv files')
+parser.add_argument('-v', action='store_true', default=False, dest='verbose', help='Verbose output')
+args = parser.parse_args()
+
+verbose=False
+if args.verbose:
+  verbose=True
+
+importer = DatabaseImporter("mps_config_imported.db", verbose)
 
 importer.add_crates('import/Crates.csv')
 importer.add_app_types('import/AppTypes.csv')
@@ -591,8 +608,11 @@ importer.add_digital_device('import/PROF')
 importer.add_analog_device('import/BLEN')
 importer.add_analog_device('import/SOLN')
 importer.add_analog_device('import/BPMS')
+importer.add_analog_device('import/BLM')
 
 importer.check()
+
+print 'Done.'
 
 #link_node_card = models.ApplicationCard(name="EIC Digital Card", number=100, area="GUNB",
 #                                        location="MP10", type=eic_digital_app, slot_number=2, amc=2, #amc=2 -> RTM

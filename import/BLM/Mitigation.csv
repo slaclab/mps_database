@@ -1,0 +1,3 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU,
+SXU,LOSS_T0,1,SXU BPM X Fault,-,-,1,-,
+HXU,LOSS_T0,1,HXU BPM X Fault,-,-,-,1,
