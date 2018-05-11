@@ -748,4 +748,12 @@ if not two_apps:
   ignore_condition = models.IgnoreCondition(condition=yag01_in_condition, analog_device=bpm02)
   session.add(ignore_condition)
 
+  # Add condition to ignore TORO DIFF - leaving TORO CHARGE enabled
+  # This is a special EIC only case 
+  ignore_condition = models.IgnoreCondition(condition=yag01_in_condition, 
+                                            fault_state=im01_diff_fault_states[0],
+                                            analog_device=im01)
+  session.add(ignore_condition)
+
+
 session.commit()
