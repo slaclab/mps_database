@@ -1,0 +1,2 @@
+Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Alarm_State,Debounce
+SPEED_OK,Backplane,Backplane,1,NOT_OK,OK,0,0,0,10

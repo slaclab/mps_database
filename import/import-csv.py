@@ -605,10 +605,11 @@ importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
 importer.add_digital_device('import/PROF')
-importer.add_analog_device('import/BLEN')
-importer.add_analog_device('import/SOLN')
-importer.add_analog_device('import/BPMS')
-importer.add_analog_device('import/BLM')
+#importer.add_analog_device('import/BLEN')
+#importer.add_analog_device('import/SOLN')
+#importer.add_analog_device('import/BPMS')
+#importer.add_analog_device('import/BLM')
+#importer.add_digital_device('import/WIRE')
 
 importer.check()
 

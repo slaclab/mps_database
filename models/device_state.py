@@ -30,3 +30,16 @@ class DeviceState(Base):
   mask = Column(Integer, nullable=False, default=0xFFFFFFFF)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   fault_states = relationship("FaultState", backref='device_state')
+
+  # This is valid only for AnalogDevice states, where the value
+  # contains only one high bit. Based on the value this returns
+  # to which integrator it belongs
+  def get_integrator(self):
+    if self.value < 0x100:
+      return 0
+    elif self.value < 0x10000:
+      return 1
+    elif self.value < 0x1000000:
+      return 2
+    else:
+      return 3

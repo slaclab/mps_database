@@ -408,6 +408,22 @@ def exportAnalogDevices(file, analogDevices, session):
             fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id)))
             printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
 
+            # if there is an ignore condition where there is an analogDevice AND a faultState, then
+            # the asynMask for the record is different, it must return the ignored state for the faultState,
+            # not from the analogDevice
+            # aoeu
+            ignore_condition = session.query(models.IgnoreCondition).filter(models.IgnoreCondition.analog_device_id==analogDevice.id).all()
+
+            asynMask = '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)
+            for i in ignore_condition:
+#              print '{2}: {0} {1}'.format(i.analog_device_id, i.fault_state_id, analogDevice.id)
+              if i.fault_state_id != None:
+                faultState = session.query(models.FaultState).filter(models.FaultState.id==i.fault_state_id).one()
+                deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
+                if deviceState.get_integrator() == intIndex:
+                  asynMask = '@asynMask(CENTRAL_NODE {0} 1 {1})MPS_ANALOG_DEVICE_IGNORED_INTEGRATOR'.format(analogDevice.id, intIndex)
+#                  print "Found it {0} {1}".format(intIndex, deviceState.get_integrator())
+
             fields=[]
             fields.append(('DESC', 'Ignored status'))
             fields.append(('DTYP', 'asynUInt32Digital'))
@@ -416,7 +432,7 @@ def exportAnalogDevices(file, analogDevices, session):
             fields.append(('ONAM', 'Ignored'))
             fields.append(('ZSV', 'NO_ALARM'))
             fields.append(('OSV', 'MAJOR'))
-            fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)))
+            fields.append(('INP', asynMask))
             printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
             
             # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 

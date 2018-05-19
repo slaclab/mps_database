@@ -15,3 +15,8 @@ TORO,13,Toroid,2
 BPMS,14,Beam Position Monitor,3
 BLEN,15,Bunch Length Monitor,1
 BLM,16,Beam Loss Monitor,1
+BEND,17,Dipole,1
+STOP,18,Stopper,0
+WIRE,19,Fast Wire Scanner,0
+COLL,20,Collimator Position,0
+WIRE_PARK,21,Fast Wire Parked Switch,0

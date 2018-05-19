@@ -278,7 +278,7 @@ class Exporter:
     channelDeviceState = []
 
     integratorShift = 0
-    if ("X" in fault.name or "I0" in fault.name or "CHARGE" in fault.name):
+    if ("X" in fault.name or "I0" in fault.name or "CHARGE" in fault.name or "T0" in fault.name):
       integratorShift = 0
     elif ("Y" in fault.name or "I1" in fault.name or "DIFF" in fault.name):
       integratorShift = 8
@@ -559,12 +559,48 @@ class Exporter:
     dt = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
     rows.append(['type', dt.name])
 
+    cols=[{'name':'c1', 'width':'0.25*'},
+          {'name':'c2', 'width':'0.75*'}]
+
+    header=[{'name':'Property', 'namest':None, 'nameend':None},
+            {'name':'Value', 'namest':'zero1', 'nameend':'zero2'}]
+
     table_name = '{0} Properties'.format(device.name)
     table_id = 'device_table.{0}'.format(device.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
+#    self.writeDeviceStates(device)
+
     self.writeDeviceFaults(device)
     
+    self.docbook.closeSection()
+
+  def writeDeviceStates(self, device):
+    self.docbook.openSection('{0} Device States'.format(device.name))
+    
+    self.docbook.para('Table with possible states for {0} device.'.format(device.name))
+
+    table_name = '{0} Device States'.format(device.name)
+    table_id = 'device_states_{0}'.format(device.id)
+
+    cols=[{'name':'c1', 'width':'0.25*'},
+          {'name':'c2', 'width':'0.45*'},
+          {'name':'c3', 'width':'0.75*'}]
+
+    header=[{'name':'Name', 'namest':None, 'nameend':None},
+            {'name':'Description', 'namest':None, 'nameend':None},
+            {'name':'Value', 'namest':None, 'nameend':None}]
+
+    rows=[]
+    for s in device.device_type.states:
+      rows.append(['aaa','bbb','ccc'])
+#
+#      fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
+#      rows.append(['<link linkend=\'fault.{0}\'>{1}</link>'.format(fault.id, fault.name),
+#                   fault.description, self.mpsName.getFaultName(fault)])
+
+    self.docbook.table(table_name, cols, header, rows, table_id)
+
     self.docbook.closeSection()
 
   def writeDigitalCheckoutTable(self, card, channels):
