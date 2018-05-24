@@ -107,7 +107,8 @@ Options for the script are:
 ```
 mps_database]$ ./central_node_test.py -h
 usage: central_node_test.py [-h] [--host hostname] [--port [size]]
-                            [--debug [debug]] [--device [device]]
+                            [--debug [debug]] [--device [device]] [--analog]
+                            [--report] [--delay]
                             db
 
 Send link node update to central_node_engine server
@@ -121,6 +122,9 @@ optional arguments:
   --port [size]      server port (default=4356)
   --debug [debug]    set debug level output (default level 0)
   --device [device]  device id (default - test all digital devices)
+  --analog           analog device
+  --report           generate pdf report
+  --delay            add 1 second delay between tests
 ```
 Example of output:
 ```

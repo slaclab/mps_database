@@ -789,8 +789,10 @@ if args.delay:
 
 docbook = None
 if args.report:
-    report = True
-    docbook = DocBook('{0}-report.xml'.format(args.database[0].name.split('.')[0]))
+  report = True
+  docbook = DocBook('{0}-report.xml'.format(args.database[0].name.split('/')[len(args.database[0].name.split('/'))-1].split('.')[0]))
+  docbook.tableHeaderColor='<?dbhtml bgcolor="#606060" ?><?dbfo bgcolor="#606060" ?>'
+    
 
 s = Simulator(args.database[0].name, debug, docbook)
 t = Tester(s, host, port, debug, docbook, delay)

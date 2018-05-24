@@ -103,7 +103,6 @@ class Exporter:
       crate = self.session.query(models.Crate).\
           filter(models.Crate.id==card.crate_id).one()
       num_bits = num_bits + 1
-      print '{0}: {1}'.format(channel.name, ddi.bit_position)
 
       channelName.append(channel.name)
       channelBitPos.append(ddi.bit_position)
@@ -569,37 +568,148 @@ class Exporter:
     table_id = 'device_table.{0}'.format(device.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
-#    self.writeDeviceStates(device)
+    try:
+      if (self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==device.id).one() != 'None'):
+        self.writeDeviceStates(device)
+    except:
+      None
 
     self.writeDeviceFaults(device)
     
     self.docbook.closeSection()
 
+  # write table with possible states for a digital device
   def writeDeviceStates(self, device):
     self.docbook.openSection('{0} Device States'.format(device.name))
     
-    self.docbook.para('Table with possible states for {0} device.'.format(device.name))
+    # Device Inputs
+    table_name = '{0} Device Inputs'.format(device.name)
+    table_id = 'device_input_table.{0}'.format(device.id)
+
+    # Device States
+    device_states_table_name = '{0} Device States'.format(device.name)
+    device_states_table_id = 'device_states_{0}'.format(device.id)
+
+    self.docbook.para('Table "<link linkend=\'device_input_table.{0}\'>{2}</link>" lists the digital inputs that compose the {1} device. Each input combination defines a state (table "<link linkend=\'{3}\'>{4}</link>"). Some of the states are considered faults and may have mitigation actions.'.format(device.id, device.name, table_name, device_states_table_id, device_states_table_name))
+
+    channelName = []
+    channelBitPos = []
+    channelCrateId = []
+    channelCrate = []
+    channelSlot = []
+    channelNumber = []
+    channelPv = []
+    channelDeviceInput = []
+
+    num_bits = 0
+
+    print '{0} {1}'.format(device.name, device.id)
+    inp = device.inputs
+    ins = sorted(inp, key=lambda i: i.bit_position, reverse=True)
+
+    for ddi in ins: #device.inputs:
+      channel = self.session.query(models.DigitalChannel).\
+          filter(models.DigitalChannel.id==ddi.channel_id).one()
+      card = self.session.query(models.ApplicationCard).\
+          filter(models.ApplicationCard.id==channel.card_id).one()
+      crate = self.session.query(models.Crate).\
+          filter(models.Crate.id==card.crate_id).one()
+      num_bits = num_bits + 1
+
+      channelName.append(channel.name)
+      channelBitPos.append(ddi.bit_position)
+      channelCrateId.append(crate.id)
+      channelCrate.append(crate.location)# + '-' + crate.rack + str(crate.elevation))
+      channelSlot.append(str(card.slot_number))
+      channelNumber.append(str(channel.number))
+      channelPv.append(self.mpsName.getDeviceInputName(ddi) + "_MPSC")
+      channelDeviceInput.append(ddi)
+
+    
+    cols=[{'name':'c1', 'width':'0.08*'},
+          {'name':'b1', 'width':'0.08*'},
+          {'name':'c2', 'width':'0.25*'},
+          {'name':'c3', 'width':'0.25*'},
+          {'name':'c4', 'width':'0.08*'},
+          {'name':'c5', 'width':'0.08*'},
+          {'name':'c6', 'width':'0.50*'}]
+
+    header=[{'name':'Input', 'namest':None, 'nameend':None},
+            {'name':'Bit', 'namest':None, 'nameend':None},
+            {'name':'Name', 'namest':None, 'nameend':None},
+            {'name':'Crate', 'namest':None, 'nameend':None},
+            {'name':'Slot', 'namest':None, 'nameend':None},
+            {'name':'Ch #', 'namest':None, 'nameend':None},
+            {'name':'PV', 'namest':None, 'nameend':None}]
+
+    rows=[]
+    var = 'A'
+    for b in range(0, num_bits):
+      rows.append([var, channelBitPos[b], channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
+                   channelSlot[b], channelNumber[b], channelPv[b]])
+      var = chr(ord(var) + 1)
+#      self.tf.write('aoeu[FaultInput {0} : Fault {1}] Name:{2}; Value: {3}; Mask: {4}\n'.\
+#                      format(state.id, fault.id, deviceState.name,
+#                             hex(deviceState.value), hex(deviceState.mask)))
+
+    self.docbook.table(table_name, cols, header, rows, table_id)
 
     table_name = '{0} Device States'.format(device.name)
     table_id = 'device_states_{0}'.format(device.id)
 
-    cols=[{'name':'c1', 'width':'0.25*'},
-          {'name':'c2', 'width':'0.45*'},
-          {'name':'c3', 'width':'0.75*'}]
+    # Device states table
+    cols=[]
+    for b in range (0, num_bits):
+      cols.append({'name':'b{0}'.format(b), 'width':'0.05*'})
+    cols.append({'name':'v1', 'width':'0.05*'})
+    cols.append({'name':'f1', 'width':'0.25*'})
 
-    header=[{'name':'Name', 'namest':None, 'nameend':None},
-            {'name':'Description', 'namest':None, 'nameend':None},
-            {'name':'Value', 'namest':None, 'nameend':None}]
+    header=[]
+    var = 'A'
+    ivar = num_bits - 1
+    for b in range(0, num_bits):
+      header.append({'name':'{0}'.format(var), 'namest':None, 'nameend':None})
+      var = chr(ord(var) + 1)
+      ivar = ivar - 1
+    header.append({'name':'Value', 'namest':None, 'nameend':None})
+    header.append({'name':'Device State', 'namest':None, 'nameend':None})
 
     rows=[]
-    for s in device.device_type.states:
-      rows.append(['aaa','bbb','ccc'])
-#
-#      fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
-#      rows.append(['<link linkend=\'fault.{0}\'>{1}</link>'.format(fault.id, fault.name),
-#                   fault.description, self.mpsName.getFaultName(fault)])
+    device_type = self.session.query(models.DeviceType).\
+        filter(models.DeviceType.id==device.device_type_id).one()
 
-    self.docbook.table(table_name, cols, header, rows, table_id)
+    for deviceState in device_type.states:
+      row=[]
+      bits = []
+      maskBits = []
+      value = deviceState.value
+      mask = deviceState.mask
+      for b in range(0, num_bits):
+        bits.append((value & (1 << (num_bits - 1 - b))) >> (num_bits -1 -b))
+        maskBits.append((mask & (1 << (num_bits - 1 - b))) >> (num_bits -1 -b))
+        if (maskBits[b] == 0):
+          input_value = "-"
+        else:
+          input_value = bits[b]
+
+          # end for
+          row.append(input_value)
+
+      row.append(hex(deviceState.value))
+      row.append(deviceState.name)
+      rows.append(row)
+
+      self.tf.write('[FaultState {0} : Fault {1} : DeviceState {2}] Name: {3}; Value: {4}; Mask: {5}; Desc: {6}'.\
+#                      format(state.id, fault.id, deviceState.id,
+                    format('S', 'F', deviceState.id,
+                             deviceState.name, hex(deviceState.value),
+                             hex(deviceState.mask), deviceState.description))
+
+      self.tf.write('\n')
+
+#    table_name = '{0} Device States'.format(device.name)
+#    table_id = 'device_state_table.{0}'.format(device.id)
+    self.docbook.table(device_states_table_name, cols, header, rows, device_states_table_id)
 
     self.docbook.closeSection()
 
@@ -926,7 +1036,7 @@ class Exporter:
     table_id = 'condition.{0}'.format(condition.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
 
-    self.docbook.para('When the condition inputs in the above <link linkend=\'condition.{0}\'>table</link> are met, then the faults generated by the following devices are ignored (bypassed):'.format(condition.id))
+    self.docbook.para('When the condition inputs in the above "<link linkend=\'condition.{0}\'>table</link>" are met, then the faults generated by the following devices are ignored (bypassed):'.format(condition.id))
 
     table_name = 'Ignored Devices'
     table_id = 'ignored_devices.{0}'.format(condition.id)
