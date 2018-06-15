@@ -96,6 +96,31 @@ record(ao, "BPMS:GUNB:201:X_T1_HIHI") {
 ```
 This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter). The script also crates thresholds for the alternative, LCLS-I and idle modes. (LCLS-I and IDLE have a single HIHI/LOLO).
 
+EIC History Server
+------------------
+
+```
+mps_database]$ ./historyServer.py -h
+usage: historyServer.py [-h] [--host hostname] [--port [port]] [--file [file]]
+                        [--file-size [file_size]] [-c]
+                        db
+
+Receive MPS status messages
+
+positional arguments:
+  db                    database file name (e.g. mps_gun_config.db)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --host hostname       Central node hostname
+  --port [port]         server port (default=3356)
+  --file [file]         History log file base, e.g. /data/history/mpshist -
+                        file will be /data/history/mpshist-<DATE>.txt
+  --file-size [file_size]
+                        Maximum history log file size (default=10 MB)
+  -c                    Print messages to stdout
+```
+
 Tests
 -----
 

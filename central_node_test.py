@@ -14,15 +14,16 @@ class App:
   app=None
   was_low_bits=bytearray()
   was_high_bits=bytearray()
-  is_digital=True
+  is_digital=False
   session=None
   num_integrators=1
   app_type=None
+  has_channels=True
 
   def __init__(self, app, session):
       self.app = app
       self.session = session
-
+      
       if app != None:
           appType = self.session.query(models.ApplicationType).\
               filter(models.ApplicationType.id==app.type_id).one()
@@ -31,12 +32,15 @@ class App:
           if appType.name == 'Digital Card':
               self.is_digital = True
           else:
-              self.is_digital = False
+            self.is_digital = False
+            if (len(app.analog_channels) <= 0):
+              self.has_channels = False
+            else:
               id = app.analog_channels[0].analog_device.device_type_id
               device_type = self.session.query(models.DeviceType).\
                   filter(models.DeviceType.id==id).one()
               self.num_integrators = device_type.num_integrators
-#              print appType.name + " " + str(appType.number) + " " + str(app.number)
+#            print appType.name + " " + str(appType.number) + " " + str(app.number)
 #              print "Integrators: " + str(self.num_integrators)
 
           self.set_good_state()
@@ -62,14 +66,32 @@ class App:
       return (value >> 24) & 0xFF
 
   def set_good_state(self):
-      if self.is_digital:
-          self.was_low_bits = bytearray(192*[0])
-          self.was_high_bits = bytearray(192*[1])
-          if self.app != None:
-              self.write_digital_devices()
-      else:
-          self.was_low_bits = bytearray(192*[1])
-          self.was_high_bits = bytearray(192*[0])
+#    if (self.app != None):
+#      print '{0}({1})'.format(self.app.name, self.app.id)
+    if self.is_digital:
+      self.was_low_bits = bytearray(192*[0])
+      self.was_high_bits = bytearray(192*[1])
+      if self.app != None:
+        self.write_digital_devices()
+    else:
+      self.was_low_bits = bytearray(192*[1])
+      self.was_high_bits = bytearray(192*[0])
+
+  def dump_bits(self):
+    print "Was Low Bits:"
+    for i in range(0, len(self.was_low_bits)):
+      sys.stdout.write('{0}'.format(self.was_low_bits[i]))
+      if (i + 1) % 8 == 0:
+        sys.stdout.write(' ')
+      if (i + 1) % (8*8) == 0:
+        print ""
+    print "Was High Bits:"
+    for i in range(0, len(self.was_low_bits)):
+      sys.stdout.write('{0}'.format(self.was_high_bits[i]))
+      if (i + 1) % 8 == 0:
+        sys.stdout.write(' ')
+      if (i + 1) % (8*8) == 0:
+        print ""
 
   def get_id(self):
       if self.app != None:
@@ -96,7 +118,10 @@ class App:
 
   # value has 24 or 32 bits
   # channel_number is the analog channel index (from 0 to 5)
-  def set_analog_channel_value(self, channel_number, value):
+  def set_analog_channel_value(self, channel_number, value): # App 75 and 145 faulting..
+    if (not self.has_channels):
+      return
+    else:
       integrator_index = self.get_integrator(value) # return value from 0 to 3
       actual_value = self.get_integrator_value(integrator_index, value)
 #      print "Ch: {3}; Integrator: {0}; Value: {1:X}; Full: {2:X}".format(integrator_index, actual_value, value, channel_number)
@@ -132,14 +157,14 @@ class App:
             for input in device.inputs:
                 channel = self.session.query(models.DigitalChannel).\
                     filter(models.DigitalChannel.id==input.channel_id).one()
-  #              print 'Bit pos={0}, num={1}'.format(input.bit_position, channel.number)
+#                print 'Bit pos={0}, num={1}'.format(input.bit_position, channel.number)
                 inputs[input.bit_position]=channel
             for state in device_type.states:
                 fault_states = self.session.query(models.FaultState).\
                     filter(models.FaultState.device_state_id==state.id).all()
                 if (len(fault_states) == 0):
-  #                  print '{0}={1}'.format(state.name, state.value)
-  #                  print len(inputs)
+#                    print '{0}={1}'.format(state.name, state.value)
+#                    print len(inputs)
                     for b in range(0, len(inputs)):
                         bit_value = (state.value >> b) & 1
   #                      print 'bit {0}={1}'.format(b, bit_value)
@@ -224,7 +249,6 @@ class Simulator:
                 filter(models.ApplicationCard.global_id == id).one()
         except:
             app = None
-            
         self.apps.append(App(app, self.session))
 
   def __del__(self):

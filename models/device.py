@@ -14,6 +14,7 @@ class Device(Base):
     description: some extra information about this device
     position: 100 to 999 number that defines approximatelly where the device
               is within the area. This field is used to create PVs
+    z_location: z location in ft along the linac
     area: sector where the device is installed (e.g. GUNB, LI30, DMPB,...), this
           is used to create the PVs (second field). This field is used
           to create PVs.
@@ -37,6 +38,7 @@ class Device(Base):
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=False)
   position = Column(Integer, nullable=False)
+  z_location = Column(Float, nullable=False, default=0)
   area = Column(String, nullable=False)
   evaluation = Column(Integer, nullable=False, default=0)
 #  drawing = Column(String, unique=False, nullable=True)

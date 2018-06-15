@@ -2,23 +2,37 @@
 from mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 import argparse
+import yaml
+import os
 
 class DatabaseImporter:
   conf = None # MPSConfig
   session = None
   beam_destinations = []
   verbose = False
+  database_file_name = None
 
-  def __init__(self, file_name, verbose):
+  def __init__(self, file_name, verbose, clear_all=True):
+    self.database_file_name = file_name
     self.conf = MPSConfig(file_name)
-    self.conf.clear_all()
+    if (clear_all):
+      self.conf.clear_all()
     self.session = self.conf.session
     self.session.autoflush=False
+#    self.session.autoflush=True
     self.verbose = verbose
 
   def __del__(self):
     self.session.commit()
-    
+ 
+  def reopen(self):
+    self.session.commit()
+    self.session = None
+    self.conf = None
+    self.conf = MPSConfig(self.database_file_name)
+    self.session = self.conf.session
+    self.session.autoflush=False    
+   
   def add_crates(self, file_name):
     f = open(file_name)
 
@@ -118,7 +132,7 @@ class DatabaseImporter:
                                           slot_number=int(app_card_info['slot']),
                                           amc=int(app_card_info['amc']),
                                           global_id=int(app_card_info['global_id']),
-                                          description="EIC Digital Input/Output")
+                                          description=app_card_info['description'])
 
         app_crate.cards.append(app_card)
         self.session.add(app_card)
@@ -218,11 +232,16 @@ class DatabaseImporter:
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
+    has_measured_device_type = False
     for field in line.split(','):
       fields.append(str(field).lower())
+      lower_case_field = str(field).lower()
+       # check if device is measuring some other device
+      if (lower_case_field == 'measured_device_type_id'):
+        has_measured_device_type = True
 
+    type_info={}
     while line:
-      type_info={}
       line = f.readline().strip()
 
       if line:
@@ -230,7 +249,7 @@ class DatabaseImporter:
         for property in line.split(','):
           type_info[fields[field_index]]=property
           field_index = field_index + 1
-     
+
         try:
           device_type = self.session.query(models.DeviceType).\
               filter(models.DeviceType.name==type_info['name']).one()
@@ -238,7 +257,11 @@ class DatabaseImporter:
           print('ERROR: Cannot find device type with name {0}, exiting...'.format(type_info['name']))
           return None
     f.close()
-    return device_type
+
+    if has_measured_device_type:
+      return [device_type,type_info['measured_device_type_id']]
+    else:
+      return [device_type,None]
 
   def add_device_states(self, file_name, device_type):
     f = open(file_name)
@@ -272,6 +295,41 @@ class DatabaseImporter:
     f.close()
     return device_states
 
+  #
+  # Returns a dictionary with the mitigation rules for a device type,
+  # each entry is keyed on the destination (e.g. HXU, SXU, Linac),
+  # the data for each destination is another dictionary, where each
+  # key is the device state name, the data contains the mitigation
+  # information. Example for profile monitor, for the Linac destination
+  # only (in YAML):
+  # Linac:
+  #  Broken:
+  #    device_location: Linac
+  #    device_state_number: '4'
+  #    diag0: '-'
+  #    fault_description: Linac Screen Fault
+  #    hxu: '-'
+  #    linac: '1'
+  #    state_name: Broken
+  #    sxu: '-'
+  #  In:
+  #    device_location: Linac
+  #    device_state_number: '2'
+  #    diag0: '-'
+  #    fault_description: Linac Screen Fault
+  #    hxu: '-'
+  #    linac: '2'
+  #    state_name: In
+  #    sxu: '-'
+  #  Moving:
+  #    device_location: Linac
+  #    device_state_number: '3'
+  #    diag0: '-'
+  #    fault_description: Linac Screen Fault
+  #    hxu: '-'
+  #    linac: '1'
+  #    state_name: Moving
+  #    sxu: '-' 
   def read_mitigation(self, file_name):
     f = open(file_name)
     line = f.readline().strip()
@@ -295,12 +353,126 @@ class DatabaseImporter:
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
 
     f.close()
+    
+#    print yaml.dump(mitigation, default_flow_style=False)
     return mitigation
 
-  def add_analog_device(self, directory):
+  def read_conditions(self, file_name):
+    f = open(file_name)
+    line = f.readline().strip()
+    fields = []
+    for field in line.split(','):
+      fields.append(str(field).lower())
+    location = None
+    condition={}
+    while line:
+      condition_info={}
+      line = f.readline().strip()
+      if line:
+        field_index = 0
+        for property in line.split(','):
+          condition_info[fields[field_index]]=property
+          field_index = field_index + 1
+
+        condition[condition_info['state_name']]=condition_info
+
+    f.close()
+#    print yaml.dump(condition, default_flow_style=False)
+    return condition
+
+  # For a condition with single input, find with device is 
+  # used as input - this is used for adding ignore conditions
+  # based on device area and location.
+  def find_condition_input_device(self, condition):
+    # Condition must have single condition_input
+    try: 
+      inputs = self.session.query(models.ConditionInput).\
+          filter(models.ConditionInput.condition_id==condition.id).all()
+
+    except:
+      print('ERROR: no inputs found for condition {0}.'.format(condition.name))
+      return
+
+    if (len(inputs) > 1):
+      print('ERROR: too many inputs ({0}) found for condition {1}.'.format(len(inputs), condition.name))
+
+    # Now find the fault state for the input
+    try:
+      fault_state = self.session.query(models.FaultState).\
+          filter(models.FaultState.id==inputs[0].fault_state.id).one()
+    except:
+      print('ERROR: cannot find fault_state for condition {0}.'.format(condition.name))
+
+    # Find the fault...
+    try:
+      fault = self.session.query(models.Fault).\
+          filter(models.Fault.id==fault_state.fault_id).one()
+    except:
+      print('ERROR: cannot find fault for condition {0}.'.format(condition.name))
+
+    # Find the fault_input... must be a single input
+    if (len(fault.inputs) > 1):
+      print('ERROR: too many inputs ({0}) found for fault {1} that causes condition {2}.'.format(len(inputs), fault.name, condition.name))
+    elif (len(fault.inputs) == 0):
+      print('ERROR: no many inputs ({0}) found for fault {1} that causes condition {2}.'.format(len(inputs), fault.name, condition.name))
+
+    # Finally get the device that causes triggers the condition
+    device = None
+    try:
+      device = self.session.query(models.Device).\
+          filter(models.Device.id==fault.inputs[0].device_id).one()
+    except:
+      print('ERROR: cannot find device that causes for condition {0}.'.format(condition.name))
+
+    return device
+
+  # Check if the device in the 'cond_area' should be used
+  # as ignore condition for the device in 'device_area'
+  def check_area_order(self, cond_area, device_area):
+    cond = False
+    if (device_area.upper() == 'DIAG0' and
+        (cond_area.upper() == 'GUNB' or
+         cond_area.upper() == 'HTR' or
+         cond_area.upper() == 'LR00')):
+      cond = True
+    elif (device_area.upper().endswith('H') and
+          (not cond_area.upper().endswith('S'))):
+      cond = True
+    elif (device_area.upper().endswith('S') and
+          (not cond_area.upper().endswith('H'))):
+      cond = True
+    elif (cond_area != 'DIAG0'):
+      cond = True
+
+    return cond
+      
+  def add_ignore_conditions_analog(self, device):
+    try:
+      conditions = self.session.query(models.Condition).all()
+    except:
+      print('INFO: Found no conditions to ignore')
+      return
+
+    for cond in conditions:
+      cond_device = self.find_condition_input_device(cond)
+      if (cond_device != None):
+        # The location of the cond_device must be before the location of the device
+        # to be ignored
+        try:
+          cond_device_z = float(cond_device.z_location)
+          device_z = float(device.z_location)
+          if (cond_device_z < device_z):
+            if (self.check_area_order(cond_device.area, device.area)):
+              #            print '{0}, {1}:{2}, {3}:{4}'.format(cond.name, cond_device.name, cond_device.z_location, device.name, device.z_location)
+              ignore_condition = models.IgnoreCondition(condition=cond, analog_device=device)    
+        except:
+          print 'WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location)
+
+
+  def add_analog_device(self, directory, add_ignore=False):
     print 'Adding ' + directory
     file_name = directory + '/DeviceType.csv'
-    device_type = self.check_device_type(file_name)
+    [device_type, measured_device_type_id] = self.check_device_type(file_name)
     if device_type == None:
       return
 
@@ -378,6 +550,7 @@ class DatabaseImporter:
                                      channel=analog_channel,
                                      card=app_card,
                                      position=device_info['position'],
+                                     z_location=device_info['linac_z'],
                                      description=device_info['device'] + ' ' + device_type.description,
                                      area=device_info['area'],
                                      evaluation=1)
@@ -386,6 +559,10 @@ class DatabaseImporter:
 
         self.session.add(device)
 #        self.session.commit()
+
+        # If device should be ignored, add conditions
+        if (add_ignore):
+          self.add_ignore_conditions_analog(device)
 
         # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
         if device_info['fault'] != 'all':
@@ -458,7 +635,7 @@ class DatabaseImporter:
     print 'Adding ' + directory
     # Find the device type
     file_name = directory + '/DeviceType.csv'
-    device_type = self.check_device_type(file_name)
+    [device_type, measured_device_type_id] = self.check_device_type(file_name)
     if device_type == None:
       return
 
@@ -497,14 +674,23 @@ class DatabaseImporter:
     file_name = directory + '/Mitigation.csv'
     mitigation = self.read_mitigation(file_name)
 
+    # Read Ignore conditions (if any)
+    file_name = directory + '/Conditions.csv'
+    conditions = None
+    if (os.path.isfile(file_name)):
+      conditions = self.read_conditions(file_name)
+
     # Read list of devices, create Faults, FaultStates, etc...
     file_name = directory + '/Devices.csv'
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
-    for field in line.split(','):
-      fields.append(str(field).lower())
 
+    for field in line.split(','):
+      lower_case_field = str(field).lower()
+      fields.append(lower_case_field)
+
+    # read every device
     while line:
       device_info={}
       line = f.readline().strip()
@@ -522,12 +708,23 @@ class DatabaseImporter:
           print('ERROR: Cannot find application_card with id {0}, exiting...'.format(device_info['application_card_number']))
           return
 
-        device = models.DigitalDevice(name=device_info['device'],
-                                      position=device_info['position'],
-                                      description=device_info['device'] + ' ' + device_type.description,
-                                      device_type=device_type,
-                                      card=app_card,
-                                      area=device_info['area'])
+        if measured_device_type_id != None:
+          device = models.DigitalDevice(name=device_info['device'],
+                                        position=device_info['position'],
+                                        z_location=device_info['linac_z'],
+                                        description=device_info['device'] + ' ' + device_type.description,
+                                        device_type=device_type,
+                                        card=app_card,
+                                        area=device_info['area'],
+                                        measured_device_type_id=measured_device_type_id)
+        else:
+          device = models.DigitalDevice(name=device_info['device'],
+                                        position=device_info['position'],
+                                        z_location=device_info['linac_z'],
+                                        description=device_info['device'] + ' ' + device_type.description,
+                                        device_type=device_type,
+                                        card=app_card,
+                                        area=device_info['area'])
 
         self.session.add(device)
         self.session.commit()
@@ -565,6 +762,22 @@ class DatabaseImporter:
             for m in mitigation[device_info['mitigation']]:
               fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
               self.session.add(fault_state)
+              if (conditions != None and device_states[m].name in conditions):
+                name = device_states[m].name
+#                print '{0} : {1}'.format(device_info['device'], device_states[m].name)
+                # Create condition inputs and conditions
+                condition = models.Condition(name='{0}_{1}'.format(device_info['device'], name.upper()),
+                                             description='{0} in state {1}'.format(device_info['device'], name.upper()),
+                                             value=conditions[name]["value"])
+                self.session.add(condition)
+                self.session.commit()
+                self.session.refresh(condition)
+                
+                condition_input = models.ConditionInput(bit_position=conditions[name]["bit_position"],
+                                                        fault_state = fault_state, condition=condition)
+                self.session.add(condition_input)
+                self.session.commit()
+                self.session.refresh(condition_input)
 
               # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
               for d in self.beam_destinations:
@@ -578,6 +791,7 @@ class DatabaseImporter:
                   fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
 
     self.session.commit()
+    self.session.flush()
     f.close()
 
   def check(self):
@@ -604,12 +818,15 @@ importer.add_device_types('import/DeviceTypes.csv')
 importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
+#importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
+#importer.add_digital_device('import/WIRE_PARK')
 importer.add_digital_device('import/PROF')
-#importer.add_analog_device('import/BLEN')
-#importer.add_analog_device('import/SOLN')
-#importer.add_analog_device('import/BPMS')
-#importer.add_analog_device('import/BLM')
-#importer.add_digital_device('import/WIRE')
+importer.add_analog_device('import/BLEN', add_ignore=True)
+importer.add_analog_device('import/SOLN')
+importer.add_analog_device('import/BPMS', add_ignore=True)
+importer.add_analog_device('import/BLM')
+
+
 
 importer.check()
 
