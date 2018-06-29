@@ -15,21 +15,21 @@ class DocBook:
         self.file_name = file_name
         self.f = open(file_name, "w")
         
-    def exportHtml(self):
+    def exportHtml(self, suffix=''):
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
         location = self.file_name.split(base_name)[0]
 
-        output_file_name = '{0}{1}'.format(location, base_name.split('.')[0])
+        output_file_name = '{0}{1}-{2}'.format(location, base_name.split('.')[0], suffix)
 
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/html/docbook.xsl {0} > {1}.html'.\
             format(self.file_name, output_file_name)
         os.system(cmd)
 
-    def exportPdf(self):
+    def exportPdf(self, suffix=''):
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
         location = self.file_name.split(base_name)[0]
 
-        output_file_name = '{0}{1}'.format(location, base_name.split('.')[0])
+        output_file_name = '{0}{1}-{2}'.format(location, base_name.split('.')[0], suffix)
 
 #        print '>>>>> ' + self.file_name + " -> " + self.file_name.split(".")[0]
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.\
@@ -46,11 +46,11 @@ class DocBook:
         cmd = 'rm {0}.xml'.format(output_file_name)
 #        os.system(cmd)
 
-    def exportRtf(self):
+    def exportRtf(self, suffix=''):
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
         location = self.file_name.split(base_name)[0]
 
-        output_file_name = '{0}{1}'.format(location, base_name.split('.')[0])
+        output_file_name = '{0}{1}{2}'.format(location, base_name.split('.')[0], suffix)
 
 #        print self.file_name + " -> " + self.file_name.split(".")[0]
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.\

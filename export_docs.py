@@ -16,9 +16,17 @@ class Exporter:
   f=0
   siocPv='SIOC:SYS0:MP01'
   beamDestinationNames=[]
-  
-  def __init__(self, dbFileName):
+  checkout=True
+  cards_only=False
+  devices_only=False
+  checkout_only=False
+
+  def __init__(self, dbFileName, checkout, cards_only, devices_only, checkout_only):
     self.databaseFileName = dbFileName
+    self.checkout = checkout
+    self.cards_only = cards_only
+    self.devices_only = devices_only
+    self.checkout_only = checkout_only
     mps = MPSConfig(args.database[0].name)
     self.session = mps.session
     self.mpsName = MpsName(self.session)
@@ -212,8 +220,12 @@ class Exporter:
     rows=[]
     var = 'A'
     for b in range(0, num_bits):
-      rows.append([var, channelBitPos[b], channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
-                   channelSlot[b], channelNumber[b], channelPv[b]])
+      if (self.devices_only):
+        rows.append([var, channelBitPos[b], channelName[b], channelCrate[b],
+                     channelSlot[b], channelNumber[b], channelPv[b]])
+      else:
+        rows.append([var, channelBitPos[b], channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
+                     channelSlot[b], channelNumber[b], channelPv[b]])
       var = chr(ord(var) + 1)
 #      self.tf.write('aoeu[FaultInput {0} : Fault {1}] Name:{2}; Value: {3}; Mask: {4}\n'.\
 #                      format(state.id, fault.id, deviceState.name,
@@ -223,45 +235,46 @@ class Exporter:
     self.docbook.closeSection()
 
     # Fault Checkout Table
-    self.docbook.openSection('{0} Checkout'.format(fault.name))
+    if (self.checkout):
+      self.docbook.openSection('{0} Checkout'.format(fault.name))
 
-    self.docbook.para('Check all fault input combinations listed in tables "<xref linkend="fault_state_table.{0}"/>" and "<xref linkend="fault_input_table.{0}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table.{1}"/>"). Write down the power class for each beam destination. The power levels must match the ones listed in the "<xref linkend="fault_state_table.{0}"/>" table.'.format(fault.id, device.id))
+      self.docbook.para('Check all fault input combinations listed in tables "<xref linkend="fault_state_table.{0}"/>" and "<xref linkend="fault_input_table.{0}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table.{1}"/>"). Write down the power class for each beam destination. The power levels must match the ones listed in the "<xref linkend="fault_state_table.{0}"/>" table.'.format(fault.id, device.id))
 
-    table_name = '{0} Fault Checkout'.format(fault.name)
-    table_id = 'fault_checkout_table.{0}'.format(fault.id)
+      table_name = '{0} Fault Checkout'.format(fault.name)
+      table_id = 'fault_checkout_table.{0}'.format(fault.id)
 
-    cols=[]
-    cols.append({'name':'fault1', 'width':'0.10*'})
-    cols.append({'name':'fault2', 'width':'0.50*'})
-    for i in range(0, numBeamDestinations):
-      cols.append({'name':'m{0}'.format(i), 'width':'0.10*'})
+      cols=[]
+      cols.append({'name':'fault1', 'width':'0.10*'})
+      cols.append({'name':'fault2', 'width':'0.50*'})
+      for i in range(0, numBeamDestinations):
+        cols.append({'name':'m{0}'.format(i), 'width':'0.10*'})
 
-    header=[]
-    header.append({'name':'Fault Name', 'namest':'fault1', 'nameend':'fault2'})
-    beamDestinations = self.session.query(models.BeamDestination).\
-        order_by(models.BeamDestination.destination_mask.asc())
-    beamDest={}
+      header=[]
+      header.append({'name':'Fault Name', 'namest':'fault1', 'nameend':'fault2'})
+      beamDestinations = self.session.query(models.BeamDestination).\
+          order_by(models.BeamDestination.destination_mask.asc())
+      beamDest={}
 
-    for m in beamDestinations:
-      beamDest[m.name.lower()] = '-'
-      header.append({'name':m.name, 'namest':None, 'nameend':None})
+      for m in beamDestinations:
+        beamDest[m.name.lower()] = '-'
+        header.append({'name':m.name, 'namest':None, 'nameend':None})
 
-    rows=[]
-    for state in fault.states:
-      deviceState = self.session.query(models.DeviceState).\
-          filter(models.DeviceState.id==state.device_state_id).one()
-      row=[]
-      row.append(' ')
-#      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
-      row.append(deviceState.name)
-      for key in beamDest:
+      rows=[]
+      for state in fault.states:
+        deviceState = self.session.query(models.DeviceState).\
+            filter(models.DeviceState.id==state.device_state_id).one()
+        row=[]
         row.append(' ')
-#        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
+  #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
+        row.append(deviceState.name)
+        for key in beamDest:
+          row.append(' ')
+  #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
 
-      rows.append(row)
+        rows.append(row)
 
-    self.docbook.table(table_name, cols, header, rows, table_id)
-    self.docbook.closeSection()
+      self.docbook.table(table_name, cols, header, rows, table_id)
+      self.docbook.closeSection()
 
   def writeAnalogFault(self, fault, device):
     num_bits = 0
@@ -423,64 +436,65 @@ class Exporter:
 
     self.docbook.para('Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}"/>" table are defined in this database.'.format(fault.name, fault.id))
 
-    self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}"/>" lists the PVs that should be changed to test the faults. Set the LOW/HIGH PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id))
+    if (self.checkout):
+      self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}"/>" lists the PVs that should be changed to test the faults. Set the LOW/HIGH PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id))
 
-    # Fault Checkout Table
-    table_name = '{0} Fault Checkout'.format(fault.name)
-    table_id = 'fault_checkout_table.{0}'.format(fault.id)
+      # Fault Checkout Table
+      table_name = '{0} Fault Checkout'.format(fault.name)
+      table_id = 'fault_checkout_table.{0}'.format(fault.id)
 
-    cols=[]
-    cols.append({'name':'fault1', 'width':'0.12*'})
-    cols.append({'name':'fault2', 'width':'0.35*'})
-    cols.append({'name':'threshold1', 'width':'0.65*'})
-    cols.append({'name':'threshold2', 'width':'0.25*'})
-    for i in range(0, numBeamDestinations):
-      cols.append({'name':'m{0}'.format(i), 'width':'0.15*'})
+      cols=[]
+      cols.append({'name':'fault1', 'width':'0.12*'})
+      cols.append({'name':'fault2', 'width':'0.35*'})
+      cols.append({'name':'threshold1', 'width':'0.65*'})
+      cols.append({'name':'threshold2', 'width':'0.25*'})
+      for i in range(0, numBeamDestinations):
+        cols.append({'name':'m{0}'.format(i), 'width':'0.15*'})
 
-    header=[]
-    header.append({'name':'Fault', 'namest':'fault1', 'nameend':'fault2'})
-    header.append({'name':'Threshold [PV, Value]', 'namest':'threshold1', 'nameend':'threshold2'})
-    beamDest={}
-    beamDestinations = self.session.query(models.BeamDestination).\
-        order_by(models.BeamDestination.destination_mask.asc())
-    for m in beamDestinations:
-      beamDest[m.name.lower()] = '-'
-      header.append({'name':m.name, 'namest':None, 'nameend':None})
+      header=[]
+      header.append({'name':'Fault', 'namest':'fault1', 'nameend':'fault2'})
+      header.append({'name':'Threshold [PV, Value]', 'namest':'threshold1', 'nameend':'threshold2'})
+      beamDest={}
+      beamDestinations = self.session.query(models.BeamDestination).\
+          order_by(models.BeamDestination.destination_mask.asc())
+      for m in beamDestinations:
+        beamDest[m.name.lower()] = '-'
+        header.append({'name':m.name, 'namest':None, 'nameend':None})
 
-    rows=[]
-    for state in fault.states:
-      deviceState = self.session.query(models.DeviceState).\
-          filter(models.DeviceState.id==state.device_state_id).one()
+      rows=[]
+      for state in fault.states:
+        deviceState = self.session.query(models.DeviceState).\
+            filter(models.DeviceState.id==state.device_state_id).one()
 
-      thresholdPv = self.mpsName.getAnalogDeviceName(device) + ":" + deviceState.name
+        thresholdPv = self.mpsName.getAnalogDeviceName(device) + ":" + deviceState.name
 
-      # Low threshold
-      row=[]
-      row.append(' ')
-#      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
-      row.append('{0} (Low)'.format(deviceState.name))
-      row.append('{0}_L'.format(thresholdPv))
-      row.append(' ')
-#      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
-      for key in beamDest:
+        # Low threshold
+        row=[]
         row.append(' ')
-#        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
-      rows.append(row)
-
-      # High threshold
-      row=[]
-      row.append(' ')
-#      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
-      row.append('{0} (High)'.format(deviceState.name))
-      row.append('{0}_H'.format(thresholdPv))
-      row.append(' ')
-#      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
-      for key in beamDest:
+  #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
+        row.append('{0} (Low)'.format(deviceState.name))
+        row.append('{0}_L'.format(thresholdPv))
         row.append(' ')
-#        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
-      rows.append(row)
+  #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
+        for key in beamDest:
+          row.append(' ')
+  #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
+        rows.append(row)
 
-    self.docbook.table(table_name, cols, header, rows, table_id)
+        # High threshold
+        row=[]
+        row.append(' ')
+  #      row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
+        row.append('{0} (High)'.format(deviceState.name))
+        row.append('{0}_H'.format(thresholdPv))
+        row.append(' ')
+  #      row.append('<mediaobject><imageobject condition="print"><imagedata contentdepth="0.5cm" fileref="checkbox-long.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox-long.png"/></imageobject></mediaobject>')
+        for key in beamDest:
+          row.append(' ')
+  #        row.append('<mediaobject><imageobject condition="print"><imagedata contentwidth="0.5cm" fileref="checkbox.png"/></imageobject><imageobject condition="web"><imagedata fileref="http://www.slac.stanford.edu/~lpiccoli/checkbox.png"/></imageobject></mediaobject>')
+        rows.append(row)
+
+      self.docbook.table(table_name, cols, header, rows, table_id)
 
   def writeFault(self, fault, device):
     self.docbook.openSection('{0} Fault'.format(fault.name), 'fault.{0}'.format(fault.id))
@@ -541,38 +555,39 @@ class Exporter:
 
     self.docbook.openSection(device.name, 'device.{0}'.format(device.id))
 
-    cols=[{'name':'c1', 'width':'0.25*'},
-          {'name':'c2', 'width':'0.75*'}]
+    if (self.checkout_only):
+      cols=[{'name':'c1', 'width':'0.25*'},
+            {'name':'c2', 'width':'0.75*'}]
 
-    header=[{'name':'Property', 'namest':None, 'nameend':None},
-            {'name':'Value', 'namest':'zero1', 'nameend':'zero2'}]
+      header=[{'name':'Property', 'namest':None, 'nameend':None},
+              {'name':'Value', 'namest':'zero1', 'nameend':'zero2'}]
 
-    self.tf.write('[Device {0}] '.format(device.id))
-    rows=[]
-    for k in keys:
-      if not k.startswith('_'):
-        rows.append([k.title(), getattr(device, k)])
-        self.tf.write('{0}: {1}; '.format(k.title(), getattr(device, k)))
-    self.tf.write('\n')
+      self.tf.write('[Device {0}] '.format(device.id))
+      rows=[]
+      for k in keys:
+        if not k.startswith('_'):
+          rows.append([k.title(), getattr(device, k)])
+          self.tf.write('{0}: {1}; '.format(k.title(), getattr(device, k)))
+      self.tf.write('\n')
 
-    dt = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
-    rows.append(['type', dt.name])
+      dt = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
+      rows.append(['type', dt.name])
 
-    cols=[{'name':'c1', 'width':'0.25*'},
-          {'name':'c2', 'width':'0.75*'}]
+      cols=[{'name':'c1', 'width':'0.25*'},
+            {'name':'c2', 'width':'0.75*'}]
 
-    header=[{'name':'Property', 'namest':None, 'nameend':None},
-            {'name':'Value', 'namest':'zero1', 'nameend':'zero2'}]
+      header=[{'name':'Property', 'namest':None, 'nameend':None},
+              {'name':'Value', 'namest':'zero1', 'nameend':'zero2'}]
 
-    table_name = '{0} Properties'.format(device.name)
-    table_id = 'device_table.{0}'.format(device.id)
-    self.docbook.table(table_name, cols, header, rows, table_id)
+      table_name = '{0} Properties'.format(device.name)
+      table_id = 'device_table.{0}'.format(device.id)
+      self.docbook.table(table_name, cols, header, rows, table_id)
 
-    try:
-      if (self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==device.id).one() != 'None'):
-        self.writeDeviceStates(device)
-    except:
-      None
+      try:
+        if (self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==device.id).one() != 'None'):
+          self.writeDeviceStates(device)
+      except:
+        None
 
     self.writeDeviceFaults(device)
     
@@ -603,7 +618,7 @@ class Exporter:
 
     num_bits = 0
 
-    print '{0} {1}'.format(device.name, device.id)
+#    print '{0} {1}'.format(device.name, device.id)
     inp = device.inputs
     ins = sorted(inp, key=lambda i: i.bit_position, reverse=True)
 
@@ -645,8 +660,12 @@ class Exporter:
     rows=[]
     var = 'A'
     for b in range(0, num_bits):
-      rows.append([var, channelBitPos[b], channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
-                   channelSlot[b], channelNumber[b], channelPv[b]])
+      if (self.devices_only):
+        rows.append([var, channelBitPos[b], channelName[b], channelCrate[b],
+                     channelSlot[b], channelNumber[b], channelPv[b]])
+      else:
+        rows.append([var, channelBitPos[b], channelName[b], '<link linkend=\'crate.{0}\'>{1}</link>'.format(channelCrateId[b], channelCrate[b]),
+                     channelSlot[b], channelNumber[b], channelPv[b]])
       var = chr(ord(var) + 1)
 #      self.tf.write('aoeu[FaultInput {0} : Fault {1}] Name:{2}; Value: {3}; Mask: {4}\n'.\
 #                      format(state.id, fault.id, deviceState.name,
@@ -768,7 +787,10 @@ class Exporter:
             {'name':'Value', 'namest':None, 'nameend':None}]
 
     rows=[]
-    rows.append(['Crate', '<link linkend=\'crate.{0}\'>{1}</link>'.format(crate.id, crate_name)])
+    if (self.devices_only):
+      rows.append(['Crate', crate_name])
+    else:
+      rows.append(['Crate', '<link linkend=\'crate.{0}\'>{1}</link>'.format(crate.id, crate_name)])
     for k in keys:
       if not k.startswith('_'):
         rows.append([k, getattr(card, k)])
@@ -794,24 +816,29 @@ class Exporter:
       return
 #      exit(-1)
 
-    cols=[{'name':'c1', 'width':'0.20*'},
-          {'name':'c2', 'width':'0.20*'},
-          {'name':'c3', 'width':'0.60*'}]
+    if (not self.cards_only):
 
-    header=[{'name':'Name', 'namest':None, 'nameend':None},
-            {'name':'Type', 'namest':None, 'nameend':None},
-            {'name':'Description', 'namest':None, 'nameend':None}]
+      cols=[{'name':'c1', 'width':'0.20*'},
+            {'name':'c2', 'width':'0.20*'},
+            {'name':'c3', 'width':'0.60*'}]
 
-    rows=[]
-    for d in card.devices:
-      if (d.discriminator != 'mitigation_device'):
-        rows.append(['<link linkend=\'device.{0}\'>{1}</link>'.format(d.id, d.name), d.discriminator, d.description])
-      else:
-        rows.append([d.name, d.discriminator, d.description])
+      header=[{'name':'Name', 'namest':None, 'nameend':None},
+              {'name':'Type', 'namest':None, 'nameend':None},
+              {'name':'Description', 'namest':None, 'nameend':None}]
 
-    table_name = '{0} Devices'.format(card.name)
-    table_id = 'card_devices_table.{0}'.format(card.id)
-    self.docbook.table(table_name, cols, header, rows, table_id)
+      rows=[]
+      for d in card.devices:
+        if (d.discriminator != 'mitigation_device'):
+          if (self.cards_only):
+            rows.append([d.name, d.discriminator, d.description])
+          else:
+            rows.append(['<link linkend=\'device.{0}\'>{1}</link>'.format(d.id, d.name), d.discriminator, d.description])
+        else:
+          rows.append([d.name, d.discriminator, d.description])
+
+      table_name = '{0} Devices'.format(card.name)
+      table_id = 'card_devices_table.{0}'.format(card.id)
+      self.docbook.table(table_name, cols, header, rows, table_id)
 
     # Application Card Channels
     cols=[{'name':'c1', 'width':'0.1*'},
@@ -868,7 +895,8 @@ class Exporter:
         table_id = 'card_output_channels_table.{0}'.format(card.id)
         self.docbook.table(table_name, cols, header, rows, table_id)
 
-      self.writeDigitalCheckoutTable(card, channels)
+      if (self.checkout):
+        self.writeDigitalCheckoutTable(card, channels)
 
     self.docbook.closeSection()
 
@@ -933,8 +961,12 @@ class Exporter:
       crate = self.session.query(models.Crate).\
           filter(models.Crate.id==m.card.crate_id).one()
       crate_name = crate.location + '-' + crate.rack + str(crate.elevation)
-      rows.append([m.name, m.description, '<link linkend=\'crate.{0}\'>{1}</link>\n'.format(crate.id, crate_name),
-                   '<link linkend=\'card.{0}\'>{1} (slot {2})</link>\n'.format(m.card.id, m.card.name, m.card.slot_number)])
+      if (self.devices_only):
+        rows.append([m.name, m.description, crate_name,
+                     '<link linkend=\'card.{0}\'>{1} (slot {2})</link>\n'.format(m.card.id, m.card.name, m.card.slot_number)])
+      else:
+        rows.append([m.name, m.description, '<link linkend=\'crate.{0}\'>{1}</link>\n'.format(crate.id, crate_name),
+                     '<link linkend=\'card.{0}\'>{1} (slot {2})</link>\n'.format(m.card.id, m.card.name, m.card.slot_number)])
 
     table_name = 'Mitigation Devices for {0}'.format(destination.name)
     self.docbook.table(table_name, cols, header, rows, 'mitigation_devices.{0}'.format(destination.id))
@@ -1006,7 +1038,10 @@ class Exporter:
     self.docbook.closeSection()
  
   def writeDevices(self):
-    self.docbook.openSection('MPS Devices')
+    if (self.checkout_only):
+      self.docbook.openSection('Devices Checkout')
+    else:
+      self.docbook.openSection('MPS Devices')
     for device in self.session.query(models.Device).all():
       if (device.name != "AOM" and device.name != "MS"):
         self.writeDeviceInfo(device)
@@ -1057,7 +1092,9 @@ class Exporter:
   def writeIgnoreLogic(self):
     self.docbook.openSection('Ignore Logic')
     for condition in self.session.query(models.Condition).all():
-      self.writeLogicCondition(condition)
+      if (len(condition.condition_inputs) > 0 and
+          len(condition.ignore_conditions) > 0):
+        self.writeLogicCondition(condition)
     self.docbook.closeSection()
 
   def writeCrates(self):
@@ -1075,22 +1112,32 @@ class Exporter:
 
     self.writeDatabaseInfo()
 
-    self.writeBeamDestinations()
+    if (not self.cards_only and not self.devices_only and not self.checkout_only):
+      self.writeBeamDestinations()
 
-    self.writePowerClasses()
+      self.writePowerClasses()
 
-    self.writeCrates()
+    if (self.cards_only or not self.devices_only and not self.checkout_only):
+      self.writeCrates()
 
-    self.writeAppCards()
+      self.writeAppCards()
 
-    self.writeDevices()
+    if (not self.cards_only or self.devices_only or self.checkout_only):
+      self.writeDevices()
 
-    self.writeIgnoreLogic()
+      self.writeIgnoreLogic()
 
     self.docbook.writeFooter()
 
-    self.docbook.exportHtml()
-    self.docbook.exportPdf()
+    suffix=''
+    if (self.cards_only):
+      suffix='cards'
+    elif (self.devices_only):
+      suffix='devices'
+    elif (self.checkout_only):
+      suffix='checkout'
+    self.docbook.exportHtml(suffix)
+    self.docbook.exportPdf(suffix)
 
 # --- Main ---
 
@@ -1099,8 +1146,30 @@ parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
 parser.add_argument('--output', metavar='output', type=str, nargs='?', 
                     help='directory where the documentation is generated')
+parser.add_argument('--no-checkout', dest='checkout', action='store_false')
+parser.set_defaults(no_checkout=True)
+parser.add_argument('--cards-only', dest='cards_only', action='store_true')
+parser.set_defaults(cards_only=False)
+parser.add_argument('--devices-only', dest='devices_only', action='store_true')
+parser.set_defaults(devices_only=False)
+parser.add_argument('--checkout-only', dest='checkout_only', action='store_true')
+parser.set_defaults(checkout_only=False)
 
 args = parser.parse_args()
+
+full_report = True
+cards_only = False
+devices_only = False
+checkout_only = False
+if (args.cards_only):
+  full_report = False
+  cards_only = True
+elif (args.devices_only):
+  full_report = False
+  devices_only = True
+elif (args.checkout_only):
+  full_report = False
+  checkout_only = True
 
 output_dir = './'
 if args.output:
@@ -1109,7 +1178,7 @@ if args.output:
     print 'ERROR: Invalid output directory {0}'.format(output_dir)
     exit(-1)
 
-e = Exporter(args.database[0].name)
+e = Exporter(args.database[0].name, args.checkout, cards_only, devices_only, checkout_only)
 #split('/')[len(name2.split('/'))-1].split('.')[0]
 doc_name = args.database[0].name.split('/')[len(args.database[0].name.split('/'))-1].split('.')[0]
 #e.exportDocBook('{0}.xml'.format(args.database[0].name.split('.')[0]),

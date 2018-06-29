@@ -819,14 +819,12 @@ importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
-#importer.add_digital_device('import/WIRE_PARK')
+importer.add_digital_device('import/WIRE_PARK')
 importer.add_digital_device('import/PROF')
 importer.add_analog_device('import/BLEN', add_ignore=True)
 importer.add_analog_device('import/SOLN')
 importer.add_analog_device('import/BPMS', add_ignore=True)
 importer.add_analog_device('import/BLM')
-
-
 
 importer.check()
 

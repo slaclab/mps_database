@@ -369,7 +369,7 @@ for i in range(0,8):
 session.commit()
 
 #Add digital devices
-screen = models.DigitalDevice(name="YAG01B", position=753, description="YAG01B Screen",
+screen = models.DigitalDevice(name="YAG01B", position=753, z_location=-28, description="YAG01B Screen",
                               device_type = profmon_device_type, card = link_node_card, area="GUNB")
 #gun_temp = models.DigitalDevice(name="Gun Temperature", device_type = temp_device_type,
 #                                card = link_node_card, position = 100,
@@ -379,36 +379,36 @@ screen = models.DigitalDevice(name="YAG01B", position=753, description="YAG01B S
 #                               card = link_node_card, position = 100,
 #                               description = "Waveguide A3/A4 Temperature Summary Input", area="GUNB")
 buncher_temp = models.DigitalDevice(name="BUN1B Buncher Temperature", device_type = temp_device_type,
-                                    card = link_node_card, position = 455,
+                                    card = link_node_card, position = 455, z_location=-35,
                                     description = "Buncher Temperature Summary Input", area="GUNB",
                                     measured_device_type_id = buncher_device_type.id)
 fc_temp = models.DigitalDevice(name="Faraday Cup Temperature", device_type = temp_device_type,
-                               card = link_node_card, position = 530,
+                               card = link_node_card, position = 530, z_location=-20,
                                description = "Faraday Cup Temperature Summary Input", area="DIAG",
                                measured_device_type_id = fc_device_type.id)
-sol01_temp = models.DigitalDevice(name="SOL01B Temp", position=212, description="SOL01B Temperature",
+sol01_temp = models.DigitalDevice(name="SOL01B Temp", position=212, z_location=-32, description="SOL01B Temperature",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
-sol02_temp = models.DigitalDevice(name="SOL02B Temp", position=823, description="SOL02B Temperature",
+sol02_temp = models.DigitalDevice(name="SOL02B Temp", position=823, z_location=-27,  description="SOL02B Temperature",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
-sol01_flow = models.DigitalDevice(name="SOL01B Flow", position=212, description="SOL01B Waterflow Status",
+sol01_flow = models.DigitalDevice(name="SOL01B Flow", position=212, z_location=-32, description="SOL01B Waterflow Status",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
-sol02_flow = models.DigitalDevice(name="SOL02B Flow", position=823, description="SOL02B Waterflow Status",
+sol02_flow = models.DigitalDevice(name="SOL02B Flow", position=823, z_location=-27, description="SOL02B Waterflow Status",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
-vvr1 = models.DigitalDevice(name="VVR01", position=100, description="Vacuum Gate Valve VVR01",
+vvr1 = models.DigitalDevice(name="VVR01", position=100, z_location=-35, description="Vacuum Gate Valve VVR01",
                             device_type = vvr_device_type, card = link_node_card, area="GUNB")
-vvr2 = models.DigitalDevice(name="VVR02", position=941, description="Vacuum Gate Valve VVR02",
+vvr2 = models.DigitalDevice(name="VVR02", position=941, z_location=-35, description="Vacuum Gate Valve VVR02",
                             device_type = vvr_device_type, card = link_node_card, area="GUNB")
-shutter_status = models.DigitalDevice(name="Mech. Shutter", position=100, description="Mechanical Shutter Status",
+shutter_status = models.DigitalDevice(name="Mech. Shutter", position=100, z_location=-35, description="Mechanical Shutter Status",
                                       device_type = shutter_status_device_type, card = link_node_card, area="GUNB")
-vvmg1 = models.DigitalDevice(name="VVMG01", position=100, description="Manual Vacuum Gate Valve VVMG01",
+vvmg1 = models.DigitalDevice(name="VVMG01", position=100, z_location=-35, description="Manual Vacuum Gate Valve VVMG01",
                             device_type = vvmg_device_type, card = link_node_card, area="GUNB")
-vvmg2 = models.DigitalDevice(name="VVMG02", position=200, description="Manual Vacuum Gate Valve VVMG02",
+vvmg2 = models.DigitalDevice(name="VVMG02", position=200, z_location=-35, description="Manual Vacuum Gate Valve VVMG02",
                             device_type = vvmg_device_type, card = link_node_card, area="GUNB")
-vvmg3 = models.DigitalDevice(name="VVMG03", position=300, description="Manual Vacuum Gate Valve VVMG03",
+vvmg3 = models.DigitalDevice(name="VVMG03", position=300, z_location=-35, description="Manual Vacuum Gate Valve VVMG03",
                             device_type = vvmg_device_type, card = link_node_card, area="GUNB")
 
 session.add_all([screen,

@@ -529,6 +529,8 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('DESC', 'Software mitigation for: {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
+    fields.append(('LOLO', '0'))
+    fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_SW_MITIGATION'.format(beamDestination.id))) # former MITIGATION_DEVICE
     printRecord(file, 'longin', '$(BASE):{0}_SW_PC'.format(beamDestination.name.upper()), fields)
     
@@ -536,6 +538,8 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('DESC', 'Fast mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
+    fields.append(('LOLO', '0'))
+    fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_FW_MITIGATION'.format(beamDestination.id)))
     printRecord(file, 'longin', '$(BASE):{0}_FW_PC'.format(beamDestination.name.upper()), fields)
 
@@ -543,6 +547,8 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('DESC', 'Current mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
+    fields.append(('LOLO', '0'))
+    fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_MITIGATION'.format(beamDestination.id)))
     printRecord(file, 'longin', '$(BASE):{0}_PC'.format(beamDestination.name.upper()), fields)
 
@@ -550,6 +556,8 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('DESC', 'Latched mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('SCAN', '1 second'))
+    fields.append(('LOLO', '0'))
+    fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_LATCHED_MITIGATION'.format(beamDestination.id)))
     printRecord(file, 'longin', '$(BASE):{0}_LATCHED_PC'.format(beamDestination.name.upper()), fields)
 
