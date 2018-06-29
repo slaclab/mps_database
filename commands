@@ -1,4 +1,0 @@
-# Generate device_inputs.edl panel:
-python export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
-# Generate epics databases:
-python export_epics.py --device-inputs device_inputs.db mps_gun_config.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db

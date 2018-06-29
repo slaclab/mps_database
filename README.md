@@ -27,55 +27,56 @@ to activate the virtual environment.
 Scripts
 -------
 
-All the following scripts are invoked by the $PHYSICS_TOP/mps_configuration/tool/mps_config.py script when creating new databases. For EIC the mps_gun_config.db has been copied to a versioned subdirectory (e.g. 2018-02-09-a) in the mps_configuration area.
+All the following scripts are invoked by the $PHYSICS_TOP/mps_configuration/tool/mps_config.py script when creating new databases. For EIC the mps\_gun\_config.db has been copied to a versioned subdirectory (e.g. 2018-02-09-a) in the mps_configuration area.
 
 Generate GUNB database - this creates the file mps_gun_config.db (sqlite file) that is used by other scripts to generate EPICS database and panels.
 
 ```
-[mps_database]$ ./populate-gunb-t0.py
+[mps_database/tools]$ ./populate-gunb-t0.py
 ```
 
 Export sqlite database (mps_gun_config.db) to YAML (mps_gun_config.yaml) file:
 
 ```
-(venv)[lpiccoli@lcls-dev3 mps_database]$ ./export_yaml.py mps_gun_config.db mps_gun_config.yaml
+(venv)[lpiccoli@lcls-dev3 mps_database/tools]$ ./export_yaml.py mps_gun_config.db mps_gun_config.yaml
 Done.
 ```
 
 Generate database documentation (Inputs/Faults):
 ```
-[mps_database]$ ./export_docs.py mps_gun_config.db 
+[mps_database/tools]$ ./export_docs.py mps_gun_config.db 
 ... (you may see many warnings) ...
 ```
 The script generates documentation in pdf, rtf and html formats:
 ```
-mps_database]$ ls -1 mps_gun_config.{rtf,pdf,html}
+[mps_database/tools]$ ls -1 mps_gun_config.{rtf,pdf,html}
 mps_gun_config.html
 mps_gun_config.pdf
 mps_gun_config.rtf
 ```
 Export EPICS databases for central node IOC:
 ```
-[mps_database]$ ./export_epics.py --device-inputs device_inputs.db --analog-devices analog_devices.db --mitigation-devices mitigation.db --faults faults.db --apps apps.db mps_gun_config.db
+[mps_database/tools]$ export_epics.py mps_config-2018-05-22-a.db --device-inputs device_inputs.db --analog-devices analog_devices.db --beam-destinations destinations.db --faults faults.db --apps apps.db --conditions conditions.db
 ```
 The command above generates file .db files:
 - device_inputs.db for the digital inputs
 - analog_devices.db for the analog inputs
-- mitigation.db for the mitigation devices
+- destinations.db for the beam destinations (mitigation devices)
 - faults.db for the list of faults
 - apps.db for the applications 
+- conditions.db for the ignore conditions
 
 The source for the EPICS databases is the mps_gun_config.db file (sqlite format).
 
 Export EDM panels for central node IOC:
 ```
-[mps_database]$ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
+[mps_database/tools]$ ./export_edl.py mps_gun_config.db --device-inputs-edl device_inputs.edl --device-inputs-template templates/device_inputs.tmpl
 ```
 Export EPICS databases for link node IOCs:
 ```
-[mps_database]$ ./export_thresholds.py --app-id 2 --threshold-file threshold.template mps_gun_config.db
+[mps_database/tools]$ ./export_thresholds.py --app-id 2 --threshold-file threshold.template mps_gun_config.db
 
-[mps_database]$ head -18 threshold.template
+[mps_database/tools]$ head -18 threshold.template
 record(ao, "BPMS:GUNB:201:X_T0_HIHI") {
  field(DESC, "High analog threshold for X_T0")
  field(DTYP, "asynFloat64")
@@ -100,7 +101,7 @@ EIC History Server
 ------------------
 
 ```
-mps_database]$ ./historyServer.py -h
+[mps_database/tools]$ ./historyServer.py -h
 usage: historyServer.py [-h] [--host hostname] [--port [port]] [--file [file]]
                         [--file-size [file_size]] [-c]
                         db
@@ -130,7 +131,7 @@ The central node software must be compiled without the option '-DFW_ENABLE', whi
 
 Options for the script are:
 ```
-mps_database]$ ./central_node_test.py -h
+[mps_database/tools]$ ./central_node_test.py -h
 usage: central_node_test.py [-h] [--host hostname] [--port [size]]
                             [--debug [debug]] [--device [device]] [--analog]
                             [--report] [--delay]
@@ -153,7 +154,7 @@ optional arguments:
 ```
 Example of output:
 ```
-[mps_database]$ ./central_node_test.py mps_gun_config.db --host cpu-li00-mp01
+[mps_database/tools]$ ./central_node_test.py mps_gun_config.db --host cpu-li00-mp01
 YAG01B PASSED
 Gun Temperature PASSED
 Waveguide Temperature PASSED
@@ -165,7 +166,7 @@ VVR02 PASSED
 ```
 Example of verbose output, specifying a single device for testing:
 ```
-[mps_database]$ ./central_node_test.py mps_gun_config.db --host cpu-li00-mp01 --device 1 --debug 1
+[mps_database/tools]$ ./central_node_test.py mps_gun_config.db --host cpu-li00-mp01 --device 1 --debug 1
 +------------------------------------------------------------+
 Device YAG01B
 +------------------------------------------------------------+
