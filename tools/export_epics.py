@@ -46,12 +46,16 @@ def printRecord(file, recType, recName, fields):
 #  ${DEV}_BYPS (bypass status)
 #  ${DEV}_BYPEXP (bypass expiration date?)
 #
-def exportDeviceInputs(file, deviceInputs, session):
+def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocation):
   base_name =  file.name.split('/')[len(file.name.split('/'))-1]
   location = file.name.split(base_name)[0]
 
-  saveBypassFile = '{0}{1}.save'.format(location, base_name.split('.')[0])
-  restoreBypassFile = '{0}{1}.restore'.format(location, base_name.split('.')[0])
+  if prodLocation==None:
+    prodLocation=location
+
+  print 'LOCA: {0}'.format(prodLocation)
+  saveBypassFile = '{0}{1}.save'.format(prodLocation, base_name.split('.')[0])
+  restoreBypassFile = '{0}{1}.restore'.format(restoreLocation, base_name.split('.')[0])
 
   sf = open(saveBypassFile, 'w')
 
@@ -88,8 +92,10 @@ def exportDeviceInputs(file, deviceInputs, session):
       '}\n\n'
 
   sf.write(func)
-  sf.write('echo \'INFO: removing existing restore script...\'\n')
-  sf.write('rm -f {0}\n'.format(restoreBypassFile))
+  sf.write('if [ -f {0} ]; then\n'.format(restoreBypassFile))
+  sf.write('  echo \'INFO: found existing restore file, saving it with current timestamp\'\n')
+  sf.write('  mv -f {0} {0}-`date +\'%m-%d-%y-%H:%M:%S\'`\n'.format(restoreBypassFile))
+  sf.write('fi\n')
   sf.write('echo \'INFO: getting current bypasses...\'\n\n')
   sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'# Bypass restore file generated on \'`date`\'\' >> {0}\n'.format(restoreBypassFile))
@@ -201,7 +207,7 @@ def exportDeviceInputs(file, deviceInputs, session):
     printRecord(file, 'stringin', '{0}_BYPD_STR'.format(name), fields)
 
     # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
-    sf.write('getBypass {0} {1} {2} {3}\n'.format(remainingTimePv, bypassTimePv,
+    sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv,
                                                   bypassValuePv, restoreBypassFile))
 
     #=== End Bypass records ====
@@ -211,8 +217,8 @@ def exportDeviceInputs(file, deviceInputs, session):
       '  echo \'INFO: found no active bypasses\'\n'                 + \
       'else\n'                                                      + \
       '  echo \'INFO: Found \'${bypassCount}\' active bypasses\'\n' + \
-      '  echo \'INFO: Please run the script {0} to restore bypasses\'\n'.format(restoreBypassFile) + \
-      '  chmod a+x {0}\n'.format(restoreBypassFile) + \
+      '  echo \'INFO: Please run the script "{0}" to restore bypasses\'\n'.format(restoreBypassFile) + \
+      '  chmod a+x "{0}"\n'.format(restoreBypassFile) + \
       'fi\n'
   sf.write(footer)
   
@@ -229,14 +235,18 @@ def exportDeviceInputs(file, deviceInputs, session):
 # is passed to asyn as the third parameter within the 
 # '@asynMask(PORT ADDR MASK TIMEOUT)' INP record field
 #
-def exportAnalogDevices(file, analogDevices, session):
+def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocation):
   mpsName = MpsName(session)
 
   base_name =  file.name.split('/')[len(file.name.split('/'))-1]
   location = file.name.split(base_name)[0]
 
-  saveBypassFile = '{0}{1}.save'.format(location, base_name.split('.')[0])
-  restoreBypassFile = '{0}{1}.restore'.format(location, base_name.split('.')[0])
+  if prodLocation==None:
+    prodLocation=location
+
+  saveBypassFile = '{0}{1}.save'.format(prodLocation, base_name.split('.')[0])
+  restoreBypassFile = '{0}{1}.restore'.format(restoreLocation, base_name.split('.')[0])
+  print 'RESTORE: {0}'.format(restoreBypassFile)
 
   sf = open(saveBypassFile, 'w')
 
@@ -271,12 +281,14 @@ def exportAnalogDevices(file, analogDevices, session):
       '}\n\n'
 
   sf.write(func)
-  sf.write('echo \'INFO: removing existing restore script...\'\n')
-  sf.write('rm -f {0}\n'.format(restoreBypassFile))
+  sf.write('if [ -f {0} ]; then\n'.format(restoreBypassFile))
+  sf.write('  echo \'INFO: found existing restore file, saving it with current timestamp\'\n')
+  sf.write('  mv -f {0} {0}-`date +"%m-%d-%y-%H:%M:%S"`\n'.format(restoreBypassFile))
+  sf.write('fi\n')
   sf.write('echo \'INFO: getting current bypasses...\'\n\n')
-  sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'# \' >> "{0}"\n'.format(restoreBypassFile))
   sf.write('echo \'# Bypass restore file generated on \'`date`\'\' >> {0}\n'.format(restoreBypassFile))
-  sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'# \' >> "{0}"\n'.format(restoreBypassFile))
 
   for analogDevice in analogDevices:
 #    name = getAnalogDeviceName(session, analogDevice)
@@ -436,7 +448,7 @@ def exportAnalogDevices(file, analogDevices, session):
             printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
             
             # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
-            sf.write('getBypass {0} {1} {2}\n'.format(remainingTimePv, bypassTimePv, restoreBypassFile))
+            sf.write('getBypass {0} {1} "{2}"\n'.format(remainingTimePv, bypassTimePv, restoreBypassFile))
 
             bypassPvs=True
           #=== End Bypass records ====
@@ -446,8 +458,8 @@ def exportAnalogDevices(file, analogDevices, session):
       '  echo \'INFO: found no active bypasses\'\n'                 + \
       'else\n'                                                      + \
       '  echo \'INFO: Found \'${bypassCount}\' active bypasses\'\n' + \
-      '  echo \'INFO: Please run the script {0} to restore bypasses\'\n'.format(restoreBypassFile) + \
-      '  chmod a+x {0}\n'.format(restoreBypassFile) + \
+      '  echo \'INFO: Please run the script "{0}" to restore bypasses\'\n'.format(restoreBypassFile) + \
+      '  chmod a+x "{0}"\n'.format(restoreBypassFile) + \
       'fi\n'
   sf.write(footer)
   
@@ -660,17 +672,27 @@ parser.add_argument('--apps', metavar='file', type=argparse.FileType('w'), nargs
                     help='epics template file name for application cards (e.g. apps.template)')
 parser.add_argument('--conditions', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for ignore conditions (e.g. conditions.template)')
+parser.add_argument('--prod-location', metavar='prod_location', type=str, nargs='?', 
+                    help='directory where database versions are kept in production (please use $PHYSICS_TOP/mps_config string ;). If not specified use the location pointed by the --location option')
+parser.add_argument('--version', metavar='version', type=str, nargs=1,
+                    help='database version to be configured')
 
 args = parser.parse_args()
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
 
+if args.prod_location:
+  if not os.path.isdir(args.prod_location):
+    os.makedirs(args.prod_location)
+
 if (args.device_inputs):
-  exportDeviceInputs(args.device_inputs, session.query(models.DeviceInput).all(), session)
+  exportDeviceInputs(args.device_inputs, session.query(models.DeviceInput).all(), session,
+                     '$PHYSICS_TOP/mps_configuration/{0}/bypass/'.format(args.version[0]), args.prod_location)
 
 if (args.analog_devices):
-  exportAnalogDevices(args.analog_devices, session.query(models.AnalogDevice).all(), session)
+  exportAnalogDevices(args.analog_devices, session.query(models.AnalogDevice).all(), session,
+                      '$PHYSICS_TOP/mps_configuration/{0}/bypass/'.format(args.version[0]), args.prod_location)
 
 if (args.beam_destinations):
   exportBeamDestinations(args.beam_destinations,
