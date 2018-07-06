@@ -219,7 +219,8 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
       '  echo \'INFO: Found \'${bypassCount}\' active bypasses\'\n' + \
       '  echo \'INFO: Please run the script "{0}" to restore bypasses\'\n'.format(restoreBypassFile) + \
       '  chmod a+x "{0}"\n'.format(restoreBypassFile) + \
-      'fi\n'
+      'fi\n' + \
+      'echo \'Done.\'\n'
   sf.write(footer)
   
   file.close()
@@ -417,7 +418,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
             fields.append(('SCAN', '1 second'))
             fields.append(('VAL', 'Invalid'))
             fields.append(('PINI', 'YES'))
-            fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id)))
+            fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id * 4 +  intIndex)))
             printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
 
             # if there is an ignore condition where there is an analogDevice AND a faultState, then
@@ -460,7 +461,8 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
       '  echo \'INFO: Found \'${bypassCount}\' active bypasses\'\n' + \
       '  echo \'INFO: Please run the script "{0}" to restore bypasses\'\n'.format(restoreBypassFile) + \
       '  chmod a+x "{0}"\n'.format(restoreBypassFile) + \
-      'fi\n'
+      'fi\n' + \
+      'echo \'Done.\'\n'
   sf.write(footer)
   
   file.close()

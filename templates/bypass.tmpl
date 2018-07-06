@@ -1,0 +1,326 @@
+#import math
+#
+#set $DIGITAL = int($DEVICE_INPUTS)
+#if $DIGITAL>0
+#set $WINDOW_HEIGHT = int($DEVICE_INPUTS) * 16 + 85
+#set $ELEMENTS = int($DEVICE_INPUTS)
+#else
+#set $WINDOW_HEIGHT = int($ANALOG_DEVICES) * 16 + 80
+#set $ELEMENTS = int($ANALOG_DEVICES)
+#end if
+#set $BOX_HEIGHT = $WINDOW_HEIGHT - 35
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 153
+y 179
+w 740
+h $WINDOW_HEIGHT
+font "helvetica-medium-r-10.0"
+ctlFont "helvetica-medium-r-10.0"
+btnFont "helvetica-medium-r-10.0"
+fgColor index 14
+bgColor index 5
+textColor index 14
+ctlFgColor1 index 25
+ctlFgColor2 index 18
+ctlBgColor1 index 4
+ctlBgColor2 index 4
+topShadowColor index 1
+botShadowColor index 11
+#if $DIGITAL>0
+title "Digital Bypass Status"
+#else
+title "Analog Bypass Status"
+#end if
+showGrid
+snapToGrid
+gridSize 4
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 20
+w 708
+h $BOX_HEIGHT
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 12
+w 160
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+#if $DIGITAL>0
+  "Digital Bypass Status"
+#else
+  "Analog Bypass Status"
+#end if
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 29
+y 34
+w 192
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Device Name"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 256
+y 36
+w 132
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Expiration Date"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 424
+y 36
+w 132
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Remaining Time (sec)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 556
+y 34
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bypass Status"
+}
+endObjectProperties
+
+#==========================================================================
+# Add a line for each device_input:
+
+#for $i in range (0, int($ELEMENTS))
+#set $WIDGET_Y = 68 + 16 * ($i - 1)
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 29
+y $WIDGET_Y
+w 192
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_NAME[$i]"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y $WIDGET_Y
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "$DI_BYPS[$i]"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 712
+y $WIDGET_Y
+w 8
+h 16
+lineColor index 22
+fill
+fillColor index 22
+visPv "$DI_BYPS[$i]"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 220
+y $WIDGET_Y
+w 204
+h 16
+controlPv "$DI_EXPD[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 424
+y $WIDGET_Y
+w 132
+h 16
+controlPv "$DI_RTIM[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 556
+y $WIDGET_Y
+w 100
+h 16
+controlPv "$DI_BYPS[$i]"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 11
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+lineWidth 0
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 656
+y $WIDGET_Y
+w 52
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Bypass"
+numPvs 4
+numDsps 1
+displayFileName {
+#if $DIGITAL>0
+  0 "mps2_bypass_control"
+#else
+  0 "mps2_bypass_control_analog"
+#end if
+}
+menuLabel {
+  0 "Bypass"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+#if $DIGITAL>0
+  0 "PV=$DI_PV[$i],BYPV=$DI_BYPV[$i],BYPS=$DI_BYPS[$i],BYPD=$DI_BYPD[$i],BYPT=$DI_BYPT[$i],NAME=$DI_NAME[$i]"
+#else
+  0 "BITPV=$DI_PV[$i],PV=$DI_DEVPV[$i],BYPS=$DI_BYPS[$i],BYPD=$DI_BYPD[$i],BYPT=$DI_BYPT[$i],NAME=$DI_NAME[$i]"
+#end if
+}
+endObjectProperties
+
+#end for
+
