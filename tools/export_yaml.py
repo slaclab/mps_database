@@ -37,8 +37,9 @@ ioc_tools.dump_db_to_yaml(mps, args.yaml[0])
 #   user: "lpiccoli"
 #   md5sum: "d9604d932498e7f6c2b77afbcd0a2fa7"
 #
-
-db_info_file = open("/tmp/header.yaml", "w")
+timestr = time.strftime("%Y%m%d-%H%M%S")
+db_info_file_name = '{0}-{1}.yaml'.format('/tmp/header', timestr)
+db_info_file = open(db_info_file_name, "w")
 
 cmd = "whoami"
 process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
@@ -58,7 +59,7 @@ db_info_file.write("  user: {0}\n".format(user_name.strip()))
 db_info_file.write("  md5sum: {0}\n".format(md5sum_tokens[0].strip()))
 db_info_file.close()
 
-cmd = "cat {0} >> {1}".format("/tmp/header.yaml", args.yaml[0])
+cmd = "cat {0} >> {1}".format(db_info_file_name, args.yaml[0])
 os.system(cmd)
 
 print 'Done.'
