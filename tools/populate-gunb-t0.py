@@ -276,29 +276,29 @@ if not two_apps:
   bpm_y_states=[]
   bpm_t_states=[]
   state_value = 1
-  # X Thresholds - bits 0 through 7
-  for i in range(0,8):
-    state_name = "X_T" + str(i)
-    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-    if (i < 8):
-      bpm_x_states.append(bpm_threshold_state)
-    session.add(bpm_threshold_state)
-    state_value = (state_value << 1)
-  # Y Thresholds - bits 8 through 15
-  for i in range(0,8):
-    state_name = "Y_T" + str(i)
-    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-    if (i < 8):
-      bpm_y_states.append(bpm_threshold_state)
-    session.add(bpm_threshold_state)
-    state_value = (state_value << 1)
-  # TMIT Thresholds - bits 16 though 23
+  # TMIT Thresholds - bits 0 through 7
   for i in range(0,8):
     state_name = "TMIT_T" + str(i)
     bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
     if (i < 8):
       bpm_t_states.append(bpm_threshold_state)
-    session.add(bpm_threshold_state)
+      session.add(bpm_threshold_state)
+    state_value = (state_value << 1)
+  # X Thresholds - bits 8 through 15
+  for i in range(0,8):
+    state_name = "X_T" + str(i)
+    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
+    if (i < 8):
+      bpm_x_states.append(bpm_threshold_state)
+      session.add(bpm_threshold_state)
+    state_value = (state_value << 1)
+  # Y Thresholds - bits 16 though 23
+  for i in range(0,8):
+    state_name = "Y_T" + str(i)
+    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
+    if (i < 8):
+      bpm_y_states.append(bpm_threshold_state)
+      session.add(bpm_threshold_state)
     state_value = (state_value << 1)
 
 session.commit()
