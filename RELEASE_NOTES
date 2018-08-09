@@ -1,0 +1,14 @@
+#==============================================================
+#
+#  Name: RELEASE_NOTES
+#
+#  Rem:  This files describes release notes for
+#        the mps_database application.
+#
+#  Auth: xx-Dec-2012, XXX         (xxx)
+#  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
+#--------------------------------------------------------------
+
+mps_database-R1-0-4: (Aug 09 2018)
+  * Addition of .cram directory to allow installation in production (for historyServer)
+  * Change to BPM status bits order coming from update message
