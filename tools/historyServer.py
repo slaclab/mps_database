@@ -121,7 +121,7 @@ class HistoryLogger:
 
           self.messageCount = self.messageCount + 1
           if (self.messageCount == self.fileSizeCheckCount):
-              print 'Size={0}'.format(self.file.tell())
+#              print 'Size={0}'.format(self.file.tell())
               if (self.file.tell() > self.fileSize):
                   self.openNewLogFile()
               self.messageCount = 0
@@ -250,7 +250,7 @@ class HistoryLogger:
         self.decodeMessage(message)
 
 parser = argparse.ArgumentParser(description='Receive MPS status messages')
-parser.add_argument('--host', metavar='hostname', type=str, nargs=1, help='Central node hostname')
+#parser.add_argument('--host', metavar='hostname', type=str, nargs=1, help='Central node hostname')
 parser.add_argument('--port', metavar='port', type=int, nargs='?', help='server port (default=3356)')
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun_config.db)')
@@ -262,10 +262,11 @@ parser.add_argument('-c', action='store_true', default=False, dest='stdout', hel
 args = parser.parse_args()
 
 
-if args.host:
-    host = args.host[0]
-else:    
-    host = 'lcls-dev3'
+#if args.host:
+#    host = args.host[0]
+#else:    
+#    host = 'lcls-dev3'
+host = socket.gethostname()
 
 fileSize=1024*1024*10
 if args.file_size:

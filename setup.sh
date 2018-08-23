@@ -5,6 +5,9 @@ if [ $# == 1 ]; then
     virtualenv venv
     source ./venv/bin/activate
     pip install -r requirements.txt
+  elif [ "$1" == "prod" ]; then
+    source $TOOLS/script/go_python2.7.13.bash
+    export PYTHONPATH=$PHYSICS_TOP/mps_database:$PYTHONPATH
   fi
 else
   source ./venv/bin/activate
