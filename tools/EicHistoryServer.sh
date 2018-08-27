@@ -26,7 +26,7 @@ if [ $1 == 'start' ]; then
     history_files=/tmp/mps_history
   fi
 
-  $PHYSICS_TOP/mps_database/tools/historyServer.py --port 3356 $db_file --file $history_files --file-size `echo '1024*1024*10'|bc -l` &
+  $PHYSICS_TOP/mps_database/tools/EicHistoryServer.py --port 3356 $db_file --file $history_files --file-size `echo '1024*1024*10'|bc -l` &
 
 elif [ $1 == 'stop' ]; then
   echo 'Stopping...'

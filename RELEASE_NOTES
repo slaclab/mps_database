@@ -9,6 +9,9 @@
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
 
+mps_database-R1-0-6: (Aug 17 2018)
+  * Renaming historyServer.* to EicHistoryServer.*
+
 mps_database-R1-0-5: (Aug 22 2018)
   * Addition of tools/historyServer.sh script to start server
 
