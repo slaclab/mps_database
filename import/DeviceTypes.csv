@@ -20,3 +20,4 @@ STOP,18,Stopper,0
 WIRE,19,Fast Wire Scanner,0
 COLL,20,Collimator Position,0
 WIRE_PARK,21,Fast Wire Parked Switch,0
+VVFS,22,Vacuum Fast Valve,0
