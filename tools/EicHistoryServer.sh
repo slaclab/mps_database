@@ -8,7 +8,7 @@ fi
 if [ $1 == 'start' ]; then
   echo 'Starting...'
 
-  export PYTHONPATH=$PHYSICS_TOP/mps_database:$PYTHON_PATH
+  export PYTHONPATH=$PHYSICS_TOP/mps_database:$PYTHONPATH
 
   current_db=$PHYSICS_TOP/mps_configuration/current
   history_files=$PHYSICS_DATA/mps_history/mps_history
