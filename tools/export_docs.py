@@ -1101,17 +1101,21 @@ class Exporter:
     self.docbook.openSection('Link Nodes')
     self.tf.write('# Link Nodes\n')
 
-    cols=[{'name':'c1', 'width':'0.5*'},
-          {'name':'c2', 'width':'0.5*'}]
+    cols=[{'name':'c1', 'width':'0.20*'},
+          {'name':'c2', 'width':'0.30*'},
+          {'name':'c3', 'width':'0.10*'},
+          {'name':'c4', 'width':'0.25*'}]
 
     header=[{'name':'SIOC', 'namest':None, 'nameend':None},
-            {'name':'Crate', 'namest':None, 'nameend':None}]
+            {'name':'Crate', 'namest':None, 'nameend':None},
+            {'name':'Group', 'namest':None, 'nameend':None},
+            {'name':'Drawing', 'namest':None, 'nameend':None},]
     
     rows=[]
     for ln in self.session.query(models.LinkNode).all():
       sioc_info = '{0}'.format(ln.get_name())
       crate_info = '<link linkend=\'crate.{0}\'>{1}</link>'.format(ln.crate.id, ln.crate.get_name())
-      rows.append([sioc_info, crate_info])
+      rows.append([sioc_info, crate_info, ln.group, ln.group_drawing])
       self.tf.write('[LN {0}] SIOC: {1}; Crate: {2}\n'.\
                       format(ln.id, sioc_info, ln.crate.get_name()))
 

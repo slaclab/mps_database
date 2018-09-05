@@ -15,6 +15,10 @@ class LinkNode(Base):
              This is used for creating the LinkNode PVs (second field)
    location: this is the location field to generate LinkNode PVs (third field)
    cpu: name of the LinuxRT CPU where the SIOC is running
+   group: MPS update network group number (i.e. CN port the chain connects to)
+          group 100 is the CN in LI00, group 200 is the CN in B005
+   group_link: index within the group
+   group_link_destination: specifies to which LN or CN the link node connects to
    
   References:
    crate_id: specifies the crate that contains this link node
@@ -23,15 +27,22 @@ class LinkNode(Base):
   id = Column(Integer, primary_key=True)
   area = Column(String, nullable=False)
   location = Column(String, nullable=False, unique=False)
-  cpu = Column(String, nullable=False, unique=True)
+  cpu = Column(String, nullable=False, unique=False)
+  group = Column(Integer, unique=False)
+  group_link = Column(Integer, unique=False)
+  group_link_destination = Column(Integer, unique=False)
+  group_drawing = Column(String, unique=False)
   crate = relationship("Crate", uselist=False, back_populates="link_node")
-#  crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
   
   def show(self):
     print('> Area: {0}'.format(self.area))
     print('> Location: {0}'.format(self.location))
     print('> CPU: {0}'.format(self.cpu))
-#    print('> CrateId: {0}'.format(self.crate_id))
+    print('> Crate: {0}'.format(self.crate.get_name()))
+    print('> Group: {0}'.format(self.group))
+    print('> GroupLink: {0}'.format(self.group_link))
+    print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
+    print('> GroupDrawing: {0}'.format(self.group_drawing))
 
   def get_name(self):
-    return 'sioc-' + self.area + '-' + self.location
+    return 'sioc-' + self.area.lower() + '-' + self.location.lower()
