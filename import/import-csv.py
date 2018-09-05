@@ -51,13 +51,21 @@ class DatabaseImporter:
           crate_info[fields[field_index]]=property
           field_index = field_index + 1
 
+        ln = models.LinkNode(area=crate_info['ln_area'], location=crate_info['ln_location'],
+                             cpu='cpu-{0}-spXX'.format(crate_info['ln_location'].lower()),
+                             group=crate_info['group'], group_link=crate_info['group_link'],
+                             group_link_destination=crate_info['group_link_destination'],
+                             group_drawing=crate_info['network_drawing'])
+        self.session.add(ln)
+
         crate = models.Crate(number=crate_info['number'],
                              num_slots=crate_info['num_slots'],
                              shelf_number=int(crate_info['shelf_number']),
                              location=crate_info['location'],
                              rack=crate_info['rack'],
                              elevation=crate_info['elevation'],
-                             sector=crate_info['sector'])
+                             sector=crate_info['sector'],
+                             link_node=ln)
         self.session.add(crate)
       
     self.session.commit()
