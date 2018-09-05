@@ -824,8 +824,10 @@ importer.add_beam_classes('import/BeamClasses.csv')
 #importer.add_analog_device('import/SOLN')
 #importer.add_analog_device('import/BPMS', add_ignore=True)
 #importer.add_analog_device('import/BLM')
-importer.add_digital_device('import/VVPG')
-importer.add_digital_device('import/VVMG')
+#importer.add_digital_device('import/VVPG')
+#importer.add_digital_device('import/VVMG')
+#importer.add_digital_device('import/VVFS')
+importer.add_digital_device('import/TEMP')
 
 importer.check()
 

@@ -1,0 +1,3 @@
+Device,Mitigation,Fault,Area,Linac_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#
+SOL1B_TEMP,Linac,TEMP_STATE,GUNB,-32.115049,212,L2KA00-1506,1,L2KA00-0517,2,VM37604000
+SOL2B_TEMP,Linac,TEMP_STATE,GUNB,-27.538278,823,L2KA00-1506,1,L2KA00-0517,3,VM37604000
