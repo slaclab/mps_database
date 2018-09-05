@@ -8,6 +8,7 @@ def dump_db_to_yaml(mps_config, filename):
   f = file(filename, 'w')
   yaml.add_multi_representer(models.Base, model_representer)
   model_classes = [models.Crate,
+                   models.LinkNode,
                   models.ApplicationType,
                   models.ApplicationCard,
                   models.DigitalChannel,

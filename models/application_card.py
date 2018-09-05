@@ -63,7 +63,6 @@ class ApplicationCard(Base):
     """
     channel_list = self.digital_channels
     channel_count = self.type.digital_channel_count
-    print('added digital channel')
     return self.validate_generic_channel(new_channel, channel_list, channel_count)
     
   @validates('analog_channels')

@@ -11,6 +11,7 @@ meta = MetaData(naming_convention={
       })
 
 from models.crate import Crate
+from models.link_node import LinkNode
 from models.application_type import ApplicationType
 from models.application_card import ApplicationCard
 from models.channel import DigitalChannel, DigitalOutChannel, AnalogChannel

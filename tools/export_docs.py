@@ -909,7 +909,7 @@ class Exporter:
     self.docbook.closeSection()
     
   def writeCrate(self, crate):
-    name = crate.location
+    name = crate.get_name()
 
     self.docbook.openSection(name, 'crate.{0}'.format(crate.id))
     self.tf.write('Crate: {0}\n'.format(name))
@@ -1097,6 +1097,30 @@ class Exporter:
         self.writeLogicCondition(condition)
     self.docbook.closeSection()
 
+  def writeLinkNodes(self):
+    self.docbook.openSection('Link Nodes')
+    self.tf.write('# Link Nodes\n')
+
+    cols=[{'name':'c1', 'width':'0.5*'},
+          {'name':'c2', 'width':'0.5*'}]
+
+    header=[{'name':'SIOC', 'namest':None, 'nameend':None},
+            {'name':'Crate', 'namest':None, 'nameend':None}]
+    
+    rows=[]
+    for ln in self.session.query(models.LinkNode).all():
+      sioc_info = '{0}'.format(ln.get_name())
+      crate_info = '<link linkend=\'crate.{0}\'>{1}</link>'.format(ln.crate.id, ln.crate.get_name())
+      rows.append([sioc_info, crate_info])
+      self.tf.write('[LN {0}] SIOC: {1}; Crate: {2}\n'.\
+                      format(ln.id, sioc_info, ln.crate.get_name()))
+
+    table_name = 'Link Nodes'
+    table_id = 'link_nodes'
+    self.docbook.table(table_name, cols, header, rows, table_id)
+
+    self.docbook.closeSection()
+
   def writeCrates(self):
     self.docbook.openSection('ATCA Crates')
     self.tf.write('# Crates\n')
@@ -1118,6 +1142,8 @@ class Exporter:
       self.writePowerClasses()
 
     if (self.cards_only or not self.devices_only and not self.checkout_only):
+      self.writeLinkNodes()
+
       self.writeCrates()
 
       self.writeAppCards()

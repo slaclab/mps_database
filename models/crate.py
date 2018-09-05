@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, validates
 from models import Base
 
@@ -17,6 +17,9 @@ class Crate(Base):
 
   Relationships:
     cards: each ApplicationCard has a reference to a crate 
+
+  References:
+    link_node_id: points to the link node for this crate
   """
   __tablename__ = 'crates'
   id = Column(Integer, primary_key=True)
@@ -28,6 +31,8 @@ class Crate(Base):
   rack = Column(String, nullable=False)
   elevation = Column(Integer, nullable=False, default=0)
   cards = relationship("ApplicationCard", backref='crate')
+  link_node_id = Column(Integer, ForeignKey('link_nodes.id'), nullable=False)
+  link_node = relationship("LinkNode", back_populates="crate")
 
   def get_name(self):
     return self.location + '-' + self.rack + str(self.elevation)
