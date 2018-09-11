@@ -51,7 +51,7 @@ class MpsName:
 
         return self.getFaultName(fault)
 
-    def getFaultName(self, fault):
+    def getBaseFaultName(self, fault):
         is_digital = True
 
         if len(fault.inputs) <= 0:
@@ -79,10 +79,16 @@ class MpsName:
         else:
             base = self.getAnalogDeviceName(device)
 
-        return base + ":" + fault.name + "_FLT"
+        return base + ":" + fault.name
+
+    def getFaultName(self, fault):
+        return self.getBaseFaultName(fault) + "_FLT"
 
     def getConditionName(self, condition):
         return "$(BASE):" + condition.name.upper() + "_COND"
+
+    def getFaultStateName(self, faultState):
+        return self.getBaseFaultName(faultState.fault) + ":" + faultState.device_state.name
 
     #
     # Figure out the PV base name for the Link Node, given a crate_id. There is

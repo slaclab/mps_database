@@ -622,6 +622,34 @@ def exportFaults(file, faults, session):
 
   file.close()
 
+def exportFaultStates(file, faultStates, session):
+  mpsName = MpsName(session)
+  for fs in faultStates:
+    name = mpsName.getFaultStateName(fs)
+    fields=[]
+    fields.append(('DESC', '{0}'.format(fs.device_state.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'OK'))
+    fields.append(('ONAM', 'FAULTED'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_STATE'.format(fs.id)))
+    printRecord(file, 'bi', '{0}'.format(name), fields)
+
+    fields=[]
+    fields.append(('DESC', '{0}'.format(fs.device_state.description)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'Not Ignored'))
+    fields.append(('ONAM', 'Ignored'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_STATE_IGNORED'.format(fs.id)))
+    printRecord(file, 'bi', '{0}_IGN'.format(name), fields)
+
+  file.close()
+
 def exportApps(file, apps, session):
 #  mpsName = MpsName(session)
   for app in apps:
@@ -670,6 +698,8 @@ parser.add_argument('--beam-destinations', metavar='file', type=argparse.FileTyp
                     help='epics template file name for beam destinations and beam classes (e.g. destinations.template)')
 parser.add_argument('--faults', metavar='file', type=argparse.FileType('w'), nargs='?', 
                     help='epics template file name for faults (e.g. faults.template)')
+parser.add_argument('--fault-states', metavar='file', type=argparse.FileType('w'), nargs='?', 
+                    help='epics template file name for fault states (e.g. fault-states.template)')
 parser.add_argument('--apps', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for application cards (e.g. apps.template)')
 parser.add_argument('--conditions', metavar='file', type=argparse.FileType('w'), nargs='?',
@@ -687,6 +717,9 @@ session = mps.session
 if args.prod_location:
   if not os.path.isdir(args.prod_location):
     os.makedirs(args.prod_location)
+
+if (args.fault_states):
+  exportFaultStates(args.fault_states, session.query(models.FaultState).all(), session)
 
 if (args.device_inputs):
   exportDeviceInputs(args.device_inputs, session.query(models.DeviceInput).all(), session,

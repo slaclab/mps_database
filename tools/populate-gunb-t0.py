@@ -208,19 +208,19 @@ if not two_apps:
 # Define some states for the device types
 # out sw bit 0
 # in sw bit 1
-screen_out        = models.DeviceState(name="Out", device_type = profmon_device_type, value = 1)
-screen_in         = models.DeviceState(name="In", device_type = profmon_device_type, value = 2)
-screen_moving     = models.DeviceState(name="Moving", device_type = profmon_device_type, value = 0)
-screen_broken     = models.DeviceState(name="Broken", device_type = profmon_device_type, value = 3)
+screen_out        = models.DeviceState(name="OUT", description="Screen Out", device_type = profmon_device_type, value = 1)
+screen_in         = models.DeviceState(name="IN", description="Screen In", device_type = profmon_device_type, value = 2)
+screen_moving     = models.DeviceState(name="MOVING", description="Screen Moving", device_type = profmon_device_type, value = 0)
+screen_broken     = models.DeviceState(name="BROKEN", description="Screen Broken", device_type = profmon_device_type, value = 3)
 
-temp_device_fault = models.DeviceState(name="Temp Fault", device_type = temp_device_type, value = 0)
-temp_device_ok    = models.DeviceState(name="Temp OK", device_type = temp_device_type, value = 1)
-flow_device_fault = models.DeviceState(name="Flow Fault", device_type = flow_device_type, value = 0)
-flow_device_ok    = models.DeviceState(name="Flow OK", device_type = flow_device_type, value = 1)
-vvr_device_fault  = models.DeviceState(name="Vacuum Fault", device_type = vvr_device_type, value = 0)
-vvr_device_ok     = models.DeviceState(name="Vacuum OK", device_type = vvr_device_type, value = 1)
-vvmg_device_fault = models.DeviceState(name="Vacuum Fault", device_type = vvmg_device_type, value = 0)
-vvmg_device_ok    = models.DeviceState(name="Vacuum OK", device_type = vvmg_device_type, value = 1)
+temp_device_fault = models.DeviceState(name="FAULT", description="Temperature Fault", device_type = temp_device_type, value = 0)
+temp_device_ok    = models.DeviceState(name="OK", description="Temperature Ok", device_type = temp_device_type, value = 1)
+flow_device_fault = models.DeviceState(name="FAULT", description="Flow Fault", device_type = flow_device_type, value = 0)
+flow_device_ok    = models.DeviceState(name="OK", description="Flow Ok", device_type = flow_device_type, value = 1)
+vvr_device_fault  = models.DeviceState(name="CLOSED", description="Vacuum Fault", device_type = vvr_device_type, value = 0)
+vvr_device_ok     = models.DeviceState(name="OPENED", description="Vacuum Ok", device_type = vvr_device_type, value = 1)
+vvmg_device_fault = models.DeviceState(name="CLOSED", description="Manual Vacuum Fault", device_type = vvmg_device_type, value = 0)
+vvmg_device_ok    = models.DeviceState(name="OPENED", description="Manual Vacuum Ok",  device_type = vvmg_device_type, value = 1)
 
 session.add_all([screen_out, screen_in, screen_moving, screen_broken,
                  temp_device_fault, temp_device_ok,
@@ -237,10 +237,10 @@ session.add_all([screen_out, screen_in, screen_moving, screen_broken,
 #   0   |   0   | Moving (value=0)
 #   1   |   1   | Broken (value=3)
 # 
-shutter_moving = models.DeviceState(name="Moving", device_type = shutter_status_device_type, value = 0)
-shutter_open   = models.DeviceState(name="Open", device_type = shutter_status_device_type, value = 1)
-shutter_close  = models.DeviceState(name="Close", device_type = shutter_status_device_type, value = 2)
-shutter_broken = models.DeviceState(name="Broken", device_type = shutter_status_device_type, value = 3)
+shutter_moving = models.DeviceState(name="MOVING", description="Shutter Moving", device_type = shutter_status_device_type, value = 0)
+shutter_open   = models.DeviceState(name="OPENED", description="Shutter Opened",device_type = shutter_status_device_type, value = 1)
+shutter_close  = models.DeviceState(name="CLOSED", description="Shutter Closed",device_type = shutter_status_device_type, value = 2)
+shutter_broken = models.DeviceState(name="BROKEN", description="Shutter Broken",device_type = shutter_status_device_type, value = 3)
 
 session.add_all([shutter_open, shutter_close, shutter_moving, shutter_broken])
 
@@ -260,25 +260,31 @@ if not two_apps:
   state_value = 1
   # TMIT Thresholds - bits 0 through 7
   for i in range(0,8):
-    state_name = "TMIT_T" + str(i)
-    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-    if (i < 8):
+    state_name = "TMIT_T" + str(i) #+ "_FAULT"
+    description = "TMIT Threshold" + str(i)
+    if (i < 1):
+      bpm_threshold_state = models.DeviceState(name=state_name, description=description,
+                                               value=state_value, mask=state_value, device_type = bpm_device_type)
       bpm_t_states.append(bpm_threshold_state)
       session.add(bpm_threshold_state)
     state_value = (state_value << 1)
   # X Thresholds - bits 8 through 15
   for i in range(0,8):
-    state_name = "X_T" + str(i)
-    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-    if (i < 8):
+    state_name = "X_T" + str(i) #+ "_FAULT"
+    description = "X Threshold" + str(i)
+    if (i < 1):
+      bpm_threshold_state = models.DeviceState(name=state_name, description=description,
+                                               value=state_value, mask=state_value, device_type = bpm_device_type)
       bpm_x_states.append(bpm_threshold_state)
       session.add(bpm_threshold_state)
     state_value = (state_value << 1)
   # Y Thresholds - bits 16 though 23
   for i in range(0,8):
-    state_name = "Y_T" + str(i)
-    bpm_threshold_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = bpm_device_type)
-    if (i < 8):
+    state_name = "Y_T" + str(i) #+ "_FAULT"
+    description = "Y Threshold" + str(i)
+    if (i < 1):
+      bpm_threshold_state = models.DeviceState(name=state_name, description=description,
+                                               value=state_value, mask=state_value, device_type = bpm_device_type)
       bpm_y_states.append(bpm_threshold_state)
       session.add(bpm_threshold_state)
     state_value = (state_value << 1)
@@ -298,44 +304,48 @@ fc_int1_states=[]
 state_value = 1
 # Integrator #1 - bits 0 through 7
 for i in range(0,8):
-  state_name = "I0_T" + str(i)
-#  im_state_name = "CHARGE_T" + str(i)
-#  state_name = "CHARGE"
-  im_state_name = "CHARGE"
-  if not two_apps:
-    im_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value, device_type = im_device_type, description="Toroid Charge")
-    fc_int1_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value, device_type = fc_device_type, description="FC Integrator 1")
-
-  sol1_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = sol_curr_device_type, description="SOL1B Integrator 1")
-  sol2_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, device_type = sol_curr_device_type, description="SOL2B Integrator 1")
-
   if (i < 1):
-    sol1_int1_states.append(sol1_int1_state)
-    sol2_int1_states.append(sol2_int1_state)
+    state_name = "I0_T" + str(i)# + "_FAULT"
+    im_state_name = "CHARGE"
     if not two_apps:
-      fc_int1_states.append(fc_int1_state)
-      im_charge_states.append(im_state)
+      im_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value,
+                                    device_type = im_device_type, description="Toroid Charge")
+      fc_int1_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value,
+                                         device_type = fc_device_type, description="FC Integrator 1")
 
-  session.add(sol1_int1_state)
-  session.add(sol2_int1_state)
+    sol1_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, 
+                                         device_type = sol_curr_device_type, description="SOL1B Integrator 1")
+    sol2_int1_state = models.DeviceState(name=state_name, value=state_value, mask=state_value, 
+                                         device_type = sol_curr_device_type, description="SOL2B Integrator 1")
 
-  if not two_apps:
-    session.add(im_state)
-    session.add(fc_int1_state)
+    if (i < 1):
+      sol1_int1_states.append(sol1_int1_state)
+      sol2_int1_states.append(sol2_int1_state)
+      if not two_apps:
+        fc_int1_states.append(fc_int1_state)
+        im_charge_states.append(im_state)
+
+    session.add(sol1_int1_state)
+    session.add(sol2_int1_state)
+
+    if not two_apps:
+      session.add(im_state)
+      session.add(fc_int1_state)
 
   state_value = (state_value << 1)
 
 # Integrator #2 - bits 8 through 15
 for i in range(0,8):
-#  state_name = "I1_T" + str(i)
-#  im_state_name = "DIFF_T" + str(i)
   im_state_name = "DIFF"
-  if not two_apps:
-    im_state = models.DeviceState(name=im_state_name, value=state_value, mask=state_value, device_type = im_device_type, description="Toroid Diff")
-    if (i < 1):
-      im_diff_states.append(im_state)
-  if not two_apps:
-    session.add(im_state)
+  if (i < 1):
+    if not two_apps:
+      im_state = models.DeviceState(name=im_state_name, value=state_value,
+                                    mask=state_value, device_type = im_device_type,
+                                    description="Toroid Charge Difference")
+      if (i < 1):
+        im_diff_states.append(im_state)
+    if not two_apps:
+      session.add(im_state)
   state_value = (state_value << 1)
 
 # Integrator #3 - bits 16 though 23
@@ -434,7 +444,7 @@ sol02_temp_fault = models.Fault(name="TEMP_SUM", description="SOL2B Temperature 
 sol_flow_fault = models.Fault(name="FLOW_SW", description="SOL1B/SOL2B Waterflow Fault")
 vvr1_fault = models.Fault(name="VVR01", description="VVR01 Vacuum Valve Fault")
 vvr2_fault = models.Fault(name="VVR02", description="VVR02 Vacuum Valve Fault")
-vvmg1_fault = models.Fault(name="VVMG1", description="VVMG:LLOK:500:3 Manual Vacuum Valve Fault")
+vvmg1_fault = models.Fault(name="VVMG1", description="VVMG:LLOK:500:3 Man. Vac. Valve Fault")
 session.add_all([yag_fault,  sol01_temp_fault, sol02_temp_fault, fc_temp_fault])
 session.add_all([vvr1_fault, vvr2_fault, vvmg1_fault])
 session.add_all([sol_flow_fault])
