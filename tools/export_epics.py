@@ -75,7 +75,6 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
       '#\n'                                                          + \
       '# Generated on {0}\n'.format(time.asctime(time.localtime(time.time()))) + \
       '#\n\n'                                                        + \
-      'bypassCount=0\n'                                              + \
       'function getBypass {\n'                                       + \
       '  time=`caget -t $1`\n'                                       + \
       '  value=`caget -t -n $3`\n'                                      + \
@@ -85,9 +84,9 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
       '    exit 1\n'                                                 + \
       '  fi\n'                                                       + \
       '  if [ $time != \'0\' ]; then\n'                              + \
-      '    echo \'caput \'$2\' \'${time} >> $5\n'                    + \
-      '    echo \'caput \'$3\' \'${value} >> $5\n'                   + \
-      '    echo \'echo \'$4 >> $5\n'                                 + \
+      '    echo \'  caput \'$2\' \'${time} >> $5\n'                    + \
+      '    echo \'  caput \'$3\' \'${value} >> $5\n'                   + \
+      '    echo \'  echo \'$4 >> $5\n'                                 + \
       '    bypassCount=$[bypassCount + 1]\n'                         + \
       '  fi\n'                                                       + \
       '}\n\n'
@@ -132,6 +131,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
   percentageIncrease=100/numInputs
   percentage=0
   sf.write('echo \'(\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'  bypassCount=0\' >> {0}\n'.format(restoreBypassFile))
 
   mpsName = MpsName(session)
   for deviceInput in deviceInputs:
@@ -245,6 +245,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
                                                         bypassValuePv, percentage, restoreBypassFile))
 
     #=== End Bypass records ====
+  sf.write('  echo $bypassCount > /tmp/mps-digital-bypass-count.txt\n')
   sf.write(') |\n')
   sf.write('zenity --progress --percentage=0 --text="Saving digital bypass information..." --auto-close\n')
 
@@ -252,7 +253,8 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
   sf.write('echo \'zenity --progress --percentage=0 --text="Restoring digital bypass information..." --auto-close\' >> {0}\n'.format(restoreBypassFile))
 
   footer = \
-      '\n\nif [ $bypassCount == \'0\' ]; then\n'                        + \
+      '\n\nbypassCount=`cat /tmp/mps-digital-bypass-count.txt`\n'    + \
+      '\n\nif [ $bypassCount == \'0\' ]; then\n'                    + \
       '  echo \'INFO: found no active bypasses\'\n'                 + \
       'else\n'                                                      + \
       '  echo \'INFO: Found \'${bypassCount}\' active bypasses\'\n' + \
@@ -306,7 +308,6 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
       '#\n'                                                          + \
       '# Generated on {0}\n'.format(time.asctime(time.localtime(time.time()))) + \
       '#\n\n'                                                        + \
-      'bypassCount=0\n'                                              + \
       'function getBypass {\n'                                       + \
       '  v=`caget -t $1`\n'                                          + \
       '  if [ $? != \'0\' ]; then\n'                                 + \
@@ -361,6 +362,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
   percentageIncrease=100/numInputs
   percentage=0
   sf.write('echo \'(\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'  bypassCount=0\' >> {0}\n'.format(restoreBypassFile))
 
   for analogDevice in analogDevices:
 #    name = getAnalogDeviceName(session, analogDevice)
@@ -527,6 +529,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
     percentage = percentage + percentageIncrease
     sf.write('echo {0}\n'.format(percentage))
 
+  sf.write('  echo $bypassCount > /tmp/mps-analog-bypass-count.txt\n')
   sf.write(') |\n')
   sf.write('zenity --progress --percentage=0 --text="Saving analog bypass information..." --auto-close\n')
 
@@ -535,7 +538,8 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
 
 
   footer = \
-      '\n\nif [ $bypassCount == \'0\' ]; then\n'                        + \
+      '\n\nbypassCount=`cat /tmp/mps-analog-bypass-count.txt`\n'    + \
+      '\n\nif [ $bypassCount == \'0\' ]; then\n'                    + \
       '  echo \'INFO: found no active bypasses\'\n'                 + \
       'else\n'                                                      + \
       '  echo \'INFO: Found \'${bypassCount}\' active bypasses\'\n' + \
