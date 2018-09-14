@@ -62,7 +62,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
   # Write function that gets the current bypass time and
   # restores if it is non-zero
   func = \
-      '#\n'                                                          + \
+      '#!/bin/bash\n'                                                + \
       '# This script reads the PVs with the number of remaining\n'   + \
       '# seconds on active bypasses. It should be used prior to\n'   + \
       '# rebooting the MPS Central Node IOC.\n'                      + \
@@ -85,21 +85,53 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
       '    exit 1\n'                                                 + \
       '  fi\n'                                                       + \
       '  if [ $time != \'0\' ]; then\n'                              + \
-      '    echo \'caput \'$2\' \'${time} >> $4\n'                    + \
-      '    echo \'caput \'$3\' \'${value} >> $4\n'                   + \
+      '    echo \'caput \'$2\' \'${time} >> $5\n'                    + \
+      '    echo \'caput \'$3\' \'${value} >> $5\n'                   + \
+      '    echo \'echo \'$4 >> $5\n'                                 + \
       '    bypassCount=$[bypassCount + 1]\n'                         + \
       '  fi\n'                                                       + \
       '}\n\n'
 
   sf.write(func)
+  sf.write('msg=\'*** This will save the current bypass times and values ***\'\n')
+  sf.write('hasRestore=\'0\'\n')
   sf.write('if [ -f {0} ]; then\n'.format(restoreBypassFile))
-  sf.write('  echo \'INFO: found existing restore file, saving it with current timestamp\'\n')
-  sf.write('  mv -f {0} {0}-`date +\'%m-%d-%y-%H:%M:%S\'`\n'.format(restoreBypassFile))
+  sf.write('   hasRestore=\'1\'\n')
+  sf.write('   timestamp=`date +\'%m-%d-%y-%H:%M:%S\'`\n')
+  sf.write('   newFile={0}-$timestamp\n'.format(restoreBypassFile))
+  sf.write('   msg=$msg\'\n\nThe current restore file will be saved with the timestamp \'$timestamp\' in the name\'\n')
   sf.write('fi\n')
+  sf.write('\n')
+  sf.write('msg=$msg\'\n\nProceed?\'\n')
+  sf.write('zenity --question --text "$msg" --ok-label=YES --cancel-label=NO --title "MPS Digital Input Bypass"\n')
+  sf.write('\n')
+  sf.write('if [ $? == \'1\' ]; then\n')
+  sf.write('  echo \'Save bypass cancelled.\'\n')
+  sf.write('  exit 1\n')
+  sf.write('fi\n')
+  sf.write('\n')
+  sf.write('if [ $hasRestore == \'1\' ]; then\n')
+  sf.write('  echo \'INFO: found existing restore file, saving it with current timestamp (\'$newFile\')\'\n')
+  sf.write('  mv -f {0} $newFile\n'.format(restoreBypassFile))
+  sf.write('fi\n\n')
   sf.write('echo \'INFO: getting current bypasses...\'\n\n')
+
+  # These are the lines in the bypass restore script
+  sf.write('echo \'#!/bin/bash \' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'# Bypass restore file generated on \'`date`\'\' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'date="\'`date`\'"\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'msg="This will restore device input (digital) bypasses saved on $date."\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'msg=$msg"\\n\\nProceed?"\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'zenity --question --text "$msg" --ok-label=YES --cancel-label=NO --title "MPS Digital Input Bypass"\' >> {0}\n'.format(restoreBypassFile))
+
+  # zenity --progress start and percentage increase
+  sf.write('(\n')
+  numInputs=len(deviceInputs)
+  percentageIncrease=100/numInputs
+  percentage=0
+  sf.write('echo \'(\' >> {0}\n'.format(restoreBypassFile))
 
   mpsName = MpsName(session)
   for deviceInput in deviceInputs:
@@ -207,10 +239,17 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     printRecord(file, 'stringin', '{0}_BYPD_STR'.format(name), fields)
 
     # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
-    sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv,
-                                                  bypassValuePv, restoreBypassFile))
+    percentage = percentage + percentageIncrease
+    sf.write('echo {0}\n'.format(percentage))
+    sf.write('getBypass {0} {1} {2} {3} "{4}"\n'.format(remainingTimePv, bypassTimePv,
+                                                        bypassValuePv, percentage, restoreBypassFile))
 
     #=== End Bypass records ====
+  sf.write(') |\n')
+  sf.write('zenity --progress --percentage=0 --text="Saving digital bypass information..." --auto-close\n')
+
+  sf.write('echo \') |\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'zenity --progress --percentage=0 --text="Restoring digital bypass information..." --auto-close\' >> {0}\n'.format(restoreBypassFile))
 
   footer = \
       '\n\nif [ $bypassCount == \'0\' ]; then\n'                        + \
@@ -276,20 +315,52 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
       '    exit 1\n'                                                 + \
       '  fi\n'                                                       + \
       '  if [ $v != \'0\' ]; then\n'                                 + \
-      '    echo \'caput \'$2\' \'${v} >> $3\n'                       + \
+      '    echo \'caput \'$2\' \'${v} >> $4\n'                       + \
+      '    echo \'echo \'$3 >> $4\n'                                 + \
       '    bypassCount=$[bypassCount + 1]\n'                         + \
       '  fi\n'                                                       + \
       '}\n\n'
 
   sf.write(func)
+  sf.write('msg=\'*** This will save the current bypass times and values ***\'\n')
+  sf.write('hasRestore=\'0\'\n')
   sf.write('if [ -f {0} ]; then\n'.format(restoreBypassFile))
-  sf.write('  echo \'INFO: found existing restore file, saving it with current timestamp\'\n')
-  sf.write('  mv -f {0} {0}-`date +"%m-%d-%y-%H:%M:%S"`\n'.format(restoreBypassFile))
+  sf.write('   hasRestore=\'1\'\n')
+  sf.write('   timestamp=`date +\'%m-%d-%y-%H:%M:%S\'`\n')
+  sf.write('   newFile={0}-$timestamp\n'.format(restoreBypassFile))
+  sf.write('   msg=$msg\'\n\nThe current restore file will be saved with the timestamp \'$timestamp\' in the name\'\n')
   sf.write('fi\n')
+  sf.write('\n')
+  sf.write('msg=$msg\'\n\nProceed?\'\n')
+  sf.write('zenity --question --text "$msg" --ok-label=YES --cancel-label=NO --title "MPS Analog Input Bypass"\n')
+  sf.write('\n')
+  sf.write('if [ $? == \'1\' ]; then\n')
+  sf.write('  echo \'Save bypass cancelled.\'\n')
+  sf.write('  exit 1\n')
+  sf.write('fi\n')
+  sf.write('\n')
+  sf.write('if [ $hasRestore == \'1\' ]; then\n')
+  sf.write('  echo \'INFO: found existing restore file, saving it with current timestamp (\'$newFile\')\'\n')
+  sf.write('  mv -f {0} $newFile\n'.format(restoreBypassFile))
+  sf.write('fi\n\n')
   sf.write('echo \'INFO: getting current bypasses...\'\n\n')
-  sf.write('echo \'# \' >> "{0}"\n'.format(restoreBypassFile))
+
+  # These are the lines in the bypass restore script
+  sf.write('echo \'#!/bin/bash \' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'# Bypass restore file generated on \'`date`\'\' >> {0}\n'.format(restoreBypassFile))
-  sf.write('echo \'# \' >> "{0}"\n'.format(restoreBypassFile))
+  sf.write('echo \'# \' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'date="\'`date`\'"\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'msg="This will restore analog device bypasses saved on $date."\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'msg=$msg"\\n\\nProceed?"\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'zenity --question --text "$msg" --ok-label=YES --cancel-label=NO --title "MPS Analog Input Bypass"\' >> {0}\n'.format(restoreBypassFile))
+
+  # zenity --progress start and percentage increase
+  sf.write('(\n')
+  numInputs=len(analogDevices)
+  percentageIncrease=100/numInputs
+  percentage=0
+  sf.write('echo \'(\' >> {0}\n'.format(restoreBypassFile))
 
   for analogDevice in analogDevices:
 #    name = getAnalogDeviceName(session, analogDevice)
@@ -449,10 +520,19 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
             printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
             
             # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
-            sf.write('getBypass {0} {1} "{2}"\n'.format(remainingTimePv, bypassTimePv, restoreBypassFile))
+            sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv, percentage, restoreBypassFile))
 
             bypassPvs=True
           #=== End Bypass records ====
+    percentage = percentage + percentageIncrease
+    sf.write('echo {0}\n'.format(percentage))
+
+  sf.write(') |\n')
+  sf.write('zenity --progress --percentage=0 --text="Saving analog bypass information..." --auto-close\n')
+
+  sf.write('echo \') |\' >> {0}\n'.format(restoreBypassFile))
+  sf.write('echo \'zenity --progress --percentage=0 --text="Restoring analog bypass information..." --auto-close\' >> {0}\n'.format(restoreBypassFile))
+
 
   footer = \
       '\n\nif [ $bypassCount == \'0\' ]; then\n'                        + \
