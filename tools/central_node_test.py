@@ -263,6 +263,10 @@ class Simulator:
       print 'Device {0} ({1}) is a mitigation device'.format(device.id, device.name)
       exit(1)
 
+    if device.card_id == None:
+      print 'Cannot test device {0} (id={1}), it is not associated with any physical card'.format(device.name, device_id)
+      exit(1)
+
     if device_type == 'digital':
         self.analog_device = None
         try:
@@ -691,7 +695,10 @@ class Tester:
   def test_all(self):
       devices = self.simulator.get_all_devices()
       for device in devices:
+        if (device.card_id != None and device.evaluation != 3):
           self.test(device.id)
+        else:
+          print 'Skipping device {0}, it is not associated with any physical card'.format(device.name)
 
       devices = self.simulator.get_all_analog_devices()
       self.digital_device = None

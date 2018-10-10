@@ -35,7 +35,7 @@ class Crate(Base):
   link_node = relationship("LinkNode", back_populates="crate")
 
   def get_name(self):
-    return self.location + '-' + self.rack + str(self.elevation)
+    return self.location #+ '-' + self.rack #+ str(self.elevation)
   
   @validates('cards')
   def validate_card(self, key, new_card):
@@ -44,8 +44,9 @@ class Crate(Base):
     such as is the slot available and is the slot number valid.
     """
     #Ensure the crate won't be full after adding the new card
-    if len(self.cards)+1 > self.num_slots:
-      raise ValueError("Crate cannot have more cards than num_slots.")
+# This test is not correct because on the same slot there may be amc cards - need to add other type of check    
+#    if len(self.cards)+1 > self.num_slots:
+#      raise ValueError("Crate cannot have more cards than num_slots.")
     
     #Ensure the slot exists
     if new_card.slot_number > self.num_slots:

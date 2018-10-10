@@ -42,7 +42,7 @@ class Device(Base):
   area = Column(String, nullable=False)
   evaluation = Column(Integer, nullable=False, default=0)
 #  drawing = Column(String, unique=False, nullable=True)
-  card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
+  card_id = Column(Integer, ForeignKey('application_cards.id'))
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   measured_device_type_id = Column(Integer, ForeignKey('device_types.id'))
   fault_outputs = relationship("FaultInput", backref='device')

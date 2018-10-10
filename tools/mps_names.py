@@ -58,10 +58,14 @@ class MpsName:
             print 'ERROR: Fault {0} (id={1}) has no inputs, can\'t proceed. exiting...'.format(fault.name, fault.id)
             exit(1)
 
+#        print 'len: {0}'.format(len(fault.inputs))
+
         for fault_input in fault.inputs:
+#            print 'id={0} bit={1} devid={2}'.format(fault_input.id,fault_input.bit_position, fault_input.device_id)
             if fault_input.bit_position == 0:
                 try:
                     device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==fault_input.device_id).one()
+#                    print 'Inputs: {0}'.format(len(device.inputs))
                     for input in device.inputs:
                         if input.bit_position == 0:
                             device_input = input
@@ -88,6 +92,7 @@ class MpsName:
         return "$(BASE):" + condition.name.upper() + "_COND"
 
     def getFaultStateName(self, faultState):
+#        print 'name for {0} {1} {2}'.format(faultState.id, faultState.device_state.name, faultState.fault.name)
         return self.getBaseFaultName(faultState.fault) + ":" + faultState.device_state.name
 
     #

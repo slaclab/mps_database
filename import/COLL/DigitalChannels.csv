@@ -1,0 +1,2 @@
+Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Alarm_State,Debounce
+COLL_POSITION,TBD,0/24V,1,NOT_OUT,OUT,0,0,0,10

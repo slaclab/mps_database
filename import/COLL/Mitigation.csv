@@ -1,0 +1,2 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,NOT_OUT,2,Collimator NOT OUT,1,-,-,-
