@@ -34,6 +34,8 @@ class DatabaseImporter:
     self.session.autoflush=False    
    
   def add_crates(self, file_name):
+    if self.verbose:
+      print "Adding crates... {0}".format(file_name)
     f = open(file_name)
 
     line = f.readline().strip()
@@ -339,6 +341,8 @@ class DatabaseImporter:
   #    state_name: Moving
   #    sxu: '-' 
   def read_mitigation(self, file_name):
+    if self.verbose:
+      print '  Mitigation actions:'
     f = open(file_name)
     line = f.readline().strip()
     fields = []
@@ -359,6 +363,9 @@ class DatabaseImporter:
           mitigation[mitigation_info['device_location']]={}
           location = mitigation_info['device_location']
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
+
+        if self.verbose:
+          print "  + {0}".format(mitigation_info['device_location'])
 
     f.close()
     
@@ -642,7 +649,7 @@ class DatabaseImporter:
   # Devices.csv
   # DigitalChannels.csv
   # Mitigation.csv
-  def add_digital_device(self, directory):
+  def add_digital_device(self, directory, card_name="Digital Card"):
     print 'Adding ' + directory
     # Find the device type
     file_name = directory + '/DeviceType.csv'
@@ -655,8 +662,23 @@ class DatabaseImporter:
     device_states = self.add_device_states(file_name, device_type)
 
     # Add DigitalChannels, first read the channels for one device
+
     file_name = directory + '/DigitalChannels.csv'
-    f = open(file_name)
+    soft = False
+    try:
+      f = open(file_name)
+    except:
+      file_name = directory + '/SoftChannels.csv'
+      soft=True
+
+    if soft:
+      try:
+        f = open(file_name)
+      except:
+        print 'ERROR: No file found ({0})'.format(file_name)
+        return
+
+
     line = f.readline().strip()
     fields=[]
     for field in line.split(','):
@@ -718,8 +740,8 @@ class DatabaseImporter:
         try:
           app_card = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
-          if app_card.name != "Digital Card":
-            print('ERROR: digital device ({0}) assigned to a non-digital card ({1} at {2} slot {3})'.\
+          if app_card.name != card_name:
+            print('ERROR: digital device ({0}) assigned to non-digital card ({1} at {2} slot {3})'.\
                     format(device_info['device'], app_card.name, app_card.crate.location, app_card.slot_number))
             return
         except:
@@ -756,6 +778,8 @@ class DatabaseImporter:
                                         area=device_info['area'],
                                         evaluation=evaluation)
 
+        if (self.verbose):
+          print '  Adding device {0}'.format(device_info['device'])
         self.session.add(device)
         self.session.commit()
 
@@ -768,20 +792,33 @@ class DatabaseImporter:
             if device_info['mps_channel_#' + mps_channel_index] != '-':
               channel_number = int(device_info['mps_channel_#' + mps_channel_index])
 
-              digital_channel = models.DigitalChannel(number=channel_number, 
-                                                      name = channel[key]['name'],
-                                                      z_name=channel[key]['z_name'],
-                                                      o_name=channel[key]['o_name'],
-                                                      alarm_state=channel[key]['alarm_state'],
-                                                      card_id=app_card.id)
-              self.session.add(digital_channel)
-              self.session.commit()
+              if (not soft):
+                digital_channel = models.DigitalChannel(number=channel_number, 
+                                                        name = channel[key]['name'],
+                                                        z_name=channel[key]['z_name'],
+                                                        o_name=channel[key]['o_name'],
+                                                        alarm_state=channel[key]['alarm_state'],
+                                                        card_id=app_card.id)
+                self.session.add(digital_channel)
+                self.session.commit()
+              else:
+                digital_channel = models.DigitalChannel(number=channel_number, 
+                                                        name = channel[key]['name'],
+                                                        z_name=channel[key]['z_name'],
+                                                        o_name=channel[key]['o_name'],
+                                                        alarm_state=channel[key]['alarm_state'],
+                                                        card_id=app_card.id,
+                                                        num_inputs=1,
+                                                        monitored_pvs=device_info['mps_signal_source_location'])
+                self.session.add(digital_channel)
+                self.session.commit()
 
               device_input = models.DeviceInput(channel = digital_channel,
                                                 bit_position = int(channel[key]['bit_position']),
                                                 digital_device = device,
                                                 fault_value = int(channel[key]['alarm_state']))
               self.session.add(device_input)
+
 
           # For each device - create a Fault, FaultInputs, FaultStates and the AllowedClasses
           device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
@@ -792,8 +829,12 @@ class DatabaseImporter:
 
           # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
           for k in mitigation:
+            if self.verbose:
+              print '  + Mitigation {0}'.format(k)
             if device_info['mitigation'] == k:
               for m in mitigation[device_info['mitigation']]:
+                if self.verbose:
+                  print '   + {0}'.format(m)
                 fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
                 self.session.add(fault_state)
                 if (conditions != None and device_states[m].name in conditions):
@@ -855,17 +896,20 @@ importer.add_beam_classes('import/BeamClasses.csv')
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 #importer.add_digital_device('import/TEMP')
 
-importer.add_digital_device('import/WIRE_PARK')
-importer.add_digital_device('import/PROF')
-importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
-importer.add_analog_device('import/SOLN', card_name="Generic ADC")
-importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
-importer.add_analog_device('import/BLM', card_name="Generic ADC")
-importer.add_digital_device('import/VVPG')
-importer.add_digital_device('import/VVMG')
-importer.add_digital_device('import/VVFS')
-importer.add_digital_device('import/COLL')
-importer.add_digital_device('import/FLOW')
+if (True):
+  importer.add_digital_device('import/WIRE_PARK')
+  importer.add_digital_device('import/PROF')
+  importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
+  importer.add_analog_device('import/SOLN', card_name="Generic ADC")
+  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+  importer.add_analog_device('import/BLM', card_name="Generic ADC")
+  importer.add_digital_device('import/VVPG')
+  importer.add_digital_device('import/VVMG')
+  importer.add_digital_device('import/VVFS')
+  importer.add_digital_device('import/COLL')
+  importer.add_digital_device('import/FLOW')
+
+importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
 
 importer.check()
 

@@ -1,7 +1,7 @@
 Number,Area,Location,Slot,AMC,Crate_Number,Crate,Type,Type_Number,Global_ID,Name,Description
 1,LI00,MP01,2,2,1,L2KA00-0517,Digital Card,1,1,Digital Card,Trunk L2A00012/L2A00011
 2,LI00,MP01,2,1,1,L2KA00-0517,Generic ADC,5,2,Generic ADC,SOL1/SOL2 and CEHTR PBLM
-3,LI00,MP01,2,3,1,L2KA00-0517,Virtual,6,3,Virtual,Soft Inputs
+3,LI00,MP01,2,3,1,L2KA00-0517,Virtual Card,6,3,Virtual Card,Soft Inputs
 4,LI00,MP01,3,0,1,L2KA00-0517,BPM Card,2,4,BPM Card,EMPTY
 5,LI00,MP01,4,0,1,L2KA00-0517,BPM Card,2,5,BPM Card,EMPTY
 6,LI00,MP01,5,2,1,L2KA00-0517,LLRF,4,6,LLRF,EMPTY
