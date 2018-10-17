@@ -54,9 +54,9 @@ mps_gun_config.html
 mps_gun_config.pdf
 mps_gun_config.rtf
 ```
-Export EPICS databases for central node IOC:
+Export EPICS databases for central node IOC and link node virtual channels:
 ```
-[mps_database/tools]$ export_epics.py mps_config-2018-05-22-a.db --device-inputs device_inputs.db --analog-devices analog_devices.db --beam-destinations destinations.db --faults faults.db --apps apps.db --conditions conditions.db
+[mps_database/tools]$ export_epics.py mps_config-2018-05-22-a.db --device-inputs device_inputs.db --analog-devices analog_devices.db --beam-destinations destinations.db --faults faults.db --apps apps.db --conditions conditions.db --link-nodes link_node_db
 ```
 The command above generates file .db files:
 - device_inputs.db for the digital inputs
@@ -65,6 +65,7 @@ The command above generates file .db files:
 - faults.db for the list of faults
 - apps.db for the applications 
 - conditions.db for the ignore conditions
+- virtual_inputs.db for all link nodes that have virtual cards defined in the database (a subdirectory with the link node name is created under the link_node_db area)
 
 The source for the EPICS databases is the mps_gun_config.db file (sqlite format).
 
@@ -96,6 +97,13 @@ record(ao, "BPMS:GUNB:201:X_T1_HIHI") {
 }
 ```
 This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter). The script also crates thresholds for the alternative, LCLS-I and idle modes. (LCLS-I and IDLE have a single HIHI/LOLO).
+
+Virtual Channels
+----------------
+
+Virtual channels translate MPS inputs from EPICS PVs into status bits within the MPS update network. A link node may have a virtual card, which is basically a set of 32 digital inputs driven by software. Each virtual input has one analog input PV (the PV name is defined in the database). If the value of the input PV generates a HIHI/LOLO or gets disconnected (e.g. PV cannot be reached), then the link node will write a fault to the status bit for the given input.
+
+The EPICS database containing the support records for monitoring the external input PVs are generated from the MPS database. The PV whose HIHI/LOLO fields generate the fault is named using the same rules applied for regular digital channels. For example the dipole current for the BCXH1-4 magnets is BEND:HTR:100:CURRENT. Auxiliary PVs with similar names (with suffixes) are defined to drive the link node asyn code that communicates with the link node firmware.
 
 EIC History Server
 ------------------

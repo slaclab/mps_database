@@ -164,7 +164,8 @@ class HistoryLogger:
  
         self.printMessage(messageType, messageString)
 
-    except:
+    except Exception as ex:
+        print ex
         self.printGeneric(messageType, message)
 
   def printBypassState(self, message):
@@ -201,6 +202,7 @@ class HistoryLogger:
     try:
         deviceInput = self.session.query(models.DeviceInput).filter(models.DeviceInput.id==message.id).first()
         channel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).first()
+        device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).first()
 
         oldName = channel.z_name
         newName = channel.z_name
@@ -209,7 +211,7 @@ class HistoryLogger:
         if (message.newValue > 0):
             newName = channel.o_name
 
-        messageString = '{0}: {1} -> {2}'.format(channel.name, oldName, newName)
+        messageString = '{0} [{3}]: {1} -> {2}'.format(channel.name, oldName, newName, device.name)
         self.printMessage(messageType, messageString)
 
     except:

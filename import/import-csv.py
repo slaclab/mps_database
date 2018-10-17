@@ -896,7 +896,7 @@ importer.add_beam_classes('import/BeamClasses.csv')
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 #importer.add_digital_device('import/TEMP')
 
-if (True):
+if (False):#True):
   importer.add_digital_device('import/WIRE_PARK')
   importer.add_digital_device('import/PROF')
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)

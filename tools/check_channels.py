@@ -45,6 +45,7 @@ def checkDigitalChannels(session):
 
   card={}
   error=False
+  softError=False
   for c in channels:
     deviceInput=session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==c.id).one()
 
@@ -63,7 +64,21 @@ def checkDigitalChannels(session):
       else:
         card[c.card_id][c.number]=c.id
 
+    # If this is a 'soft' digital channel verify if the contents of
+    # num_inputs/monitored_pvs is correct
+    if c.num_inputs > 0:
+      if (c.num_inputs != len(c.monitored_pvs.split(';'))):
+        print 'ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
+            format(c.number, c.card_id, c.num_inputs, len(c.monitored_pvs.split(';')))
+        print '       PVs should be separated by semi-colons. This are the PVs found:'
+        for s in c.monitored_pvs.split(';'):
+          print '       - \'{0}\''.format(s.strip())
+        error=True
+        softError=True
+
   if error:
+    if softError:
+      print 'Detected bad soft channel specifications, please check!'
     print 'Please check database for duplicate digital channel assignments!'
   else:
     print 'Database OK for digital channels, no duplicate assignments found'

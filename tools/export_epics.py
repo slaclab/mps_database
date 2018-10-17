@@ -20,10 +20,12 @@ import os
 #     field(INP, "@asyn(CENTRAL_NODE 0 3)DIGITAL_CHANNEL")
 #}
 
-def printRecord(file, recType, recName, fields):
+def printRecord(file, recType, recName, fields, infoFields=[]):
   file.write("record({0}, \"{1}\") {{\n".format(recType, recName))
   for name, value in fields:
     file.write("  field({0}, \"{1}\")\n".format(name, value))
+  for name, value in infoFields:
+    file.write("  info({0}, \"{1}\")\n".format(name, value))
   file.write("}\n\n")
 
 #def getDeviceInputName(session, deviceInput):
@@ -128,7 +130,10 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
   # zenity --progress start and percentage increase
   sf.write('(\n')
   numInputs=len(deviceInputs)
-  percentageIncrease=100/numInputs
+  if numInputs == 0:
+    percentageIncrease=100
+  else:
+    percentageIncrease=100/numInputs
   percentage=0
   sf.write('echo \'(\' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'  bypassCount=0\' >> {0}\n'.format(restoreBypassFile))
@@ -359,7 +364,10 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
   # zenity --progress start and percentage increase
   sf.write('(\n')
   numInputs=len(analogDevices)
-  percentageIncrease=100/numInputs
+  if numInputs == 0:
+    percentageIncrease=100
+  else:
+    percentageIncrease=100/numInputs
   percentage=0
   sf.write('echo \'(\' >> {0}\n'.format(restoreBypassFile))
   sf.write('echo \'  bypassCount=0\' >> {0}\n'.format(restoreBypassFile))
@@ -769,11 +777,151 @@ def exportConditions(file, conditions, session):
 
   file.close()
 
+#
+# Generate records for single channel access MPS input
+# PV1: external input - the DOL field is set to the PV listed in monitored_pvs field
+#      Scan is 1 second, FLNK field set to PV2. An MPS fault will be generated 
+#      if there are HIHI/LOLO alarms and also if the DOL PV gets disconnected
+# PV2: calc record that has PV1.STAT and PV1.SEVR as inputs, CALC field is A+B,
+#      which should be 0 in there are no faults in PV1. FLNKs to PV3.
+# PV3: ao asyn record used as input to the link node sioc. Non-zero values 
+#      causes link node to set the MPS fault bit for this input
+#
+def exportVirtualInput(file, device_input, channel, input_pv, mpsName):
+  name = mpsName.getDeviceInputName(device_input)
+
+  fields=[]
+  fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}]'.
+                 format(device_input.channel.card.crate.number,
+                        device_input.channel.card.number,
+                        device_input.channel.number)))
+  fields.append(('PINI', 'YES'))
+  fields.append(('OMSL', 'closed_loop'))
+  fields.append(('SCAN', '1 second'))
+  fields.append(('OIF', 'Full'))
+  fields.append(('DOL', '{0}'.format(input_pv)))
+  fields.append(('FLNK', '{0}'.format(name + '_CALC')))
+  fields.append(('LLSV', 'MAJOR'))
+  fields.append(('HHSV', 'MAJOR'))
+  infoFields=[]
+  infoFields.append(('autosaveVirtualChannels','HIHI LOLO'))
+  printRecord(file, 'ao', '{0}'.format(name), fields, infoFields)
+
+  fields=[]
+  fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] CALC'.
+                 format(device_input.channel.card.crate.number,
+                        device_input.channel.card.number,
+                        device_input.channel.number)))
+  fields.append(('PINI', 'YES'))
+  fields.append(('SCAN', 'Passive'))
+  fields.append(('FLNK', '{0}'.format(name + '_INPUT')))
+  fields.append(('INPA', '{0}.SEVR CPP MS'.format(name)))
+  fields.append(('INPB', '{0}.STAT CPP MS'.format(name)))
+  fields.append(('CALC', '(A+B)>0?{0}:{1}'.format(channel.alarm_state, int(not channel.alarm_state))))
+  printRecord(file, 'calc', '{0}_CALC'.format(name), fields)
+
+  fields=[]
+  fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] INP'.
+                 format(device_input.channel.card.crate.number,
+                        device_input.channel.card.number,
+                        device_input.channel.number)))
+  fields.append(('PINI', 'YES'))
+  fields.append(('OMSL', 'closed_loop'))
+  fields.append(('SCAN', 'Passive'))
+  fields.append(('DOL', '{0}_CALC'.format(name)))
+  fields.append(('DTYP', 'asynUInt32Digital'))
+  fields.append(('ZNAM', '{0}'.format(device_input.channel.z_name)))
+  fields.append(('ONAM', '{0}'.format(device_input.channel.o_name)))
+  if device_input.channel.alarm_state == 0:
+    fields.append(('ZSV', 'MAJOR'))
+    fields.append(('OSV', 'NO_ALARM'))
+  else:
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+  # The channel.alarm_state gets mapped into the mask read by the LN code
+  # MPS faults if the input value matches the channel.alarm_states.
+  # Normally the fault is produced when the value is zero (zero volts for
+  # actual digital inputs).
+  fields.append(('OUT', '@asynMask(MPS_VIRTUAL_CHANNEL {0} {1} 0)MPS_VIRTUAL_INPUT_{2}'.\
+                   format(device_input.channel.card.global_id, channel.alarm_state, channel.number)))
+  printRecord(file, 'bo', '{0}_INPUT'.format(name), fields)
+
+def exportVirtualCard(link_node, directory, session):
+  mpsName = MpsName(session)
+  
+  if link_node.get_name() == 'sioc-gunb-mp01':
+    print link_node.crate.location
+    cards = 0
+    virtual_card = None
+    for c in link_node.crate.cards:
+      if c.name.startswith('Virtual'):
+        cards = cards + 1
+        virtual_card = c
+
+    # Exit if found multiple cards, or do nothing if there are no cards
+    if cards > 1:
+      print 'ERROR: Found multiple virtual cards assigned to link node {0}'.\
+          format(link_node.get_name())
+      exit(-1)
+    elif cards == 0:
+      return
+
+    # Create directory for link node databases, if that is not available yet
+    ln_dir = directory + '/' + link_node.get_name()
+    if not os.path.isdir(ln_dir):
+      try:
+        os.makedirs(ln_dir)
+      except:
+        print 'ERROR: Failed to create directory {0}'.format(ln_dir)
+        exit(-1)
+
+    file_name = ln_dir + '/virtual_inputs.db'
+    f = open(file_name, 'w')
+
+    for d in virtual_card.devices:
+      print '{0} {1}'.format(d.name, d.device_type.name)
+
+      if len(d.inputs) > 1 or len(d.inputs) < 1:
+        print 'ERROR: virtual card device must have only one input, found {0} input(s)'.\
+            format(len(d.inputs))
+      
+      input = d.inputs[0]
+      error=False
+      if input.channel.num_inputs > 0:
+        if (input.channel.num_inputs != len(input.channel.monitored_pvs.split(';'))):
+          print 'ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
+              format(input.channel.number, input.channel.card_id, input.channel.num_inputs, len(input.channel.monitored_pvs.split(';')))
+          print '       PVs should be separated by semi-colons. This are the PVs found:'
+          for s in input.channel.monitored_pvs.split(';'):
+            print '       - \'{0}\''.format(s.strip())
+          error=True
+          softError=True
+      if error:
+        print 'ERROR: Mismatch between num_inputs ({0}) and monitered_pvs ({1})'.\
+            format(input.channel.num_inputs, input.channel.monitered_pvs)
+        exit(-1)
+        
+      if input.channel.num_inputs == 1:
+        exportVirtualInput(f, input, input.channel, input.channel.monitored_pvs, mpsName)
+
+    f.close()
+
+def exportLinkNodeDatabases(directory, session):
+  if not os.path.isdir(directory):
+    print 'ERROR: {0} directory for link node files does not exist'.format(directory)
+    exit(-1)
+
+  link_nodes = session.query(models.LinkNode).all()
+  for ln in link_nodes:
+    exportVirtualCard(ln, directory, session)
+
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
 parser.add_argument('database', metavar='db', type=file, nargs=1, 
                     help='database file name (e.g. mps_gun.db)')
+parser.add_argument('--link-nodes', metavar='link_node_dir', type=str, nargs='?',
+                    help='generate templates for link nodes SIOCs')
 parser.add_argument('--device-inputs', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for digital channels (e.g. device-inputs.template)')
 parser.add_argument('--analog-devices', metavar='file', type=argparse.FileType('w'), nargs='?', 
@@ -826,6 +974,9 @@ if (args.apps):
 
 if (args.conditions):
   exportConditions(args.conditions, session.query(models.Condition).all(), session)
+
+if (args.link_nodes):
+  exportLinkNodeDatabases(args.link_nodes, session)
 
 session.close()
 

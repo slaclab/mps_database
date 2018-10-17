@@ -8,6 +8,14 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R1-0-9: (Oct 16 2018)
+  * Addition of support for virtual channels:
+    - export_epics.py script now has the --link-nodes switch,
+      which generates EPICS database files for the link nodes
+      that have virtual channels.
+    - central_node_test.py modified to support virtual cards.
+      They behave as digital apps.
+
 mps_database-R1-0-8: (Sep 13 2018)
   * Change to export_epics.py script: added pop up windows to
     confirm bypass save and bypass restore. Also added progress

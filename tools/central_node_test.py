@@ -29,7 +29,9 @@ class App:
               filter(models.ApplicationType.id==app.type_id).one()
           self.app_type = appType
 
-          if appType.name == 'Digital Card':
+          if (appType.name == 'Digital Card' or 
+              appType.name == 'Virtual Card' or
+              appType.name == 'Virtual'):
               self.is_digital = True
           else:
             self.is_digital = False
@@ -67,7 +69,7 @@ class App:
 
   def set_good_state(self):
 #    if (self.app != None):
-#      print '{0}({1})'.format(self.app.name, self.app.id)
+#      print '{0}({1}) {2}'.format(self.app.name, self.app.id, self.is_digital)
     if self.is_digital:
       self.was_low_bits = bytearray(192*[0])
       self.was_high_bits = bytearray(192*[1])
