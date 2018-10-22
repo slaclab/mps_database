@@ -20,6 +20,14 @@ def checkAnalogChannels(session):
   for c in channels:
     analogDevice=session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==c.id).one()
 
+    # Check if channel number is valid (i.e. does not exceed number of supported channels)
+    if c.number > analogDevice.card.type.analog_channel_count-1:
+      print 'ERROR: invalid channel number assigned to device {0} in card id {1}, channel {2}'.\
+          format(analogDevice.name, analogDevice.card_id, c.number)
+      print '       [crate {0}, slot {1}, num channels {2}]'.\
+          format(analogDevice.card.crate.get_name(), analogDevice.card.slot_number,
+                 analogDevice.card.type.analog_channel_count)
+
     if not c.card_id in card.keys():
       card[c.card_id]={}
       card[c.card_id][c.number]=c.id
@@ -48,6 +56,14 @@ def checkDigitalChannels(session):
   softError=False
   for c in channels:
     deviceInput=session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==c.id).one()
+
+    # Check if channel number is valid (i.e. does not exceed number of supported channels)
+    if c.number > deviceInput.channel.card.type.digital_channel_count-1:
+      print 'ERROR: invalid channel number assigned to device {0} in card id {1}, channel {2}'.\
+          format(deviceInput.channel.name, deviceInput.channel.card_id, c.number)
+      print '       [crate {0}, slot {1}, num channels {2}]'.\
+          format(deviceInput.channel.card.crate.get_name(), deviceInput.channel.card.slot_number,
+                 deviceInput.channel.card.type.digital_channel_count)
 
     if not c.card_id in card.keys():
       card[c.card_id]={}

@@ -848,63 +848,64 @@ def exportVirtualInput(file, device_input, channel, input_pv, mpsName):
 
 def exportVirtualCard(link_node, directory, session):
   mpsName = MpsName(session)
-  
-  if link_node.get_name() == 'sioc-gunb-mp01':
-    print link_node.crate.location
-    cards = 0
-    virtual_card = None
-    for c in link_node.crate.cards:
-      if c.name.startswith('Virtual'):
-        cards = cards + 1
-        virtual_card = c
+  hasVirtual = False
+  cards = 0
+  virtual_card = None
+  for c in link_node.crate.cards:
+    if c.name.startswith('Virtual'):
+      cards = cards + 1
+      virtual_card = c
 
-    # Exit if found multiple cards, or do nothing if there are no cards
-    if cards > 1:
-      print 'ERROR: Found multiple virtual cards assigned to link node {0}'.\
-          format(link_node.get_name())
+  # Exit if found multiple cards, or do nothing if there are no cards
+  if cards > 1:
+    print 'ERROR: Found multiple virtual cards assigned to link node {0}'.\
+        format(link_node.get_name())
+    exit(-1)
+  elif cards == 0:
+    return
+
+  # Create directory for link node databases, if that is not available yet
+  ln_dir = directory + '/' + link_node.get_name()
+  if not os.path.isdir(ln_dir):
+    try:
+      os.makedirs(ln_dir)
+    except:
+      print 'ERROR: Failed to create directory {0}'.format(ln_dir)
       exit(-1)
-    elif cards == 0:
-      return
-
-    # Create directory for link node databases, if that is not available yet
-    ln_dir = directory + '/' + link_node.get_name()
-    if not os.path.isdir(ln_dir):
-      try:
-        os.makedirs(ln_dir)
-      except:
-        print 'ERROR: Failed to create directory {0}'.format(ln_dir)
-        exit(-1)
-
-    file_name = ln_dir + '/virtual_inputs.db'
-    f = open(file_name, 'w')
-
-    for d in virtual_card.devices:
-      print '{0} {1}'.format(d.name, d.device_type.name)
-
-      if len(d.inputs) > 1 or len(d.inputs) < 1:
-        print 'ERROR: virtual card device must have only one input, found {0} input(s)'.\
-            format(len(d.inputs))
       
-      input = d.inputs[0]
-      error=False
-      if input.channel.num_inputs > 0:
-        if (input.channel.num_inputs != len(input.channel.monitored_pvs.split(';'))):
-          print 'ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
-              format(input.channel.number, input.channel.card_id, input.channel.num_inputs, len(input.channel.monitored_pvs.split(';')))
-          print '       PVs should be separated by semi-colons. This are the PVs found:'
-          for s in input.channel.monitored_pvs.split(';'):
-            print '       - \'{0}\''.format(s.strip())
-          error=True
-          softError=True
-      if error:
-        print 'ERROR: Mismatch between num_inputs ({0}) and monitered_pvs ({1})'.\
-            format(input.channel.num_inputs, input.channel.monitered_pvs)
-        exit(-1)
-        
-      if input.channel.num_inputs == 1:
-        exportVirtualInput(f, input, input.channel, input.channel.monitored_pvs, mpsName)
+  file_name = ln_dir + '/virtual_inputs.db'
+  f = open(file_name, 'w')
 
-    f.close()
+  print ' + {0} ({1})'.format(link_node.get_name(), link_node.crate.location)
+  hasVirtual = True
+
+  for d in virtual_card.devices:
+    if len(d.inputs) > 1 or len(d.inputs) < 1:
+      print 'ERROR: virtual card device must have only one input, found {0} input(s)'.\
+          format(len(d.inputs))
+
+    input = d.inputs[0]
+    error=False
+    if input.channel.num_inputs > 0:
+      if (input.channel.num_inputs != len(input.channel.monitored_pvs.split(';'))):
+        print 'ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
+            format(input.channel.number, input.channel.card_id, input.channel.num_inputs, len(input.channel.monitored_pvs.split(';')))
+        print '       PVs should be separated by semi-colons. This are the PVs found:'
+        for s in input.channel.monitored_pvs.split(';'):
+          print '       - \'{0}\''.format(s.strip())
+        error=True
+        softError=True
+    if error:
+      print 'ERROR: Mismatch between num_inputs ({0}) and monitered_pvs ({1})'.\
+          format(input.channel.num_inputs, input.channel.monitered_pvs)
+      exit(-1)
+
+    if input.channel.num_inputs == 1:
+      exportVirtualInput(f, input, input.channel, input.channel.monitored_pvs, mpsName)
+
+  f.close()
+  if not hasVirtual:
+    print ' + no Virtual Cards found.'
 
 def exportLinkNodeDatabases(directory, session):
   if not os.path.isdir(directory):
@@ -912,6 +913,7 @@ def exportLinkNodeDatabases(directory, session):
     exit(-1)
 
   link_nodes = session.query(models.LinkNode).all()
+  print 'Virtual Cards:'
   for ln in link_nodes:
     exportVirtualCard(ln, directory, session)
 
