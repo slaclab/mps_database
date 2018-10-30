@@ -1,2 +1,5 @@
 Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU,
-Linac,I0_T0,1,Solenoid charge fault,1,-,-,-,
+Linac,I0_T0,1,Linac Toroid current fault,1,-,-,-,
+Diag0,I0_T0,1,Diag0 Toroid current fault,-,1,-,-,
+SXU,I0_T0,1,SXU Toroid current fault,-,-,1,-,
+HXU,I0_T0,1,HXU Toroid current fault,-,-,-,1,

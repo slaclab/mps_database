@@ -894,16 +894,16 @@ importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
-#importer.add_digital_device('import/TEMP')
 
-importer.add_digital_device('import/BEND_STATE')
 
-if (True):
+importer.add_digital_device('import/TEMP')
+
+if (False):
+  importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/WIRE_PARK')
   importer.add_digital_device('import/PROF')
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/SOLN', card_name="Generic ADC")
-  importer.add_analog_device('import/BLM', card_name="Generic ADC")
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
@@ -912,10 +912,15 @@ if (True):
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_analog_device('import/BEND', card_name="Generic ADC")
+  importer.add_analog_device('import/TORO', card_name="Analog Card")
+
+if (False):
   importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+  importer.add_analog_device('import/BLM', card_name="Generic ADC")
+
+  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
 
 
-importer.add_analog_device('import/TORO', card_name="Analog Card")
 
 importer.check()
 
