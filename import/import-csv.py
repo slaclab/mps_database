@@ -60,7 +60,7 @@ class DatabaseImporter:
                              group_drawing=crate_info['network_drawing'])
         self.session.add(ln)
 
-        crate = models.Crate(number=crate_info['number'],
+        crate = models.Crate(crate_id=crate_info['crate_id'],
                              num_slots=crate_info['num_slots'],
                              shelf_number=int(crate_info['shelf_number']),
                              location=crate_info['location'],
@@ -130,7 +130,7 @@ class DatabaseImporter:
 
         try:
           app_crate = self.session.query(models.Crate).\
-              filter(models.Crate.number==app_card_info['crate_number']).one()
+              filter(models.Crate.id==app_card_info['crate_number']).one()
         except:
           print('ERROR: Cannot find crate with number {0}, exiting...'.format(app_card_info['crate_number']))
 

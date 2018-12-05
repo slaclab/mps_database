@@ -44,7 +44,7 @@ session.add_all([class_0, class_1, class_2])
 link_node = models.LinkNode(area="gunb", location="mp01", cpu="cpu-gunb0-mp01")
 session.add(link_node)
 
-crate = models.Crate(number=1, shelf_number=1, num_slots=8, location="L2KA00", rack="05", elevation=17, sector="LI00", link_node=link_node)
+crate = models.Crate(crate_id=1, shelf_number=1, num_slots=8, location="L2KA00", rack="05", elevation=17, sector="LI00", link_node=link_node)
 session.add_all([crate])
 
 #Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)

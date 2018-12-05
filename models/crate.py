@@ -7,7 +7,12 @@ class Crate(Base):
   Crate class (crates table)
   
   Describes an ATCA crate, properties are:
-    number: crate number (property or serial number)
+    crate_id: number that identifies the crate connected to a CPU. The CPU is
+              the hostname where the link_node_id runs. There maybe one or
+              more crates connected to one CPU (additional information at:
+              https://confluence.slac.stanford.edu/display/ppareg/EED+ATCA+Shelf+manager%27s+shelfaddress+naming+convention
+              The crate_id is globally unique, it is unique among the crates
+              connected to one CPU.
     shelf_number: 
     num_slots: number of slots available (usually 2 or 7)
     location: string containing area where this crate is installed (e.g. LKG02, LKA01)
@@ -23,7 +28,7 @@ class Crate(Base):
   """
   __tablename__ = 'crates'
   id = Column(Integer, primary_key=True)
-  number = Column(Integer, unique=True, nullable=False)
+  crate_id = Column(Integer, nullable=False)
   shelf_number = Column(Integer, nullable=False)
   num_slots = Column(Integer, nullable=False)
   location = Column(String, nullable=False)
