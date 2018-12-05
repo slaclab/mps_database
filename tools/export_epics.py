@@ -20,6 +20,22 @@ import os
 #     field(INP, "@asyn(CENTRAL_NODE 0 3)DIGITAL_CHANNEL")
 #}
 
+def openArchiveFile(archiveLocation, archiveFileName):
+  if (archiveLocation==None):
+    print 'None?'
+    return None
+
+  af=open('{0}/{1}'.format(archiveLocation,archiveFileName), 'w')
+  af.write('#\n')
+  af.write('# List of Device Input related PVs to be archived\n')
+  af.write('# File generated on {0}\n'.format(time.asctime(time.localtime(time.time()))))
+  af.write('#\n')
+  return af
+
+def printArchive(file, record, interval, type='monitor'):
+  if (file!=None):
+    file.write('{0}\t{1}\t{2}\n'.format(record, interval, type))
+
 def printRecord(file, recType, recName, fields, infoFields=[]):
   file.write("record({0}, \"{1}\") {{\n".format(recType, recName))
   for name, value in fields:
@@ -48,17 +64,17 @@ def printRecord(file, recType, recName, fields, infoFields=[]):
 #  ${DEV}_BYPS (bypass status)
 #  ${DEV}_BYPEXP (bypass expiration date?)
 #
-def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocation):
+def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocation, archiveLocation):
   base_name =  file.name.split('/')[len(file.name.split('/'))-1]
   location = file.name.split(base_name)[0]
 
   if prodLocation==None:
     prodLocation=location
 
-  print 'LOCA: {0}'.format(prodLocation)
+#  print 'LOCA: {0}'.format(prodLocation)
   saveBypassFile = '{0}{1}.save'.format(prodLocation, base_name.split('.')[0])
   restoreBypassFile = '{0}{1}.restore'.format(restoreLocation, base_name.split('.')[0])
-
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
   sf = open(saveBypassFile, 'w')
 
   # Write function that gets the current bypass time and
@@ -159,7 +175,9 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
       fields.append(('OSV', 'MAJOR'))
 
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_DEVICE_INPUT'.format(deviceInput.id)))
-    printRecord(file, 'bi', '{0}_MPSC'.format(name), fields)
+    recName='{0}_MPSC'.format(name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'monitor')
 
     #=== Begin Latch records ====
     # Record for latched value
@@ -210,7 +228,9 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     fields.append(('ZSV', 'NO_ALARM'))
     fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_DEVICE_INPUT_BYPS'.format(deviceInput.id)))
-    printRecord(file, 'bi', '{0}_BYPS'.format(name), fields)
+    recName='{0}_BYPS'.format(name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 60, 'monitor')
 
     # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
     fields=[]
@@ -233,6 +253,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_REMAINING_BYPTIME'.format(deviceInput.id)))
     remainingTimePv = '{0}_BYPT'.format(name)
     printRecord(file, 'longin', remainingTimePv, fields)
+    printArchive(af, remainingTimePv, 60, 'monitor')
 
     fields=[]
     fields.append(('DESC', 'Bypass Expiration Date/Time String'))
@@ -272,6 +293,9 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
   file.close()
   sf.close()
 
+  if (af != None):
+    af.close
+
   os.system('chmod a+x {0}'.format(saveBypassFile))
 
 #
@@ -282,7 +306,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
 # is passed to asyn as the third parameter within the 
 # '@asynMask(PORT ADDR MASK TIMEOUT)' INP record field
 #
-def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocation):
+def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocation, archiveLocation):
   mpsName = MpsName(session)
 
   base_name =  file.name.split('/')[len(file.name.split('/'))-1]
@@ -293,8 +317,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
 
   saveBypassFile = '{0}{1}.save'.format(prodLocation, base_name.split('.')[0])
   restoreBypassFile = '{0}{1}.restore'.format(restoreLocation, base_name.split('.')[0])
-  print 'RESTORE: {0}'.format(restoreBypassFile)
-
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
   sf = open(saveBypassFile, 'w')
 
   # Write function that gets the current bypass time and
@@ -376,7 +399,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
 #    name = getAnalogDeviceName(session, analogDevice)
     name = mpsName.getAnalogDeviceName(analogDevice)
 #    print name
-    
+    ignored_pv_added=False
     # All these queries are to get the threshold faults
     faultInputs = session.query(models.FaultInput).filter(models.FaultInput.device_id==analogDevice.id).all()
     for fi in faultInputs:
@@ -427,8 +450,10 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
           fields.append(('ZSV', 'NO_ALARM'))
           fields.append(('OSV', 'MAJOR'))
           fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE'.format(analogDevice.id, state.device_state.mask)))
-          printRecord(file, 'bi', '{0}:{1}_MPSC'.format(name, state.device_state.name), fields)
-    
+          recName = '{0}:{1}_MPSC'.format(name, state.device_state.name)
+          printRecord(file, 'bi', recName, fields)
+          printArchive(af, recName, 1, 'monitor')
+
           #=== Begin Latch records ====
           # Record for latched value
           fields=[]
@@ -470,7 +495,9 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
             fields.append(('ZSV', 'NO_ALARM'))
             fields.append(('OSV', 'MAJOR'))
             fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPS'.format(analogDevice.id, intIndex)))
-            printRecord(file, 'bi', '{0}:{1}_BYPS'.format(name, fa.name), fields)
+            recName = '{0}:{1}_BYPS'.format(name, fa.name)
+            printRecord(file, 'bi', recName, fields)
+            printArchive(af, recName, 60, 'monitor')
           
             # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
             fields=[]
@@ -492,6 +519,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
             fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_REMAINING_BYPTIME'.format(analogDevice.id, intIndex)))
             remainingTimePv = '{0}:{1}_BYPT'.format(name, fa.name)
             printRecord(file, 'longin', remainingTimePv, fields)
+            printArchive(af, remainingTimePv, 60, 'monitor')
 
             fields=[]
             fields.append(('DESC', 'Bypass Expiration Date/Time String'))
@@ -502,38 +530,49 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
             fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id * 4 +  intIndex)))
             printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
 
-            # if there is an ignore condition where there is an analogDevice AND a faultState, then
-            # the asynMask for the record is different, it must return the ignored state for the faultState,
-            # not from the analogDevice
-            # aoeu
-            ignore_condition = session.query(models.IgnoreCondition).filter(models.IgnoreCondition.analog_device_id==analogDevice.id).all()
+            # Add a IGNORED PV only if device appears in an ignoreCondition
+            ignore_condition = session.query(models.IgnoreCondition).\
+                filter(models.IgnoreCondition.analog_device_id==analogDevice.id).all()
+            if len(ignore_condition) > 0:
+              asynMask = '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)
+#              print '{0} {1}'.format(name, len(ignore_condition))
+              ignored_pv_fs = False
+              for i in ignore_condition:
+                # if there is an ignore condition where there is an analogDevice AND a faultState, then
+                # the asynMask for the record is different, it must return the ignored state for the faultState,
+                # not from the analogDevice. The ignored state for the faultState is stored in the
+                # analogDevice.ignoredIntegrator array (see central_node_engine.cc file)
+                if i.fault_state_id != None:
+                  faultState = session.query(models.FaultState).filter(models.FaultState.id==i.fault_state_id).one()
+                  deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
+                  if deviceState.get_integrator() == intIndex:
+                    asynMask = '@asynMask(CENTRAL_NODE {0} 1 {1})MPS_ANALOG_DEVICE_IGNORED_INTEGRATOR'.format(analogDevice.id, intIndex)
+                    ignored_pv_fs = True # Make sure the PV is added for this specific case
 
-            asynMask = '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)
-            for i in ignore_condition:
-#              print '{2}: {0} {1}'.format(i.analog_device_id, i.fault_state_id, analogDevice.id)
-              if i.fault_state_id != None:
-                faultState = session.query(models.FaultState).filter(models.FaultState.id==i.fault_state_id).one()
-                deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
-                if deviceState.get_integrator() == intIndex:
-                  asynMask = '@asynMask(CENTRAL_NODE {0} 1 {1})MPS_ANALOG_DEVICE_IGNORED_INTEGRATOR'.format(analogDevice.id, intIndex)
-#                  print "Found it {0} {1}".format(intIndex, deviceState.get_integrator())
-
-            fields=[]
-            fields.append(('DESC', 'Ignored status'))
-            fields.append(('DTYP', 'asynUInt32Digital'))
-            fields.append(('SCAN', '1 second'))
-            fields.append(('ZNAM', 'Not Ignored'))
-            fields.append(('ONAM', 'Ignored'))
-            fields.append(('ZSV', 'NO_ALARM'))
-            fields.append(('OSV', 'MAJOR'))
-            fields.append(('INP', asynMask))
-            printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
+              if (not ignored_pv_added or ignored_pv_fs):
+                fields=[]
+                fields.append(('DESC', 'Ignored status'))
+                fields.append(('DTYP', 'asynUInt32Digital'))
+                fields.append(('SCAN', '1 second'))
+                fields.append(('ZNAM', 'Not Ignored'))
+                fields.append(('ONAM', 'Ignored'))
+                fields.append(('ZSV', 'NO_ALARM'))
+                fields.append(('OSV', 'MAJOR'))
+                fields.append(('INP', asynMask))
+                if (ignored_pv_fs):
+                  printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
+                else:
+                  printRecord(file, 'bi', '{0}:MPSC_IGN'.format(name, fa.name), fields)
+                ignored_pv_added = True
             
             # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
             sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv, percentage, restoreBypassFile))
 
             bypassPvs=True
           #=== End Bypass records ====
+        #=== End States 
+      #=== End Faults
+    #=== End Fault Inputs
     percentage = percentage + percentageIncrease
     sf.write('echo {0}\n'.format(percentage))
 
@@ -612,8 +651,11 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
           #=== End Bypass records ====
 '''
 
-def exportBeamDestinations(file, beamDestinations, beamClasses, session):
+def exportBeamDestinations(file, beamDestinations, beamClasses, session, archiveLocation):
   mpsName = MpsName(session)
+
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
 
   fields=[]
   fields.append(('DESC', 'Total number of beam power classes'))
@@ -638,8 +680,10 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('LOLO', '0'))
     fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_SW_MITIGATION'.format(beamDestination.id))) # former MITIGATION_DEVICE
-    printRecord(file, 'longin', '$(BASE):{0}_SW_PC'.format(beamDestination.name.upper()), fields)
-    
+    recName = '$(BASE):{0}_SW_PC'.format(beamDestination.name.upper())
+    printRecord(file, 'longin', recName, fields)
+    printArchive(af, recName, 1, 'scan')
+            
     fields=[]
     fields.append(('DESC', 'Fast mitigation for {0}'.format(beamDestination.name)))
     fields.append(('DTYP', 'asynInt32'))
@@ -647,7 +691,9 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('LOLO', '0'))
     fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_FW_MITIGATION'.format(beamDestination.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_FW_PC'.format(beamDestination.name.upper()), fields)
+    recName = '$(BASE):{0}_FW_PC'.format(beamDestination.name.upper())
+    printRecord(file, 'longin', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
     fields=[]
     fields.append(('DESC', 'Current mitigation for {0}'.format(beamDestination.name)))
@@ -656,7 +702,9 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('LOLO', '0'))
     fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_MITIGATION'.format(beamDestination.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_PC'.format(beamDestination.name.upper()), fields)
+    recName = '$(BASE):{0}_PC'.format(beamDestination.name.upper())
+    printRecord(file, 'longin', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
     fields=[]
     fields.append(('DESC', 'Latched mitigation for {0}'.format(beamDestination.name)))
@@ -665,12 +713,18 @@ def exportBeamDestinations(file, beamDestinations, beamClasses, session):
     fields.append(('LOLO', '0'))
     fields.append(('LLSV', 'MAJOR'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_LATCHED_MITIGATION'.format(beamDestination.id)))
-    printRecord(file, 'longin', '$(BASE):{0}_LATCHED_PC'.format(beamDestination.name.upper()), fields)
+    recName = '$(BASE):{0}_LATCHED_PC'.format(beamDestination.name.upper())
+    printRecord(file, 'longin', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
   file.close()
 
-def exportFaults(file, faults, session):
+def exportFaults(file, faults, session, archiveLocation):
   mpsName = MpsName(session)
+
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
+
   for fault in faults:
     name = mpsName.getFaultName(fault)
     fields=[]
@@ -682,18 +736,23 @@ def exportFaults(file, faults, session):
     fields.append(('ZSV', 'NO_ALARM'))
     fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT'.format(fault.id)))
-    printRecord(file, 'bi', '{0}'.format(name), fields)
+    recName = '{0}'.format(name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
-    fields=[]
-    fields.append(('DESC', '{0}'.format(fault.description)))
-    fields.append(('DTYP', 'asynUInt32Digital'))
-    fields.append(('SCAN', '1 second'))
-    fields.append(('ZNAM', 'Not Ignored'))
-    fields.append(('ONAM', 'Ignored'))
-    fields.append(('ZSV', 'NO_ALARM'))
-    fields.append(('OSV', 'MAJOR'))
-    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_IGNORED'.format(fault.id)))
-    printRecord(file, 'bi', '{0}_IGN'.format(name), fields)
+    # Nov 12 2018: The DbFault.ignored field is not really used, no need to add PVs
+#    fields=[]
+#    fields.append(('DESC', '{0}'.format(fault.description)))
+#    fields.append(('DTYP', 'asynUInt32Digital'))
+#    fields.append(('SCAN', '1 second'))
+#    fields.append(('ZNAM', 'Not Ignored'))
+#    fields.append(('ONAM', 'Ignored'))
+#    fields.append(('ZSV', 'NO_ALARM'))
+#    fields.append(('OSV', 'MAJOR'))
+#    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_IGNORED'.format(fault.id)))
+#    recName = '{0}_IGN'.format(name)
+#    printRecord(file, 'bi', recName, fields)
+#    printArchive(af, recName, 1, 'scan')
 
     fields=[]
     fields.append(('DESC', '{0}'.format(fault.description)))
@@ -704,7 +763,9 @@ def exportFaults(file, faults, session):
     fields.append(('ZSV', 'NO_ALARM'))
     fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_LATCHED'.format(fault.id)))
-    printRecord(file, 'bi', '{0}_MPS'.format(name), fields)
+    recName = '{0}_MPS'.format(name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
     fields=[]
     fields.append(('DESC', '{0}'.format(fault.description)))
@@ -714,8 +775,12 @@ def exportFaults(file, faults, session):
 
   file.close()
 
-def exportFaultStates(file, faultStates, session):
+def exportFaultStates(file, faultStates, session, archiveLocation):
   mpsName = MpsName(session)
+
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
+
   for fs in faultStates:
     name = mpsName.getFaultStateName(fs)
     fields=[]
@@ -727,23 +792,33 @@ def exportFaultStates(file, faultStates, session):
     fields.append(('ZSV', 'NO_ALARM'))
     fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_STATE'.format(fs.id)))
-    printRecord(file, 'bi', '{0}'.format(name), fields)
+    recName = '{0}'.format(name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
-    fields=[]
-    fields.append(('DESC', '{0}'.format(fs.device_state.description)))
-    fields.append(('DTYP', 'asynUInt32Digital'))
-    fields.append(('SCAN', '1 second'))
-    fields.append(('ZNAM', 'Not Ignored'))
-    fields.append(('ONAM', 'Ignored'))
-    fields.append(('ZSV', 'NO_ALARM'))
-    fields.append(('OSV', 'MAJOR'))
-    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_STATE_IGNORED'.format(fs.id)))
-    printRecord(file, 'bi', '{0}_IGN'.format(name), fields)
+    # Only generate the IGNORED PV if the fault state is present in an IgnoreCondition
+    conditions = session.query(models.IgnoreCondition).filter(models.IgnoreCondition.fault_state_id==fs.id).all()
+    if (len(conditions) > 0):
+      fields=[]
+      fields.append(('DESC', '{0}'.format(fs.device_state.description)))
+      fields.append(('DTYP', 'asynUInt32Digital'))
+      fields.append(('SCAN', '1 second'))
+      fields.append(('ZNAM', 'Not Ignored'))
+      fields.append(('ONAM', 'Ignored'))
+      fields.append(('ZSV', 'NO_ALARM'))
+      fields.append(('OSV', 'MAJOR'))
+      fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_FAULT_STATE_IGNORED'.format(fs.id)))
+      recName = '{0}_IGN'.format(name)
+      printRecord(file, 'bi', recName, fields)
+      printArchive(af, recName, 1, 'scan')
 
   file.close()
 
-def exportApps(file, apps, session):
+def exportApps(file, apps, session, archiveLocation):
 #  mpsName = MpsName(session)
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
+
   for app in apps:
     crate = session.query(models.Crate).filter(models.Crate.id==app.crate_id).one()
 #    name = mpsName.getFaultName(fault)
@@ -756,12 +831,18 @@ def exportApps(file, apps, session):
     fields.append(('ZSV', 'MAJOR'))
     fields.append(('OSV', 'NO_ALARM'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_APP_STATUS'.format(app.id)))
-    printRecord(file, 'bi', '$(BASE):APP{0}_STATUS'.format(app.id), fields)
+    recName = '$(BASE):APP{0}_STATUS'.format(app.id)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
   file.close()
 
-def exportConditions(file, conditions, session):
+def exportConditions(file, conditions, session, archiveLocation):
   mpsName = MpsName(session)
+
+  base_name =  file.name.split('/')[len(file.name.split('/'))-1]
+  af = openArchiveFile(archiveLocation, '{0}.archive'.format(base_name.split('.')[0]))
+
   for cond in conditions:
     name = mpsName.getConditionName(cond)
     fields=[]
@@ -773,7 +854,9 @@ def exportConditions(file, conditions, session):
     fields.append(('ZSV', 'NO_ALARM'))
     fields.append(('OSV', 'MAJOR'))
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_CONDITION'.format(cond.id)))
-    printRecord(file, 'bi', '{0}'.format(name), fields)
+    recName = '{0}'.format(name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'scan')
 
   file.close()
 
@@ -920,6 +1003,7 @@ def exportLinkNodeDatabases(directory, session):
 #=== MAIN ==================================================================================
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
+
 parser.add_argument('database', metavar='db', type=file, nargs=1, 
                     help='database file name (e.g. mps_gun.db)')
 parser.add_argument('--link-nodes', metavar='link_node_dir', type=str, nargs='?',
@@ -938,6 +1022,8 @@ parser.add_argument('--apps', metavar='file', type=argparse.FileType('w'), nargs
                     help='epics template file name for application cards (e.g. apps.template)')
 parser.add_argument('--conditions', metavar='file', type=argparse.FileType('w'), nargs='?',
                     help='epics template file name for ignore conditions (e.g. conditions.template)')
+parser.add_argument('--archive-location', metavar='arch_location', type=str, nargs='?',
+                    help='directory where *.archive files are generated, no archive file generated if not specified')
 parser.add_argument('--prod-location', metavar='prod_location', type=str, nargs='?', 
                     help='directory where database versions are kept in production (please use $PHYSICS_TOP/mps_config string ;). If not specified use the location pointed by the --location option')
 parser.add_argument('--version', metavar='version', type=str, nargs=1,
@@ -948,34 +1034,43 @@ args = parser.parse_args()
 mps = MPSConfig(args.database[0].name)
 session = mps.session
 
-if args.prod_location:
+if (args.prod_location):
   if not os.path.isdir(args.prod_location):
     os.makedirs(args.prod_location)
 
+arch_location=None
+if (args.archive_location):
+  arch_location = args.archive_location
+  if not os.path.isdir(arch_location):
+    os.makedirs(arch_location)
+
 if (args.fault_states):
-  exportFaultStates(args.fault_states, session.query(models.FaultState).all(), session)
+  exportFaultStates(args.fault_states, session.query(models.FaultState).all(), session, arch_location)
 
 if (args.device_inputs):
   exportDeviceInputs(args.device_inputs, session.query(models.DeviceInput).all(), session,
-                     '$PHYSICS_TOP/mps_configuration/{0}/bypass/'.format(args.version[0]), args.prod_location)
+                     '$PHYSICS_TOP/mps_configuration/{0}/bypass/'.format(args.version[0]),
+                     args.prod_location, arch_location)
 
 if (args.analog_devices):
   exportAnalogDevices(args.analog_devices, session.query(models.AnalogDevice).all(), session,
-                      '$PHYSICS_TOP/mps_configuration/{0}/bypass/'.format(args.version[0]), args.prod_location)
+                      '$PHYSICS_TOP/mps_configuration/{0}/bypass/'.format(args.version[0]),
+                      args.prod_location, arch_location)
 
 if (args.beam_destinations):
   exportBeamDestinations(args.beam_destinations,
                          session.query(models.BeamDestination).all(),
-                         session.query(models.BeamClass).all(), session)
+                         session.query(models.BeamClass).all(), session,
+                         arch_location)
 
 if (args.faults):
-  exportFaults(args.faults, session.query(models.Fault).all(), session)
+  exportFaults(args.faults, session.query(models.Fault).all(), session, arch_location)
 
 if (args.apps):
-  exportApps(args.apps, session.query(models.ApplicationCard).all(), session)
+  exportApps(args.apps, session.query(models.ApplicationCard).all(), session, arch_location)
 
 if (args.conditions):
-  exportConditions(args.conditions, session.query(models.Condition).all(), session)
+  exportConditions(args.conditions, session.query(models.Condition).all(), session, arch_location)
 
 if (args.link_nodes):
   exportLinkNodeDatabases(args.link_nodes, session)

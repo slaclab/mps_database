@@ -99,6 +99,14 @@ def checkDigitalChannels(session):
   else:
     print 'Database OK for digital channels, no duplicate assignments found'
 
+def checkLinkNodes(session):
+  link_nodes = session.query(models.LinkNode).all()
+  for ln in link_nodes:
+    for ln2 in link_nodes:
+      if (ln.get_name() == ln2.get_name() and
+          ln.id != ln2.id):
+        print 'ERROR: duplicate LinkNode name: {0}, found for LN ID {1} and {2}'.\
+            format(ln.get_name(), ln.id, ln2.id)
 
 
 #=== MAIN ==================================================================================
@@ -113,6 +121,7 @@ mps = MPSConfig(args.database[0].name)
 session = mps.session
 
 checkChannels(session)
+checkLinkNodes(session)
 
 session.close()
 

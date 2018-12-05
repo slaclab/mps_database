@@ -498,7 +498,27 @@ symbols {
 }
 endObjectProperties
 
+#if $AD_IGN[$i] == '-'
 # (Text Update)
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 880
+y $WIDGET_Y
+w 100
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "N/A"
+}
+endObjectProperties
+#else
 object TextupdateClass
 beginObjectProperties
 major 10
@@ -518,6 +538,6 @@ font "helvetica-medium-r-12.0"
 fontAlign "center"
 lineWidth 0
 endObjectProperties
-
+#end if
 #end for
 

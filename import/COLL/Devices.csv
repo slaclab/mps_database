@@ -1,5 +1,5 @@
 Device,Mitigation,Fault,Area,Linac_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#
-CEHTR,Linac,COLL_POSITION,HTR,71.879751,72,Digital,26,L2KG01-1931,21,WD37604200 L2A00001 (station -34)
+CEHTR,Linac,COLL_POSITION,HTR,71.879751,615,Digital,26,L2KG01-1931,21,WD37604200 L2A00001 (station -34)
 CYC01,-,-,COL0,150.975853,151,-,-,-,-,-
 CXC01,-,-,COL0,164.099213,164,-,-,-,-,-
 CYC03,-,-,COL0,203.469291,203,-,-,-,-,-

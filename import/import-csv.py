@@ -269,9 +269,9 @@ class DatabaseImporter:
     f.close()
 
     if has_measured_device_type:
-      return [device_type,type_info['measured_device_type_id']]
+      return [device_type,type_info['evaluation'],type_info['measured_device_type_id']]
     else:
-      return [device_type,None]
+      return [device_type,type_info['evaluation'],None]
 
   def add_device_states(self, file_name, device_type):
     f = open(file_name)
@@ -487,7 +487,7 @@ class DatabaseImporter:
   def add_analog_device(self, directory, card_name, add_ignore=False):
     print 'Adding ' + directory
     file_name = directory + '/DeviceType.csv'
-    [device_type, measured_device_type_id] = self.check_device_type(file_name)
+    [device_type, evaluation_string, measured_device_type_id] = self.check_device_type(file_name)
     if device_type == None:
       return
 
@@ -653,7 +653,7 @@ class DatabaseImporter:
     print 'Adding ' + directory
     # Find the device type
     file_name = directory + '/DeviceType.csv'
-    [device_type, measured_device_type_id] = self.check_device_type(file_name)
+    [device_type, evaluation_string, measured_device_type_id] = self.check_device_type(file_name)
     if device_type == None:
       return
 
@@ -757,6 +757,8 @@ class DatabaseImporter:
         evaluation = 0
         if device_info['mitigation'] == '-':
           evaluation = 3 # this means the device has no mitigation, no device inputs
+        elif evaluation_string == 'Fast':
+          evaluation = 1
 
         if measured_device != None:
           device = models.DigitalDevice(name=device_info['device'],
@@ -896,14 +898,15 @@ importer.add_beam_classes('import/BeamClasses.csv')
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 
 
-importer.add_digital_device('import/TEMP')
+importer.add_digital_device('import/PROF')
 
-if (False):
+if (True):
+  importer.add_digital_device('import/TEMP')
   importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/WIRE_PARK')
-  importer.add_digital_device('import/PROF')
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
-  importer.add_analog_device('import/SOLN', card_name="Generic ADC")
+  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
+  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
@@ -913,11 +916,7 @@ if (False):
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_analog_device('import/BEND', card_name="Generic ADC")
   importer.add_analog_device('import/TORO', card_name="Analog Card")
-
-if (False):
-  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
-
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
 
 

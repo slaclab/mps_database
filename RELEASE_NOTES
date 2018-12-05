@@ -8,6 +8,10 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R1-0-10: (not tagged yet)
+  * export_edl.py: added generation of screens for individual link nodes
+  * export_epics.py: added generation of archive request files
+
 mps_database-R1-0-9: (Oct 16 2018)
   * Addition of support for virtual channels:
     - export_epics.py script now has the --link-nodes switch,
