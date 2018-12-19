@@ -8,6 +8,16 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R1-1-1: (Dec 19 2018)
+  * addition of export_map.py script: this generates pdf files with
+    graphs showing the inputs connected to link nodes (see file for
+    usage)
+  * misc changes to scripts missed in previous version to handle
+    field name change in crates table
+  * increase checks in the check_channels.py script
+  * removed BCS BLMs from import files - they were causing database
+    errors during import (due to strings with special characters)
+
 mps_database-R1-1-0: (Dec 05 2018)
   * export_edl.py: added generation of screens for individual link nodes
   * export_epics.py: added generation of archive request files

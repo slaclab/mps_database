@@ -39,7 +39,7 @@ class ApplicationCard(Base):
   amc = Column(Integer, nullable=False, default=0)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)
-  digital_channels = relationship("DigitalChannel", backref='card')
+  digital_channels = relationship("DigitalChannel", order_by="asc(DigitalChannel.number)", backref='card')
   digital_out_channels = relationship("DigitalOutChannel", backref='card')
   analog_channels = relationship("AnalogChannel", backref='card')
   global_id = Column(Integer, nullable=False, unique=True)

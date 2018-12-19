@@ -31,7 +31,8 @@ class App:
 
           if (appType.name == 'Digital Card' or 
               appType.name == 'Virtual Card' or
-              appType.name == 'Virtual'):
+              appType.name == 'Virtual' or
+              appType.name == 'LLRF'):
               self.is_digital = True
           else:
             self.is_digital = False
@@ -669,8 +670,8 @@ class Tester:
         db_md5sum = self.simulator.get_md5sum()
         if (db_md5sum != md5sum):
             print 'ERROR: Mismatched database md5sum:'
-            print 'Test database  : {0}'.format(md5sum)
-            print 'Server database: {0}'.format(db_md5sum)
+            print 'CN Server Database  : {0}'.format(md5sum)
+            print 'Test Database: {0}'.format(db_md5sum)
             sys.exit()
 
       except socket.error, msg:

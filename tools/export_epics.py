@@ -160,7 +160,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     name = mpsName.getDeviceInputName(deviceInput)
     fields=[]
     fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}]'.
-                   format(deviceInput.channel.card.crate.number,
+                   format(deviceInput.channel.card.crate.id,
                           deviceInput.channel.card.number,
                           deviceInput.channel.number)))
     fields.append(('DTYP', 'asynUInt32Digital'))
@@ -182,7 +182,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     #=== Begin Latch records ====
     # Record for latched value
     fields[0]=(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Latched Value'.
-                format(deviceInput.channel.card.crate.number,
+                format(deviceInput.channel.card.crate.id,
                        deviceInput.channel.card.number,
                        deviceInput.channel.number)))
     fields[7]=(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_DEVICE_INPUT_LATCHED'.format(deviceInput.id)))
@@ -191,7 +191,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     # Record to process unlatch value
     fields=[]
     fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Unlatch'.
-                   format(deviceInput.channel.card.crate.number,
+                   format(deviceInput.channel.card.crate.id,
                           deviceInput.channel.card.number,
                           deviceInput.channel.number)))
     fields.append(('DTYP', 'asynUInt32Digital'))
@@ -440,7 +440,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
 #          print name + ":" + state.device_state.name + ", mask: " + str(bitIndex) + ", fault name: " + fa.name + ", intIndex: " + str(intIndex)
           fields=[]
           fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
-                         format(analogDevice.channel.card.crate.number,
+                         format(analogDevice.channel.card.crate.id,
                                 analogDevice.channel.card.number,
                                 analogDevice.channel.number)))
           fields.append(('DTYP', 'asynUInt32Digital'))
@@ -458,7 +458,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
           # Record for latched value
           fields=[]
           fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Latched Value'.
-                         format(analogDevice.channel.card.crate.number,
+                         format(analogDevice.channel.card.crate.id,
                                 analogDevice.channel.card.number,
                                 analogDevice.channel.number)))
           fields.append(('DTYP', 'asynUInt32Digital'))
@@ -473,7 +473,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
           # Record to process unlatch value
           fields=[]
           fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Unlatch'.
-                         format(analogDevice.channel.card.crate.number,
+                         format(analogDevice.channel.card.crate.id,
                                 analogDevice.channel.card.number,
                                 analogDevice.channel.number)))
           fields.append(('DTYP', 'asynUInt32Digital'))
@@ -875,7 +875,7 @@ def exportVirtualInput(file, device_input, channel, input_pv, mpsName):
 
   fields=[]
   fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}]'.
-                 format(device_input.channel.card.crate.number,
+                 format(device_input.channel.card.crate.id,
                         device_input.channel.card.number,
                         device_input.channel.number)))
   fields.append(('PINI', 'YES'))
@@ -892,7 +892,7 @@ def exportVirtualInput(file, device_input, channel, input_pv, mpsName):
 
   fields=[]
   fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] CALC'.
-                 format(device_input.channel.card.crate.number,
+                 format(device_input.channel.card.crate.id,
                         device_input.channel.card.number,
                         device_input.channel.number)))
   fields.append(('PINI', 'YES'))
@@ -905,7 +905,7 @@ def exportVirtualInput(file, device_input, channel, input_pv, mpsName):
 
   fields=[]
   fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] INP'.
-                 format(device_input.channel.card.crate.number,
+                 format(device_input.channel.card.crate.id,
                         device_input.channel.card.number,
                         device_input.channel.number)))
   fields.append(('PINI', 'YES'))

@@ -895,13 +895,14 @@ importer.add_device_types('import/DeviceTypes.csv')
 importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
+# Wire scanner not yet defined
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 
-importer.add_digital_device('import/LLRF', card_name="LLRF")
-
-if True:
-  importer.add_digital_device('import/PROF')
+if (True):
+  importer.add_digital_device('import/LLRF', card_name="LLRF")
+  importer.add_analog_device('import/BEND', card_name="Generic ADC")
   importer.add_digital_device('import/TEMP')
+  importer.add_digital_device('import/PROF')
   importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/WIRE_PARK')
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
@@ -913,11 +914,12 @@ if True:
   importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
-  importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
-  importer.add_analog_device('import/BEND', card_name="Generic ADC")
   importer.add_analog_device('import/TORO', card_name="Analog Card")
-  importer.add_analog_device('import/BLM', card_name="Generic ADC")
-  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
+  importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
+
+importer.add_analog_device('import/BLM', card_name="Generic ADC")
+importer.add_analog_device('import/PBLM', card_name="Generic ADC")
+
 
 
 

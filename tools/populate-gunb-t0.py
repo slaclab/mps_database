@@ -18,7 +18,7 @@ conf.clear_all()
 session = conf.session
 
 #First lets define our mitigation devices.
-linac = models.BeamDestination(name="LINAC", description="Linac destination", destination_mask=0x01)
+linac = models.BeamDestination(name="Linac", description="Linac destination", destination_mask=0x01)
 session.add(linac)
 
 #Make some beam classes.
@@ -31,11 +31,11 @@ session.add(linac)
 #    Power class 1 = 10 Hz max rate, max charge = 300pC in 100mS
 #    Power class 2 = Unlimited rate, max charge = 300uC in 1 second
 #
-class_0 = models.BeamClass(number=0,name="Power Class 0",description="No Beam",
+class_0 = models.BeamClass(number=0,name="PC0",description="No Beam",
                            integration_window=10, total_charge=0, min_period=1)
-class_1 = models.BeamClass(number=1,name="Power Class 1",description="YAG Max Power",
+class_1 = models.BeamClass(number=1,name="PC1",description="YAG Max Power",
                            integration_window=100000, total_charge=300, min_period=1)
-class_2 = models.BeamClass(number=2,name="Power Class 2",description="Full Power",
+class_2 = models.BeamClass(number=2,name="PC2",description="Full Power",
                            integration_window=1000000, total_charge=300000, min_period=1)
 session.add_all([class_0, class_1, class_2])
 

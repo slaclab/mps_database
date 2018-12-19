@@ -11,6 +11,28 @@ import os
 def checkChannels(session):
   checkDigitalChannels(session)
   checkAnalogChannels(session)
+  count(session)
+
+def countDeviceTypes(t, session):
+  devices=session.query(models.Device).\
+      filter(models.Device.device_type_id==t.id).all()
+#  if (len(devices) > 0):
+  print(' {0}: {1}'.format(t.name, len(devices)))
+
+  return len(devices)
+
+def count(session):
+  devices=session.query(models.Device).all()
+  print 'Total devices: {0}'.format(len(devices))
+  types=session.query(models.DeviceType).all()
+  typeWithoutDevices = False
+  for t in types:
+    l = countDeviceTypes(t, session)
+    if (l == 0):
+      typeWithoutDevices = True
+
+  if (typeWithoutDevices):
+    print 'WARN: Database has DeviceTypes with not Devices defined'
 
 def checkAnalogChannels(session):
   channels=session.query(models.AnalogChannel).all()
