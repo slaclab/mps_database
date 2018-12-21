@@ -1,0 +1,4 @@
+- AmcCarrierCore:
+  - AppMps:
+    - AppMpsRegBase:
+      - mpsAppId: !<value> $(ID)

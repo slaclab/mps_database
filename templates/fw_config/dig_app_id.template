@@ -1,0 +1,5 @@
+- AppTop:
+  - AppCore:
+    - MpsLinkNodeCore:
+      - MpsDigitalMessage:
+        - AppId: !<value> $(ID)
