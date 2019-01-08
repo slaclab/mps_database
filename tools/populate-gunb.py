@@ -12,8 +12,20 @@ conf.clear_all()
 session = conf.session
 
 #First lets define our mitigation devices.
-shutter = models.MitigationDevice(name="MS", description="Mechanical Shutter", destination_mask=0x01)
-aom = models.MitigationDevice(name="AOM", description="AOM", destination_mask=0x02)
+linac = models.BeamDestination(name="Linac", description="Linac destination", destination_mask=0x01)
+session.add(linac)
+
+#First lets define our mitigation devices.
+shutter_channel = models.DigitalOutChannel(name="SHUTTER_CTRL", number=0, card=link_node_card)
+aom_channel = models.DigitalOutChannel(name="SHUTTER_CTRL", number=1, card=link_node_card)
+session.add_all([shutter_channel, aom_channel])
+
+shutter = models.MitigationDevice(name="MS", description="Mechanical Shutter", position=100, beam_destination=linac,
+                                  digital_out_channel=shutter_channel, area="GUNB", card = link_node_card,
+                                  device_type = shutter_device_type)
+aom = models.MitigationDevice(name="AOM", description="AOM", position=100, beam_destination=linac,
+                              digital_out_channel=aom_channel, area="GUNB", card = link_node_card,
+                              device_type = aom_device_type)
 session.add_all([shutter, aom])
 
 #Make some beam classes.

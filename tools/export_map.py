@@ -200,19 +200,27 @@ parser.add_argument('database', metavar='db', type=file, nargs=1,
 parser.add_argument('--ln', metavar='link_node_name', type=str, nargs='?',
                     help='generate graph for the specified link node (sioc name)')
 parser.add_argument('--full', action='store_true')
-
+parser.add_argument('--output', metavar='output', type=str, nargs='?', 
+                    help='directory where the maps are generated')
 
 args = parser.parse_args()
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
 
+output_dir = './'
+if (args.output):
+  output_dir = args.output
+  if (not os.path.isdir(output_dir)):
+    print 'ERROR: Invalid output directory {0}'.format(output_dir)
+    exit(-1)
+
 if (args.full):
   print 'INFO: Generation single map with all link node inputs'
   name = 'link_nodes'
-  dot_file = open('{0}.dot'.format(name), "w")
+  dot_file = open('{0}/{1}.dot'.format(output_dir, name), "w")
   export(session, dot_file, 'All')
-  exportPDF(name)
+  exportPDF('{0}/{1}'.format(output_dir,name))
   dot_file.close()
   session.close()
   exit(0)
@@ -228,18 +236,18 @@ if (args.ln):
     print 'ERROR: Failed to find link node named \"{0}\"'.format(args.ln)
     exit(-1)
 
-  dot_file = open('{0}.dot'.format(args.ln), "w")
+  dot_file = open('{0}/{1}.dot'.format(output_dir, args.ln), "w")
   export(session, dot_file, args.ln)
-  exportPDF(args.ln)
+  exportPDF('{0}/{1}'.format(output_dir, args.ln))
   dot_file.close()
 else:
   print 'INFO: Generating maps for {0} link nodes'.format(len(link_nodes))
   for ln in link_nodes:
     ln_name = ln.get_name()
     print ' * {0}'.format(ln_name)
-    dot_file = open('{0}.dot'.format(ln_name), "w")
+    dot_file = open('{0}/{1}.dot'.format(output_dir,ln_name), "w")
     export(session, dot_file, ln_name)
-    exportPDF(ln_name)
+    exportPDF('{0}/{1}'.format(output_dir,ln_name))
     dot_file.close()
 
 session.close()

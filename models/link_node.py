@@ -19,6 +19,9 @@ class LinkNode(Base):
           group 100 is the CN in LI00, group 200 is the CN in B005
    group_link: index within the group
    group_link_destination: specifies to which LN or CN the link node connects to
+   group_drawing: SEDA drawing number showing the nodes in the group
+   ln_type: 1=LCLS-I link node, 2=LCLS-II link node, 3=both (for link nodes connected
+            to devices that see beam from both injectors)
    
   References:
    crate_id: specifies the crate that contains this link node
@@ -32,6 +35,7 @@ class LinkNode(Base):
   group_link = Column(Integer, unique=False)
   group_link_destination = Column(Integer, unique=False)
   group_drawing = Column(String, unique=False)
+  ln_type = Column(Integer, nullable=False, default=2)
   crate = relationship("Crate", uselist=False, back_populates="link_node")
   
   def show(self):
