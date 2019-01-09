@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from mps_config import MPSConfig, models
+from mps_config import MPSConfig, models, runtime
 from mps_names import MpsName
 from sqlalchemy import func
 import sys
@@ -130,6 +130,33 @@ def checkLinkNodes(session):
         print 'ERROR: duplicate LinkNode name: {0}, found for LN ID {1} and {2}'.\
             format(ln.get_name(), ln.id, ln2.id)
 
+def checkRuntime(session, rt_session):
+  devices = session.query(models.Device).all()
+  rt_devices = session.query(models.Device).all()
+
+  if (len(devices) != len(rt_devices)):
+    print 'ERROR: Number of devices in static database ({0}) different from runtime database ({1})'.\
+        format(len(devices),len(rt_devices))
+
+  missing={}
+  for d in devices:
+    try:
+      rt_d = rt_session.query(runtime.Device).filter(runtime.Device.mpsdb_id==d.id).one()
+      if (rt_d.mpsdb_name != d.name):
+        print 'ERROR: Found device with same id, but different names in static/runtime databases'
+        print '       id={0}, static name={1}, runtime name={2}'.format(d.id, d.name, rt_d.mpsdb_name)
+    except Exception as e:
+      print e
+      missing[d.id]=d.name
+
+  if (len(missing)>0):
+    print 'ERROR: There are devices in config database not included in the runtime database, please check'
+  else:
+    print 'Runtime database OK'
+#    if (verbose):
+#      for k,i in missing.iteritems():
+#        print '  id={0} name={1}'.format(k, i)
+
 
 #=== MAIN ==================================================================================
 
@@ -139,11 +166,13 @@ parser.add_argument('database', metavar='db', type=file, nargs=1,
 
 args = parser.parse_args()
 
-mps = MPSConfig(args.database[0].name)
+mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
 session = mps.session
+rt_session = mps.runtime_session
 
 checkChannels(session)
 checkLinkNodes(session)
+checkRuntime(session, rt_session)
 
 session.close()
 

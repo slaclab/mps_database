@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from mps_config import MPSConfig, models
+from mps_config import MPSConfig, models, runtime
 from sqlalchemy import MetaData
 import argparse
 import yaml
@@ -12,9 +12,9 @@ class DatabaseImporter:
   verbose = False
   database_file_name = None
 
-  def __init__(self, file_name, verbose, clear_all=True):
+  def __init__(self, file_name, runtime_file_name, verbose, clear_all=True):
     self.database_file_name = file_name
-    self.conf = MPSConfig(file_name)
+    self.conf = MPSConfig(file_name, runtime_file_name)
     if (clear_all):
       self.conf.clear_all()
     self.session = self.conf.session
@@ -22,17 +22,23 @@ class DatabaseImporter:
 #    self.session.autoflush=True
     self.verbose = verbose
 
+    self.rt_session = self.conf.runtime_session
+
   def __del__(self):
     self.session.commit()
  
   def reopen(self):
     self.session.commit()
     self.session = None
+    self.rt_session.commit()
+    self.rt_session = None
     self.conf = None
     self.conf = MPSConfig(self.database_file_name)
     self.session = self.conf.session
     self.session.autoflush=False    
-   
+    self.rt_session = self.conf.runtime_session
+    self.rt_session.autoflush=False    
+
   def add_crates(self, file_name):
     if self.verbose:
       print "Adding crates... {0}".format(file_name)
@@ -871,10 +877,33 @@ class DatabaseImporter:
     self.session.flush()
     f.close()
 
-  def check(self):
-    card = self.session.query(models.ApplicationCard).\
-        filter(models.ApplicationCard.id==1).one()
-#    print len(card.digital_channels)
+  def add_runtime_thresholds(self, device):
+    t0 = runtime.Threshold0(device=device, device_id=device.id)
+    self.rt_session.add(t0)
+    t1 = runtime.Threshold1(device=device, device_id=device.id)
+    self.rt_session.add(t1)
+    t2 = runtime.Threshold2(device=device, device_id=device.id)
+    self.rt_session.add(t2)
+    t3 = runtime.Threshold3(device=device, device_id=device.id)
+    self.rt_session.add(t3)
+
+    t0 = runtime.ThresholdAlt0(device=device, device_id=device.id)
+    self.rt_session.add(t0)
+    t1 = runtime.ThresholdAlt1(device=device, device_id=device.id)
+    self.rt_session.add(t1)
+    t2 = runtime.ThresholdAlt2(device=device, device_id=device.id)
+    self.rt_session.add(t2)
+    t3 = runtime.ThresholdAlt3(device=device, device_id=device.id)
+    self.rt_session.add(t3)
+
+  def create_runtime_database(self):
+    print 'Creating thresholds database'
+    devices = self.session.query(models.Device).all()
+    for d in devices:
+      rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
+      self.rt_session.add(rt_d)
+      self.add_runtime_thresholds(rt_d)
+    self.rt_session.commit()
 
 ### MAIN
 
@@ -886,7 +915,7 @@ verbose=False
 if args.verbose:
   verbose=True
 
-importer = DatabaseImporter("mps_config_imported.db", verbose)
+importer = DatabaseImporter("mps_config_imported.db", "mps_config_imported_runtime.db", verbose)
 
 importer.add_crates('import/Crates.csv')
 importer.add_app_types('import/AppTypes.csv')
@@ -898,9 +927,10 @@ importer.add_beam_classes('import/BeamClasses.csv')
 # Wire scanner not yet defined
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 
+importer.add_analog_device('import/PBLM', card_name="Generic ADC")
 importer.add_digital_device('import/PROF')
   
-if (True):
+if (False):
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_analog_device('import/BEND', card_name="Generic ADC")
   importer.add_digital_device('import/TEMP')
@@ -919,11 +949,8 @@ if (True):
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
 
-if (True):
-  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
 
-
-importer.check()
+importer.create_runtime_database()
 
 print 'Done.'
 
