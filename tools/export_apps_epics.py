@@ -241,7 +241,7 @@ class MpsAppReader:
                                 fault_data = {}
                                 fault_data["id"] = fault_id
                                 fault_data["name"] = fault.name
-                                fault_data["description"] = fault.description
+                                fault_data["description"] = fault.description[:39]
                                 fault_data["bit_positions"] = [ fault_input.bit_position ]
 
                                 # Add this fault to the list of faults of the current device
