@@ -1,5 +1,5 @@
 record(ao, "$(P):$(R)_L") {
-    field(DESC, "$(DESC)
+    field(DESC, "$(DESC)")
     field(SCAN, "Passive")
     field(PINI, "NO")
     field(DTYP, "asynFloat64")
