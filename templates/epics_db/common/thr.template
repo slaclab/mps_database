@@ -1,5 +1,5 @@
 record(ao, "$(P):$(R)_L") {
-    field(DESC, "$(DESC) (MIN)")
+    field(DESC, "$(DESC)
     field(SCAN, "Passive")
     field(PINI, "NO")
     field(DTYP, "asynFloat64")
@@ -9,7 +9,7 @@ record(ao, "$(P):$(R)_L") {
 }
 
 record(ai,  "$(P):$(R)_L_RBV") {
-    field(DESC, "$(DESC) (MIN)")
+    field(DESC, "$(DESC)")
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynFloat64")
@@ -19,7 +19,7 @@ record(ai,  "$(P):$(R)_L_RBV") {
 }
 
 record(ao, "$(P):$(R)_H") {
-    field(DESC, "$(DESC)i (MAX)")
+    field(DESC, "$(DESC)")
     field(SCAN, "Passive")
     field(PINI, "NO")
     field(DTYP, "asynFloat64")
@@ -29,7 +29,7 @@ record(ao, "$(P):$(R)_H") {
 }
 
 record(ai,  "$(P):$(R)_H_RBV") {
-    field(DESC, "$(DESC) (MAX)")
+    field(DESC, "$(DESC)")
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynFloat64")
@@ -39,7 +39,7 @@ record(ai,  "$(P):$(R)_H_RBV") {
 }
 
 record(bo, "$(P):$(R)_L_EN") {
-    field(DESC, "$(DESC) (MIN, EN)")
+    field(DESC, "$(DESC)")
     field(SCAN, "Passive")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
@@ -49,7 +49,7 @@ record(bo, "$(P):$(R)_L_EN") {
 }
 
 record(bi, "$(P):$(R)_L_EN_RBV") {
-    field(DESC, "$(DESC) (MIN, EN)")
+    field(DESC, "$(DESC)")
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
@@ -59,7 +59,7 @@ record(bi, "$(P):$(R)_L_EN_RBV") {
 }
 
 record(bo,      "$(P):$(R)_H_EN") {
-    field(DESC, "$(DESC) (MAX, EN)")
+    field(DESC, "$(DESC)")
     field(SCAN, "Passive")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
@@ -69,7 +69,7 @@ record(bo,      "$(P):$(R)_H_EN") {
 }
 
 record(bi,      "$(P):$(R)_H_EN_RBV") {
-    field(DESC, "$(DESC) (MAX, EN)")
+    field(DESC, "$(DESC)")
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
