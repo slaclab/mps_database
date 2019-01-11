@@ -18,8 +18,8 @@
 #=========================================================================================#
 
 file "common/thr.template" { pattern
-{ R,                                DESC,               APP,        EGU,        PREC,   CH,                 TABLE,  THR,               }
-{ $(FAULT)_T$(BIT_POSITION),        "$(DESC)",          "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "2",    "$(BIT_POSITION)"   }
-{ $(FAULT)_T$(BIT_POSITION)_ALT,    "$(DESC) (ALT)",    "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "3",    "$(BIT_POSITION)"   }
+{ R,                                APP,        EGU,        PREC,   CH,                 TABLE,  THR,               }
+{ $(FAULT)_T$(BIT_POSITION),        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "2",    "$(BIT_POSITION)"   }
+{ $(FAULT)_T$(BIT_POSITION)_ALT,    "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "3",    "$(BIT_POSITION)"   }
 }
 

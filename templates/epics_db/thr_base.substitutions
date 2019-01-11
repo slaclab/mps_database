@@ -38,9 +38,9 @@ file "common/Reg1BitRO.template" { pattern
 
 ### LCLS-I and IDLE Threshold PVs ###
 file "common/thr.template" { pattern
-{ R,                DESC,               APP,        EGU,        PREC,   CH,                 TABLE,  THR,    }
-{ $(FAULT)_T0_LC1,  "$(DESC) (LCLS1)",  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "0",   "0",    }
-{ $(FAULT)_T0_IDL,  "$(DESC) (IDLE)",   "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "1",   "0",    }
+{ R,                APP,        EGU,        PREC,   CH,                 TABLE,  THR,    }
+{ $(FAULT)_T0_LC1,  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "0",   "0",    }
+{ $(FAULT)_T0_IDL,  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "1",   "0",    }
 }
 
 ### Scale PVs ###
