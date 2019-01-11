@@ -1,5 +1,5 @@
 record(longin, "$(P):$(R)") {
-    /(DESC, "$(DESC)")
+    field(DESC, "$(DESC)")
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynInt32")
