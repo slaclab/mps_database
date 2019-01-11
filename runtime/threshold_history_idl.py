@@ -8,17 +8,25 @@ class ThresholdHistoryIdl(RuntimeBase):
   Threshold History IDLE class (thresholds history table)
 
   Properties:
-    l: new low idle threshold
-    h: new high idle threshold
-    user: who changed the threshold (either l/h or both)
+    i[0-3]_[l|h]: last LCLS-I threshold set
+
+    user: who changed the thresholds
     date: when
     reason: why
     device_id: points to the device that owns this threshold
   """
   __tablename__ = 'thresholds_history_idl'
   id = Column(Integer, primary_key=True)
-  l = Column(Float, default=0.0)
-  h = Column(Float, default=0.0)
+  i0_l = Column(Float, default=0.0)
+  i1_l = Column(Float, default=0.0)
+  i2_l = Column(Float, default=0.0)
+  i3_l = Column(Float, default=0.0)
+
+  i0_h = Column(Float, default=0.0)
+  i1_h = Column(Float, default=0.0)
+  i2_h = Column(Float, default=0.0)
+  i3_h = Column(Float, default=0.0)
+
   user = Column(String, nullable=False)
   date = Column(DateTime(timezone=True), server_default=func.now())
   reason = Column(String, nullable=False)

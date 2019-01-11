@@ -1,21 +1,23 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, func
 from sqlalchemy.orm import relationship, backref
 from runtime import RuntimeBase
-import datetime
 
-class ThresholdHistoryLc1(RuntimeBase):
+class Threshold6History(RuntimeBase):
   """
-  Threshold History LCLS-I class (thresholds history table)
+  Threshold class (thresholds table)
 
   Properties:
     i[0-3]_[l|h]: last LCLS-I threshold set
 
-    user: who changed the threshold
+    user: who changed the thresholds
     date: when
     reason: why
     device_id: points to the device that owns this threshold
+
+  References:
+    device_id: points to the device that owns this threshold
   """
-  __tablename__ = 'thresholds_history_lc1'
+  __tablename__ = 'thresholds6_history'
   id = Column(Integer, primary_key=True)
   i0_l = Column(Float, default=0.0)
   i1_l = Column(Float, default=0.0)

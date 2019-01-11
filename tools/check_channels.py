@@ -145,6 +145,10 @@ def checkRuntime(session, rt_session):
       if (rt_d.mpsdb_name != d.name):
         print 'ERROR: Found device with same id, but different names in static/runtime databases'
         print '       id={0}, static name={1}, runtime name={2}'.format(d.id, d.name, rt_d.mpsdb_name)
+
+      # check if there are threshold table entries
+      # *not implemented*
+
     except Exception as e:
       print e
       missing[d.id]=d.name
