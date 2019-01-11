@@ -506,17 +506,17 @@ class MpsAppReader:
 
         If the application is a Link Nodes (slot # 2) then
         the card number will be:
-        - 1 for analog cards (type id: 1)
-        - 2 for digital cards (type id: 2)
+        - 1 for analog cards (type id: 2)
+        - 2 for digital cards (type id: 1)
 
         For other applications, the card number will be
         the slot number + 1.
         """
         if slot_number == 2:
             if type_id == 1:
-                return 1
-            elif type_id == 2:
                 return 2
+            elif type_id == 2:
+                return 1
             else:
                 raise ValueError("Function \"get_card_id(slot_number={}, type_id={})\". Invalid type_id for a Link Node"
                     .format(slot_number, type_id))
