@@ -783,37 +783,51 @@ class MpsAppReader:
 ### Main Body ###
 #################
 
-# Parse input arguments
-parser = argparse.ArgumentParser(description='Export Link Node EPICS databases')
-parser.add_argument('--db', metavar='database', required=True,
-                    help='MPS SQLite database file')
-parser.add_argument('--dest', metavar='destination', required=True,
-                    help='Destination location of the resulting EPICS database')
-parser.add_argument('--template', default='templates/',
-                    help='Path to EPICS DB template files')
-args = parser.parse_args()
+def main(db_file, dest_path, template_path=None):
 
-db_file = args.db
-template_path = args.template
-dest_path = args.dest
+    if (template_path==None):
+        template_path='templates/'
 
-# Check formatting of the paths
-dest_path = format_path(dest_path)
-template_path = format_path(template_path)
+    # Generate the Mps application reader object
+    mps_app_reader = MpsAppReader(db_file, template_path, dest_path)
 
-# Check is the template path exist
-if not os.path.exists(template_path):
-    print("EPICS DB template directory '{}' not found.".format(template_path))
-    exit(1)
+    # Print a report of the found applications
+    mps_app_reader.print_app_data()
 
-# Create a new clean output directory in the specified path
-create_dir(dest_path, clean=True, debug=True)
+    # Generated the application output file
+    mps_app_reader.generate_epics_db()
 
-# Generate the Mps application reader object
-mps_app_reader = MpsAppReader(db_file, template_path, dest_path)
+if __name__ == "__main__":
 
-# Print a report of the found applications
-mps_app_reader.print_app_data()
+    # Parse input arguments
+    parser = argparse.ArgumentParser(description='Export Link Node EPICS databases')
+    parser.add_argument('--db', metavar='database', required=True,
+                        help='MPS SQLite database file')
+    parser.add_argument('--dest', metavar='destination', required=True,
+                        help='Destination location of the resulting EPICS database')
+    # parser.add_argument('--template', default='templates/',
+    #                     help='Path to EPICS DB template files')
+    parser.add_argument('--template', required=False,
+                        help='Path to EPICS DB template files')
+    args = parser.parse_args()
 
-# Generated the application output file
-mps_app_reader.generate_epics_db()
+    db_file = args.db
+    template_path = args.template
+    dest_path = args.dest
+
+    # Check formatting of the destination path
+    dest_path = format_path(dest_path)
+
+    # Create a new clean output directory in the specified path
+    create_dir(dest_path, clean=True, debug=True)
+
+    # If the template path is specified, check its format and if it exists
+    if template_path:
+        template_path = format_path(template_path)
+
+        # Check is the template path exist
+        if not os.path.exists(template_path):
+            print("EPICS DB template directory '{}' not found.".format(template_path))
+            exit(1)
+
+    main(db_file=db_file, dest_path=dest_path, template_path=template_path)
