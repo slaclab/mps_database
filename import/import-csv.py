@@ -900,7 +900,7 @@ importer.add_beam_classes('import/BeamClasses.csv')
 
 importer.add_digital_device('import/PROF')
   
-if (True):
+if (False):
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_analog_device('import/BEND', card_name="Generic ADC")
   importer.add_digital_device('import/TEMP')
