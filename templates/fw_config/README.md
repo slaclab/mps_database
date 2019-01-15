@@ -10,3 +10,4 @@ Substitution File       | Description
 ------------------------|---------------------------------------------------------------------
 app_id.template         | Configuration of the application ID, used for each analog application
 dig_app_id.template     | Configuration of the application ID, used for each digital application
+thresholds_off.template | Defaults all analog threshold to 0 and disabled, used for each analog application

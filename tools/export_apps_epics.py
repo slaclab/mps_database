@@ -344,6 +344,7 @@ class MpsAppReader:
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix} )
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
+            self.__write_thresholds_off_config(path=app_path)
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -690,6 +691,13 @@ class MpsAppReader:
         """
         self.__write_fw_config(path=path, template_name="dig_app_id.template", macros=macros)
 
+    def __write_thresholds_off_config(self, path):
+        """
+        Write the Threshold off configuration section to the application configuration file.
+
+        This configuration will be load by all applications.
+        """
+        self.__write_fw_config(path=path, template_name="thresholds_off.template", macros={})
 
     def __write_mps_db(self, path, macros):
         """
