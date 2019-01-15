@@ -347,6 +347,10 @@ class MpsAppReader:
             self.__write_thresholds_off_config(path=app_path)
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
 
+            # Add the IOC name environmental variable for the Link Nodes
+            if app["slot_number"] == 2:
+                self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(), "LOCATION":app["link_node_location"].upper()})
+
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
 
@@ -731,6 +735,14 @@ class MpsAppReader:
         This environmental variable will be loaded by all applications.
         """
         self.__write_epics_env(path=path, template_name="prefix.template", macros=macros)
+
+    def __write_iocname_env(self, path, macros):
+        """
+        Write the  LN IOC name environmental variable file.
+
+        This environmental variable will be loaded by all link nodes.
+        """
+        self.__write_epics_env(path=path, template_name="ioc_name.template", macros=macros)
 
     def __write_epics_db(self, path, template_name, macros):
         """
