@@ -1,0 +1,10 @@
+record(waveform, "$(P):$(R)") {
+    field(DESC,    "$(DESC)")
+    field(PINI,    "NO")
+    field(SCAN,    "I/O Intr")
+    field(DTYP,    "asynOctetRead")
+    field(NELM,    "40")
+    field(FTVL,    "CHAR")
+    field(INP,     "@asyn($(PORT),$(ADDR))$(PARAM)")
+}
+

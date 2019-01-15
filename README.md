@@ -1,4 +1,4 @@
-LCLS-II MPS Database 
+LCLS-II MPS Database
 --------------------
 
 This package contains SQLAlchemy python classes that provide access to the
@@ -44,7 +44,7 @@ Done.
 
 Generate database documentation (Inputs/Faults):
 ```
-[mps_database/tools]$ ./export_docs.py mps_gun_config.db 
+[mps_database/tools]$ ./export_docs.py mps_gun_config.db
 ... (you may see many warnings) ...
 ```
 The script generates documentation in pdf, rtf and html formats:
@@ -63,7 +63,7 @@ The command above generates file .db files:
 - analog_devices.db for the analog inputs
 - destinations.db for the beam destinations (mitigation devices)
 - faults.db for the list of faults
-- apps.db for the applications 
+- apps.db for the applications
 - conditions.db for the ignore conditions
 - virtual_inputs.db for all link nodes that have virtual cards defined in the database (a subdirectory with the link node name is created under the link_node_db area)
 
@@ -97,6 +97,57 @@ record(ao, "BPMS:GUNB:201:X_T1_HIHI") {
 }
 ```
 This creates the LOLO/HIHI analog output records for setting thresholds at the link node IOC. The thresolds are created per application card (--app-id parameter). The script also crates thresholds for the alternative, LCLS-I and idle modes. (LCLS-I and IDLE have a single HIHI/LOLO).
+
+Export EPICS databases and configuration files for all applications:
+```
+[mps_database]$ ./tools/export_apps_epics.py --help
+usage: export_apps_epics.py [-h] --db database --dest destination
+                            [--template TEMPLATE]
+
+Export Link Node EPICS databases
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --db database        MPS SQLite database file
+  --dest destination   Destination location of the resulting EPICS database
+  --template TEMPLATE  Path to EPICS DB template files
+```
+
+This will generate a directory structure:
+
+```
+app_db/<CPU_NAME>/<CRATE_ID>/<SLOT_NUMBER>
+```
+
+Each directory will contain the following EPICS database and configuration files for each application:
+- **mps.db**: EPICS database file
+- **mps.env**: EPICS environmental variables
+- **config.yaml**: Firmware configuration file
+
+Example of the result obtained for the EIC configuration:
+
+```
+.
+└── app_db
+    └── cpu-gunb0-mp01
+        └── 0001
+            ├── 02
+            │   ├── config.yaml
+            │   ├── mps.db
+            │   └── mps.env
+            ├── 03
+            │   ├── config.yaml
+            │   ├── mps.db
+            │   └── mps.env
+            ├── 06
+            │   ├── config.yaml
+            │   ├── mps.db
+            │   └── mps.env
+            └── 07
+                ├── config.yaml
+                ├── mps.db
+                └── mps.env
+```
 
 Virtual Channels
 ----------------

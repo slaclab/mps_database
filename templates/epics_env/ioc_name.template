@@ -1,0 +1,2 @@
+epicsEnvSet("IOC_NAME", "SIOC:$(AREA):$(LOCATION)")
+
