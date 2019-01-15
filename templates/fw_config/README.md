@@ -6,7 +6,7 @@ This directory contains templates files used to generated firmware configuration
 
 This is a list of template files and a description of their use case.
 
-Substitution File       | Description
+Template File           | Description
 ------------------------|---------------------------------------------------------------------
 app_id.template         | Configuration of the application ID, used for each analog application
 dig_app_id.template     | Configuration of the application ID, used for each digital application
