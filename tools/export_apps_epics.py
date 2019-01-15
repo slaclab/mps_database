@@ -345,7 +345,7 @@ class MpsAppReader:
             self.__write_mps_db(path=app_path, macros={"P":app_prefix})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
-            self.__write_mps_env(path=app_path, macros={"P":app_prefix})
+            self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -724,7 +724,7 @@ class MpsAppReader:
         """
         self.__write_epics_db(path=path, template_name="thr.template", macros=macros)
 
-    def __write_mps_env(self, path, macros):
+    def __write_prefix_env(self, path, macros):
         """
         Write the  mps PV name prefix environmental variable file.
 
