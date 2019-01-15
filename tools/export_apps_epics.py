@@ -342,9 +342,10 @@ class MpsAppReader:
             print("Application path   : {}".format(app_path))
             print("Application prefix : {}".format(app_prefix))
 
-            self.__write_mps_db(path=app_path, macros={"P":app_prefix} )
+            self.__write_mps_db(path=app_path, macros={"P":app_prefix})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
+            self.__write_mps_env(path=app_path, macros={"P":app_prefix})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -723,6 +724,13 @@ class MpsAppReader:
         """
         self.__write_epics_db(path=path, template_name="thr.template", macros=macros)
 
+    def __write_mps_env(self, path, macros):
+        """
+        Write the  mps PV name prefix environmental variable file.
+
+        This environmental variable will be loaded by all applications.
+        """
+        self.__write_epics_env(path=path, template_name="prefix.template", macros=macros)
 
     def __write_epics_db(self, path, template_name, macros):
         """
@@ -737,6 +745,21 @@ class MpsAppReader:
         """
         file = "{}mps.db".format(path)
         template = "{}epics_db/{}".format(self.template_path, template_name)
+        self.__write_file_from_template(file=file, template=template, macros=macros)
+
+    def __write_epics_env(self, path, template_name, macros):
+        """
+        Write the EPICS ENV file into the 'path' directory.
+
+        The resulting file is named "mps.env". Calling this function
+        multiple times, will append the results into the same file.
+
+        The file is created from the template file located in the directory
+        "epics_env" inside the global template directory, substituting the
+        macros definitions.
+        """
+        file = "{}mps.env".format(path)
+        template = "{}epics_env/{}".format(self.template_path, template_name)
         self.__write_file_from_template(file=file, template=template, macros=macros)
 
     def __write_fw_config(self, path, template_name, macros):
