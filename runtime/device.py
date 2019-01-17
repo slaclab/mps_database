@@ -4,7 +4,12 @@ from runtime import RuntimeBase
 
 class Device(RuntimeBase):
   """
-  Threshold class (thresholds table)
+  Device class
+
+  Each instance contains the MPS database id and name of a device
+  (analog or digital), and a list of current analog thresholds.
+
+  Thresholds will be empty for digital devices.
 
   Properties:
     mpsdb_id: device id in the static mps database
@@ -55,3 +60,5 @@ class Device(RuntimeBase):
   threshold_idl_id = Column(Integer, ForeignKey('thresholds_idl.id'))
   threshold_idl = relationship("ThresholdIdl", back_populates="device")
 
+  bypass_id = Column(Integer, ForeignKey('bypasses.id'))
+  bypass = relationship("Bypass", back_populates="device")

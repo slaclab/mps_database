@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 from mps_config import MPSConfig, models, runtime
 from sqlalchemy import MetaData
+from mps_names import MpsName
 import argparse
+import time
 import yaml
 import os
 
@@ -877,6 +879,14 @@ class DatabaseImporter:
     self.session.flush()
     f.close()
 
+  def add_analog_bypass(self, device):
+    bypass = runtime.Bypass(device=device, startdate=int(time.time()), duration=0)
+    self.rt_session.add(bypass)
+
+  def add_device_input_bypass(self, device_input):
+    bypass = runtime.Bypass(device_input=device_input, startdate=int(time.time()), duration=0)
+    self.rt_session.add(bypass)
+
   def add_runtime_thresholds(self, device):
     t0 = runtime.Threshold0(device=device, device_id=device.id)
     self.rt_session.add(t0)
@@ -919,7 +929,8 @@ class DatabaseImporter:
     self.rt_session.add(t)
 
   def create_runtime_database(self):
-    print 'Creating thresholds database'
+    mpsName = MpsName(self.session)
+    print 'Creating thresholds/bypass database'
     devices = self.session.query(models.Device).all()
     for d in devices:
       rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
@@ -928,6 +939,14 @@ class DatabaseImporter:
       analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==d.id).all()
       if (len(analog_devices)==1):
         self.add_runtime_thresholds(rt_d)
+        self.add_analog_bypass(rt_d)
+
+    device_inputs = self.session.query(models.DeviceInput).all()
+    for di in device_inputs:
+      di_pv = mpsName.getDeviceInputNameFromId(di.id)
+      rt_di = runtime.DeviceInput(mpsdb_id = di.id, device_id = di.digital_device.id, pv_name = di_pv)
+      self.rt_session.add(rt_di)
+      self.add_device_input_bypass(rt_di)
     self.rt_session.commit()
 
 ### MAIN
