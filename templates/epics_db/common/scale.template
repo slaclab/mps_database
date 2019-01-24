@@ -1,0 +1,21 @@
+record(ao,      "$(P):$(R)") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "$(SCAN)")
+    field(PINI, "YES")
+    field(EGU,  "$(EGU)/raw")
+    field(PREC, "$(PREC)")
+    field(OMSL, "closed_loop")
+    field(OIF,  "Full")
+    field(DOL,  "$(SCALE_PV)")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALE_$(CH)")
+}
+
+record(ai,      "$(P):$(R)_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(EGU,  "$(EGU)/raw")
+    field(PREC, "$(PREC)")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALE_$(CH)")
+}

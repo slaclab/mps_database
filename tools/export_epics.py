@@ -234,9 +234,10 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
 
     # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
     fields=[]
-    fields.append(('DESC', 'Bypass duration in seconds'))
+    fields.append(('DESC', 'Bypass counter in seconds'))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('EGU', 'Seconds'))
+    fields.append(('EGU', 's'))
     fields.append(('VAL', '0'))
     fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_BYPEXPDATE'.format(deviceInput.id)))
@@ -262,7 +263,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     fields.append(('VAL', 'Invalid'))
     fields.append(('PINI', 'YES'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_BYPEXPDATE_STRING'.format(deviceInput.id)))
-    printRecord(file, 'stringin', '{0}_BYPD_STR'.format(name), fields)
+    printRecord(file, 'stringin', '{0}_BYP_END'.format(name), fields)
 
     # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
     percentage = percentage + percentageIncrease
@@ -501,8 +502,9 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
           
             # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
             fields=[]
-            fields.append(('DESC', 'Bypass duration in seconds'))
+            fields.append(('DESC', 'Bypass counter in seconds'))
             fields.append(('DTYP', 'asynInt32'))
+            fields.append(('EGU', 's'))
             fields.append(('VAL', '0'))
             fields.append(('PINI', 'YES'))
             fields.append(('OUT', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id, intIndex)))
@@ -528,7 +530,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
             fields.append(('VAL', 'Invalid'))
             fields.append(('PINI', 'YES'))
             fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id * 4 +  intIndex)))
-            printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
+            printRecord(file, 'stringin', '{0}:{1}_BYP_END'.format(name, fa.name), fields)
 
             # Add a IGNORED PV only if device appears in an ignoreCondition
             ignore_condition = session.query(models.IgnoreCondition).\
@@ -647,7 +649,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
           fields.append(('VAL', 'Invalid'))
           fields.append(('PINI', 'YES'))
           fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id)))
-          printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, state.device_state.name), fields)
+          printRecord(file, 'stringin', '{0}:{1}_BYP_END'.format(name, state.device_state.name), fields)
           #=== End Bypass records ====
 '''
 

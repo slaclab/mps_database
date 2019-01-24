@@ -8,6 +8,10 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R1-1-2: (Jan 14 2019)
+  * Change in bypass PV names: BYPD -> BYPC
+                               BYPD_STR -> BYP_END
+
 mps_database-R1-1-1: (Dec 19 2018)
   * addition of export_map.py script: this generates pdf files with
     graphs showing the inputs connected to link nodes (see file for
