@@ -1,2 +1,2 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description,
-LOSS_T0,1,Beam Loss,1,1,LOSS_T0,Beam Loss Fault,
+LOSS_T0,1,Beam Loss,1,1,I0,Beam Loss Fault,

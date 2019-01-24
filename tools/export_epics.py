@@ -122,6 +122,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
   sf.write('msg=$msg\'\n\nProceed?\'\n')
   sf.write('zenity --question --text "$msg" --ok-label=YES --cancel-label=NO --title "MPS Digital Input Bypass"\n')
   sf.write('\n')
+  sf.write('bypassCount=0\n')
   sf.write('if [ $? == \'1\' ]; then\n')
   sf.write('  echo \'Save bypass cancelled.\'\n')
   sf.write('  exit 1\n')
@@ -234,10 +235,9 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
 
     # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
     fields=[]
-    fields.append(('DESC', 'Bypass counter in seconds'))
+    fields.append(('DESC', 'Bypass duration in seconds'))
     fields.append(('DTYP', 'asynInt32'))
     fields.append(('EGU', 'Seconds'))
-    fields.append(('EGU', 's'))
     fields.append(('VAL', '0'))
     fields.append(('PINI', 'YES'))
     fields.append(('OUT', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_BYPEXPDATE'.format(deviceInput.id)))
@@ -263,7 +263,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     fields.append(('VAL', 'Invalid'))
     fields.append(('PINI', 'YES'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_BYPEXPDATE_STRING'.format(deviceInput.id)))
-    printRecord(file, 'stringin', '{0}_BYP_END'.format(name), fields)
+    printRecord(file, 'stringin', '{0}_BYPD_STR'.format(name), fields)
 
     # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
     percentage = percentage + percentageIncrease
@@ -272,6 +272,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
                                                         bypassValuePv, percentage, restoreBypassFile))
 
     #=== End Bypass records ====
+
   sf.write('  echo $bypassCount > /tmp/mps-digital-bypass-count.txt\n')
   sf.write(') |\n')
   sf.write('zenity --progress --percentage=0 --text="Saving digital bypass information..." --auto-close\n')
@@ -363,6 +364,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
   sf.write('\n')
   sf.write('msg=$msg\'\n\nProceed?\'\n')
   sf.write('zenity --question --text "$msg" --ok-label=YES --cancel-label=NO --title "MPS Analog Input Bypass"\n')
+  sf.write('bypassCount=0\n')
   sf.write('\n')
   sf.write('if [ $? == \'1\' ]; then\n')
   sf.write('  echo \'Save bypass cancelled.\'\n')
@@ -397,186 +399,39 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
   sf.write('echo \'  bypassCount=0\' >> {0}\n'.format(restoreBypassFile))
 
   for analogDevice in analogDevices:
-#    name = getAnalogDeviceName(session, analogDevice)
     name = mpsName.getAnalogDeviceName(analogDevice)
-#    print name
     ignored_pv_added=False
     # All these queries are to get the threshold faults
     faultInputs = session.query(models.FaultInput).filter(models.FaultInput.device_id==analogDevice.id).all()
+    fault_list={}
     for fi in faultInputs:
       faults = session.query(models.Fault).filter(models.Fault.id==fi.fault_id).all()
       for fa in faults:
+        add_pvs = False
+        if (not fa.name in fault_list):
+          fault_list[fa.name]={}
+          fault_list[fa.name]['name']=name
+          fault_list[fa.name]['fault']=fa
+          fault_list[fa.name]['faultInputs']=[]
+          add_pvs = True
+        fault_list[fa.name]['faultInputs'].append(fi.id)
         # produce only one set of bypass pvs per analog fault (one bypass control for all thresholds within an integrator)
-        bypassPvs=False 
-#        print fa.name
-        faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
-        for state in faultStates:
-#          print state.device_state.name
-          bitIndex=0
-          bitFound=False
-          while not bitFound:
-            b=(state.device_state.mask>>bitIndex) & 1
-            if b==1:
-              bitFound=True
-            else:
-              bitIndex=bitIndex+1
-              if bitIndex==32:
-                done=True
-                bitIndex=-1
-          if bitIndex==-1:
-            print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
-            exit(-1)
 
-          # Convert bitIndex to integrator index
-          # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> TMIT
-          # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
-          intIndex=0
-          if (bitIndex >= 8 and bitIndex <= 15):
-            intIndex = 1
-          elif (bitIndex >= 16 and bitIndex <= 23):
-            intIndex = 2
-          elif (bitIndex >= 24 and bitIndex <= 31):
-            intIndex = 3
+        # Only one set of PVs should be generated per faultInput (fi)
+        # Therefore get the faultStates only once
+        if (add_pvs):
+          printAnalogRecords(session, file, name, af, sf, fi, fa,
+                             analogDevice, fault_list, percentage, restoreBypassFile)
 
-#          print name + ":" + state.device_state.name + ", mask: " + str(bitIndex) + ", fault name: " + fa.name + ", intIndex: " + str(intIndex)
-          fields=[]
-          fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
-                         format(analogDevice.channel.card.crate.id,
-                                analogDevice.channel.card.number,
-                                analogDevice.channel.number)))
-          fields.append(('DTYP', 'asynUInt32Digital'))
-          fields.append(('SCAN', '1 second'))
-          fields.append(('ZNAM', 'IS_OK'))
-          fields.append(('ONAM', 'IS_EXCEEDED'))
-          fields.append(('ZSV', 'NO_ALARM'))
-          fields.append(('OSV', 'MAJOR'))
-          fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE'.format(analogDevice.id, state.device_state.mask)))
-          recName = '{0}:{1}_MPSC'.format(name, state.device_state.name)
-          printRecord(file, 'bi', recName, fields)
-          printArchive(af, recName, 1, 'monitor')
-
-          #=== Begin Latch records ====
-          # Record for latched value
-          fields=[]
-          fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Latched Value'.
-                         format(analogDevice.channel.card.crate.id,
-                                analogDevice.channel.card.number,
-                                analogDevice.channel.number)))
-          fields.append(('DTYP', 'asynUInt32Digital'))
-          fields.append(('SCAN', '1 second'))
-          fields.append(('ZNAM', 'IS_OK'))
-          fields.append(('ONAM', 'IS_EXCEEDED'))
-          fields.append(('ZSV', 'NO_ALARM'))
-          fields.append(('OSV', 'MAJOR'))
-          fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE_LATCHED'.format(analogDevice.id, state.device_state.mask)))
-          printRecord(file, 'bi', '{0}:{1}_MPS'.format(name, state.device_state.name), fields)
-
-          # Record to process unlatch value
-          fields=[]
-          fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Unlatch'.
-                         format(analogDevice.channel.card.crate.id,
-                                analogDevice.channel.card.number,
-                                analogDevice.channel.number)))
-          fields.append(('DTYP', 'asynUInt32Digital'))
-          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE_UNLATCH'.format(analogDevice.id, state.device_state.mask)))
-          printRecord(file, 'bo', '{0}:{1}_UNLH'.format(name, state.device_state.name), fields)
-          #=== End Latch records ====
-
-          #=== Begin Bypass records (One PV per fault type)  ====
-          # produce only one set of bypass pvs per analog fault (one bypass control for all thresholds within an integrator)
-          # there is no BYPV PV for analog devices
-          if (bypassPvs==False):            
-            # Bypass Status: shows if bypass is currently active or not
-            fields=[]
-            fields.append(('DESC', 'Bypass Status'))
-            fields.append(('SCAN', '1 second'))
-            fields.append(('DTYP', 'asynInt32'))    
-            fields.append(('ZNAM', 'Not Bypassed'))
-            fields.append(('ONAM', 'Bypassed'))
-            fields.append(('ZSV', 'NO_ALARM'))
-            fields.append(('OSV', 'MAJOR'))
-            fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPS'.format(analogDevice.id, intIndex)))
-            recName = '{0}:{1}_BYPS'.format(name, fa.name)
-            printRecord(file, 'bi', recName, fields)
-            printArchive(af, recName, 60, 'monitor')
-          
-            # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
-            fields=[]
-            fields.append(('DESC', 'Bypass counter in seconds'))
-            fields.append(('DTYP', 'asynInt32'))
-            fields.append(('EGU', 's'))
-            fields.append(('VAL', '0'))
-            fields.append(('PINI', 'YES'))
-            fields.append(('OUT', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id, intIndex)))
-            bypassTimePv = '{0}:{1}_BYPD'.format(name, fa.name)
-            printRecord(file, 'longout', bypassTimePv, fields)
-            
-            fields=[]
-            fields.append(('DESC', 'Remaining bypass duration is seconds'))
-            fields.append(('DTYP', 'asynInt32'))
-            fields.append(('EGU', 'Seconds'))
-            fields.append(('SCAN', '1 second'))
-            fields.append(('VAL', '0'))
-            fields.append(('PINI', 'YES'))
-            fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_REMAINING_BYPTIME'.format(analogDevice.id, intIndex)))
-            remainingTimePv = '{0}:{1}_BYPT'.format(name, fa.name)
-            printRecord(file, 'longin', remainingTimePv, fields)
-            printArchive(af, remainingTimePv, 60, 'monitor')
-
-            fields=[]
-            fields.append(('DESC', 'Bypass Expiration Date/Time String'))
-            fields.append(('DTYP', 'asynOctetRead'))
-            fields.append(('SCAN', '1 second'))
-            fields.append(('VAL', 'Invalid'))
-            fields.append(('PINI', 'YES'))
-            fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id * 4 +  intIndex)))
-            printRecord(file, 'stringin', '{0}:{1}_BYP_END'.format(name, fa.name), fields)
-
-            # Add a IGNORED PV only if device appears in an ignoreCondition
-            ignore_condition = session.query(models.IgnoreCondition).\
-                filter(models.IgnoreCondition.analog_device_id==analogDevice.id).all()
-            if len(ignore_condition) > 0:
-              asynMask = '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)
-#              print '{0} {1}'.format(name, len(ignore_condition))
-              ignored_pv_fs = False
-              for i in ignore_condition:
-                # if there is an ignore condition where there is an analogDevice AND a faultState, then
-                # the asynMask for the record is different, it must return the ignored state for the faultState,
-                # not from the analogDevice. The ignored state for the faultState is stored in the
-                # analogDevice.ignoredIntegrator array (see central_node_engine.cc file)
-                if i.fault_state_id != None:
-                  faultState = session.query(models.FaultState).filter(models.FaultState.id==i.fault_state_id).one()
-                  deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
-                  if deviceState.get_integrator() == intIndex:
-                    asynMask = '@asynMask(CENTRAL_NODE {0} 1 {1})MPS_ANALOG_DEVICE_IGNORED_INTEGRATOR'.format(analogDevice.id, intIndex)
-                    ignored_pv_fs = True # Make sure the PV is added for this specific case
-
-              if (not ignored_pv_added or ignored_pv_fs):
-                fields=[]
-                fields.append(('DESC', 'Ignored status'))
-                fields.append(('DTYP', 'asynUInt32Digital'))
-                fields.append(('SCAN', '1 second'))
-                fields.append(('ZNAM', 'Not Ignored'))
-                fields.append(('ONAM', 'Ignored'))
-                fields.append(('ZSV', 'NO_ALARM'))
-                fields.append(('OSV', 'MAJOR'))
-                fields.append(('INP', asynMask))
-                if (ignored_pv_fs):
-                  printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
-                else:
-                  printRecord(file, 'bi', '{0}:MPSC_IGN'.format(name, fa.name), fields)
-                ignored_pv_added = True
-            
-            # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
-            sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv, percentage, restoreBypassFile))
-
-            bypassPvs=True
-          #=== End Bypass records ====
-        #=== End States 
       #=== End Faults
     #=== End Fault Inputs
+
+    ignored_pv_added = printAnalogBypass(file, af, sf, analogDevice, fault_list, percentage, restoreBypassFile, ignored_pv_added)
+
     percentage = percentage + percentageIncrease
     sf.write('echo {0}\n'.format(percentage))
+
+    #=== Move the bypasses here, there is one bypass per fault in the fault_list  ===
 
   sf.write('  echo $bypassCount > /tmp/mps-analog-bypass-count.txt\n')
   sf.write(') |\n')
@@ -596,6 +451,7 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
       '  chmod a+x "{0}"\n'.format(restoreBypassFile) + \
       'fi\n' + \
       'echo \'Done.\'\n'
+  
   sf.write(footer)
   
   file.close()
@@ -605,53 +461,211 @@ def exportAnalogDevices(file, analogDevices, session, restoreLocation, prodLocat
 
   file.close()
 
-'''
-# Bypass per threshold is not possible in HW - these PVs are not needed!
-          #=== Begin Bypass records ====
-          # Bypass Value: used while bypass is active
-          fields=[]
-          fields.append(('DESC', 'Bypass for {0}'.format(analogDevice.channel.name)))
-          fields.append(('DTYP', 'asynUInt32Digital'))
-          fields.append(('VAL', '0'))
-          fields.append(('PINI', 'YES'))
-          fields.append(('ZNAM', 'IS_OK'))
-          fields.append(('ONAM', 'IS_EXCEEDED'))
-          fields.append(('ZSV', 'NO_ALARM'))
-          fields.append(('OSV', 'MAJOR'))
-          fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} 0 {1})MPS_ANALOG_DEVICE_BYPV'.format(analogDevice.id, bitIndex)))
-          printRecord(file, 'bo', '{0}:{1}_BYPV'.format(name, state.device_state.name), fields)
+def getIntegratorIndex(fault):
+  faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fault.id).all()
+  for state in faultStates:
+#    print state.device_state.name
+    bitIndex=0
+    bitFound=False
+    while not bitFound:
+      b=(state.device_state.mask>>bitIndex) & 1
+      if b==1:
+        bitFound=True
+      else:
+        bitIndex=bitIndex+1
+        if bitIndex==32:
+          done=True
+          bitIndex=-1
+      if bitIndex==-1:
+        print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
+        exit(-1)
 
-          # Bypass Status: shows if bypass is currently active or not
-          fields=[]
-          fields.append(('DESC', 'Bypass Status'))
-          fields.append(('SCAN', '1 second'))
-          fields.append(('DTYP', 'asynInt32'))    
-          fields.append(('ZNAM', 'Not Bypassed'))
-          fields.append(('ONAM', 'Bypassed'))
-          fields.append(('ZSV', 'NO_ALARM'))
-          fields.append(('OSV', 'MAJOR'))
-          fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPS'.format(analogDevice.id, bitIndex)))
-          printRecord(file, 'bi', '{0}:{1}_BYPS'.format(name, state.device_state.name), fields)
+      # Convert bitIndex to integrator index
+      # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> TMIT
+      # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
+      intIndex=0
+      if (bitIndex >= 8 and bitIndex <= 15):
+        intIndex = 1
+      elif (bitIndex >= 16 and bitIndex <= 23):
+        intIndex = 2
+      elif (bitIndex >= 24 and bitIndex <= 31):
+        intIndex = 3
 
-          # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
-          fields=[]
-          fields.append(('DESC', 'Bypass Expiration Date/Time'))
-          fields.append(('DTYP', 'asynInt32'))
-          fields.append(('VAL', '0'))
-          fields.append(('PINI', 'YES'))
-          fields.append(('OUT', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPEXPDATE'.format(analogDevice.id, bitIndex)))
-          printRecord(file, 'longout', '{0}:{1}_BYPD'.format(name, state.device_state.name), fields)
+    return intIndex
+  
+def printAnalogRecords(session, file, name, af, sf, fi, fa, analogDevice, fault_list, percentage, restoreBypassFile):
+#  print '  Fault: {0} (fault_input id={1})'.format(fa.name, fi.id)
+  faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
+  for state in faultStates:
+#    print '  FaultState: ' + state.device_state.name
+    bitIndex=0
+    bitFound=False
+    while not bitFound:
+      b=(state.device_state.mask>>bitIndex) & 1
+      if b==1:
+        bitFound=True
+      else:
+        bitIndex=bitIndex+1
+        if bitIndex==32:
+          done=True
+          bitIndex=-1
+    if bitIndex==-1:
+      print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
+      exit(-1)
 
-          fields=[]
-          fields.append(('DESC', 'Bypass Expiration Date/Time String'))
-          fields.append(('DTYP', 'asynOctetRead'))
-          fields.append(('SCAN', '1 second'))
-          fields.append(('VAL', 'Invalid'))
-          fields.append(('PINI', 'YES'))
-          fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id)))
-          printRecord(file, 'stringin', '{0}:{1}_BYP_END'.format(name, state.device_state.name), fields)
-          #=== End Bypass records ====
-'''
+    # Convert bitIndex to integrator index
+    # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> TMIT
+    # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
+    intIndex=0
+    if (bitIndex >= 8 and bitIndex <= 15):
+      intIndex = 1
+    elif (bitIndex >= 16 and bitIndex <= 23):
+      intIndex = 2
+    elif (bitIndex >= 24 and bitIndex <= 31):
+      intIndex = 3
+
+#          print '    ' + name + ":" + state.device_state.name + ", mask: " + str(bitIndex) + ", fault name: " + fa.name + ", intIndex: " + str(intIndex)
+    fields=[]
+    fields.append(('DESC', 'Crate[{0}], Card[{1}], Channel[{2}]'.
+                   format(analogDevice.channel.card.crate.id,
+                          analogDevice.channel.card.number,
+                          analogDevice.channel.number)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'IS_OK'))
+    fields.append(('ONAM', 'IS_EXCEEDED'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE'.\
+                     format(analogDevice.id, state.device_state.mask)))
+    recName = '{0}:{1}_MPSC'.format(name, state.device_state.name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 1, 'monitor')
+
+    #=== Begin Latch records ====
+    # Record for latched value
+    fields=[]
+    fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Latched Value'.
+                   format(analogDevice.channel.card.crate.id,
+                          analogDevice.channel.card.number,
+                          analogDevice.channel.number)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('ZNAM', 'IS_OK'))
+    fields.append(('ONAM', 'IS_EXCEEDED'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE_LATCHED'.\
+                     format(analogDevice.id, state.device_state.mask)))
+    printRecord(file, 'bi', '{0}:{1}_MPS'.format(name, state.device_state.name), fields)
+
+    # Record to process unlatch value
+    fields=[]
+    fields.append(('DESC', 'CR[{0}], CA[{1}], CH[{2}] Unlatch'.
+                   format(analogDevice.channel.card.crate.id,
+                          analogDevice.channel.card.number,
+                          analogDevice.channel.number)))
+    fields.append(('DTYP', 'asynUInt32Digital'))
+    fields.append(('OUT', '@asynMask(CENTRAL_NODE {0} {1} 0)MPS_ANALOG_DEVICE_UNLATCH'.\
+                     format(analogDevice.id, state.device_state.mask)))
+    printRecord(file, 'bo', '{0}:{1}_UNLH'.format(name, state.device_state.name), fields)
+    #=== End Latch records ====
+  #=== End States 
+
+def printAnalogBypass(file, af, sf, analogDevice, fault_list, percentage, restoreBypassFile, ignored_pv_added):
+  intIndex = 0
+  for k, v in fault_list.items():
+    fa = v['fault']
+    name = v['name']
+    intIndex = getIntegratorIndex(fa)
+
+    # Bypass Status: shows if bypass is currently active or not
+    fields=[]
+    fields.append(('DESC', 'Bypass Status'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('DTYP', 'asynInt32'))    
+    fields.append(('ZNAM', 'Not Bypassed'))
+    fields.append(('ONAM', 'Bypassed'))
+    fields.append(('ZSV', 'NO_ALARM'))
+    fields.append(('OSV', 'MAJOR'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPS'.\
+                     format(analogDevice.id, intIndex)))
+    recName = '{0}:{1}_BYPS'.format(name, fa.name)
+    printRecord(file, 'bi', recName, fields)
+    printArchive(af, recName, 60, 'monitor')
+  
+    # Bypass Expiration Date: date/time in seconds since Unix epoch for bypass expiration
+    fields=[]
+    fields.append(('DESC', 'Bypass duration in seconds'))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
+    fields.append(('OUT', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_BYPEXPDATE'.\
+                     format(analogDevice.id, intIndex)))
+    bypassTimePv = '{0}:{1}_BYPD'.format(name, fa.name)
+    printRecord(file, 'longout', bypassTimePv, fields)
+  
+    fields=[]
+    fields.append(('DESC', 'Remaining bypass duration is seconds'))
+    fields.append(('DTYP', 'asynInt32'))
+    fields.append(('EGU', 'Seconds'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('VAL', '0'))
+    fields.append(('PINI', 'YES'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} {1})MPS_ANALOG_DEVICE_REMAINING_BYPTIME'.\
+                     format(analogDevice.id, intIndex)))
+    remainingTimePv = '{0}:{1}_BYPT'.format(name, fa.name)
+    printRecord(file, 'longin', remainingTimePv, fields)
+    printArchive(af, remainingTimePv, 60, 'monitor')
+    
+    fields=[]
+    fields.append(('DESC', 'Bypass Expiration Date/Time String'))
+    fields.append(('DTYP', 'asynOctetRead'))
+    fields.append(('SCAN', '1 second'))
+    fields.append(('VAL', 'Invalid'))
+    fields.append(('PINI', 'YES'))
+    fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id * 4 +  intIndex)))
+    printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
+
+    # Add a IGNORED PV only if device appears in an ignoreCondition
+    ignore_condition = session.query(models.IgnoreCondition).\
+        filter(models.IgnoreCondition.analog_device_id==analogDevice.id).all()
+    if len(ignore_condition) > 0:
+      asynMask = '@asynMask(CENTRAL_NODE {0} 1 0)MPS_ANALOG_DEVICE_IGNORED'.format(analogDevice.id)
+#    print '{0} {1}'.format(name, len(ignore_condition))
+      ignored_pv_fs = False
+      for i in ignore_condition:
+        # if there is an ignore condition where there is an analogDevice AND a faultState, then
+        # the asynMask for the record is different, it must return the ignored state for the faultState,
+        # not from the analogDevice. The ignored state for the faultState is stored in the
+        # analogDevice.ignoredIntegrator array (see central_node_engine.cc file)
+        if i.fault_state_id != None:
+          faultState = session.query(models.FaultState).filter(models.FaultState.id==i.fault_state_id).one()
+          deviceState = session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
+          if deviceState.get_integrator() == intIndex:
+            asynMask = '@asynMask(CENTRAL_NODE {0} 1 {1})MPS_ANALOG_DEVICE_IGNORED_INTEGRATOR'.format(analogDevice.id, intIndex)
+            ignored_pv_fs = True # Make sure the PV is added for this specific case
+
+      if (not ignored_pv_added or ignored_pv_fs):
+        fields=[]
+        fields.append(('DESC', 'Ignored status'))
+        fields.append(('DTYP', 'asynUInt32Digital'))
+        fields.append(('SCAN', '1 second'))
+        fields.append(('ZNAM', 'Not Ignored'))
+        fields.append(('ONAM', 'Ignored'))
+        fields.append(('ZSV', 'NO_ALARM'))
+        fields.append(('OSV', 'MAJOR'))
+        fields.append(('INP', asynMask))
+        if (ignored_pv_fs):
+          printRecord(file, 'bi', '{0}:{1}_IGN'.format(name, fa.name), fields)
+        else:
+          printRecord(file, 'bi', '{0}:MPSC_IGN'.format(name, fa.name), fields)
+        ignored_pv_added = True
+  
+    # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
+    sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv, percentage, restoreBypassFile))
+
+    return ignored_pv_added
 
 def exportBeamDestinations(file, beamDestinations, beamClasses, session, archiveLocation):
   mpsName = MpsName(session)

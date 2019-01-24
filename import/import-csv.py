@@ -282,13 +282,13 @@ class DatabaseImporter:
       return [device_type,type_info['evaluation'],None]
 
   def getFault(self, faults, device_state):
-    print ' Looking for "{0}"'.format(device_state)
+#    print ' Looking for "{0}"'.format(device_state)
     # Find the proper fault for the mitigation 
     device_fault=None
     found=False
 
     for x in faults:
-      print ' ' + str(faults[x]['states'])
+#      print ' ' + str(faults[x]['states'])
       found=True
       try: 
         faults[x]['states'].index(device_state)
@@ -330,7 +330,7 @@ class DatabaseImporter:
           if (state_info['fault'] != '-'):
             fault_name = state_info['fault']
             fault_desc = state_info['fault_description']
-    #        print '{0}: {1}'.format(fault_name,fault_desc)
+#            print '{0}: {1}'.format(fault_name,fault_desc)
             if (not fault_name in faults):
               fault = models.Fault(name=fault_name, description=fault_desc)
               self.session.add(fault)
@@ -346,7 +346,7 @@ class DatabaseImporter:
         self.session.add(device_state)
 
     #    print device_states
-    print faults
+
     self.session.commit()
     f.close()
 
@@ -623,7 +623,7 @@ class DatabaseImporter:
           print 'Analog Channel: ' + device_info['device']
 
         self.session.add(device)
-#        self.session.commit()
+        self.session.commit()
 
         # If device should be ignored, add conditions
         if (add_ignore):
@@ -631,9 +631,10 @@ class DatabaseImporter:
 
         # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
         if device_info['fault'] != 'all':
+#          print device_info
           device_fault = self.getFault(faults, device_info['fault'])
           if (device_fault == None):
-            print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['name'])
+            print 'ERROR: Failed to find Fault for analog device "{0}"'.format(device_info['device'])
             exit(-1)
 #          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
 #          self.session.add(device_fault)
@@ -663,7 +664,7 @@ class DatabaseImporter:
           for k in mitigation[mit_location]:
             device_fault = self.getFault(faults, k)
             if (device_fault == None):
-              print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['name'])
+              print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['device'])
               exit(-1)
 #            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
 #                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
@@ -679,20 +680,30 @@ class DatabaseImporter:
               if device_info['mitigation'] == key:
                 for m in mitigation[device_info['mitigation']]:
                   if m == mitigation[mit_location][k]['state_name']:
-#                    print m
-                    fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
-                    self.session.add(fault_state)
+                    # Only add FaultStates if there haven't been added before
+                    existing_fault_states = self.session.query(models.FaultState).\
+                        filter(models.FaultState.fault_id==device_fault.id).all()
 
-                    # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
-                    for d in self.beam_destinations:
-                      power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
-                      if (power_class_str != '-'):
-                        beam_class = self.session.query(models.BeamClass).\
-                            filter(models.BeamClass.id==int(power_class_str)).one()
+                    add_fault_state = True
+                    for fs in existing_fault_states:
+                      if fs.device_state_id == device_states[m].id:
+                        add_fault_state = False
 
-                        beam_destination = self.session.query(models.BeamDestination).\
-                            filter(models.BeamDestination.name==d).one()
-                        fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+                    if (add_fault_state):
+                      fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
+                      self.session.add(fault_state)
+#                      print 'Adding fault states for {0}'.format(device_fault.name)
+                      
+                      # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
+                      for d in self.beam_destinations:
+                        power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
+                        if (power_class_str != '-'):
+                          beam_class = self.session.query(models.BeamClass).\
+                              filter(models.BeamClass.id==int(power_class_str)).one()
+
+                          beam_destination = self.session.query(models.BeamDestination).\
+                              filter(models.BeamDestination.name==d).one()
+                          fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
 
 
     f.close()
@@ -1018,25 +1029,25 @@ importer.add_beam_classes('import/BeamClasses.csv')
 # Wire scanner not yet defined
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 
-importer.add_analog_device('import/PBLM', card_name="Generic ADC")
-importer.add_digital_device('import/PROF')
-importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_analog_device('import/BEND', card_name="Generic ADC")  
 
 if (True):
+  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
+  importer.add_analog_device('import/TORO', card_name="Analog Card")
+  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
+  importer.add_digital_device('import/PROF')
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/TEMP')
   importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/WIRE_PARK')
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
-  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
   importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
-  importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
 
