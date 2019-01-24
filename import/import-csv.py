@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-from mps_config import MPSConfig, models
+from mps_config import MPSConfig, models, runtime
 from sqlalchemy import MetaData
+from mps_names import MpsName
 import argparse
+import time
 import yaml
 import os
 
@@ -12,9 +14,9 @@ class DatabaseImporter:
   verbose = False
   database_file_name = None
 
-  def __init__(self, file_name, verbose, clear_all=True):
+  def __init__(self, file_name, runtime_file_name, verbose, clear_all=True):
     self.database_file_name = file_name
-    self.conf = MPSConfig(file_name)
+    self.conf = MPSConfig(file_name, runtime_file_name)
     if (clear_all):
       self.conf.clear_all()
     self.session = self.conf.session
@@ -22,17 +24,23 @@ class DatabaseImporter:
 #    self.session.autoflush=True
     self.verbose = verbose
 
+    self.rt_session = self.conf.runtime_session
+
   def __del__(self):
     self.session.commit()
  
   def reopen(self):
     self.session.commit()
     self.session = None
+    self.rt_session.commit()
+    self.rt_session = None
     self.conf = None
     self.conf = MPSConfig(self.database_file_name)
     self.session = self.conf.session
     self.session.autoflush=False    
-   
+    self.rt_session = self.conf.runtime_session
+    self.rt_session.autoflush=False    
+
   def add_crates(self, file_name):
     if self.verbose:
       print "Adding crates... {0}".format(file_name)
@@ -273,13 +281,33 @@ class DatabaseImporter:
     else:
       return [device_type,type_info['evaluation'],None]
 
-  def add_device_states(self, file_name, device_type):
+  def getFault(self, faults, device_state):
+    print ' Looking for "{0}"'.format(device_state)
+    # Find the proper fault for the mitigation 
+    device_fault=None
+    found=False
+
+    for x in faults:
+      print ' ' + str(faults[x]['states'])
+      found=True
+      try: 
+        faults[x]['states'].index(device_state)
+      except:
+        found=False
+
+      if found:
+        device_fault = faults[x]['fault']
+
+    return device_fault
+
+  def add_device_states(self, file_name, device_type, add_faults=True):
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
     for field in line.split(','):
       fields.append(str(field).lower())
 
+    faults={}
     device_states={}
     while line:
       state_info={}
@@ -298,12 +326,31 @@ class DatabaseImporter:
                                           mask=int(state_info['mask']))
         device_states[state_info['name']]=device_state#state_info
 
+        if (add_faults):
+          if (state_info['fault'] != '-'):
+            fault_name = state_info['fault']
+            fault_desc = state_info['fault_description']
+    #        print '{0}: {1}'.format(fault_name,fault_desc)
+            if (not fault_name in faults):
+              fault = models.Fault(name=fault_name, description=fault_desc)
+              self.session.add(fault)
+              faults[fault_name]={}
+              faults[fault_name]['name']=fault_name
+              faults[fault_name]['desc']=fault_desc
+              faults[fault_name]['states']=[]
+              faults[fault_name]['states'].append(state_info['name'])
+              faults[fault_name]['fault']=fault
+            else:
+              faults[fault_name]['states'].append(state_info['name'])
+
         self.session.add(device_state)
 
-#    print device_states
-#    self.session.commit()
+    #    print device_states
+    print faults
+    self.session.commit()
     f.close()
-    return device_states
+
+    return faults, device_states
 
   #
   # Returns a dictionary with the mitigation rules for a device type,
@@ -492,7 +539,7 @@ class DatabaseImporter:
       return
 
     file_name = directory + '/DeviceStates.csv'
-    device_states = self.add_device_states(file_name, device_type)
+    [faults, device_states] = self.add_device_states(file_name, device_type)
 
     # Read AnalogChannels, each device has one channel
     file_name = directory + '/AnalogChannels.csv'
@@ -584,8 +631,12 @@ class DatabaseImporter:
 
         # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
         if device_info['fault'] != 'all':
-          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
-          self.session.add(device_fault)
+          device_fault = self.getFault(faults, device_info['fault'])
+          if (device_fault == None):
+            print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['name'])
+            exit(-1)
+#          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
+#          self.session.add(device_fault)
 
           device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
           self.session.add(device_fault_input)
@@ -607,18 +658,22 @@ class DatabaseImporter:
                     beam_destination = self.session.query(models.BeamDestination).\
                         filter(models.BeamDestination.name==d).one()
                     fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
-        else:
-#          print "MIT: "
-#          print mitigation[device_info['mitigation']]
+        else: # if fault=='all'
           mit_location = device_info['mitigation']
           for k in mitigation[mit_location]:
-            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
-                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
+            device_fault = self.getFault(faults, k)
+            if (device_fault == None):
+              print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['name'])
+              exit(-1)
+#            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
+#                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
+            if (self.verbose):
+              print '  Fault: {0} ({1}, {2})'.format(device_fault.name, mit_location, k)
+              print '         device_state={0} value={1}'.format(device_states[k].name, device_states[k].value)
             self.session.add(device_fault)
 
             device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
             self.session.add(device_fault_input)
-
 
             for key in mitigation:
               if device_info['mitigation'] == key:
@@ -659,7 +714,7 @@ class DatabaseImporter:
 
     # Add DeviceStates
     file_name = directory + '/DeviceStates.csv'
-    device_states = self.add_device_states(file_name, device_type)
+    [faults, device_states] = self.add_device_states(file_name, device_type, False)
 
     # Add DigitalChannels, first read the channels for one device
 
@@ -820,7 +875,7 @@ class DatabaseImporter:
                                                 digital_device = device,
                                                 fault_value = int(channel[key]['alarm_state']))
               self.session.add(device_input)
-
+          # end for key
 
           # For each device - create a Fault, FaultInputs, FaultStates and the AllowedClasses
           device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
@@ -871,10 +926,75 @@ class DatabaseImporter:
     self.session.flush()
     f.close()
 
-  def check(self):
-    card = self.session.query(models.ApplicationCard).\
-        filter(models.ApplicationCard.id==1).one()
-#    print len(card.digital_channels)
+  def add_analog_bypass(self, device):
+    bypass = runtime.Bypass(device=device, startdate=int(time.time()), duration=0)
+    self.rt_session.add(bypass)
+
+  def add_device_input_bypass(self, device_input):
+    bypass = runtime.Bypass(device_input=device_input, startdate=int(time.time()), duration=0)
+    self.rt_session.add(bypass)
+
+  def add_runtime_thresholds(self, device):
+    t0 = runtime.Threshold0(device=device, device_id=device.id)
+    self.rt_session.add(t0)
+    t1 = runtime.Threshold1(device=device, device_id=device.id)
+    self.rt_session.add(t1)
+    t2 = runtime.Threshold2(device=device, device_id=device.id)
+    self.rt_session.add(t2)
+    t3 = runtime.Threshold3(device=device, device_id=device.id)
+    self.rt_session.add(t3)
+    t4 = runtime.Threshold4(device=device, device_id=device.id)
+    self.rt_session.add(t4)
+    t5 = runtime.Threshold5(device=device, device_id=device.id)
+    self.rt_session.add(t5)
+    t6 = runtime.Threshold6(device=device, device_id=device.id)
+    self.rt_session.add(t6)
+    t7 = runtime.Threshold7(device=device, device_id=device.id)
+    self.rt_session.add(t7)
+
+    t0 = runtime.ThresholdAlt0(device=device, device_id=device.id)
+    self.rt_session.add(t0)
+    t1 = runtime.ThresholdAlt1(device=device, device_id=device.id)
+    self.rt_session.add(t1)
+    t2 = runtime.ThresholdAlt2(device=device, device_id=device.id)
+    self.rt_session.add(t2)
+    t3 = runtime.ThresholdAlt3(device=device, device_id=device.id)
+    self.rt_session.add(t3)
+    t4 = runtime.ThresholdAlt4(device=device, device_id=device.id)
+    self.rt_session.add(t4)
+    t5 = runtime.ThresholdAlt5(device=device, device_id=device.id)
+    self.rt_session.add(t5)
+    t6 = runtime.ThresholdAlt6(device=device, device_id=device.id)
+    self.rt_session.add(t6)
+    t7 = runtime.ThresholdAlt7(device=device, device_id=device.id)
+    self.rt_session.add(t7)
+
+    t = runtime.ThresholdLc1(device=device, device_id=device.id)
+    self.rt_session.add(t)
+
+    t = runtime.ThresholdIdl(device=device, device_id=device.id)
+    self.rt_session.add(t)
+
+  def create_runtime_database(self):
+    mpsName = MpsName(self.session)
+    print 'Creating thresholds/bypass database'
+    devices = self.session.query(models.Device).all()
+    for d in devices:
+      rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
+      self.rt_session.add(rt_d)
+      # Add thresholds - if device is analog
+      analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==d.id).all()
+      if (len(analog_devices)==1):
+        self.add_runtime_thresholds(rt_d)
+        self.add_analog_bypass(rt_d)
+
+    device_inputs = self.session.query(models.DeviceInput).all()
+    for di in device_inputs:
+      di_pv = mpsName.getDeviceInputNameFromId(di.id)
+      rt_di = runtime.DeviceInput(mpsdb_id = di.id, device_id = di.digital_device.id, pv_name = di_pv)
+      self.rt_session.add(rt_di)
+      self.add_device_input_bypass(rt_di)
+    self.rt_session.commit()
 
 ### MAIN
 
@@ -886,7 +1006,7 @@ verbose=False
 if args.verbose:
   verbose=True
 
-importer = DatabaseImporter("mps_config_imported.db", verbose)
+importer = DatabaseImporter("mps_config_imported.db", "mps_config_imported_runtime.db", verbose)
 
 importer.add_crates('import/Crates.csv')
 importer.add_app_types('import/AppTypes.csv')
@@ -898,17 +1018,18 @@ importer.add_beam_classes('import/BeamClasses.csv')
 # Wire scanner not yet defined
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 
+importer.add_analog_device('import/PBLM', card_name="Generic ADC")
 importer.add_digital_device('import/PROF')
-  
-if (False):
+importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+importer.add_analog_device('import/BEND', card_name="Generic ADC")  
+
+if (True):
   importer.add_digital_device('import/LLRF', card_name="LLRF")
-  importer.add_analog_device('import/BEND', card_name="Generic ADC")
   importer.add_digital_device('import/TEMP')
   importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/WIRE_PARK')
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
-  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
@@ -919,11 +1040,8 @@ if (False):
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
 
-if (True):
-  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
 
-
-importer.check()
+importer.create_runtime_database()
 
 print 'Done.'
 
