@@ -24,7 +24,7 @@ def create_dir(path, clean=False, debug=False):
 
     if clean and dir_exist:
         if debug:
-            print("Directory '{}' existis. Removing it...".format(dir_name))
+            print("Directory '{}' exists. Removing it...".format(dir_name))
 
         shutil.rmtree(dir_name, ignore_errors=True)
         dir_exist = False
@@ -514,6 +514,7 @@ class MpsAppReader:
         the card number will be:
         - 1 for analog cards (type id: 2)
         - 2 for digital cards (type id: 1)
+        - 3 for virtual cards (type id: 6)
 
         For other applications, the card number will be
         the slot number + 1.
@@ -523,6 +524,8 @@ class MpsAppReader:
                 return 2
             elif type_id == 2:
                 return 1
+            elif type_id == 6:
+                return 3
             else:
                 raise ValueError("Function \"get_card_id(slot_number={}, type_id={})\". Invalid type_id for a Link Node"
                     .format(slot_number, type_id))
@@ -533,12 +536,12 @@ class MpsAppReader:
         """
         Get the app type name used in the EPICS DB.
         The name is application specific as follows:
-          * SOLN       => BLM
+          * SOLN, BEND, PBLM, BLM => BLM
           * BPMS       => BPM
           * TORO, FARC => BCM
         """
 
-        if device_type_name == "SOLN":
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM"]:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -555,14 +558,14 @@ class MpsAppReader:
         """
         Get the application enginering units used in the EPICS DB.
         The unit is application and fault specific as follows:
-          * SOLN       => uA
+          * SOLN, BEND, PBLM, BLM => uA
           * BPMS
             - X, Y     => mm
             - TMIT     => Nel
           * TORO, FARC => Nel
         """
 
-        if device_type_name == "SOLN":
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM"]:
             # Solenoid devices use 'uA'.
             return "uA"
         elif device_type_name == "BPMS":
@@ -588,12 +591,12 @@ class MpsAppReader:
         """
         Get the 'fault_index' used in the EPICS DB.
         The fault index is appication specific as follows:
-          * SOLN    => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
+          * SOLN, BEND, PBLM, BLM => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
           * BPM     => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name == "SOLN":
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM"]:
             # For SOLN devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = int(fault_name[-1])
@@ -623,9 +626,9 @@ class MpsAppReader:
         if number_channles == 1:
             return digital_channel[0]
         elif number_channles == 0:
-            raiseVlaueError("Function \"__get_digital_channel(channel_id={}\"). Not channel was found".format(channel_id))
+            raise ValueError("Function \"__get_digital_channel(channel_id={}\"). Not channel was found".format(channel_id))
         else:
-            raiseVlaueError("Function \"__get_digital_channel(channel_id={}\"). More than one channel matched.".format(channel_id))
+            raise ValueError("Function \"__get_digital_channel(channel_id={}\"). More than one channel matched.".format(channel_id))
 
     def __get_bay_ch_number(self, mps_db_session, channel_id, type_id):
         """
