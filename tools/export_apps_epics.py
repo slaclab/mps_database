@@ -223,29 +223,33 @@ class MpsAppReader:
                         device_data["position"] = device.position
                         device_data["faults"] = {}
 
-
                         # Iterate over all the faults in this device
                         for fault_input in fault_inputs:
+                            faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
+                            if (len(faults) != 1):
+                                print 'ERROR: Fault not defined'
+                                exit(-1)
+                            fault_states = mps_db_session.query(models.FaultState).\
+                                filter(models.FaultState.fault_id==faults[0].id).all()
+
                             # Get the fault ID
                             fault_id = fault_input.fault_id
 
-                            # Check if this fault ID is already in the dictionary. If it is, then just append the
-                            # bit position to the list. Otherwise, create a new entry in the dictionary.
-                            if fault_id in device_data["faults"]:
-                                device_data["faults"][fault_id]["bit_positions"].append(fault_input.bit_position)
-                            else:
+                            # Get this fault data
+                            if (not fault_id in device_data["faults"]):
                                 # Get the fault corresponding to this fault input.
                                 fault = self.__get_fault(mps_db_session, fault_id)
 
-                                # Get this fault data
                                 fault_data = {}
                                 fault_data["id"] = fault_id
                                 fault_data["name"] = fault.name
                                 fault_data["description"] = fault.description[:39]
-                                fault_data["bit_positions"] = [ fault_input.bit_position ]
-
-                                # Add this fault to the list of faults of the current device
-                                device_data["faults"][fault_id] = fault_data
+                                fault_data["bit_positions"] = []
+                                for fs in fault_states:
+                                    fault_data["bit_positions"].append(fs.device_state.get_bit_position())
+ 
+                            # Add this fault to the list of faults of the current device
+                            device_data["faults"][fault_id] = fault_data
 
                         # Add this device to the list of devices of the current application
                         app_data["devices"].append(device_data)
