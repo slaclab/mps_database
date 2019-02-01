@@ -83,10 +83,11 @@ class MpsAppReader:
     defined in the MPS database, necessary to generate EPICS Databases,
     configuration files, and GUI screens.
     """
-    def __init__(self, db_file, template_path, dest_path):
+    def __init__(self, db_file, template_path, dest_path, verbose):
 
         self.template_path = template_path
         self.dest_path = dest_path
+        self.verbose = verbose
 
         # This is the list of all applications
         self.analog_apps = []
@@ -330,21 +331,22 @@ class MpsAppReader:
         Using the <cpu_name>, <crate_id>, and <slot_number> defined in each application.
 
         """
-
         print("==================================================")
         print("== Generating EPICS DB and configuration files: ==")
         print("==================================================")
-
+            
         # Generates analog application related databases and configuration files
-        print("--------------------------")
-        print("--  Analog applications --")
-        print("--------------------------")
+        if (self.verbose):
+            print("--------------------------")
+            print("--  Analog applications --")
+            print("--------------------------")
         for app in self.analog_apps:
             app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             app_prefix = 'MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])
 
-            print("Application path   : {}".format(app_path))
-            print("Application prefix : {}".format(app_prefix))
+            if (self.verbose):
+                print("Application path   : {}".format(app_path))
+                print("Application prefix : {}".format(app_prefix))
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
@@ -358,7 +360,8 @@ class MpsAppReader:
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
 
-                print("  Device prefix : {}".format(device_prefix))
+                if (self.verbose):
+                    print("  Device prefix : {}".format(device_prefix))
 
                 for fault in device["faults"].values():
 
@@ -375,22 +378,25 @@ class MpsAppReader:
                     for bit in fault["bit_positions"]:
                         fault_prefix = "{}_T{}".format(fault["name"], bit)
 
-                        print("    Fault prefix : {}".format(fault_prefix))
+                        if (self.verbose):
+                            print("    Fault prefix : {}".format(fault_prefix))
 
                         macros["BIT_POSITION"] = str(bit)
                         self.__write_thr_db(path=app_path, macros=macros)
-        print("--------------------------")
+        if (self.verbose):
+            print("--------------------------")
 
         # Generate digital application related databases and configuration files
-        print("----------------------------")
-        print("--  Digital applications  --")
-        print("----------------------------")
+            print("----------------------------")
+            print("--  Digital applications  --")
+            print("----------------------------")
         for app in self.digital_apps:
             app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             app_prefix = 'MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])
 
-            print("Application path   : {}".format(app_path))
-            print("Application prefix : {}".format(app_prefix))
+            if (self.verbose):
+                print("Application path   : {}".format(app_path))
+                print("Application prefix : {}".format(app_prefix))
 
             # self.write_mps_db(path=app_path, macros={"P":app_prefix} )
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
@@ -398,7 +404,8 @@ class MpsAppReader:
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
 
-                print("  Device prefix : {}".format(device_prefix))
+                if (self.verbose):
+                    print("  Device prefix : {}".format(device_prefix))
 
                 for input in device["inputs"]:
 
@@ -408,12 +415,14 @@ class MpsAppReader:
                                 "ZNAM":input["zero_name"],
                                 "ONAM":input["one_name"] }
 
-                    print("    Digital Input : {}".format(input["name"]))
+                    if (self.verbose):
+                        print("    Digital Input : {}".format(input["name"]))
                     #self.write_thr_base_db(path=app_path, macros=macros)
-        print("----------------------------")
+        if (self.verbose):
+            print("----------------------------")
 
-        print("==================================================")
-        print("")
+            print("==================================================")
+            print("")
 
 
     def print_app_data(self):
@@ -423,88 +432,90 @@ class MpsAppReader:
         print("===================================")
         print("==            REULTS:            ==")
         print("===================================")
-
+        
         # Analog application results
         print("--------------------------")
         print("--  Analog applications --")
         print("--------------------------")
         print("Number of analog application processed: {}".format(len(self.analog_apps)))
-        for app in self.analog_apps:
-            print("  Application data:")
-            print("  - - - - - - - - - - - - -")
-            print('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"]))
-            print("  - App ID             : {}".format(app["app_id"]))
-            print("  - Cpu name           : {}".format(app["cpu_name"]))
-            print("  - Crate ID           : {}".format(app["crate_id"]))
-            print("  - Slot number        : {}".format(app["slot_number"]))
-            print("  - Link node area     : {}".format(app["link_node_area"]))
-            print("  - Link node location : {}".format(app["link_node_location"]))
-            print("  - Card index         : {}".format(app["card_index"]))
-            print("  - Number of devices  : {}".format(len(app["devices"])))
-            for device in app["devices"]:
-                print("    Device data:")
-                print("    .....................")
-                print("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"]))
-                print("      - Type name        : {}".format(device["type_name"]))
-                print("      - Bay number       : {}".format(device["bay_number"]))
-                print("      - Channel number   : {}".format(device["channel_number"]))
-                print("      - Area             : {}".format(device["area"]))
-                print("      - Position         : {}".format(device["position"]))
-                print("      - Number of faults : {}".format(len(device["faults"])))
-                for fault_id,fault_data in device["faults"].items():
-                    print("      Fault data:")
-                    print("      . . . . . . . . . . . . ")
-                    print("        - EPICS PREFIX: {}_T{}".format(fault_data["name"], fault_data["bit_positions"][0]))
-                    print("        - ID            : {}".format(fault_id))
-                    print("        - Name          : {}".format(fault_data["name"]))
-                    print("        - Description   : {}".format(fault_data["description"]))
-                    print("        - Bit positions : {}".format(fault_data["bit_positions"]))
-                    print("      . . . . . . . . . . . . ")
-                print("    .....................")
-            print("  - - - - - - - - - - - - -")
-            print("")
-        print("--------------------------")
+        if (self.verbose):
+            for app in self.analog_apps:
+                print("  Application data:")
+                print("  - - - - - - - - - - - - -")
+                print('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"]))
+                print("  - App ID             : {}".format(app["app_id"]))
+                print("  - Cpu name           : {}".format(app["cpu_name"]))
+                print("  - Crate ID           : {}".format(app["crate_id"]))
+                print("  - Slot number        : {}".format(app["slot_number"]))
+                print("  - Link node area     : {}".format(app["link_node_area"]))
+                print("  - Link node location : {}".format(app["link_node_location"]))
+                print("  - Card index         : {}".format(app["card_index"]))
+                print("  - Number of devices  : {}".format(len(app["devices"])))
+                for device in app["devices"]:
+                    print("    Device data:")
+                    print("    .....................")
+                    print("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"]))
+                    print("      - Type name        : {}".format(device["type_name"]))
+                    print("      - Bay number       : {}".format(device["bay_number"]))
+                    print("      - Channel number   : {}".format(device["channel_number"]))
+                    print("      - Area             : {}".format(device["area"]))
+                    print("      - Position         : {}".format(device["position"]))
+                    print("      - Number of faults : {}".format(len(device["faults"])))
+                    for fault_id,fault_data in device["faults"].items():
+                        print("      Fault data:")
+                        print("      . . . . . . . . . . . . ")
+                        print("        - EPICS PREFIX: {}_T{}".format(fault_data["name"], fault_data["bit_positions"][0]))
+                        print("        - ID            : {}".format(fault_id))
+                        print("        - Name          : {}".format(fault_data["name"]))
+                        print("        - Description   : {}".format(fault_data["description"]))
+                        print("        - Bit positions : {}".format(fault_data["bit_positions"]))
+                        print("      . . . . . . . . . . . . ")
+                    print("    .....................")
+                print("  - - - - - - - - - - - - -")
+                print("")
+            print("--------------------------")
 
         # Digital application result
         print("----------------------------")
         print("--  Digital applications  --")
         print("----------------------------")
         print("Number of digital application processed: {}".format(len(self.digital_apps)))
-        for app in self.digital_apps:
-            print("  Application data:")
-            print("  - - - - - - - - - - - - -")
-            print('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"]))
-            print("  - App ID             : {}".format(app["app_id"]))
-            print("  - Cpu name           : {}".format(app["cpu_name"]))
-            print("  - Crate ID           : {}".format(app["crate_id"]))
-            print("  - Slot number        : {}".format(app["slot_number"]))
-            print("  - Link node area     : {}".format(app["link_node_area"]))
-            print("  - Link node location : {}".format(app["link_node_location"]))
-            print("  - Card index         : {}".format(app["card_index"]))
-            print("  - Number of devices  : {}".format(len(app["devices"])))
-            for device in app["devices"]:
-                print("    Device data:")
-                print("    .....................")
-                print("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"]))
-                print("      - Type name        : {}".format(device["type_name"]))
-                print("      - Area             : {}".format(device["area"]))
-                print("      - Position         : {}".format(device["position"]))
-                print("      - Number of inputs : {}".format(len(device["inputs"])))
-                for input in device["inputs"]:
-                    print("      Input data:")
-                    print("      . . . . . . . . . . . . ")
-                    print("        - EPICS PREFIX: {}".format(input["name"]))
-                    print("        - Name         : {}".format(input["name"]))
-                    print("        - Bit position : {}".format(input["bit_position"]))
-                    print("        - Zero name    : {}".format(input["zero_name"]))
-                    print("        - One name     : {}".format(input["one_name"]))
-                    print("        - Alarm state  : {}".format(input["alarm_state"]))
-                    print("        - Debounce     : {}".format(input["debounce"]))
-                    print("      . . . . . . . . . . . . ")
-                print("    .....................")
-            print("  - - - - - - - - - - - - -")
-            print("")
-        print("----------------------------")
+        if (self.verbose):
+            for app in self.digital_apps:
+                print("  Application data:")
+                print("  - - - - - - - - - - - - -")
+                print('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"]))
+                print("  - App ID             : {}".format(app["app_id"]))
+                print("  - Cpu name           : {}".format(app["cpu_name"]))
+                print("  - Crate ID           : {}".format(app["crate_id"]))
+                print("  - Slot number        : {}".format(app["slot_number"]))
+                print("  - Link node area     : {}".format(app["link_node_area"]))
+                print("  - Link node location : {}".format(app["link_node_location"]))
+                print("  - Card index         : {}".format(app["card_index"]))
+                print("  - Number of devices  : {}".format(len(app["devices"])))
+                for device in app["devices"]:
+                    print("    Device data:")
+                    print("    .....................")
+                    print("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"]))
+                    print("      - Type name        : {}".format(device["type_name"]))
+                    print("      - Area             : {}".format(device["area"]))
+                    print("      - Position         : {}".format(device["position"]))
+                    print("      - Number of inputs : {}".format(len(device["inputs"])))
+                    for input in device["inputs"]:
+                        print("      Input data:")
+                        print("      . . . . . . . . . . . . ")
+                        print("        - EPICS PREFIX: {}".format(input["name"]))
+                        print("        - Name         : {}".format(input["name"]))
+                        print("        - Bit position : {}".format(input["bit_position"]))
+                        print("        - Zero name    : {}".format(input["zero_name"]))
+                        print("        - One name     : {}".format(input["one_name"]))
+                        print("        - Alarm state  : {}".format(input["alarm_state"]))
+                        print("        - Debounce     : {}".format(input["debounce"]))
+                        print("      . . . . . . . . . . . . ")
+                    print("    .....................")
+                print("  - - - - - - - - - - - - -")
+                print("")
+            print("----------------------------")
 
 
         print("===================================")
@@ -545,7 +556,7 @@ class MpsAppReader:
           * TORO, FARC => BCM
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "BLEN"]:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -562,14 +573,14 @@ class MpsAppReader:
         """
         Get the application enginering units used in the EPICS DB.
         The unit is application and fault specific as follows:
-          * SOLN, BEND, PBLM, BLM => uA
+          * SOLN, BEND, PBLM, BLM, BLEN => uA
           * BPMS
             - X, Y     => mm
             - TMIT     => Nel
           * TORO, FARC => Nel
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "BLEN"]:
             # Solenoid devices use 'uA'.
             return "uA"
         elif device_type_name == "BPMS":
@@ -600,7 +611,7 @@ class MpsAppReader:
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "BLEN"]:
             # For SOLN devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = int(fault_name[-1])
@@ -833,13 +844,13 @@ class MpsAppReader:
 ### Main Body ###
 #################
 
-def main(db_file, dest_path, template_path=None):
+def main(db_file, dest_path, template_path=None, verbose=False):
 
     if (template_path==None):
         template_path='templates/'
 
     # Generate the Mps application reader object
-    mps_app_reader = MpsAppReader(db_file, template_path, dest_path)
+    mps_app_reader = MpsAppReader(db_file, template_path, dest_path, verbose)
 
     # Print a report of the found applications
     mps_app_reader.print_app_data()
@@ -859,11 +870,15 @@ if __name__ == "__main__":
     #                     help='Path to EPICS DB template files')
     parser.add_argument('--template', required=False,
                         help='Path to EPICS DB template files')
+    parser.add_argument('-v', action='store_true', default=False,
+                        dest='verbose', help='Verbose output')
+
     args = parser.parse_args()
 
     db_file = args.db
     template_path = args.template
     dest_path = args.dest
+    verbose = args.verbose
 
     # Check formatting of the destination path
     dest_path = format_path(dest_path)
@@ -880,4 +895,4 @@ if __name__ == "__main__":
             print("EPICS DB template directory '{}' not found.".format(template_path))
             exit(1)
 
-    main(db_file=db_file, dest_path=dest_path, template_path=template_path)
+    main(db_file=db_file, dest_path=dest_path, template_path=template_path, verbose=verbose)
