@@ -1077,6 +1077,7 @@ importer.add_beam_classes('import/BeamClasses.csv')
 # Wire scanner not yet defined
 #importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
 
+importer.add_digital_device('import/PROF')
 importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
 importer.add_digital_device('import/TEMP')
@@ -1094,7 +1095,6 @@ if (True):
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
-  importer.add_digital_device('import/PROF')
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
   importer.add_analog_device('import/BEND', card_name="Generic ADC")  

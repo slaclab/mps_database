@@ -9,9 +9,9 @@ class Condition(Base):
   Condition class (conditions table)
 
   Describe a condition that is composed of current values of one or more 
-  faults (digital and/or analog). Each fault input is represented by a bit
-  (starting at zero). When the state of the input faults match the 
-  condition value it becomes valid.
+  digital and/or analog device faults (via FaultStates). Each fault input 
+  is represented by a bit (starting at zero). When the combined state of
+  the input faults match the condition value it becomes valid.
 
   A condition is used to ignore one ore more faults (digital and/or analog)
 
