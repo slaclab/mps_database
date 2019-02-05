@@ -23,10 +23,10 @@ def check(session, rt_session):
 
   # Extract device_ids and names and sort
   d = [ [i.id, i.name] for i in devices ]
-  d.sort()
+  d = sorted(d, key=lambda v: v[0])
 
   rt_d = [ [i.mpsdb_id, i.mpsdb_name] for i in rt_devices ]
-  rt_d.sort()
+  rt_d = sorted(rt_d, key=lambda v: v[0])
 
   # Compare one by one the devices, they must be exactly the same
   for a, b in zip(d, rt_d):

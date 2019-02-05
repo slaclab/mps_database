@@ -83,11 +83,12 @@ class MpsAppReader:
     defined in the MPS database, necessary to generate EPICS Databases,
     configuration files, and GUI screens.
     """
-    def __init__(self, db_file, template_path, dest_path, verbose):
+    def __init__(self, db_file, template_path, dest_path, app_id, verbose):
 
         self.template_path = template_path
         self.dest_path = dest_path
         self.verbose = verbose
+        self.app_id = app_id
 
         # This is the list of all applications
         self.analog_apps = []
@@ -167,7 +168,10 @@ class MpsAppReader:
 
         try:
             # Get all the apps defined in the database
-            app_cards = mps_db_session.query(models.ApplicationCard).all()
+            if (app_id == None):
+                app_cards = mps_db_session.query(models.ApplicationCard).all()
+            else:
+                app_cards = mps_db_session.query(models.ApplicationCard).filter(models.ApplicationCard.global_id == app_id).all()
         except exc.SQLAlchemyError as e:
             raise
 
@@ -355,7 +359,8 @@ class MpsAppReader:
 
             # Add the IOC name environmental variable for the Link Nodes
             if app["slot_number"] == 2:
-                self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(), "LOCATION":app["link_node_location"].upper()})
+                self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
+                                                                "LOCATION":app["link_node_location"].upper()})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -844,13 +849,13 @@ class MpsAppReader:
 ### Main Body ###
 #################
 
-def main(db_file, dest_path, template_path=None, verbose=False):
+def main(db_file, dest_path, template_path=None, app_id=None, verbose=False):
 
     if (template_path==None):
         template_path='templates/'
 
     # Generate the Mps application reader object
-    mps_app_reader = MpsAppReader(db_file, template_path, dest_path, verbose)
+    mps_app_reader = MpsAppReader(db_file, template_path, dest_path, app_id, verbose)
 
     # Print a report of the found applications
     mps_app_reader.print_app_data()
@@ -872,6 +877,7 @@ if __name__ == "__main__":
                         help='Path to EPICS DB template files')
     parser.add_argument('-v', action='store_true', default=False,
                         dest='verbose', help='Verbose output')
+    parser.add_argument('--app-id', type=int, help='Generate database only for this app')
 
     args = parser.parse_args()
 
@@ -879,12 +885,17 @@ if __name__ == "__main__":
     template_path = args.template
     dest_path = args.dest
     verbose = args.verbose
+    app_id = args.app_id
+    clean = True
+    if app_id != None:
+        print ('Exporting databases for AppId={}'.format(app_id))
+        clean = False
 
     # Check formatting of the destination path
     dest_path = format_path(dest_path)
 
     # Create a new clean output directory in the specified path
-    create_dir(dest_path, clean=True, debug=True)
+    create_dir(dest_path, clean=clean, debug=True)
 
     # If the template path is specified, check its format and if it exists
     if template_path:
@@ -895,4 +906,4 @@ if __name__ == "__main__":
             print("EPICS DB template directory '{}' not found.".format(template_path))
             exit(1)
 
-    main(db_file=db_file, dest_path=dest_path, template_path=template_path, verbose=verbose)
+    main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id = app_id, verbose=verbose)

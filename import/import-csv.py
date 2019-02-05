@@ -62,7 +62,7 @@ class DatabaseImporter:
           field_index = field_index + 1
 
         ln = models.LinkNode(area=crate_info['ln_area'], location=crate_info['ln_location'],
-                             cpu=crate_info['cpu_name'],
+                             cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
                              group=crate_info['group'], group_link=crate_info['group_link'],
                              group_link_destination=crate_info['group_link_destination'],
                              group_drawing=crate_info['network_drawing'])
@@ -1079,12 +1079,12 @@ importer.add_beam_classes('import/BeamClasses.csv')
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 importer.add_digital_device('import/PROF')
+importer.add_analog_device('import/BEND', card_name="Generic ADC")  
 
-importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
-importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
-importer.add_digital_device('import/TEMP')
-
-if (True):
+if (False):
+  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
+  importer.add_digital_device('import/TEMP')
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_digital_device('import/LLRF', card_name="LLRF")
@@ -1099,7 +1099,7 @@ if (True):
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
-  importer.add_analog_device('import/BEND', card_name="Generic ADC")  
+
 
 
 

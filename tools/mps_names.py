@@ -1,14 +1,37 @@
 from mps_config import MPSConfig, models
 
 class MpsName:
+    """
+    This class helps build PV names for MPS componets.
+    """
     def __init__(self, session):
         self.session = session
 
     def getDeviceInputNameFromId(self, deviceInputId):
+        """
+        Builds the PV base name for the specified DeviceInput ID (see getDeviceInputBaseName())
+
+        :type deviceInputId: int
+        :rtype :string
+        """
         deviceInput = self.session.query(models.DeviceInput).filter(models.DeviceInput.id==deviceInputId).one()
         return self.getDeviceInputName(deviceInput)
 
     def getDeviceInputBaseName(self, deviceInput):
+        """
+        Builds the PV base name for the specified DeviceInput. The PV
+        name of the DeviceInput is composed of
+
+          <DeviceType.name> : <Device.area> : <Device.position>
+
+        Example: PROF:GUNB:753
+
+        The full PV name for the DeviceInput requires the fourth field, which
+        is given by the Channel associated with the DeviceInput.
+
+        :type deviceInput: models.DeviceInput 
+        :rtype :string
+        """
         digitalChannel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
         device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
         if device.measured_device_type_id == None:
@@ -19,6 +42,17 @@ class MpsName:
         return deviceType.name + ":" + device.area + ":" + str(device.position)
 
     def getDeviceInputName(self, deviceInput):
+        """
+        Builds the full DeviceInput PV name.
+        name of the DeviceInput is composed of
+
+          <DeviceType.name> : <Device.area> : <Device.position> : <Channel.name>
+
+        Example: PROF:GUNB:753:IN_SWITCH
+
+        :type deviceInput: models.DeviceInput 
+        :rtype :string
+        """
         digitalChannel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
         device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
         if device.measured_device_type_id == None:
@@ -29,11 +63,25 @@ class MpsName:
         return deviceType.name + ":" + device.area + ":" + str(device.position) + ":" + digitalChannel.name
 
     def getAnalogDeviceNameFromId(self, analogDeviceId):
+        """
+        Builds the PV for an AnalogDevice.
+
+        :type analogDeviceId: int
+        :rtype :string
+        """
         analogDevice = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==analogDeviceId).one()
         
         return self.getAnalogDeviceName(analogDevice)
 
     def getAnalogDeviceName(self, analogDevice):
+        """
+        Builds the PV for an AnalogDevice in the format:
+
+          <DeviceType.name> : <AnalogDevice.area> : <AnalogDevice.position>
+
+        :type analogDevice: models.AnalogDevice
+        :rtype :string
+        """
         deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==analogDevice.device_type_id).one()
         
         return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)

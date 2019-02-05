@@ -349,6 +349,9 @@ parser.add_argument('--bypass-analog-template', metavar='file', type=argparse.Fi
 parser.add_argument('--link-nodes', metavar='link_node_dir', type=str, nargs='?',
                     help='Generate link node screens under the specified directory' \
                       'need --device-inputs, --analog-devices, --faults and --bypass options!')
+parser.add_argument('--link-node', metavar='link_node_name', type=str, nargs='?',
+                    help='If provided generate screens only for the specified link node'\
+                      'need --link-nodes and related options specified')
 
 args = parser.parse_args()
 
@@ -357,9 +360,18 @@ session = mps.session
 mpsName = MpsName(session)
 
 linkNodes = None
+linkNode = None
 if (args.link_nodes):
   linkNodes = session.query(models.LinkNode).all()
   createLinkNodeDirectories(args.link_nodes, linkNodes, mpsName)
+  if (args.link_node):
+    linkNode = args.link_node
+    if (len(filter (lambda x : x.get_name() == linkNode, linkNodes)) != 1):
+      print 'ERROR: Can\'t find sioc named {0}'.format(linkNode)
+      exit(0)
+    else:
+      linkNodes = filter (lambda x : x.get_name() == linkNode, linkNodes)
+      print 'INFO: Producing screens for SIOC {0} only'.format(linkNode)
 
 if (args.device_inputs_edl and args.device_inputs_template):
   if linkNodes == None:
