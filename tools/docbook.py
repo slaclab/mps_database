@@ -19,7 +19,7 @@ class DocBook:
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
         location = self.file_name.split(base_name)[0]
 
-        output_file_name = '{0}{1}-{2}'.format(location, base_name.split('.')[0], suffix)
+        output_file_name = '{0}{1}{2}'.format(location, base_name.split('.')[0], suffix)
 
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/html/docbook.xsl {0} > {1}.html'.\
             format(self.file_name, output_file_name)
@@ -29,7 +29,7 @@ class DocBook:
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]
         location = self.file_name.split(base_name)[0]
 
-        output_file_name = '{0}{1}-{2}'.format(location, base_name.split('.')[0], suffix)
+        output_file_name = '{0}{1}{2}'.format(location, base_name.split('.')[0], suffix)
 
 #        print '>>>>> ' + self.file_name + " -> " + self.file_name.split(".")[0]
         cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.\

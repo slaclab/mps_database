@@ -20,16 +20,19 @@ class Exporter:
   cards_only=False
   devices_only=False
   checkout_only=False
+  ignore_only=False
+  general_only=False
+  verbose=False
 
-  def __init__(self, dbFileName, checkout, cards_only, devices_only, checkout_only):
+  def __init__(self, dbFileName, general_only, ignore_only, verbose):
     self.databaseFileName = dbFileName
-    self.checkout = checkout
-    self.cards_only = cards_only
-    self.devices_only = devices_only
-    self.checkout_only = checkout_only
     mps = MPSConfig(args.database[0].name)
     self.session = mps.session
     self.mpsName = MpsName(self.session)
+    self.verbose = verbose
+    self.ignore_only = ignore_only
+    self.general_only = general_only
+
     beamDestinations = self.session.query(models.BeamDestination).\
         order_by(models.BeamDestination.destination_mask.asc())
     for d in beamDestinations:
@@ -199,7 +202,7 @@ class Exporter:
 
     # Fault Inputs
     table_name = '{0} Fault Inputs'.format(fault.name)
-    table_id = 'fault_input_table.{0}'.format(fault.id)
+    table_id = 'fault_input_table.{0}.{1}'.format(fault.id, device.id)
     
     cols=[{'name':'c1', 'width':'0.08*'},
           {'name':'b1', 'width':'0.08*'},
@@ -238,10 +241,10 @@ class Exporter:
     if (self.checkout):
       self.docbook.openSection('{0} Checkout'.format(fault.name))
 
-      self.docbook.para('Check all fault input combinations listed in tables "<xref linkend="fault_state_table.{0}"/>" and "<xref linkend="fault_input_table.{0}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table.{1}"/>"). Write down the power class for each beam destination. The power levels must match the ones listed in the "<xref linkend="fault_state_table.{0}"/>" table.'.format(fault.id, device.id))
+      self.docbook.para('Check all fault input combinations listed in tables "<xref linkend="fault_state_table.{0}"/>" and "<xref linkend="fault_input_table.{0}.{1}"/>". For each fault state verify the inputs and make sure the fault PV is in the faulted state (Fault PV in table "<xref linkend="device_faults_table.{1}"/>"). Write down the power class for each beam destination. The power levels must match the ones listed in the "<xref linkend="fault_state_table.{0}"/>" table.'.format(fault.id, device.id))
 
       table_name = '{0} Fault Checkout'.format(fault.name)
-      table_id = 'fault_checkout_table.{0}'.format(fault.id)
+      table_id = 'fault_checkout_table.{0}.{1}'.format(fault.id, device.id)
 
       cols=[]
       cols.append({'name':'fault1', 'width':'0.10*'})
@@ -277,6 +280,9 @@ class Exporter:
       self.docbook.closeSection()
 
   def writeAnalogFault(self, fault, device):
+    if (self.verbose):
+      print 'INFO: Analog fault {} for device {}'.format(fault.name, device.name)
+
     num_bits = 0
 
     channelName = []
@@ -314,7 +320,7 @@ class Exporter:
 
       channelId.append(str(channel.id))
       channelName.append(deviceState.name)
-      channelCrate.append(str(crate.number))
+      channelCrate.append(str(crate.crate_id))
       channelSlot.append(str(card.slot_number))
       channelNumber.append(str(channel.number))
       channelMask.append(str(hex((deviceState.mask >> integratorShift) & 0xFF)))
@@ -322,12 +328,12 @@ class Exporter:
       channelFaultState.append(state)
       channelDeviceState.append(deviceState)
 
-    self.docbook.para('Table "<xref linkend="fault_states.{1}"/>" lists the {0} fault input bits for the {2} device. MPS supports up to eight comparators for {0}, this database version {3}.'.format(fault.name, fault.id, device.name, len(fault.states)))
+    self.docbook.para('Table "<xref linkend="fault_states.{1}{4}"/>" lists the {0} fault input bits for the {2} device. MPS supports up to eight comparators for {0}, this database version {3}.'.format(fault.name, fault.id, device.name, len(fault.states), device.id))
 
     # Fault States
     table_name = '{0} Fault States'.format(fault.name)
-    table_id = 'fault_states.{0}'.format(fault.id)
-          
+    table_id = 'fault_states.{0}{1}'.format(fault.id, device.id)
+
     max_bits = 8 # max number of analog thresholds
     numBeamDestinations = self.session.query(models.BeamDestination).count()
 
@@ -404,7 +410,7 @@ class Exporter:
 
     # Fault Threshold Input Bits
     table_name = '{0} Fault Inputs (thresholds)'.format(fault.name)
-    table_id = 'fault_input_table.{0}'.format(fault.id)
+    table_id = 'fault_input_table.{0}.{1}'.format(fault.id, device.id)
     
     cols=[{'name':'c1', 'width':'0.08*'},
           {'name':'c2', 'width':'0.25*'},
@@ -434,14 +440,14 @@ class Exporter:
 
     self.docbook.table(table_name, cols, header, rows, table_id)
 
-    self.docbook.para('Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}"/>" table are defined in this database.'.format(fault.name, fault.id))
+    self.docbook.para('Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}{2}"/>" table are defined in this database.'.format(fault.name, fault.id, device.id))
 
     if (self.checkout):
-      self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}"/>" lists the PVs that should be changed to test the faults. Set the LOW/HIGH PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id))
+      self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}.{1}"/>" lists the PVs that should be changed to test the faults. Set the LOW/HIGH PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id, device.id))
 
       # Fault Checkout Table
       table_name = '{0} Fault Checkout'.format(fault.name)
-      table_id = 'fault_checkout_table.{0}'.format(fault.id)
+      table_id = 'fault_checkout_table.{0}.{1}'.format(fault.id, device.id)
 
       cols=[]
       cols.append({'name':'fault1', 'width':'0.12*'})
@@ -497,31 +503,37 @@ class Exporter:
       self.docbook.table(table_name, cols, header, rows, table_id)
 
   def writeFault(self, fault, device):
-    self.docbook.openSection('{0} Fault'.format(fault.name), 'fault.{0}'.format(fault.id))
-    
-    for inp in fault.inputs:
-      digital = True
-      try:
-        digitalDevice = self.session.query(models.DigitalDevice).\
-            filter(models.DigitalDevice.id==inp.device_id).one()
-        self.writeDigitalFault(fault, digitalDevice)
-      except:
-        digital = False
+    self.docbook.openSection('{0} Fault'.format(fault.name), 'fault.{0}.{1}'.format(fault.id, device.id))
+    if (self.verbose):
+      print 'INFO: {} Fault (id={}, device={}, inputs={})'.\
+          format(fault.name, fault.id, device.name, len(fault.inputs))
 
-      if (not digital):
+    for inp in fault.inputs:
+      if (inp.device_id == device.id):
+        digital = True
         try:
-          analogDevice = self.session.query(models.AnalogDevice).\
-              filter(models.AnalogDevice.id==inp.device_id).one()
-          self.writeAnalogFault(fault, analogDevice)
+          digitalDevice = self.session.query(models.DigitalDevice).\
+              filter(models.DigitalDevice.id==inp.device_id).one()
+          self.writeDigitalFault(fault, digitalDevice)
         except:
-          print("ERROR: Can't find device for fault[{0}]:desc[{1}], device Id: {2}, fault_input id: {3}".\
-                  format(fault.name, fault.description, inp.device_id, inp.id))
-          exit(-1)
+          digital = False
+
+        if (not digital):
+          try:
+            analogDevice = self.session.query(models.AnalogDevice).\
+                filter(models.AnalogDevice.id==inp.device_id).one()
+          except:
+            print("ERROR: Can't find device for fault[{0}] (fault id={1}, desc[{2}], device id: {3}, fault_input id: {4}".\
+                    format(fault.name, fault.id, fault.description, inp.device_id, inp.id))
+            exit(-1)
+          self.writeAnalogFault(fault, analogDevice)
 
     self.docbook.closeSection()
 
   def writeDeviceFaults(self, device):
     self.docbook.openSection('{0} Faults'.format(device.name))
+    if (self.verbose):
+      print 'INFO: {} Faults'.format(device.name)
 
     cols=[{'name':'c1', 'width':'0.25*'},
           {'name':'c2', 'width':'0.45*'},
@@ -534,7 +546,7 @@ class Exporter:
     rows=[]
     for fault_input in device.fault_outputs:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
-      rows.append(['<link linkend=\'fault.{0}\'>{1}</link>'.format(fault.id, fault.name),
+      rows.append(['<link linkend=\'fault.{0}.{2}\'>{1}</link>'.format(fault.id, fault.name, device.id),
                    fault.description, self.mpsName.getFaultName(fault)])
       self.tf.write('[Fault {0}] Name: {1}; DeviceId: {2}; DeviceName: {3}\n'.
                     format(fault.id, fault.name, device.id, device.name))
@@ -543,6 +555,9 @@ class Exporter:
     table_name = '{0} Faults'.format(device.name)
     table_id = 'device_faults_table.{0}'.format(device.id)
     self.docbook.table(table_name, cols, header, rows, table_id)
+
+    if (self.verbose):
+      print 'INFO: {} device fault outputs found'.format(len(device.fault_outputs))
 
     for fault_input in device.fault_outputs:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
@@ -771,7 +786,10 @@ class Exporter:
     self.docbook.closeSection()
 
   def writeAppCard(self, card):
-    self.docbook.openSection(card.crate.location + ' Slot ' + str(card.slot_number) + ' - '+ card.name, 'card.{0}'.format(card.id))
+    if (self.general_only):
+      self.docbook.openSection(card.crate.location + ' Slot ' + str(card.slot_number) + ' - '+ card.name)
+    else:
+      self.docbook.openSection(card.crate.location + ' Slot ' + str(card.slot_number) + ' - '+ card.name, 'card.{0}'.format(card.id))
 
     crate = self.session.query(models.Crate).filter(models.Crate.id==card.crate_id).one()
     crate_name = crate.location# + '-' + crate.rack + str(crate.elevation)
@@ -807,8 +825,9 @@ class Exporter:
       channels = card.analog_channels
       digital = False
     else:
-      print 'WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
-          format(card.name, card.crate.location, card.slot_number, card.amc)
+      if (False):
+        print 'WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
+            format(card.name, card.crate.location, card.slot_number, card.amc)
 #      print 'ERROR: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}" can\'t proceed.'.\
 #          format(card.name, card.crate.location, card.slot_number, card.amc)
 #      card.show()
@@ -900,10 +919,15 @@ class Exporter:
 
     self.docbook.closeSection()
 
-  def writeAppCards(self):
+  def writeAppCards(self, link_node):
     self.docbook.openSection('Application Cards')
 
-    for card in self.session.query(models.ApplicationCard).all():
+    cards = self.session.query(models.ApplicationCard).all()
+
+    if (link_node):
+      cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
+
+    for card in cards:
       self.writeAppCard(card)
 
     self.docbook.closeSection()
@@ -928,7 +952,9 @@ class Exporter:
 
       rows=[]
       for card in crate.cards:
-        slot_info = '<link linkend=\'card.{0}\'>{1}</link>'.format(card.id, card.slot_number)
+        slot_info = ''
+        if (not self.general_only):
+          slot_info = '<link linkend=\'card.{0}\'>{1}</link>'.format(card.id, card.slot_number)
         rows.append([slot_info, card.name, card.global_id, card.description])
         self.tf.write('[Card {0}] Slot: {1}; Name: {2}; GID: {3}; Desc: {4}\n'.\
                         format(card.id, card.slot_number,card.name, card.global_id, card.description))
@@ -1037,12 +1063,18 @@ class Exporter:
 
     self.docbook.closeSection()
  
-  def writeDevices(self):
+  def writeDevices(self, link_node):
     if (self.checkout_only):
       self.docbook.openSection('Devices Checkout')
     else:
       self.docbook.openSection('MPS Devices')
-    for device in self.session.query(models.Device).all():
+
+    devices = self.session.query(models.Device).all()
+
+    if (link_node):      
+      devices = filter (lambda x : x.card.crate.link_node.id == link_node.id, devices)
+    
+    for device in devices:
       if (device.name != "AOM" and device.name != "MS"):
         self.writeDeviceInfo(device)
     self.docbook.closeSection()
@@ -1064,7 +1096,7 @@ class Exporter:
           filter(models.FaultState.id==input.fault_state_id).one()
       deviceState = self.session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
       fault = self.session.query(models.Fault).filter(models.Fault.id==faultState.fault_id).one()
-      rows.append(['<link linkend=\'fault.{0}\'>{1}</link>\n'.format(fault.id, fault.name),
+      rows.append(['<link linkend=\'fault.{0}.{2}\'>{1}</link>\n'.format(fault.id, fault.name, device.id),
                    deviceState.name, input.bit_position])
 
     table_name = 'Condition Inputs'
@@ -1091,13 +1123,17 @@ class Exporter:
 
   def writeIgnoreLogic(self):
     self.docbook.openSection('Ignore Logic')
-    for condition in self.session.query(models.Condition).all():
-      if (len(condition.condition_inputs) > 0 and
-          len(condition.ignore_conditions) > 0):
-        self.writeLogicCondition(condition)
+    conditions = self.session.query(models.Condition).all()
+    if (len(conditions) == 0):
+      self.docbook.para('There are no ignore logic conditions defined.')
+    else:
+      for condition in conditions:
+        if (len(condition.condition_inputs) > 0 and
+            len(condition.ignore_conditions) > 0):
+          self.writeLogicCondition(condition)
     self.docbook.closeSection()
 
-  def writeLinkNodes(self):
+  def writeLinkNodes(self, link_node):
     self.docbook.openSection('Link Nodes')
     self.tf.write('# Link Nodes\n')
 
@@ -1112,7 +1148,11 @@ class Exporter:
             {'name':'Drawing', 'namest':None, 'nameend':None},]
     
     rows=[]
-    for ln in self.session.query(models.LinkNode).all():
+    linkNodes = self.session.query(models.LinkNode).all()
+    if (link_node):
+      linkNodes = [ link_node ]
+
+    for ln in linkNodes:
       sioc_info = '{0}'.format(ln.get_name())
       crate_info = '<link linkend=\'crate.{0}\'>{1}</link>'.format(ln.crate.id, ln.crate.get_name())
       rows.append([sioc_info, crate_info, ln.group, ln.group_drawing])
@@ -1125,81 +1165,116 @@ class Exporter:
 
     self.docbook.closeSection()
 
-  def writeCrates(self):
+  def writeCrates(self, link_node):
     self.docbook.openSection('ATCA Crates')
     self.tf.write('# Crates\n')
-    for crate in self.session.query(models.Crate).all():
+    crates = self.session.query(models.Crate).all()
+    if (link_node):
+      crates = filter (lambda x : x.link_node.id == link_node.id, crates)
+
+    for crate in crates:
       self.writeCrate(crate)
     self.docbook.closeSection()
 
-  def exportDocBook(self, fileName, fileNameTxt):
+  def exportDocBookLinkNodes(self, output_dir, databaseName):
+    link_nodes = self.session.query(models.LinkNode).all()
+    for ln in link_nodes:
+      devices = self.session.query(models.Device).filter(models.Device.card_id == ln.crate.id).all()
+      if (len(devices) > 0):
+        fileName = '{0}/{1}.xml'.format(output_dir, ln.get_name())
+        fileNameTxt = '{0}/{1}.txt'.format(output_dir, ln.get_name())
+        self.exportDocBook(fileName, fileNameTxt, databaseName, ln.get_name())
+
+  def exportDocBook(self, fileName, fileNameTxt, databaseName, linkNode):
     info = self.getAuthor()
     self.tf = open(fileNameTxt, 'w')
     self.docbook = DocBook(fileName)
-    self.docbook.writeHeader('MpsDatabase', info[2], info[3])
+    if (linkNode):
+      self.docbook.writeHeader('{1} [{0}]'.format(databaseName, linkNode), '', '')
+    elif (self.ignore_only):
+      self.docbook.writeHeader('{0} [Ignore Logic]'.format(databaseName), '', '')
+      if (self.verbose):
+        print 'INFO: Generating document with ignore conditions'
+    elif (self.general_only):
+      self.docbook.writeHeader('{0} [General Information]'.format(databaseName), '', '')
+      if (self.verbose):
+        print 'INFO: Generating document with ignore conditions'
+    else:
+      self.docbook.writeHeader('MPS Database', info[2], info[3])
 
     self.writeDatabaseInfo()
 
-    if (not self.cards_only and not self.devices_only and not self.checkout_only):
+    link_node = None
+    if (linkNode):
+      link_nodes = self.session.query(models.LinkNode).all()
+      link_node = filter (lambda x : x.get_name() == linkNode, link_nodes)
+      if (not link_node):
+        print 'ERROR: link node "{}" not found'.format(linkNode)
+        exit(-1)
+      link_node=link_node[0]
+    
+    if (not self.cards_only and 
+        not self.devices_only and 
+        not self.checkout_only and
+        not self.ignore_only and
+        linkNode==None):
       self.writeBeamDestinations()
 
       self.writePowerClasses()
 
-    if (self.cards_only or not self.devices_only and not self.checkout_only):
-      self.writeLinkNodes()
+    if (self.cards_only or
+        (not self.devices_only and
+         not self.checkout_only and
+         not self.ignore_only)):
+      self.writeLinkNodes(link_node)
 
-      self.writeCrates()
+      self.writeCrates(link_node)
 
-      self.writeAppCards()
+      if (not self.general_only):
+        self.writeAppCards(link_node)
 
-    if (not self.cards_only or self.devices_only or self.checkout_only):
-      self.writeDevices()
+    if ((not self.cards_only or
+         self.devices_only or
+         self.checkout_only) and
+        not self.ignore_only and
+        not self.general_only):
+      self.writeDevices(link_node)
 
-      self.writeIgnoreLogic()
+      if (not link_node or 
+          self.ignore_only): 
+        self.writeIgnoreLogic()
 
     self.docbook.writeFooter()
 
     suffix=''
-    if (self.cards_only):
-      suffix='cards'
-    elif (self.devices_only):
-      suffix='devices'
-    elif (self.checkout_only):
-      suffix='checkout'
+#    if (self.cards_only):
+#      suffix='cards'
+#    elif (self.devices_only):
+#      suffix='devices'
+#    elif (self.checkout_only):
+#      suffix='checkout'
     self.docbook.exportHtml(suffix)
     self.docbook.exportPdf(suffix)
 
 # --- Main ---
 
-parser = argparse.ArgumentParser(description='Print database inputs/logic')
+parser = argparse.ArgumentParser(description='Generate documentation from the MPS database')
 parser.add_argument('database', metavar='db', type=file, nargs=1,
                     help='database file name (e.g. mps_gun.db)')
 parser.add_argument('--output', metavar='output', type=str, nargs='?', 
                     help='directory where the documentation is generated')
-parser.add_argument('--no-checkout', dest='checkout', action='store_false')
-parser.set_defaults(no_checkout=True)
-parser.add_argument('--cards-only', dest='cards_only', action='store_true')
-parser.set_defaults(cards_only=False)
-parser.add_argument('--devices-only', dest='devices_only', action='store_true')
-parser.set_defaults(devices_only=False)
-parser.add_argument('--checkout-only', dest='checkout_only', action='store_true')
-parser.set_defaults(checkout_only=False)
+parser.add_argument('--ignore-only', dest='ignore_only', action='store_true', default=False,
+                    help="Generate documentation for the ignore logic only")
+parser.add_argument('--general-only', dest='general_only', action='store_true', default=False,
+                    help="Generate documentation about crates and link nodes, but not individual inputs")
+parser.add_argument('--link-nodes-only', dest='link_nodes_only', action='store_true', default=False,
+                    help="Generate documentation for each link node")
+parser.add_argument('-v', action='store_true', default=False,
+                    dest='verbose', help='Verbose output')
+parser.add_argument('--ln', metavar='link_node_name', type=str, nargs='?',
+                    help='generate documentation the specified link node only (sioc name)')
 
 args = parser.parse_args()
-
-full_report = True
-cards_only = False
-devices_only = False
-checkout_only = False
-if (args.cards_only):
-  full_report = False
-  cards_only = True
-elif (args.devices_only):
-  full_report = False
-  devices_only = True
-elif (args.checkout_only):
-  full_report = False
-  checkout_only = True
 
 output_dir = './'
 if args.output:
@@ -1208,10 +1283,28 @@ if args.output:
     print 'ERROR: Invalid output directory {0}'.format(output_dir)
     exit(-1)
 
-e = Exporter(args.database[0].name, args.checkout, cards_only, devices_only, checkout_only)
+e = Exporter(args.database[0].name, #args.checkout, cards_only, devices_only, checkout_only,
+             args.general_only, args.ignore_only, args.verbose)
 #split('/')[len(name2.split('/'))-1].split('.')[0]
 doc_name = args.database[0].name.split('/')[len(args.database[0].name.split('/'))-1].split('.')[0]
 #e.exportDocBook('{0}.xml'.format(args.database[0].name.split('.')[0]),
 #                '{0}.txt'.format(args.database[0].name.split('.')[0]))
-e.exportDocBook('{0}/{1}.xml'.format(output_dir,doc_name), '{0}/{1}.txt'.format(output_dir, doc_name))
+
+if (args.ln):
+  fileName = '{0}/{1}.xml'.format(output_dir, args.ln)
+  fileNameTxt = '{0}/{1}.txt'.format(output_dir, args.ln)
+elif (args.ignore_only):
+  fileName = '{0}/{1}-ignore.xml'.format(output_dir, doc_name)
+  fileNameTxt = '{0}/{1}-ignore.txt'.format(output_dir, doc_name)
+elif (args.general_only):
+  fileName = '{0}/{1}-general.xml'.format(output_dir, doc_name)
+  fileNameTxt = '{0}/{1}-general.txt'.format(output_dir, doc_name)
+elif (args.link_nodes_only):
+  e.exportDocBookLinkNodes(output_dir, doc_name)
+  exit(0)
+else:
+  fileName = '{0}/{1}.xml'.format(output_dir, doc_name)
+  fileNameTxt = '{0}/{1}.txt'.format(output_dir, doc_name)
+
+e.exportDocBook(fileName, fileNameTxt, doc_name, args.ln)
 
