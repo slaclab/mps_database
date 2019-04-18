@@ -22,6 +22,8 @@ class LinkNode(Base):
    group_drawing: SEDA drawing number showing the nodes in the group
    ln_type: 1=LCLS-I link node, 2=LCLS-II link node, 3=both (for link nodes connected
             to devices that see beam from both injectors)
+   lcls1_id: link node id for LCLS-I. This is used to build the link node IP address,
+             it goes into the NodeID register.
    
   References:
    crate_id: specifies the crate that contains this link node
@@ -36,6 +38,7 @@ class LinkNode(Base):
   group_link_destination = Column(Integer, unique=False)
   group_drawing = Column(String, unique=False)
   ln_type = Column(Integer, nullable=False, default=2)
+  lcls1_id = Column(Integer, nullable=False, default=0)
   crate = relationship("Crate", uselist=False, back_populates="link_node")
   
   def show(self):
@@ -47,6 +50,20 @@ class LinkNode(Base):
     print('> GroupLink: {0}'.format(self.group_link))
     print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
     print('> GroupDrawing: {0}'.format(self.group_drawing))
+    print('> LinkNodeType: {}'.format(self.get_type()))
+    if (self.ln_type == 1 or self.ln_type == 3):
+      print('> LinkNodeType: {}'.format(self.get_type()))
+      print('> LinkNodeId: {}'.format(self.lcls1_id))
+
+  def get_type(self):
+    if (self.ln_type == 1):
+      return 'LCLS-I only'
+    elif (self.ln_type == 2):
+      return 'LCLS-II only'
+    elif (self.ln_type == 3):
+      return 'LCLS-I and LCLS-II'
+    else:
+      return 'Invalid type {}'.format(self.ln_type)
 
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()

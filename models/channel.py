@@ -29,7 +29,9 @@ class DigitalChannel(Base):
   Properties:
    number: position of this channel in the card - starts at 0. The
            ApplicationCard checks if there are duplicate numbers and
-           if the number does not exceed the maximum number of channels
+           if the number does not exceed the maximum number of channels.
+           Channels number 32 to 47 are reserved for virtual inputs - i.e.
+           inputs settable by software
    name: string identification for channel, this is used to compose PVs
          (e.g. PROF:GUNB:855:IN_LMTSW, where IN_LMTSW is the channel name)
    z_name: named state when value is zero (e.g. OUT or OFF) 
@@ -63,6 +65,12 @@ class DigitalChannel(Base):
   debounce = Column(Integer, nullable=False, default=10)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   device_input = relationship("DeviceInput", uselist=False, backref="channel")
+
+  def is_virtual(self):
+    if (self.number >= 32):
+      return True
+    else:
+      return False
   
 class AnalogChannel(Base):
   """

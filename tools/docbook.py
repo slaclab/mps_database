@@ -41,10 +41,10 @@ class DocBook:
         os.system(cmd)
 
         cmd = 'rm {0}.fo'.format(output_file_name)
-#        os.system(cmd)
+        os.system(cmd)
 
         cmd = 'rm {0}.xml'.format(output_file_name)
-#        os.system(cmd)
+        os.system(cmd)
 
     def exportRtf(self, suffix=''):
         base_name =  self.file_name.split('/')[len(self.file_name.split('/'))-1]

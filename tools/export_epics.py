@@ -177,6 +177,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
 
     fields.append(('INP', '@asynMask(CENTRAL_NODE {0} 1 0)MPS_DEVICE_INPUT'.format(deviceInput.id)))
     recName='{0}_MPSC'.format(name)
+
     printRecord(file, 'bi', recName, fields)
     printArchive(af, recName, 1, 'monitor')
 
@@ -263,7 +264,7 @@ def exportDeviceInputs(file, deviceInputs, session, restoreLocation, prodLocatio
     fields.append(('VAL', 'Invalid'))
     fields.append(('PINI', 'YES'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_DEVICE_INPUT_BYPEXPDATE_STRING'.format(deviceInput.id)))
-    printRecord(file, 'stringin', '{0}_BYPD_STR'.format(name), fields)
+    printRecord(file, 'stringin', '{0}_BYP_END'.format(name), fields)
 
     # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
     percentage = percentage + percentageIncrease
@@ -625,7 +626,7 @@ def printAnalogBypass(file, af, sf, analogDevice, fault_list, percentage, restor
     fields.append(('VAL', 'Invalid'))
     fields.append(('PINI', 'YES'))
     fields.append(('INP', '@asyn(CENTRAL_NODE {0} 0)MPS_ANALOG_DEVICE_BYPEXPDATE_STRING'.format(analogDevice.id * 4 +  intIndex)))
-    printRecord(file, 'stringin', '{0}:{1}_BYPD_STR'.format(name, fa.name), fields)
+    printRecord(file, 'stringin', '{0}:{1}_BYP_END'.format(name, fa.name), fields)
 
     # Add a IGNORED PV only if device appears in an ignoreCondition
     ignore_condition = session.query(models.IgnoreCondition).\
@@ -665,7 +666,7 @@ def printAnalogBypass(file, af, sf, analogDevice, fault_list, percentage, restor
     # Write line to get the current bypass time that should be restored after a configuration is reloaded (after reboot) 
     sf.write('getBypass {0} {1} {2} "{3}"\n'.format(remainingTimePv, bypassTimePv, percentage, restoreBypassFile))
 
-    return ignored_pv_added
+  return ignored_pv_added
 
 def exportBeamDestinations(file, beamDestinations, beamClasses, session, archiveLocation):
   mpsName = MpsName(session)

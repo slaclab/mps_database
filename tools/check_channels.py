@@ -92,8 +92,10 @@ def checkDigitalChannels(session):
       card[c.card_id][c.number]=c.id
     else:
       if c.number in card[c.card_id].keys():
-        otherChannel=session.query(models.DigitalChannel).filter(models.DigitalChannel.id==card[c.card_id][c.number]).one()
-        otherDeviceInput=session.query(models.DeviceInput).filter(models.DeviceInput.channel_id==card[c.card_id][c.number]).one()
+        otherChannel=session.query(models.DigitalChannel).\
+            filter(models.DigitalChannel.id==card[c.card_id][c.number]).one()
+        otherDeviceInput=session.query(models.DeviceInput).\
+            filter(models.DeviceInput.channel_id==card[c.card_id][c.number]).one()
         print 'ERROR: channel {0} of card id {1} (crate {2}, slot {3}) assigned to both channels {4} ({5}) and {6} ({7})'.\
             format(c.number, c.card_id, c.card.crate.get_name(), c.card.slot_number,
                    otherChannel.name, otherDeviceInput.digital_device.name,

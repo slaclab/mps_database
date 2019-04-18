@@ -80,13 +80,12 @@ def export(session, file, node):
     ln_color[l.id]=colors[ci]
     ci = (ci + 1) % len(colors)
     if (node == l.get_name()):
-      ln_info='{0}\\n{1}\\n'.format(l.get_name(), l.crate.get_name())
+      ln_info='{0}\\n{1}\\n{2} (id={3})\\n'.format(l.get_name(), l.cpu, l.crate.get_name(), l.crate.crate_id)
       
       for c in l.crate.cards:
         card_type = session.query(models.ApplicationType).\
             filter(models.ApplicationType.id==c.type_id).one()
         ln_info = '{0}\\n{1} (slot {2})'.format(ln_info, card_type.name, c.slot_number)
-
       file.write('  "{0}" [shape=box3d, color={1}, label="{2}"]\n'.\
                    format(l.get_name(), ln_color[l.id], ln_info))
 
@@ -240,6 +239,8 @@ if (args.ln):
   export(session, dot_file, args.ln)
   exportPDF('{0}/{1}'.format(output_dir, args.ln))
   dot_file.close()
+  cmd = 'rm {}'.format(dot_file.name)
+  os.system(cmd)
 else:
   print 'INFO: Generating maps for {0} link nodes'.format(len(link_nodes))
   for ln in link_nodes:
@@ -249,6 +250,8 @@ else:
     export(session, dot_file, ln_name)
     exportPDF('{0}/{1}'.format(output_dir,ln_name))
     dot_file.close()
+    cmd = 'rm {}'.format(dot_file.name)
+    os.system(cmd)
 
 session.close()
 

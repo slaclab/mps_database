@@ -1,0 +1,35 @@
+record(ao, "$(P,undefined)") {
+    field(DESC, "Input")
+    field(PINI, "YES")	
+    field(OMSL, "closed_loop")
+    field(SCAN, "1 second")
+    field(OIF, "Full")
+    field(DOL, "$(INPV)")
+    field(FLNK, "$(N)_CALC")
+    field(LLSV, "MAJOR")
+    field(HHSV, "MAJOR")
+    info(autosaveVirtualChannels, "HIHI LOLO")
+}
+
+record(calc, "$(N)_CALC") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(FLNK, "$(N)_INPUT")
+    field(INPA, "$(N).SEVR CPP MS")
+    field(INPB, "$(N).STAT CPP MS")
+    field(CALC, "(A+B)>0?$(ALSTATE):$(NALSTATE)"
+}
+
+record(bo, "$(N)_INPUT") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(DOL, "$(N)_CALC")
+    field(DTYP, "asynUInt32Digital")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ZSV, "$(ZSV)")
+    field(OSV, "$(OSV)")
+    field(OUT, "@asynMask(MPS_VIRTUAL_CHANNEL $(GID) $(ALSTATE) 0)MPS_VIRTUAL_INPUT_$(BIT)")
+}

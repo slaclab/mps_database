@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from mps_config import MPSConfig, models
+from mps_names import MpsName
 from sqlalchemy import func, exc
 import argparse
 import os
@@ -99,6 +100,7 @@ class MpsAppReader:
 
             # Extract the application information
             self.__extract_apps(mps_db_session)
+            self.mps_name = MpsName(mps_db_session)
 
 
     def __extract_apps(self, mps_db_session):
@@ -278,7 +280,10 @@ class MpsAppReader:
                 app_data["link_node_area"] = app_card.crate.link_node.area
                 app_data["link_node_location"] = app_card.crate.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+                app_data["virtual"] = False
                 app_data["devices"] = []
+                if (app_card.has_virtual_channels()):
+                    app_data["virtual"] = True
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:
@@ -308,6 +313,16 @@ class MpsAppReader:
                             input_data["one_name"] = digital_channel.o_name
                             input_data["alarm_state"] = digital_channel.alarm_state
                             input_data["debounce"] = digital_channel.debounce
+                            input_data["db_id"] = digital_channel.id
+                            if (digital_channel.num_inputs == 1):
+                                input_data["input_pv"] = digital_channel.monitored_pvs
+                                input_data["alarm_state"] = digital_channel.alarm_state
+                                if (digital_channel.alarm_state == 0):
+                                    input_data["zero_severity"] = "MAJOR"
+                                    input_data["one_severity"] = "NO_ALARM"
+                                else:
+                                    input_data["zero_severity"] = "NO_ALARM"
+                                    input_data["one_severity"] = "MAJOR"
 
                             # Add this input to the list of inputs of the current device
                             device_data["inputs"].append(input_data)
@@ -413,6 +428,23 @@ class MpsAppReader:
                     print("  Device prefix : {}".format(device_prefix))
 
                 for input in device["inputs"]:
+
+                    if app["virtual"]:
+                        if (input["bit_position"]>=32):
+                            print("Virtual Input: {}, number={}".format(input["name"], input["bit_position"]))
+                            vmacros = {  "P":device_prefix,
+                                         "R":input["name"],
+                                         "N":self.mps_name.getDeviceInputNameFromId(input["db_id"]),
+                                         "INPV":input["input_pv"],
+                                         "ALSTATE":str(input["alarm_state"]),
+                                         "NALSTATE":str(not input["alarm_state"]),
+                                         "ZSV":input["zero_severity"],
+                                         "OSV":input["one_severity"],
+                                         "BIT":str(input["bit_position"]),
+                                         "ZNAM":input["zero_name"],
+                                         "ONAM":input["one_name"] }
+                            self.__write_virtual_db(path=app_path, macros=vmacros)
+
 
                     macros = {  "P":device_prefix,
                                 "R":input["name"],
@@ -556,12 +588,12 @@ class MpsAppReader:
         """
         Get the app type name used in the EPICS DB.
         The name is application specific as follows:
-          * SOLN, BEND, PBLM, BLM => BLM
+          * SOLN, BEND, PBLM, LBLM, BLM => BLM
           * BPMS       => BPM
           * TORO, FARC => BCM
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "LBLM", "BLEN"]:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -578,14 +610,14 @@ class MpsAppReader:
         """
         Get the application enginering units used in the EPICS DB.
         The unit is application and fault specific as follows:
-          * SOLN, BEND, PBLM, BLM, BLEN => uA
+          * SOLN, BEND, PBLM, LBLM, BLM, BLEN => uA
           * BPMS
             - X, Y     => mm
             - TMIT     => Nel
           * TORO, FARC => Nel
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "LBLM", "BLEN"]:
             # Solenoid devices use 'uA'.
             return "uA"
         elif device_type_name == "BPMS":
@@ -611,12 +643,12 @@ class MpsAppReader:
         """
         Get the 'fault_index' used in the EPICS DB.
         The fault index is appication specific as follows:
-          * SOLN, BEND, PBLM, BLM => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
+          * SOLN, BEND, PBLM, LBLM, BLM => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
           * BPM     => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "LBLM", "BLEN"]:
             # For SOLN devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = int(fault_name[-1])
@@ -735,6 +767,12 @@ class MpsAppReader:
         """
         self.__write_epics_db(path=path, template_name="mps.template", macros=macros)
 
+    def __write_virtual_db(self, path, macros):
+        """
+        Write records for digital virtual inputs
+        """
+        self.__write_epics_db(path=path, template_name="virtual.template", macros=macros)
+
     def __write_thr_base_db(self, path, macros):
         """
         Write the base threshold record to the application EPICS database file.
@@ -826,6 +864,7 @@ class MpsAppReader:
 
         with open(file, 'a') as db, open(template, 'r') as template:
             for line in template:
+                print("*** {}".format(line))
                 db.write(self.__expand_macros(line, macros))
 
     def __expand_macros(self, text, macros):
@@ -840,6 +879,7 @@ class MpsAppReader:
         It will return the original text will all the macros found in it
         substituted by the respective values.
         """
+        print macros.items()
         for k, v in macros.items():
             text = re.sub(r'\$\(({key}|{key},[^)]*)\)'.format(key=k),v, text)
 

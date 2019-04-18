@@ -1,4 +1,4 @@
 Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU,
-Linac,LOSS_T0,1,Linac BLM Fault,1,-,-,-,
-SXU,LOSS_T0,1,SXU BLM Fault,-,-,1,-,
-HXU,LOSS_T0,1,HXU BLM X Fault,-,-,-,1,
+Linac,I0_T0,1,Linac BLM Fault,1,-,-,-,
+SXU,I0_T0,1,SXU BLM Fault,-,-,1,-,
+HXU,I0_T0,1,HXU BLM X Fault,-,-,-,1,

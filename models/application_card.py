@@ -54,6 +54,18 @@ class ApplicationCard(Base):
     print('> Analog: {0}'.format(len(self.analog_channels)))
     print('> Digital Out: {0}'.format(len(self.digital_out_channels)))
 
+  def has_virtual_channels(self):
+    """
+    If there are channels defined between 32 and 47 this card has virtual
+    channels. Channels 0 through 31 are for hardwired inputs, while from 32
+    to 47 are software settable inputs.
+    """
+    for c in self.digital_channels:
+      if (c.is_virtual()):
+        return True
+
+    return False
+
   @validates('digital_channels')
   def validate_digital_channel(self, key, new_channel):
     """

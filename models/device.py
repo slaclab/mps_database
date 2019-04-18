@@ -48,6 +48,18 @@ class Device(Base):
   fault_outputs = relationship("FaultInput", backref='device')
   __mapper_args__ = {'polymorphic_on': discriminator}
 
+  def is_digital(self):
+    if self.discriminator == 'digital_device':
+      return True
+    else:
+      return False
+
+  def is_analog(self):
+    if self.discriminator == 'analog_device':
+      return True
+    else:
+      return False
+
 class MitigationDevice(Device):
   """
   MitigationDevice class (mitigation_devices table)

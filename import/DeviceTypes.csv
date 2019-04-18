@@ -26,3 +26,7 @@ QUAD,24,Quad Current (Soft),0
 BEND_STATE,25,Dipole On/Off State,0
 PBLM,26,Point BLM,1
 LLRF,27,Low Level RF,0
+BEND_STATUS,28,Dipole Current DCCT Status,0
+KICK_STATUS,29,Kicker Status,0
+XTES,30,XTES Beam Class,0
+LBLM,31,BCS BLM,1

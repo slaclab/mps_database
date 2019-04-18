@@ -927,6 +927,9 @@ class Exporter:
     if (link_node):
       cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
 
+    if (self.verbose):
+      print('Link Node: {} has {} cards'.format(link_node.get_name(), len(cards)))
+
     for card in cards:
       self.writeAppCard(card)
 
@@ -1179,8 +1182,11 @@ class Exporter:
   def exportDocBookLinkNodes(self, output_dir, databaseName):
     link_nodes = self.session.query(models.LinkNode).all()
     for ln in link_nodes:
-      devices = self.session.query(models.Device).filter(models.Device.card_id == ln.crate.id).all()
-      if (len(devices) > 0):
+      device_count = 0
+      for c in ln.crate.cards:
+        device_count += len(c.devices)
+#     devices = self.session.query(models.Device).filter(models.Device.card.crate_id == ln.crate.id).all()
+      if (device_count > 0):
         fileName = '{0}/{1}.xml'.format(output_dir, ln.get_name())
         fileNameTxt = '{0}/{1}.txt'.format(output_dir, ln.get_name())
         self.exportDocBook(fileName, fileNameTxt, databaseName, ln.get_name())

@@ -31,12 +31,14 @@ session.add(linac)
 #    Power class 1 = 10 Hz max rate, max charge = 300pC in 100mS
 #    Power class 2 = Unlimited rate, max charge = 300uC in 1 second
 #
+# Min period: ~1uS * (value + 1)
+#    if value=0, min period is 1uS
 class_0 = models.BeamClass(number=0,name="PC0",description="No Beam",
-                           integration_window=10, total_charge=0, min_period=1)
+                           integration_window=10, total_charge=0, min_period=0)
 class_1 = models.BeamClass(number=1,name="PC1",description="YAG Max Power",
-                           integration_window=100000, total_charge=300, min_period=1)
+                           integration_window=91000, total_charge=300, min_period=91000)
 class_2 = models.BeamClass(number=2,name="PC2",description="Full Power",
-                           integration_window=1000000, total_charge=300000, min_period=1)
+                           integration_window=910000, total_charge=300000, min_period=0)
 session.add_all([class_0, class_1, class_2])
 
 # EIC Link Node - L2KA00-05 (Level 17)
@@ -111,15 +113,20 @@ if not two_apps:
 #   2  | SOL1B+return TEMP
 #   3  | SOL2B+return TEMP
 #   4  | SOL1B/2 FLOW
-#
+#   5  | BUNCHER TEMP (added 02/13/2019)
+#   6  | BUNCHER FLOW (added 02/13/2019)
 #   7  | VVR01 STATUS
 #   8  | VVR02 STATUS
 #   9  | MECH SHUTTER OPEN STATUS
 #  10  | MECH SHUTTER CLOSED STATUS
 #
-#  20  | VVMG:LLOK:100:3 (MANUAL VALVE) STATUS
+#  21  | VVMG:LLOK:100:2 (MANUAL VALVE) STATUS
 #
+#  23  | GUN TEMP (added 02/13/2019)
+#  24  | GUN FLOW (added 02/13/2019)
 #  25  | FARADAY CUP TEMP STATUS
+#  26  | GUN WAVEGUIDE TEMP STATUS
+#  27  | FARADAY CUP FLOW (added 02/27/2019)
 #  
 digital_chans = []
 
@@ -130,13 +137,18 @@ names.append(("OUT_LMTSW",      "NOT_OUT",    "IS_OUT",  0,  1)) # YAG01B OUT
 names.append(("TEMP_SUM",       "IS_FAULTED", "IS_OK",   0,  2)) # SOL1B TEMP
 names.append(("TEMP_SUM",       "IS_FAULTED", "IS_OK",   0,  3)) # SOL2B TEMP
 names.append(("FLOW_SW",        "IS_FAULTED", "IS_OK",   0,  4)) # SOL1B/02 FLOW
+names.append(("TEMP_SUM",       "IS_FAULTED", "IS_OK",   0,  5)) # BUNCHER TEMP
+names.append(("FLOW_SW",        "IS_FAULTED", "IS_OK",   0,  6)) # BUNCHER FLOW
 names.append(("STATUS",         "IS_FAULTED", "IS_OK",   0,  7)) # VVR01 STATUS
 names.append(("STATUS",         "IS_FAULTED", "IS_OK",   0,  8)) # VVR02 STATUS
 names.append(("OPEN_STATUS",    "NOT_OPEN",   "OPEN",    0,  9)) # Mechanical Shutter OPEN Status
 names.append(("CLOSED_STATUS",  "NOT_CLOSED", "CLOSED",  0, 10)) # Mechanical Shutter CLOSE Status
-
-names.append(("3:STATUS",         "IS_FAULTED", "IS_OK",   0, 20)) # VVMG:LLOK:100:3
+names.append(("TEMPBD_SUM",     "IS_FAULTED", "IS_OK",   0, 23)) # GUN TEMP
+names.append(("FLOW_SW",        "IS_FAULTED", "IS_OK",   0, 24)) # GUN FLOW
+names.append(("STATUS",         "IS_FAULTED", "IS_OK",   0, 21)) # VVMG:LLOK:500:2
 names.append(("TEMP_SUM",       "IS_FAULTED", "IS_OK",   0, 25)) # FARC TEMP
+names.append(("TEMPWG_SUM",     "IS_FAULTED", "IS_OK",   0, 26)) # GUN WAVEGUIDE TEMP
+names.append(("FLOW_SW",        "IS_FAULTED", "IS_OK",   0, 27)) # FARC FLOW
 
 for i in range(0,len(names)):
   (name, z_name, o_name, alarm_state,chan_number) = names[i]
@@ -185,11 +197,12 @@ profmon_device_type = models.DeviceType(name="PROF", description="Profile Monito
 temp_device_type = models.DeviceType(name="TEMP", description="Temperature Status")
 flow_device_type = models.DeviceType(name="FLOW", description="Waterflow Status")
 gun_device_type = models.DeviceType(name="GUN", description="Gun Device")
+buncher_device_type = models.DeviceType(name="ACCL", description="Buncher")
 vvr_device_type = models.DeviceType(name="VVPG", description="Vacuum Valve Pneumatic Status")
 vvmg_device_type = models.DeviceType(name="VVMG", description="Manual Vacuum Valve Status")
 shutter_status_device_type = models.DeviceType(name="SHUT", description="Laser Shutter Status")
 session.add_all([profmon_device_type, temp_device_type, flow_device_type, vvr_device_type,
-                 gun_device_type, shutter_status_device_type])
+                 buncher_device_type, gun_device_type, shutter_status_device_type])
 
 # Add analog device types
 sol_curr_device_type = models.DeviceType(name="SOLN", description="Solenoid", num_integrators=1)
@@ -374,21 +387,42 @@ sol02_temp = models.DigitalDevice(name="SOL2B Temp", position=823, z_location=-2
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
 sol_flow = models.DigitalDevice(name="SOL1B/SOL2B Flow", position=212, z_location=-32, description="SOL1B and SOL2B Waterflow Status",
-                                  device_type = temp_device_type, card = link_node_card, area="GUNB",
+                                  device_type = flow_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
+buncher_temp = models.DigitalDevice(name="Buncher Temp", position=455, z_location=-35,  description="Buncher Temperature",
+                                  device_type = temp_device_type, card = link_node_card, area="GUNB",
+                                  measured_device_type_id = buncher_device_type.id)
+buncher_flow = models.DigitalDevice(name="Buncher Flow", position=455, z_location=-35, description="Buncher Flow",
+                                  device_type = flow_device_type, card = link_node_card, area="GUNB",
+                                  measured_device_type_id = buncher_device_type.id)
 vvr1 = models.DigitalDevice(name="VVR01", position=100, z_location=-35, description="Vacuum Gate Valve VVR01",
                             device_type = vvr_device_type, card = link_node_card, area="GUNB")
 vvr2 = models.DigitalDevice(name="VVR02", position=941, z_location=-35, description="Vacuum Gate Valve VVR02",
                             device_type = vvr_device_type, card = link_node_card, area="GUNB")
 shutter_status = models.DigitalDevice(name="Mech. Shutter", position=100, z_location=-35, description="Mechanical Shutter Status",
                                       device_type = shutter_status_device_type, card = link_node_card, area="GUNB")
-vvmg1 = models.DigitalDevice(name="VVMG01", position=500, z_location=-35, description="Manual Vacuum Gate Valve VVMG01",
+gun_temp = models.DigitalDevice(name="Gun Temp", position=100, z_location=-36,  description="Gun Temperature",
+                                device_type = temp_device_type, card = link_node_card, area="GUNB",
+                                measured_device_type_id = gun_device_type.id)
+gun_flow = models.DigitalDevice(name="Gun Flow", position=100, z_location=-36, description="Gun Flow",
+                                device_type = flow_device_type, card = link_node_card, area="GUNB",
+                                measured_device_type_id = gun_device_type.id)
+vvmg1 = models.DigitalDevice(name="VVMG02", position=500, z_location=-35, description="Manual Vacuum Gate Valve VVMG02",
                             device_type = vvmg_device_type, card = link_node_card, area="LLOK")
+gunwg_temp = models.DigitalDevice(name="Gun Waveguide Temp", position=100, z_location=-36,  description="Gun Waveguide Temperature",
+                                  device_type = temp_device_type, card = link_node_card, area="GUNB",
+                                  measured_device_type_id = gun_device_type.id)
+fc_flow = models.DigitalDevice(name="Faraday Cup Flow", position=999, z_location=-20,
+                               description="Faraday Cup Flow",
+                               device_type = flow_device_type, card = link_node_card, area="GUNB",
+                               measured_device_type_id = fc_device_type.id)
 
 session.add_all([screen, fc_temp,
-                 sol01_temp, sol02_temp,
-                 sol_flow, vvr1, vvr2,
-                 vvmg1])
+                 sol01_temp, sol02_temp, sol_flow,
+                 buncher_temp, buncher_flow,
+                 vvr1, vvr2,
+                 gun_temp, gun_flow, fc_flow,
+                 vvmg1, gunwg_temp])
 session.add(shutter_status)
 
 # Add analog devices
@@ -418,22 +452,36 @@ sol02_temp_channel = models.DeviceInput(channel = digital_chans[3], bit_position
                                         digital_device = sol02_temp, fault_value=0)
 sol_flow_channel = models.DeviceInput(channel = digital_chans[4], bit_position = 0,
                                       digital_device = sol_flow, fault_value=0)
-vvr1_channel =  models.DeviceInput(channel = digital_chans[5], bit_position = 0,
+buncher_temp_channel = models.DeviceInput(channel = digital_chans[5], bit_position = 0,
+                                          digital_device = buncher_temp, fault_value=0)
+buncher_flow_channel = models.DeviceInput(channel = digital_chans[6], bit_position = 0,
+                                          digital_device = buncher_flow, fault_value=0)
+vvr1_channel =  models.DeviceInput(channel = digital_chans[7], bit_position = 0,
                                    digital_device = vvr1, fault_value=0)
-vvr2_channel =  models.DeviceInput(channel = digital_chans[6], bit_position = 0,
+vvr2_channel =  models.DeviceInput(channel = digital_chans[8], bit_position = 0,
                                    digital_device = vvr2, fault_value=0)
-shutter_open_sw = models.DeviceInput(channel = digital_chans[7], bit_position=0,
+shutter_open_sw = models.DeviceInput(channel = digital_chans[9], bit_position=0,
                                      digital_device=shutter_status, fault_value=0)
-shutter_close_sw = models.DeviceInput(channel = digital_chans[8], bit_position=1,
+shutter_close_sw = models.DeviceInput(channel = digital_chans[10], bit_position=1,
                                       digital_device=shutter_status, fault_value=1)
-vvmg1_channel =  models.DeviceInput(channel = digital_chans[9], bit_position = 0,
+gun_temp_channel = models.DeviceInput(channel = digital_chans[11], bit_position = 0,
+                                      digital_device = gun_temp, fault_value=0)
+gun_flow_channel = models.DeviceInput(channel = digital_chans[12], bit_position = 0,
+                                      digital_device = gun_flow, fault_value=0)
+vvmg1_channel =  models.DeviceInput(channel = digital_chans[13], bit_position = 0,
                                     digital_device = vvmg1, fault_value=0)
-fc_temp_channel = models.DeviceInput(channel = digital_chans[10], bit_position = 0,
+fc_temp_channel = models.DeviceInput(channel = digital_chans[14], bit_position = 0,
                                      digital_device = fc_temp, fault_value=0)
+gunwg_temp_channel = models.DeviceInput(channel = digital_chans[15], bit_position = 0,
+                                      digital_device = gunwg_temp, fault_value=0)
+fc_flow_channel = models.DeviceInput(channel = digital_chans[16], bit_position = 0,
+                                     digital_device = fc_flow, fault_value=0)
 session.add_all([yag_out_lim_sw,yag_in_lim_sw,
                  sol01_temp_channel, sol02_temp_channel,
+                 buncher_temp_channel, buncher_flow_channel,
                  fc_temp, sol_flow_channel,
                  shutter_open_sw, shutter_close_sw,
+                 gun_temp_channel, gun_flow_channel, gunwg_temp_channel,
                  vvr1_channel, vvr2_channel, vvmg1_channel])
 
 #Configure faults for the digital devices
@@ -442,18 +490,22 @@ fc_temp_fault = models.Fault(name="TEMP_SUM", description="Faraday Cup Temperatu
 sol01_temp_fault = models.Fault(name="TEMP_SUM", description="SOL1B Temperature Fault")
 sol02_temp_fault = models.Fault(name="TEMP_SUM", description="SOL2B Temperature Fault")
 sol_flow_fault = models.Fault(name="FLOW_SW", description="SOL1B/SOL2B Waterflow Fault")
+buncher_temp_fault = models.Fault(name="TEMP_SUM", description="Buncher Temperature Fault")
+buncher_flow_fault = models.Fault(name="FLOW_SW", description="Buncher Waterflow Fault")
 vvr1_fault = models.Fault(name="VVR01", description="VVR01 Vacuum Valve Fault")
 vvr2_fault = models.Fault(name="VVR02", description="VVR02 Vacuum Valve Fault")
-vvmg1_fault = models.Fault(name="VVMG1", description="VVMG:LLOK:500:3 Man. Vac. Valve Fault")
+gun_temp_fault = models.Fault(name="TEMPBD_SUM", description="Gun Temperature Fault")
+gun_flow_fault = models.Fault(name="FLOW_SW", description="Gun Waterflow Fault")
+vvmg1_fault = models.Fault(name="VVMG2", description="VVMG:LLOK:500:2 Man. Vac. Valve Fault")
+gunwg_temp_fault = models.Fault(name="TEMPWG_SUM", description="Gun Waveguide Temperature Fault")
+fc_flow_fault = models.Fault(name="FLOW_SW", description="Faraday Cup Waterflow Fault")
 session.add_all([yag_fault,  sol01_temp_fault, sol02_temp_fault, fc_temp_fault])
 session.add_all([vvr1_fault, vvr2_fault, vvmg1_fault])
-session.add_all([sol_flow_fault])
+session.add_all([sol_flow_fault, fc_flow_fault])
+session.add_all([buncher_temp_fault, buncher_flow_fault, 
+                 gun_temp_fault, gun_flow_fault, gunwg_temp_fault])
 shutter_fault = models.Fault(name="SHUT", description="Mechanical Shutter Status Fault")
 session.add(shutter_fault)
-
-#bpm01_fault = models.Fault(name="BPM01", description="BPM01 X/Y/TMIT Threshold Fault")
-#bpm02_fault = models.Fault(name="BPM02", description="BPM02 X/Y/TMIT Threshold Fault")
-#session.add_all([bpm01_fault, bpm02_fault])
 
 sol1_int1_fault = models.Fault(name="I0", description="SOL1B Integrator #0 Fault")
 sol2_int1_fault = models.Fault(name="I0", description="SOL2B Integrator #0 Fault")
@@ -483,11 +535,19 @@ fc_temp_fault_input = models.FaultInput(bit_position = 0, device = fc_temp, faul
 sol01_temp_fault_input = models.FaultInput(bit_position = 0, device = sol01_temp, fault = sol01_temp_fault)
 sol02_temp_fault_input = models.FaultInput(bit_position = 0, device = sol02_temp, fault = sol02_temp_fault)
 sol_flow_fault_input = models.FaultInput(bit_position = 0, device = sol_flow, fault = sol_flow_fault)
+buncher_temp_fault_input = models.FaultInput(bit_position = 0, device = buncher_temp, fault = buncher_temp_fault)
+buncher_flow_fault_input = models.FaultInput(bit_position = 0, device = buncher_flow, fault = buncher_flow_fault)
 vvr1_fault_input = models.FaultInput(bit_position = 0, device = vvr1, fault = vvr1_fault)
 vvr2_fault_input = models.FaultInput(bit_position = 0, device = vvr2, fault = vvr2_fault)
+gun_temp_fault_input = models.FaultInput(bit_position = 0, device = gun_temp, fault = gun_temp_fault)
+gun_flow_fault_input = models.FaultInput(bit_position = 0, device = gun_flow, fault = gun_flow_fault)
+gunwg_temp_fault_input = models.FaultInput(bit_position = 0, device = gunwg_temp, fault = gunwg_temp_fault)
+fc_flow_fault_input = models.FaultInput(bit_position = 0, device = fc_flow, fault = fc_flow_fault)
 
-session.add_all([yag_fault_input, fc_temp_fault_input,
+session.add_all([yag_fault_input, fc_temp_fault_input, fc_flow_fault_input,
                  sol01_temp_fault_input, sol02_temp_fault_input,
+                 buncher_temp_fault_input, buncher_flow_fault_input,
+                 gun_temp_fault_input, gun_flow_fault_input, gunwg_temp_fault,
                  sol_flow_fault_input, vvr1_fault_input, vvr2_fault_input])
 
 shutter_fault_input = models.FaultInput(bit_position = 0, device = shutter_status, fault = shutter_fault)
@@ -528,10 +588,19 @@ fc_temp_fault_state = models.FaultState(fault = fc_temp_fault, device_state = te
 sol01_temp_fault_state = models.FaultState(fault = sol01_temp_fault, device_state = temp_device_fault)
 sol02_temp_fault_state = models.FaultState(fault = sol02_temp_fault, device_state = temp_device_fault)
 sol_flow_fault_state = models.FaultState(fault = sol_flow_fault, device_state = flow_device_fault)
+buncher_temp_fault_state = models.FaultState(fault = buncher_temp_fault, device_state = temp_device_fault)
+buncher_flow_fault_state = models.FaultState(fault = buncher_flow_fault, device_state = flow_device_fault)
 vvr1_fault_state = models.FaultState(fault = vvr1_fault, device_state = vvr_device_fault)
 vvr2_fault_state = models.FaultState(fault = vvr2_fault, device_state = vvr_device_fault)
+gun_temp_fault_state = models.FaultState(fault = gun_temp_fault, device_state = temp_device_fault)
+gun_flow_fault_state = models.FaultState(fault = gun_flow_fault, device_state = flow_device_fault)
+gunwg_temp_fault_state = models.FaultState(fault = gunwg_temp_fault, device_state = temp_device_fault)
+fc_flow_fault_state = models.FaultState(fault = fc_flow_fault, device_state = flow_device_fault)
 
-session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken, fc_temp_fault,
+session.add_all([yag_fault_in, yag_fault_moving, yag_fault_broken, fc_temp_fault_state,
+                 fc_flow_fault_state,
+                 buncher_temp_fault_state, buncher_flow_fault_state,
+                 gun_temp_fault_state, gun_flow_fault_state, gunwg_temp_fault_state,
                  sol01_temp_fault_state, sol02_temp_fault_state, sol_flow_fault_state])
 
 shutter_fault_broken = models.FaultState(fault = shutter_fault, device_state = shutter_broken)
@@ -619,10 +688,16 @@ fc_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac
 sol01_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 sol02_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 sol_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+buncher_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+buncher_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 vvr1_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 vvr2_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 shutter_fault_broken.add_allowed_class(beam_class=class_0, beam_destination=linac)
+gun_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+gun_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 vvmg1_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+gunwg_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+fc_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 
 for fault_state in sol1_int1_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)

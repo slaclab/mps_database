@@ -44,8 +44,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
           ignore_condition = session.query(models.IgnoreCondition).\
               filter(models.IgnoreCondition.analog_device_id==analogDevice.id).all()
 
-#    for state in analogDevice.device_type.states:
-          crates.append(analogDevice.channel.card.crate.get_name())#number)
+          crates.append(analogDevice.channel.card.crate.get_name())
           slot=str(analogDevice.channel.card.slot_number)
           if (analogDevice.channel.card.amc == 0):
             slot=slot+':AMC0'
@@ -73,6 +72,9 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
               ign_pv_name = '{0}:MPSC_IGN'.format(name)
             elif (ignore_condition[0].analog_device_id == None):
               ign_pv_name = '-'
+            else:
+              if (ignore_condition[0].fault_state.device_state_id != state.device_state.id):
+                ign_pv_name = '-'
           else:
             ign_pv_name = '-'
 
