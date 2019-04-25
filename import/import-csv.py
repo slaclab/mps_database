@@ -6,6 +6,7 @@ import argparse
 import time
 import yaml
 import os
+import sys
 
 class DatabaseImporter:
   conf = None # MPSConfig
@@ -63,23 +64,44 @@ class DatabaseImporter:
           crate_info[fields[field_index]]=property
           field_index = field_index + 1
 
-        ln = models.LinkNode(area=crate_info['ln_area'], location=crate_info['ln_location'],
-                             cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
-                             group=crate_info['group'], group_link=crate_info['group_link'],
-                             group_link_destination=crate_info['group_link_destination'],
-                             group_drawing=crate_info['network_drawing'])
-        self.session.add(ln)
-        
+        locations=[crate_info['ln_location']]
+        slots=[crate_info['ln_slot']]
+        if (';' in crate_info['ln_location'] and
+            ';' in crate_info['ln_slot']):
+          locations=crate_info['ln_location'].split(';')
+          slots=crate_info['ln_slot'].split(';')
+
         crate = models.Crate(crate_id=crate_info['crate_id'],
-                               num_slots=crate_info['num_slots'],
+                             num_slots=crate_info['num_slots'],
                              shelf_number=int(crate_info['shelf_number']),
                              location=crate_info['location'],
                              rack=crate_info['rack'],
                              elevation=crate_info['elevation'],
-                               sector=crate_info['sector'],
-                             link_node=ln)
+                             sector=crate_info['sector'])
+#                             link_node=slot2_ln)
+
         self.session.add(crate)
-      
+
+        for l,s in zip(locations,slots):
+          lcls1_id = 0
+          if (s == '2'):
+            lcls1_id = crate_info['lcls1_id']
+
+          ln = models.LinkNode(area=crate_info['ln_area'], location=l,
+                               cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
+                               group=crate_info['group'], group_link=crate_info['group_link'],
+                               group_link_destination=crate_info['group_link_destination'],
+                               group_drawing=crate_info['network_drawing'],
+                               slot_number=s, lcls1_id=lcls1_id, crate=crate)
+
+          if (s == '2'):
+            slot2_ln = ln
+
+          self.session.add(ln)
+        
+        print('INFO: Added crate {}, with slot 2 LN {}'.format(crate.get_name(), slot2_ln.get_name()))
+
+        
     self.session.commit()
     f.close()
 
@@ -771,8 +793,17 @@ class DatabaseImporter:
           filter(models.Crate.id==app_card.crate_id).one()
     except:
       return False
+    
+    slots = []
+    for n in app_crate.link_nodes:
+      slots.append(n.slot_number)
 
-    if (app_crate.link_node.ln_type == 3 or app_crate.link_node.ln_type == 1):
+    for ln in app_crate.link_nodes:
+      if (app_card.slot_number == ln.slot_number or
+          (ln.slot_number == 2 and not app_card.slot_number in slots)):
+        link_node = ln
+
+    if (link_node.ln_type == 3 or link_node.ln_type == 1):
       return True
     else:
       return False
@@ -1117,11 +1148,16 @@ class DatabaseImporter:
       crates = self.session.query(models.Crate).all()
       for c in crates:
         # Removes LCLS-II only cards/crates
-        if (c.link_node.ln_type == 2):
+        if (c.link_nodes[0].ln_type == 2):
           cards = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.crate_id==c.id).delete()
-          print('Deleting cards for crate #{}'.format(c.id))
-          self.session.query(models.LinkNode).filter(models.LinkNode.id == c.link_node_id).delete()
+          print('INFO: Deleting cards for crate {} (#{})'.format(c.get_name(), c.id))
+          sys.stdout.write('INFO: `Link Nodes: ')
+          for ln in c.link_nodes:
+            sys.stdout.write('{} '.format(ln.get_name()))
+            l = self.session.query(models.LinkNode).\
+                filter(models.LinkNode.id == ln.id).delete()
+            print('')
           self.session.query(models.Crate).filter(models.Crate.id == c.id).delete()
         else:
           cards = self.session.query(models.ApplicationCard).\
@@ -1130,15 +1166,16 @@ class DatabaseImporter:
             if (len(c.devices) == 0):
               print('Deleting card #{}'.format(c.id))
               self.session.query(models.ApplicationCard).filter(models.ApplicationCard.id == c.id).delete()
+
       # remove crates that end up with no cards
       for c in crates:
         cards = self.session.query(models.ApplicationCard).\
             filter(models.ApplicationCard.crate_id==c.id).all()
         if (len(cards) == 0):
           print('Crate #{} has no cards'.format(c.id))
-          self.session.query(models.LinkNode).filter(models.LinkNode.id == c.link_node_id).delete()
+          for ln in c.link_nodes:
+            self.session.query(models.LinkNode).filter(models.LinkNode.id == ln.id).delete()
           self.session.query(models.Crate).filter(models.Crate.id == c.id).delete()
-
 
       self.session.query(models.LinkNode).filter(models.LinkNode.ln_type==2).delete()
 
@@ -1175,6 +1212,7 @@ importer.add_beam_classes('import/BeamClasses.csv')
 importer.add_digital_device('import/QUAD', card_name="Virtual Card")
 importer.add_analog_device('import/BEND', card_name="Generic ADC") 
 
+#if (False):
 if (True):
   importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
   importer.add_digital_device('import/PROF')

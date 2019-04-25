@@ -102,6 +102,26 @@ class MpsAppReader:
             self.__extract_apps(mps_db_session)
             self.mps_name = MpsName(mps_db_session)
 
+    def __get_app_link_node(self, mps_db_session, cpu, slot):
+        """
+        Find the link node that is responsible for the application at the
+        specified slot, running on the specified cpu.
+        """
+        try:
+            # Get all the apps defined in the database
+            link_nodes = mps_db_session.query(models.LinkNode).\
+                filter(models.LinkNode.cpu == cpu).all()
+            if (len(link_nodes) == 0):
+                return None
+            
+            for ln in link_nodes:
+                if (ln.slot_number == slot):
+                    return ln
+            return None
+
+        except exc.SQLAlchemyError as e:
+            raise
+
 
     def __extract_apps(self, mps_db_session):
         """
@@ -208,8 +228,23 @@ class MpsAppReader:
                 app_data["cpu_name"] = app_card.crate.link_node.cpu
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["slot_number"] = app_card.slot_number
-                app_data["link_node_area"] = app_card.crate.link_node.area
-                app_data["link_node_location"] = app_card.crate.link_node.location
+                if (app_card.slot_number == 2):
+                    app_data["link_node_area"] = app_card.crate.link_node.area
+                    app_data["link_node_location"] = app_card.crate.link_node.location
+                else:
+                    link_node = self.__get_app_link_node(mps_db_session, app_card.crate.link_node.cpu, app_card.slot_number)
+                    # If link_node is not found, the device is taken care by a non-link_node SIOC.
+                    # That is the case for devices like BPMs, TORO, WIRE, etc
+                    if (link_node == None):
+                        app_data["link_node_area"] = app_card.crate.link_node.area
+                        app_data["link_node_location"] = app_card.crate.link_node.location
+#                        print('ERROR: Failed to find link node for application {} (cpu={}, crate={}, slot={})'.\
+#                                  format(app_card.global_id, app_card.crate.link_node.cpu,
+#                                         app_card.crate.get_name(), app_card.slot_number))
+#                        exit(-1)
+                    else:
+                        app_data["link_node_area"] = link_node.area
+                        app_data["link_node_location"] = link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
                 app_data["devices"] = []
 
@@ -864,7 +899,7 @@ class MpsAppReader:
 
         with open(file, 'a') as db, open(template, 'r') as template:
             for line in template:
-                print("*** {}".format(line))
+ #               print("*** {}".format(line))
                 db.write(self.__expand_macros(line, macros))
 
     def __expand_macros(self, text, macros):
@@ -879,7 +914,7 @@ class MpsAppReader:
         It will return the original text will all the macros found in it
         substituted by the respective values.
         """
-        print macros.items()
+#        print macros.items()
         for k, v in macros.items():
             text = re.sub(r'\$\(({key}|{key},[^)]*)\)'.format(key=k),v, text)
 

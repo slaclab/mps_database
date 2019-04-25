@@ -13,7 +13,7 @@ class LinkNode(Base):
   Properties:
    area: sector where the card is installed (e.g. GUNB, LI30, DMPB,...).
              This is used for creating the LinkNode PVs (second field)
-   location: this is the location field to generate LinkNode PVs (third field)
+   location: this is the location field to generate LinkNode PVs (third field, e.g. MP02)
    cpu: name of the LinuxRT CPU where the SIOC is running
    group: MPS update network group number (i.e. CN port the chain connects to)
           group 100 is the CN in LI00, group 200 is the CN in B005
@@ -24,6 +24,8 @@ class LinkNode(Base):
             to devices that see beam from both injectors)
    lcls1_id: link node id for LCLS-I. This is used to build the link node IP address,
              it goes into the NodeID register.
+   slot_number: link nodes connect to only one slots, usually slot 2.
+                In some instances they need to connect to cards in other slots.
    
   References:
    crate_id: specifies the crate that contains this link node
@@ -39,8 +41,10 @@ class LinkNode(Base):
   group_drawing = Column(String, unique=False)
   ln_type = Column(Integer, nullable=False, default=2)
   lcls1_id = Column(Integer, nullable=False, default=0)
-  crate = relationship("Crate", uselist=False, back_populates="link_node")
-  
+  slot_number = Column(Integer, nullable=False, default=2)
+#  crate = relationship("Crate", uselist=False, back_populates="link_node")
+  crate_id = Column(Integer, ForeignKey('crates.id'))
+
   def show(self):
     print('> Area: {0}'.format(self.area))
     print('> Location: {0}'.format(self.location))
@@ -51,6 +55,7 @@ class LinkNode(Base):
     print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
     print('> GroupDrawing: {0}'.format(self.group_drawing))
     print('> LinkNodeType: {}'.format(self.get_type()))
+#    print('> CrateId: {}'format(self.crate_id))
     if (self.ln_type == 1 or self.ln_type == 3):
       print('> LinkNodeType: {}'.format(self.get_type()))
       print('> LinkNodeId: {}'.format(self.lcls1_id))
