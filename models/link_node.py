@@ -42,8 +42,8 @@ class LinkNode(Base):
   ln_type = Column(Integer, nullable=False, default=2)
   lcls1_id = Column(Integer, nullable=False, default=0)
   slot_number = Column(Integer, nullable=False, default=2)
-#  crate = relationship("Crate", uselist=False, back_populates="link_node")
   crate_id = Column(Integer, ForeignKey('crates.id'))
+  cards = relationship("ApplicationCard", backref='link_node')
 
   def show(self):
     print('> Area: {0}'.format(self.area))
@@ -55,7 +55,6 @@ class LinkNode(Base):
     print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
     print('> GroupDrawing: {0}'.format(self.group_drawing))
     print('> LinkNodeType: {}'.format(self.get_type()))
-#    print('> CrateId: {}'format(self.crate_id))
     if (self.ln_type == 1 or self.ln_type == 3):
       print('> LinkNodeType: {}'.format(self.get_type()))
       print('> LinkNodeId: {}'.format(self.lcls1_id))

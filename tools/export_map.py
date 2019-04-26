@@ -84,8 +84,6 @@ def select_link_node_cards(session, cards, node):
     slots.append(n.slot_number)
 
   for card in cards:
-    print '{} {} {} {} {}'.format(card.slot_number, ln.slot_number,
-                               card.crate_id, ln.crate.id, ln.crate.get_name())
     if ((card.slot_number == ln.slot_number or
          (ln.slot_number == 2 and not card.slot_number in slots)) and
         card.crate_id == ln.crate.id):

@@ -139,6 +139,25 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
 
+  def find_app_link_node(self, crate, slot):
+    """
+    Return the link node that connects to the specified slot for the crate
+    """
+    slots = []
+    for ln in crate.link_nodes:
+      slots.append(ln.slot_number)
+
+    link_node = None
+    for ln in crate.link_nodes:
+      if (slot == ln.slot_number):
+        return ln
+      elif (ln.slot_number == 2 and not slot in slots):
+        return ln
+      elif (not slot in slots and slot == ln.slot_number):
+        return ln
+
+    return link_node
+
   def add_cards(self, file_name):
     f = open(file_name)
 
@@ -172,15 +191,22 @@ class DatabaseImporter:
             print('ERROR: Cannot find crate with number {0}, exiting...'.format(app_card_info['crate_number']))
             return
 
+
+        link_node = self.find_app_link_node(app_crate, int(app_card_info['slot']))
+        if (link_node == None):
+          print('ERROR: Cannot find link_node associated to slot {} in crate {}'.\
+                  format(app_card_info['slot'], app_crate.get_name()))
+
         app_card = models.ApplicationCard(name=app_card_info['name'],
                                           number=int(app_card_info['number']),
                                           area=app_card_info['area'],
-                                          location=app_card_info['location'],
+#                                          location=app_card_info['location'],
                                           type=app_card_type,
                                           slot_number=int(app_card_info['slot']),
                                           amc=int(app_card_info['amc']),
                                           global_id=int(app_card_info['global_id']),
-                                          description=app_card_info['description'])
+                                          description=app_card_info['description'],
+                                          link_node=link_node)
         
         app_crate.cards.append(app_card)
         self.session.add(app_card)
@@ -795,6 +821,7 @@ class DatabaseImporter:
       return False
     
     slots = []
+
     for n in app_crate.link_nodes:
       slots.append(n.slot_number)
 

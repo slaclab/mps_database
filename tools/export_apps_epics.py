@@ -102,27 +102,6 @@ class MpsAppReader:
             self.__extract_apps(mps_db_session)
             self.mps_name = MpsName(mps_db_session)
 
-    def __get_app_link_node(self, mps_db_session, cpu, slot):
-        """
-        Find the link node that is responsible for the application at the
-        specified slot, running on the specified cpu.
-        """
-        try:
-            # Get all the apps defined in the database
-            link_nodes = mps_db_session.query(models.LinkNode).\
-                filter(models.LinkNode.cpu == cpu).all()
-            if (len(link_nodes) == 0):
-                return None
-            
-            for ln in link_nodes:
-                if (ln.slot_number == slot):
-                    return ln
-            return None
-
-        except exc.SQLAlchemyError as e:
-            raise
-
-
     def __extract_apps(self, mps_db_session):
         """
         Extract all application information from the MPS database. A session to the
@@ -225,26 +204,11 @@ class MpsAppReader:
                 # Get this application data
                 app_data = {}
                 app_data["app_id"] = app_card.global_id
-                app_data["cpu_name"] = app_card.crate.link_node.cpu
+                app_data["cpu_name"] = app_card.link_node.cpu
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["slot_number"] = app_card.slot_number
-                if (app_card.slot_number == 2):
-                    app_data["link_node_area"] = app_card.crate.link_node.area
-                    app_data["link_node_location"] = app_card.crate.link_node.location
-                else:
-                    link_node = self.__get_app_link_node(mps_db_session, app_card.crate.link_node.cpu, app_card.slot_number)
-                    # If link_node is not found, the device is taken care by a non-link_node SIOC.
-                    # That is the case for devices like BPMs, TORO, WIRE, etc
-                    if (link_node == None):
-                        app_data["link_node_area"] = app_card.crate.link_node.area
-                        app_data["link_node_location"] = app_card.crate.link_node.location
-#                        print('ERROR: Failed to find link node for application {} (cpu={}, crate={}, slot={})'.\
-#                                  format(app_card.global_id, app_card.crate.link_node.cpu,
-#                                         app_card.crate.get_name(), app_card.slot_number))
-#                        exit(-1)
-                    else:
-                        app_data["link_node_area"] = link_node.area
-                        app_data["link_node_location"] = link_node.location
+                app_data["link_node_area"] = app_card.link_node.area
+                app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
                 app_data["devices"] = []
 
@@ -309,11 +273,11 @@ class MpsAppReader:
                 # Get this application data
                 app_data = {}
                 app_data["app_id"] = app_card.global_id
-                app_data["cpu_name"] = app_card.crate.link_node.cpu
+                app_data["cpu_name"] = app_card.link_node.cpu
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["slot_number"] = app_card.slot_number
-                app_data["link_node_area"] = app_card.crate.link_node.area
-                app_data["link_node_location"] = app_card.crate.link_node.location
+                app_data["link_node_area"] = app_card.link_node.area
+                app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
                 app_data["virtual"] = False
                 app_data["devices"] = []
@@ -408,9 +372,9 @@ class MpsAppReader:
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
 
             # Add the IOC name environmental variable for the Link Nodes
-            if app["slot_number"] == 2:
-                self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
-                                                                "LOCATION":app["link_node_location"].upper()})
+#            if app["analog_link_node"]:
+            self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
+                                                            "LOCATION":app["link_node_location"].upper()})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -455,6 +419,11 @@ class MpsAppReader:
 
             # self.write_mps_db(path=app_path, macros={"P":app_prefix} )
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
+
+            # Add the IOC name environmental variable for the Link Nodes
+#            if app["digital_link_node"]:
+            self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
+                                                            "LOCATION":app["link_node_location"].upper()})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
