@@ -1191,7 +1191,7 @@ class DatabaseImporter:
               filter(models.ApplicationCard.crate_id==c.id).all()
           for c in cards:
             if (len(c.devices) == 0):
-              print('Deleting card #{}'.format(c.id))
+              print('Deleting card #{} ({})'.format(c.id, c.name))
               self.session.query(models.ApplicationCard).filter(models.ApplicationCard.id == c.id).delete()
 
       # remove crates that end up with no cards

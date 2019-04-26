@@ -210,6 +210,25 @@ class MpsAppReader:
                 app_data["link_node_area"] = app_card.link_node.area
                 app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+
+                # Defines whether the IOC_NAME env var should be added no the mps.env
+                # file. In order to add only once we need to figure out if there are
+                # other cards with the same SIOC. If there is a digital card the SIOC
+                # is written in the digital section. If a card is a "Generic ADC" and
+                # it is not in slot 2 then it has its own SIOC (there are only ~7 cases
+                # like that)
+                app_data["analog_link_node"] = False
+                if (app_card.link_node.slot_number != 2 and app_card.name == "Generic ADC"):
+                    app_data["analog_link_node"] = True # Non-slot 2 link node
+                elif (app_card.link_node.slot_number == 2):
+                    has_digital = False
+                    for c in app_card.link_node.cards:
+                        if (c.name == "Digital Card" or c.name == "Generic ADC" and c.id != app_card.id):
+                            has_digital = True
+
+                    if (not has_digital):
+                        app_data["analog_link_node"] = True # Add if the digital card is not defined
+
                 app_data["devices"] = []
 
                 # Iterate over all the analog devices in this application
@@ -372,9 +391,9 @@ class MpsAppReader:
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
 
             # Add the IOC name environmental variable for the Link Nodes
-#            if app["analog_link_node"]:
-            self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
-                                                            "LOCATION":app["link_node_location"].upper()})
+            if app["analog_link_node"]:
+                self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
+                                                                "LOCATION":app["link_node_location"].upper()})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -421,7 +440,6 @@ class MpsAppReader:
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
             # Add the IOC name environmental variable for the Link Nodes
-#            if app["digital_link_node"]:
             self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                             "LOCATION":app["link_node_location"].upper()})
 

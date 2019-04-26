@@ -37,8 +37,6 @@ class Crate(Base):
   rack = Column(String, nullable=False)
   elevation = Column(Integer, nullable=False, default=0)
   cards = relationship("ApplicationCard", backref='crate')
-#  link_node_id = Column(Integer, ForeignKey('link_nodes.id'), nullable=False)
-#  link_node = relationship("LinkNode", back_populates="crate")
   link_nodes = relationship("LinkNode", backref='crate')
 
   def get_name(self):
