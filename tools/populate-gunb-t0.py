@@ -43,11 +43,11 @@ session.add_all([class_0, class_1, class_2])
 
 # EIC Link Node - L2KA00-05 (Level 17)
 # Make a crate for BPMs, and for the mitigation LN
-link_node = models.LinkNode(area="gunb", location="mp01", cpu="cpu-gunb0-mp01")
-session.add(link_node)
-
-crate = models.Crate(crate_id=1, shelf_number=1, num_slots=8, location="L2KA00", rack="05", elevation=17, sector="LI00", link_node=link_node)
+crate = models.Crate(crate_id=1, shelf_number=1, num_slots=8, location="L2KA00", rack="05", elevation=17, sector="LI00")#, link_node=link_node)
 session.add_all([crate])
+
+link_node = models.LinkNode(area="gunb", location="mp01", cpu="cpu-gunb0-mp01", crate=crate)
+session.add(link_node)
 
 #Define a mixed-mode link node (One digital AMC, one analog for IM01/SOL01-02 Curr/Faraday Cup Curr)
 eic_digital_app = models.ApplicationType(name="Digital Card", number=0,
@@ -74,22 +74,27 @@ if not two_apps:
 
 # Application Cards (one for digital inputs, three for analog inputs)
 link_node_card = models.ApplicationCard(name="EIC Digital Card", number=100, area="GUNB",
-                                        location="MP10", type=eic_digital_app, slot_number=2, amc=2, #amc=2 -> RTM
-                                        global_id=2, description="EIC Digital Input/Output")
+                                        type=eic_digital_app, slot_number=2, amc=2, #amc=2 -> RTM
+                                        global_id=2, description="EIC Digital Input/Output",
+                                        link_node=link_node)
 sol_card = models.ApplicationCard(name="EIC Analog Inputs", number=104, area="GUNB",
-                                  location="MP11", type=eic_analog_app, slot_number=2, amc=1,
-                                  global_id=1, description="EIC Analog Inputs")
+                                  type=eic_analog_app, slot_number=2, amc=1,
+                                  global_id=1, description="EIC Analog Inputs",
+                                  link_node=link_node)
 
 if not two_apps:
   bpm_card = models.ApplicationCard(name="EIC BPM1B/BPM2B", number=101, area="GUNB", 
-                                    location="MP12", type=eic_bpm_app, slot_number=3,
-                                    global_id=3, description="EIC BPM Status")
+                                    type=eic_bpm_app, slot_number=3,
+                                    global_id=3, description="EIC BPM Status",
+                                    link_node=link_node)
   im_card = models.ApplicationCard(name="EIC IM01B", number=102, area="GUNB",
-                                   location="MP13", type=eic_bcm_app, slot_number=7,
-                                   global_id=6, description="EIC IM Status")
+                                   type=eic_bcm_app, slot_number=7,
+                                   global_id=6, description="EIC IM Status",
+                                   link_node=link_node)
   fc_card = models.ApplicationCard(name="EIC FC01", number=103, area="GUNB",
-                                   location="MP14", type=eic_bcm_app, slot_number=6,
-                                   global_id=5, description="EIC Faraday Cup Status")
+                                   type=eic_bcm_app, slot_number=6,
+                                   global_id=5, description="EIC Faraday Cup Status",
+                                   link_node=link_node)
 
 crate.cards.append(link_node_card)
 crate.cards.append(sol_card)
@@ -382,10 +387,10 @@ fc_temp = models.DigitalDevice(name="Faraday Cup Temperature", device_type = tem
                                measured_device_type_id = fc_device_type.id)
 sol01_temp = models.DigitalDevice(name="SOL1B Temp", position=212, z_location=-32, description="SOL1B Temperature",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
-                                  measured_device_type_id = sol_curr_device_type.id)
+                                  measured_device_type_id = sol_curr_device_type.id, evaluation=0)
 sol02_temp = models.DigitalDevice(name="SOL2B Temp", position=823, z_location=-27,  description="SOL2B Temperature",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
-                                  measured_device_type_id = sol_curr_device_type.id)
+                                  measured_device_type_id = sol_curr_device_type.id, evaluation=0)
 sol_flow = models.DigitalDevice(name="SOL1B/SOL2B Flow", position=212, z_location=-32, description="SOL1B and SOL2B Waterflow Status",
                                   device_type = flow_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)

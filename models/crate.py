@@ -58,7 +58,7 @@ class Crate(Base):
       raise ValueError("Card cannot use slot_number > num_slots.")
     
     if new_card.slot_number == None:
-      raise ValueError('Slot number is None')
+      raise ValueError('Slot number is None (card "{}")'.format(new_card.name))
 
     if new_card.slot_number < 0:
       raise ValueError('Slot number must be positive (slot_number={0}).'.format(new_card.slot_number))

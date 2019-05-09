@@ -8,6 +8,14 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database:
+  * Modified the device.position field - it is now a string because
+    there are PVs fields that need characters besides the location
+    number. This was added for the LBLMs, which need to have chains
+    A and B distinguished.
+  * Fixes to tools scripts to reflect schema changes in previous
+    version.
+
 mps_database-R1-2-0: (Apr 26 2019)
   * Charge in export_apps_epics.py to generate records for virtual
     inputs; addition of template file for virtual inputs.

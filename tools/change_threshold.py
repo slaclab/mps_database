@@ -12,176 +12,222 @@ import re
 import subprocess
 from argparse import RawTextHelpFormatter
 
-def isAnalog(session, dev_id):
-  analog_devices = session.query(models.AnalogDevice).filter(models.AnalogDevice.id==dev_id).all()
-  if (len(analog_devices)==1):
-    return True
-  else:
-    digital_devices = session.query(models.DigitalDevice).filter(models.DigitalDevice.id==dev_id).all()
-    if (len(digital_devices)==0):
-      print 'ERROR: Device not found (invalid device id {0})'.format(dev_id)
-    return False
+class ThresholdManager:
+  """
+  Changes thresholds of analog devices - save value in database and set device using channel access
+  """
+  def __init__(self, db, rt_db):
+    self.mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
+    self.session = self.mps.session
+    self.rt_session = self.mps.runtime_session
+    self.mps_names = MpsName(self.session)
+    
+  def __exit__(self):
+    self.session.close()
+    self.rt_session.close()
 
-#
-# Save threshold to the database as current value
-#
-def updateThreshold(rt_session, rt_d, t_table, integrator_k, t_type, value_v):
-  setattr(getattr(rt_d, t_table), '{0}_{1}'.format(integrator_k,t_type), value_v)
-  rt_session.commit()
+  def isAnalog(self, dev_id):
+    analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==dev_id).all()
+    if (len(analog_devices)==1):
+      return True
+    else:
+      digital_devices = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==dev_id).all()
+      if (len(digital_devices)==0):
+        print 'ERROR: Device not found (invalid device id {0})'.format(dev_id)
+      return False
 
-def getThresholdHistoryName(table_k, t_index):
-  if (table_k == 'idl'):
-    return 'ThresholdHistoryIdl'
-  elif (table_k == 'lc1'):
-    return 'ThresholdHistoryLc1'
-  elif (table_k == 'lc2'):
-    return 'Threshold{0}History'.format(t_index[1])
-  elif (table_k == 'alt'):
-    return 'ThresholdAlt{0}History'.format(t_index[1])
+  #
+  # Save threshold to the database as current value
+  #
+  def updateThreshold(self, rt_d, t_table, integrator_k, t_type, value_v):
+    setattr(getattr(rt_d, t_table), '{0}_{1}'.format(integrator_k,t_type), value_v)
+    self.rt_session.commit()
 
-  return None
+  def getThresholdHistoryName(self, table_k, t_index):
+    if (table_k == 'idl'):
+      return 'ThresholdHistoryIdl'
+    elif (table_k == 'lc1'):
+      return 'ThresholdHistoryLc1'
+    elif (table_k == 'lc2'):
+      return 'Threshold{0}History'.format(t_index[1])
+    elif (table_k == 'alt'):
+      return 'ThresholdAlt{0}History'.format(t_index[1])
+
+    return None
   
-def addHistory(rt_session, table_k, t_index, rt_d, t_table, user, reason):
-  hist_name = getThresholdHistoryName(table_k, t_index)
-  hist_class = globals()[hist_name]
-  hist = hist_class(user=user, reason=reason, device_id=rt_d.id)
+  def addHistory(self, table_k, t_index, rt_d, t_table, user, reason):
+    hist_name = self.getThresholdHistoryName(table_k, t_index)
+    hist_class = globals()[hist_name]
+    hist = hist_class(user=user, reason=reason, device_id=rt_d.id)
 
-  # Copy thresholds from rt_d.threshold to history
-  for k in getattr(rt_d, t_table).__dict__.keys():
-    if (re.match('i[0-3]_[lh]', k)):
-      db_value = float(getattr(getattr(rt_d, t_table), k))
-#      print '{0} {1}'.format(k, db_value)
-      setattr(hist, k, db_value)
-      
-  rt_session.add(hist)
-  rt_session.commit()
+    # Copy thresholds from rt_d.threshold to history
+    for k in getattr(rt_d, t_table).__dict__.keys():
+      if (re.match('i[0-3]_[lh]', k)):
+        db_value = float(getattr(getattr(rt_d, t_table), k))
+  #      print '{0} {1}'.format(k, db_value)
+        setattr(hist, k, db_value)
 
-  return True
+    self.rt_session.add(hist)
+    self.rt_session.commit()
 
-#
-# Update the thresholds in database and make enty in the history table.
-#
-def changeThresholds(session, rt_session, rt_d, table, user, reason):
-  log = '=== Threshold Change for device "{0}" ===\n'.format(rt_d.mpsdb_name)
-  log = log + 'User: {0}\n'.format(user)
-  log = log + 'Reason: {0}\n'.format(reason)
-  log = log + 'Date: {0}\n\n'.format(time.strftime("%Y/%m/%d %H:%M:%S"))
+    return True
 
-  for table_k, table_v in table.items():
-    for threshold_k, threshold_v in table_v.items():
-      for integrator_k, integrator_v in threshold_v.items():
-        # Get threshold table
-        t_table = getThresholdTableName(table_k, integrator_k, threshold_k)
-        for value_k, value_v in integrator_v.items():
-          old_value = getattr(getattr(rt_d, t_table), '{1}_{2}'.format(t_table, integrator_k, value_k))
-          log = log + 'threshold={0} integrator={1} type={2} prev={3} new={4}\n'.format(threshold_k, integrator_k, value_k, old_value, value_v)
-          updateThreshold(rt_session, rt_d, t_table, integrator_k, value_k, value_v)
+  def buildThresholdPv(self, base, table, threshold, integrator, value_type):
+    # If the device is a BPM must rename the integrator to X, Y or TMIT
+    if (self.is_bpm):
+      if (integrator == 'i0'):
+        integrator = 'x'
+      elif (integrator == 'i1'):
+        integrator = 'y'
+      elif (integrator == 'i2'):
+        integrator = 'tmit'
+      else:
+        return None
 
-      addHistory(rt_session, table_k, threshold_k, rt_d, t_table, user, reason)
+    if (table == 'lc2'):
+      pv_name = base + ':' + integrator + '_' + threshold + '_' + value_type
+    else:
+      pv_name = base + ':' + integrator + '_' + threshold + '_' + table + '_' + value_type
 
-  log = log + "===\n"
-  print log
-  return True
+    return pv_name.upper()
+    
+  def writeThreshold(self, rt_d, table, threshold, integrator, value_type, value):
+    pv_name = self.buildThresholdPv(self.mps_names.getAnalogDeviceNameFromId(rt_d.mpsdb_id),
+                                    table, threshold, integrator, value_type)
+    if (pv_name == None):
+      return None
 
-def checkDevice(session, rt_session, dev_id, dev_name):
-  if (dev_id < 0):
-    try:
-      d = session.query(models.Device).filter(models.Device.name==dev_name).one()
-      dev_id = d.id
-    except:
-      print 'ERROR: Cannot find device "{0}"'.format(dev_name)
+    return pv_name
+
+  #
+  # Update the thresholds in database and make enty in the history table.
+  #
+  def changeThresholds(self, rt_d, table, user, reason):
+    log = '=== Threshold Change for device "{0}" ===\n'.format(rt_d.mpsdb_name)
+    log = log + 'User: {0}\n'.format(user)
+    log = log + 'Reason: {0}\n'.format(reason)
+    log = log + 'Date: {0}\n\n'.format(time.strftime("%Y/%m/%d %H:%M:%S"))
+
+    for table_k, table_v in table.items():
+      for threshold_k, threshold_v in table_v.items():
+        for integrator_k, integrator_v in threshold_v.items():
+          # Get threshold table
+          t_table = self.getThresholdTableName(table_k, integrator_k, threshold_k)
+          for value_k, value_v in integrator_v.items():
+            old_value = getattr(getattr(rt_d, t_table), '{1}_{2}'.format(t_table, integrator_k, value_k))
+            pv_name = self.writeThreshold(rt_d, table_k, threshold_k, integrator_k, value_k, value_v)
+            self.updateThreshold(rt_d, t_table, integrator_k, value_k, value_v)
+            log = log + '{}: threshold={} integrator={} type={} prev={} new={}\n'.\
+                format(pv_name, threshold_k, integrator_k, value_k, old_value, value_v)
+
+        self.addHistory(table_k, threshold_k, rt_d, t_table, user, reason)
+
+    log = log + "===\n"
+    print log
+    return True
+
+  def checkDevice(self, dev_id, dev_name):
+    if (dev_id < 0):
+      try:
+        d = self.session.query(models.Device).filter(models.Device.name==dev_name).one()
+        dev_id = d.id
+      except:
+        print 'ERROR: Cannot find device "{0}"'.format(dev_name)
+        return False
+
+    if (self.isAnalog(dev_id)):
+      try:
+        rt_d = self.rt_session.query(runtime.Device).filter(runtime.Device.id==dev_id).one()
+        d = self.session.query(models.Device).filter(models.Device.id==dev_id).one()
+      except:
+        print 'ERROR: Cannot find device "{0}"'.format(dev_id)
+        return False
+
+      if (rt_d.mpsdb_name != d.name):
+        print 'ERROR: Device names do not match in config ({0}) and runtime databases ({1})'.\
+            format(d.name, rt_d.mpsdb_name)
+        return False
+
+      self.is_bpm = False
+      if (d.device_type.name == 'BPMS'):
+        self.is_bpm = True
+
+    else:
+      print 'ERROR: Cannot set threshold for digital device'
       return False
 
-  if (isAnalog(session, dev_id)):
-    try:
-      rt_d = rt_session.query(runtime.Device).filter(runtime.Device.id==dev_id).one()
-      d = session.query(models.Device).filter(models.Device.id==dev_id).one()
-    except:
-      print 'ERROR: Cannot find device "{0}"'.format(dev_id)
-      return False
+    return rt_d
 
-    if (rt_d.mpsdb_name != d.name):
-      print 'ERROR: Device names do not match in config ({0}) and runtime databases ({1})'.\
-          format(d.name, rt_d.mpsdb_name)
-      return False
+  def getThresholdTableName(self, table_name, integrator_name, threshold_name):
+    if (table_name == 'lc2'):
+      t_table = 'threshold{0}'.format(threshold_name[1])
 
-  else:
-    print 'ERROR: Cannot set threshold for digital device'
-    return False
+    if (table_name == 'alt'):
+      t_table = 'threshold_alt{0}'.format(threshold_name[1])
 
-  return rt_d
+    if (table_name == 'lc1'):
+      t_table = 'threshold_lc1'
 
-def getThresholdTableName(table_name, integrator_name, threshold_name):
-  if (table_name == 'lc2'):
-    t_table = 'threshold{0}'.format(threshold_name[1])
+    if (table_name == 'idl'):
+      t_table = 'threshold_idl'
 
-  if (table_name == 'alt'):
-    t_table = 'threshold_alt{0}'.format(threshold_name[1])
+    return t_table
 
-  if (table_name == 'lc1'):
-    t_table = 'threshold_lc1'
+  #
+  # Check if the specified thresholds are valid, i.e. HIHI > LOLO value
+  # If only the LOLO or HIHI is specified, then check against the
+  # current value in the database
+  #
+  def verifyThresholds(self, rt_d, table):
+    for table_k, table_v in table.items():
+      for threshold_k, threshold_v in table_v.items():
+        for integrator_k, integrator_v in threshold_v.items():
 
-  if (table_name == 'idl'):
-    t_table = 'threshold_idl'
+          new_low = None
+          new_high = None
 
-  return t_table
-
-#
-# Check if the specified thresholds are valid, i.e. HIHI > LOLO value
-# If only the LOLO or HIHI is specified, then check against the
-# current value in the database
-#
-def verifyThresholds(session, rt_session, rt_d, table):
-
-  for table_k, table_v in table.items():
-    for threshold_k, threshold_v in table_v.items():
-      for integrator_k, integrator_v in threshold_v.items():
-
-        new_low = None
-        new_high = None
-
-        if ('l' in integrator_v.keys()):
-          new_low = float(integrator_v['l'])
-        if ('h' in integrator_v.keys()):
-          new_high = float(integrator_v['h'])
+          if ('l' in integrator_v.keys()):
+            new_low = float(integrator_v['l'])
+          if ('h' in integrator_v.keys()):
+            new_high = float(integrator_v['h'])
 
 
-        if (new_low != None and new_high != None):
-          if (new_low >= new_high):
-            print 'ERROR: Invalid thresholds for device {0}, table {1}, integrator {2}, threshold {3}'.\
-                format(rt_d.mpsdb_name, table_k, integrator_k, threshold_k)
-            print 'ERROR: HIHI threshold (value={0}) smaller or equal to LOLO (value={1}), cannot proceed'.format(new_high, new_low)
-            return False
-
-        if (new_low == None or new_high == None):
-          t_table = getThresholdTableName(table_k, integrator_k, threshold_k)
-          t_type = 'h'
-          if (new_low == None):
-            t_type = 'l'
-          
-          db_value = float(getattr(getattr(rt_d, t_table), '{0}_{1}'.format(integrator_k,t_type)))
-          
-          if (new_low == None):
-#            print 'Checking new_high{1} <= db_value{0}'.format(db_value, new_high)
-            if (new_high <= db_value):
+          if (new_low != None and new_high != None):
+            if (new_low >= new_high):
               print 'ERROR: Invalid thresholds for device {0}, table {1}, integrator {2}, threshold {3}'.\
-                format(rt_d.mpsdb_name, table_k, integrator_k, threshold_k)
-              print 'ERROR: Specified HIHI value ({0}) is smaller or equal than the database LOLO value ({1})'.\
-                  format(new_high, db_value)
+                  format(rt_d.mpsdb_name, table_k, integrator_k, threshold_k)
+              print 'ERROR: HIHI threshold (value={0}) smaller or equal to LOLO (value={1}), cannot proceed'.format(new_high, new_low)
               return False
 
-          if (new_high == None):
- #           print 'Checking new_low {0} >= db_value{1}'.format(new_low, db_value)
-            if (new_low >= db_value):
-              print 'ERROR: Invalid thresholds for device {0}, table {1}, integrator {2}, threshold {3}'.\
-                format(rt_d.mpsdb_name, table_k, integrator_k, threshold_k)
-              print 'ERROR: Specified LOLO value ({0}) is greater or equal than the database HIHI value ({1})'.\
-                  format(new_low, db_value)
-              return False
-          
-#        print 'low={0} high={1}'.format(new_low, new_high)
+          if (new_low == None or new_high == None):
+            t_table = self.getThresholdTableName(table_k, integrator_k, threshold_k)
+            t_type = 'h'
+            if (new_low == None):
+              t_type = 'l'
 
-  return True
+            db_value = float(getattr(getattr(rt_d, t_table), '{0}_{1}'.format(integrator_k,t_type)))
+
+            if (new_low == None):
+  #            print 'Checking new_high{1} <= db_value{0}'.format(db_value, new_high)
+              if (new_high <= db_value):
+                print 'ERROR: Invalid thresholds for device {0}, table {1}, integrator {2}, threshold {3}'.\
+                  format(rt_d.mpsdb_name, table_k, integrator_k, threshold_k)
+                print 'ERROR: Specified HIHI value ({0}) is smaller or equal than the database LOLO value ({1})'.\
+                    format(new_high, db_value)
+                return False
+
+            if (new_high == None):
+   #           print 'Checking new_low {0} >= db_value{1}'.format(new_low, db_value)
+              if (new_low >= db_value):
+                print 'ERROR: Invalid thresholds for device {0}, table {1}, integrator {2}, threshold {3}'.\
+                  format(rt_d.mpsdb_name, table_k, integrator_k, threshold_k)
+                print 'ERROR: Specified LOLO value ({0}) is greater or equal than the database HIHI value ({1})'.\
+                    format(new_low, db_value)
+                return False
+
+  #        print 'low={0} high={1}'.format(new_low, new_high)
+
+    return True
 
 #
 # Build a table/dictionary from the command line parameters
@@ -216,7 +262,7 @@ def buildThresholdTable(rt_d, t):
           format(rt_d.mpsdb_name, table_name, integrator, t_index)
       print 'ERROR: Invalid integrator "{0}" (parameter={1})'.format(integrator, l)
       return False
-      
+
     if (not (t_index.startswith('t'))):
       print 'ERROR: Invalid thresholds for device {0}, table {1}, integrator {2}, threshold {3}'.\
           format(rt_d.mpsdb_name, table_name, integrator, t_index)
@@ -297,7 +343,7 @@ def buildThresholdTable(rt_d, t):
 parser = argparse.ArgumentParser(description='Change analog device threshold of a device',
                                  formatter_class=RawTextHelpFormatter)
 parser.add_argument('database', metavar='db', type=file, nargs=1, 
-                    help='database file name (e.g. mps_gun.db)')
+                    help='database file name (e.g. mps_gun.db, where the runtime database is named mps_gun_runtime.db')
 parser.add_argument('--reason', metavar='reason', type=str, nargs=1, help='reason for the threshold change', required=True)
 parser.add_argument('-t', nargs=5, action='append', 
                     help='<table threshold_index integrator threshold_type value>\nwhere:\n'+
@@ -330,20 +376,13 @@ if (args.device_name):
 
 reason = args.reason[0]
 
-mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
-session = mps.session
-rt_session = mps.runtime_session
+tm = ThresholdManager(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
 
-rt_d = checkDevice(session, rt_session, device_id, device_name)
+rt_d = tm.checkDevice(device_id, device_name)
+
 if (rt_d):
   table = buildThresholdTable(rt_d, args.t)
   if (table):
-    if (verifyThresholds(session, rt_session, rt_d, table)):
-      if (not changeThresholds(session, rt_session, rt_d, table, user, reason)):
-        session.close()
-        rt_session.close()
-        exit(-1)
-
-#changeThresholds(session, rt_session, device_id)
-session.close()
-rt_session.close()
+    if (tm.verifyThresholds(rt_d, table)):
+      if (not tm.changeThresholds(rt_d, table, user, reason)):
+        exit(-1);

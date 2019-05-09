@@ -13,7 +13,9 @@ class Device(Base):
     name: unique device name (possibly MAD device name)
     description: some extra information about this device
     position: 100 to 999 number that defines approximatelly where the device
-              is within the area. This field is used to create PVs
+              is within the area. This field is used to create PVs - the type is 
+              String because for some devices the field stores extra information 
+              (e.g. <position>:A or <position>:B for LBLM devices)
     z_location: z location in ft along the linac
     area: sector where the device is installed (e.g. GUNB, LI30, DMPB,...), this
           is used to create the PVs (second field). This field is used
@@ -37,7 +39,7 @@ class Device(Base):
   discriminator = Column('type', String(50))
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=False)
-  position = Column(Integer, nullable=False)
+  position = Column(String, nullable=False)
   z_location = Column(Float, nullable=False, default=0)
   area = Column(String, nullable=False)
   evaluation = Column(Integer, nullable=False, default=0)

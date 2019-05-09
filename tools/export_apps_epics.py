@@ -210,6 +210,7 @@ class MpsAppReader:
                 app_data["link_node_area"] = app_card.link_node.area
                 app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+                app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
 
                 # Defines whether the IOC_NAME env var should be added no the mps.env
                 # file. In order to add only once we need to figure out if there are
@@ -299,6 +300,7 @@ class MpsAppReader:
                 app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
                 app_data["virtual"] = False
+                app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
@@ -394,6 +396,7 @@ class MpsAppReader:
             if app["analog_link_node"]:
                 self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                                 "LOCATION":app["link_node_location"].upper()})
+                self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -442,6 +445,7 @@ class MpsAppReader:
             # Add the IOC name environmental variable for the Link Nodes
             self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                             "LOCATION":app["link_node_location"].upper()})
+            self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
 
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
@@ -826,6 +830,14 @@ class MpsAppReader:
         This environmental variable will be loaded by all link nodes.
         """
         self.__write_epics_env(path=path, template_name="ioc_name.template", macros=macros)
+
+    def __write_lc1_id_env(self, path, macros):
+        """
+        Write the LN LCLS-I node ID (used to assemble the LN IP address)
+
+        This environmental variable will be loaded by all LCLS-I connected link nodes.
+        """
+        self.__write_epics_env(path=path, template_name="lc1_node_id.template", macros=macros)
 
     def __write_epics_db(self, path, template_name, macros):
         """

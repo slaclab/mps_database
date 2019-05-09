@@ -925,7 +925,8 @@ class Exporter:
     cards = self.session.query(models.ApplicationCard).all()
 
     if (link_node):
-      cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
+#      cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
+      cards = filter (lambda x : x.link_node.id == link_node.id, cards)
 
     if (self.verbose):
       print('Link Node: {} has {} cards'.format(link_node.get_name(), len(cards)))
@@ -1075,7 +1076,8 @@ class Exporter:
     devices = self.session.query(models.Device).all()
 
     if (link_node):      
-      devices = filter (lambda x : x.card.crate.link_node.id == link_node.id, devices)
+#      devices = filter (lambda x : x.card.crate.link_node.id == link_node.id, devices)
+      devices = filter (lambda x : x.card.link_node.id == link_node.id, devices)
     
     for device in devices:
       if (device.name != "AOM" and device.name != "MS"):
@@ -1173,7 +1175,8 @@ class Exporter:
     self.tf.write('# Crates\n')
     crates = self.session.query(models.Crate).all()
     if (link_node):
-      crates = filter (lambda x : x.link_node.id == link_node.id, crates)
+#      crates = filter (lambda x : x.link_node.id == link_node.id, crates)
+      crates = filter (lambda x : x.id == link_node.crate_id, crates)
 
     for crate in crates:
       self.writeCrate(crate)

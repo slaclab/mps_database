@@ -149,7 +149,8 @@ def export(session, file, node):
 
   cards = select_link_node_cards(session, cards, node)
   if (len(cards) == 0):
-    print("nooooo")
+    print("WARN: No cards for link node {}".format(node))
+    return;
   card_ids = []
   for c in cards:
     card_ids.append(c.id)
@@ -228,7 +229,7 @@ def export(session, file, node):
           if len(d.inputs) > 1:
             channel = channel[:-1]
 
-        else:
+        elif (d.discriminator == 'analog_device'):
           try:
             ch = session.query(models.AnalogChannel).filter(models.AnalogChannel.id==d.channel_id).one()
           except:
@@ -236,6 +237,8 @@ def export(session, file, node):
                 format(d.name, d.channel_id)
           else:
             channel = ch.number
+        else:
+          channel = 0
 
         file.write('edge [dir=none, color={0}]\n'.format(color))
         file.write('"{0}"->"c{1}" [label="ch {2}"]\n'.format(d.name, card.id, channel))
