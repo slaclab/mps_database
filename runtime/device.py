@@ -60,5 +60,19 @@ class Device(RuntimeBase):
   threshold_idl_id = Column(Integer, ForeignKey('thresholds_idl.id'))
   threshold_idl = relationship("ThresholdIdl", back_populates="device")
 
-  bypass_id = Column(Integer, ForeignKey('bypasses.id'))
-  bypass = relationship("Bypass", back_populates="device")
+  bypasses = relationship("Bypass")
+  # bypass for analog integrator 0, or digital device
+#  bypass0_id = Column(Integer, ForeignKey('bypasses.id'))
+#  bypass0 = relationship("Bypass", back_populates="device")
+
+  # bypass for analog integrator 1
+#  bypass1_id = Column(Integer, ForeignKey('bypasses.id'))
+#  bypass1 = relationship("Bypass", back_populates="device")
+
+  # bypass for analog integrator 2
+#  bypass2_id = Column(Integer, ForeignKey('bypasses.id'))
+#  bypass2 = relationship("Bypass", back_populates="device")
+
+  # bypass for analog integrator 3
+#  bypass3_id = Column(Integer, ForeignKey('bypasses.id'))
+#  bypass4 = relationship("Bypass", back_populates="device")

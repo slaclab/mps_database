@@ -1100,8 +1100,9 @@ class DatabaseImporter:
     f.close()
 
   def add_analog_bypass(self, device):
-    bypass = runtime.Bypass(device=device, startdate=int(time.time()), duration=0)
-    self.rt_session.add(bypass)
+    for i in range(4):
+      bypass = runtime.Bypass(device_id=device.id, startdate=int(time.time()), duration=0, device_integrator=i)
+      self.rt_session.add(bypass)
 
   def add_device_input_bypass(self, device_input):
     bypass = runtime.Bypass(device_input=device_input, startdate=int(time.time()), duration=0)
@@ -1155,6 +1156,7 @@ class DatabaseImporter:
     for d in devices:
       rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
       self.rt_session.add(rt_d)
+      self.rt_session.commit()
       # Add thresholds - if device is analog
       analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==d.id).all()
       if (len(analog_devices)==1):
@@ -1236,17 +1238,17 @@ importer.add_beam_classes('import/BeamClasses.csv')
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
-importer.add_analog_device('import/PBLM', card_name="Generic ADC")
+importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
 
-#if (False):
-if (True):
+if (False):
+#if (True):
+  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_analog_device('import/BEND', card_name="Generic ADC") 
   importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
   importer.add_digital_device('import/PROF')
   importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
-  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
   importer.add_digital_device('import/TEMP')

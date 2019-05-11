@@ -3,6 +3,7 @@
 from mps_config import MPSConfig, models, runtime
 from mps_names import MpsName
 from runtime import *
+from runtime_utils import RuntimeChecker
 from sqlalchemy import func
 import subprocess
 import argparse
@@ -11,6 +12,81 @@ import sys
 import os
 import re
 from argparse import RawTextHelpFormatter
+
+class BypassManager:
+  def __init__(self, db, rt_db):
+    self.mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
+    self.session = self.mps.session
+    self.rt_session = self.mps.runtime_session
+    self.mps_names = MpsName(self.session)
+    self.rt = RuntimeChecker(self.session, self.rt_session, False)
+
+  def __exit__(self):
+    self.session.close()
+    self.rt_session.close()
+
+  def set_analog_bypass(self, device_id, device_name, integrator, user, reason, duration):
+    """
+    Set bypass for an analog device, specified by the ID or NAME
+  
+    Check if there is an active bypass - i.e. if the bypass.duration database
+    entry is populated, then check if the new duration goes beyond. If that is 
+    the case then extend the bypass. If duration is lesser or equal than the
+    current one don't update.
+    
+    If the specified duration is zero, then if there is an active bypass it \
+    should be cancelled.    
+    """
+    # This is the current time
+    time_now = int(time.time())
+
+    if (device_id < 0 or device_id == None):
+      device_id = self.rt.get_device_id_from_name(device_name)
+      if (device_id == None):
+        return False
+
+    [device, rt_device] = self.rt.check_device(device_id)
+
+    for b in rt_device.bypasses:
+      if (b.device_integrator == integrator):
+        bypass = b
+
+    if (self.set_bypass(bypass, time_now, user, reason, duration)):
+#      addAnalogBypassHistory(session, rt_session, rt_d, user, reason, time_now, duration)
+      return True
+    else:
+      return False
+
+  def set_bypass(self, bypass, time_now, user, reason, duration):
+    # Bypass would expire at
+    new_expiration = time_now + duration
+
+    # Set bypass if new expiration date is greater than existing
+    prev_expiration = bypass.startdate + bypass.duration
+    if (duration == 0):
+      bypass.duration = 0
+      self.rt_session.commit()
+    elif (new_expiration != prev_expiration):
+      if (bypass.duration == 0 or 
+          (bypass.duration > 0 and prev_expiration < time_now)):
+        print ('INFO: New bypass set to expire at {0}'.\
+                 format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+      elif (new_expiration < prev_expiration):
+        print ('INFO: Setting bypass to expire earlier (previous date: {0}, new date: {1}'.\
+                 format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
+                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+      else:
+        print ('INFO: Setting bypass to expire later (previous date: {0}, new date: {1}'.\
+                 format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
+                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+      bypass.startdate = time_now
+      bypass.duration = duration
+      self.rt_session.commit()
+    else:
+      print 'WARN: Specified bypass expiration date is the same as before'
+      return False
+
+    return True
 
 def isAnalog(session, dev_id):
   analog_devices = session.query(models.AnalogDevice).filter(models.AnalogDevice.id==dev_id).all()
@@ -81,39 +157,6 @@ def addAnalogBypassHistory(session, rt_session, rt_d, user, reason, startdate, d
   
   return True
 
-#
-#
-#
-def setBypass(session, rt_session, bypass, time_now, user, reason, duration):
-  # Bypass would expire at
-  new_expiration = time_now + duration
-
-  # Set bypass if new expiration date is greater than existing
-  prev_expiration = bypass.startdate + bypass.duration
-  if (duration == 0):
-    bypass.duration = 0
-    rt_session.commit()
-  elif (new_expiration != prev_expiration):
-    if (bypass.duration == 0 or 
-        (bypass.duration > 0 and prev_expiration < time_now)):
-      print ('INFO: New bypass set to expire at {0}'.\
-               format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
-    elif (new_expiration < prev_expiration):
-      print ('INFO: Setting bypass to expire earlier (previous date: {0}, new date: {1}'.\
-               format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
-                      time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
-    else:
-      print ('INFO: Setting bypass to expire later (previous date: {0}, new date: {1}'.\
-               format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
-                      time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
-    bypass.startdate = time_now
-    bypass.duration = duration
-    rt_session.commit()
-  else:
-    print 'WARN: Specified bypass expiration date is the same as before'
-    return False
-
-  return True
 
 #
 # Set bypass for device input
@@ -128,26 +171,6 @@ def setDeviceInputBypass(session, rt_session, rt_di, user, reason, duration):
   else:
     return False
 
-#
-# Set bypass for an analog device
-#
-# Check if there is an active bypass - i.e. if the bypass.duration database
-# entry is populated, then check if the new duration goes beyond. If that is 
-# the case then extend the bypass. If duration is lesser or equal than the
-# current one don't update.
-#
-# If the specified duration is zero, then if there is an active bypass it \
-# should be cancelled.
-#
-def setAnalogBypass(session, rt_session, rt_d, user, reason, duration):
-  # This is the current time
-  time_now = int(time.time())
-
-  if (setBypass(session, rt_session, rt_d.bypass, time_now, user, reason, duration)):
-    addAnalogBypassHistory(session, rt_session, rt_d, user, reason, time_now, duration)
-    return True
-  else:
-    return False
                
 def checkDeviceInput(session, rt_session, device_input_id, device_input_pv):
   rt_di = None
@@ -229,7 +252,7 @@ def checkAnalogDevice(session, rt_session, dev_id, dev_name):
 
 #=== MAIN ==================================================================================
 
-parser = argparse.ArgumentParser(description='Set bypass for analog device or device input (digital)',
+parser = argparse.ArgumentParser(description='Set bypass for analog device (integrator) or device input (digital)',
                                  formatter_class=RawTextHelpFormatter)
 parser.add_argument('database', metavar='db', type=file, nargs=1, 
                     help='database file name (e.g. mps_gun.db)')
@@ -239,16 +262,19 @@ parser.add_argument('--time', metavar='seconds', type=int, nargs=1,
                     help='Bypass duration is seconds, starting from now.\n' +
                     'Use zero seconds to cancel bypass', required=True)
 
-group_list = parser.add_mutually_exclusive_group()
+top_group_list = parser.add_mutually_exclusive_group()
+group_list = top_group_list.add_mutually_exclusive_group()
 group_list_analog = group_list.add_mutually_exclusive_group()
-group_list_analog.add_argument('--analog-device-id', metavar='database analog device id', type=int, nargs='?',
+group_list_analog.add_argument('--analog-device-id', metavar='ID', type=int, nargs='?',
                                help='Database id for the device - must be analog device')
-group_list_analog.add_argument('--analog-device-name', metavar='database device name', 
+group_list_analog.add_argument('--analog-device-name', metavar='NAME', 
                                type=str, nargs='?', help='Analog device name as found in the MPS database (e.g. BPM1B)')
+parser.add_argument('--integrator', metavar='INDEX', type=int, nargs=1,
+                    help='analog device integrator (0..3), for BPMs: X=0, Y=1, TMIT=2')
 group_list_digital = group_list.add_mutually_exclusive_group()
-group_list_digital.add_argument('--device-input-id', metavar='database device input id', type=int, nargs='?',
+group_list_digital.add_argument('--device-input-id', metavar='ID', type=int, nargs='?',
                                 help='Database id for the device input - use for digital devices')
-group_list_digital.add_argument('--device-input-pv', metavar='pv name of device input', 
+group_list_digital.add_argument('--device-input-pv', metavar='PV', 
                                type=str, nargs='?', help='Device input PV (e.g. PROF:GUNB:753:IN_SWITCH)')
 
 proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
@@ -256,45 +282,17 @@ user = proc.stdout.readline().rstrip()
 
 args = parser.parse_args()
 
-device_input_id = -1
-if (args.device_input_id):
-  device_input_id = args.device_input_id
+bm = BypassManager(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
 
-device_input_pv = None
-if (args.device_input_pv):
-  device_input_pv = args.device_input_pv
+if (args.analog_device_id or args.analog_device_name):
+  if (not args.integrator):
+    print('ERROR: Must specify an integrator for analog devices (--integrator switch)')
+    exit(1)
+  else:
+    bm.set_analog_bypass(args.analog_device_id, args.analog_device_name,
+                         int(args.integrator[0]), user, args.reason[0], int(args.time[0]))
 
-device_id = -1
-if (args.analog_device_id):
-  device_id = args.analog_device_id
+if (args.device_input_id or args.device_input_pv):
+  print('Set digital bypass')
+exit(0)
 
-device_name = None
-if (args.analog_device_name):
-  device_name =args.analog_device_name
-
-reason = args.reason[0]
-duration = int(args.time[0])
-mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
-session = mps.session
-rt_session = mps.runtime_session
-
-rt_d = None
-if (device_id != -1 or device_name != None):
-  rt_d = checkAnalogDevice(session, rt_session, device_id, device_name)
-else:
-  rt_di = checkDeviceInput(session, rt_session, device_input_id, device_input_pv)
-
-if (rt_d):
-  setAnalogBypass(session, rt_session, rt_d, user, reason, duration) 
-elif (rt_di):
-  setDeviceInputBypass(session, rt_session, rt_di, user, reason, duration)
-#  table = buildThresholdTable(rt_d, args.t)
-#  if (table):
-#    if (verifyThresholds(session, rt_session, rt_d, table)):
-#      if (not changeThresholds(session, rt_session, rt_d, table, user, reason)):
-#        session.close()
-#        rt_session.close()
-#        exit(-1)
-
-session.close()
-rt_session.close()

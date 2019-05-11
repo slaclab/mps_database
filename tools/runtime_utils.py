@@ -30,6 +30,14 @@ class RuntimeChecker:
     self.verbose = verbose
     self.mps_names = MpsName(session)
 
+  def get_device_id_from_name(self, name):
+    try:
+      d = self.session.query(models.Device).filter(models.Device.name==name).one()
+      return d.id
+    except:
+      print 'ERROR: Cannot find device "{0}"'.format(name)
+      return None
+
   def get_thresholds(self, device):
     """
     Return a list of all possible thresholds for the specified device, including
