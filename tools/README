@@ -52,6 +52,10 @@ set_bypass.py
 - Set device bypass for analog devices/device inputs, by first
 recording information to database and then changing the bypass PVs
 
+restore_bypass.py
+- Restore active bypasses, reading the values from the runtime database
+and setting the PVs
+
 * Not is use:
 export_pydm.py
 export_thresholds.py

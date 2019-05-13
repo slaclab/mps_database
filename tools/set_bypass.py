@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+#
+# Script for setting analog/digital bypass
+#
 
 from mps_config import MPSConfig, models, runtime
 from mps_names import MpsName
@@ -16,7 +19,7 @@ from epics import PV
 from argparse import RawTextHelpFormatter
 
 class BypassManager:
-  def __init__(self, db, rt_db, verbose, force_write):
+  def __init__(self, db, rt_db, verbose, force_write, no_check = False):
     self.mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
     self.session = self.mps.session
     self.rt_session = self.mps.runtime_session
@@ -24,6 +27,7 @@ class BypassManager:
     self.rt = RuntimeChecker(self.session, self.rt_session, False)
     self.force_write = force_write
     self.verbose = verbose
+    self.no_check = no_check
 
   def __exit__(self):
     self.session.close()
@@ -158,14 +162,14 @@ class BypassManager:
     if (bypv_pv != None and bypass_value != None):
       if self.write_pv(bypv_pv, bypass_value):
         v = self.read_pv(bypv_pv)
-        if (v != bypass_value):
+        if (not self.no_check and v != bypass_value):
           print('ERROR: Failed to set bypass value to {}={}, bypass not completed'.\
                   format(bypv_pv.pvname, bypass_value))
           return False
 
     if self.write_pv(bypd_pv, duration_value):
       v = self.read_pv(byps_pv)
-      if (v != expected_status_value):
+      if (not self.no_check and v != expected_status_value):
         print('ERROR: Bypass change for {} requested, however the status PV {}={} does not have the expected value {}.\nOperation failed.'.\
                 format(bypass.pv_name, byps_pv.pvname, v, expected_status_value))
         return False
@@ -184,6 +188,10 @@ class BypassManager:
       [bypd_pv, byps_pv, bypv_pv] = self.check_digital_bypass_pvs(bypass)
       if (bypd_pv == None):
         return False
+      # If the no bypass_value was specified, read the PV and save the
+      # current value to the database (it will set the PV with the same value)
+      if (bypv_pv != None and bypass_value == None):
+        bypass_value = self.read_pv(bypv_pv)
     
     # Set bypass if new expiration date is greater than existing
     prev_expiration = bypass.startdate + bypass.duration
@@ -251,9 +259,11 @@ parser.add_argument('--time', metavar='seconds', type=int, nargs=1,
                     help='Bypass duration is seconds, starting from now.\n' +
                     'Use zero seconds to cancel bypass', required=True)
 parser.add_argument('-f', action='store_true', default=False,
-                    dest='force_write', help='Change thresholds even if PVs are not writable (changes only the database)')
+                    dest='force_write', help='change bypasses even if PVs are not writable (changes only the database)')
 parser.add_argument('-v', action='store_true', default=False,
                     dest='verbose', help='verbose output')
+parser.add_argument('--no-check', action='store_true', default=False,
+                    dest='no_check', help='do *not* verify if bypass operation worked (read back BYPS status PV)')
 
 
 top_group_list = parser.add_mutually_exclusive_group()
@@ -279,7 +289,7 @@ user = proc.stdout.readline().rstrip()
 args = parser.parse_args()
 
 bm = BypassManager(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db',
-                   args.verbose, args.force_write)
+                   args.verbose, args.force_write, args.no_check)
 
 if (args.analog_device_id != None or args.analog_device_name != None):
   if (not args.integrator):
