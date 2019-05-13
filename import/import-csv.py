@@ -26,6 +26,7 @@ class DatabaseImporter:
 #    self.session.autoflush=True
     self.lcls1_only = is_lcls1
     self.verbose = verbose
+    self.mps_names = MpsName(self.session)
 
     self.rt_session = self.conf.runtime_session
 
@@ -1099,13 +1100,39 @@ class DatabaseImporter:
     self.session.flush()
     f.close()
 
-  def add_analog_bypass(self, device):
+  def add_analog_bypass(self, device, rt_device):
+    # Get the fault inputs that use the analog device
+    try:
+      fault_inputs = self.session.query(models.FaultInput).filter(models.FaultInput.device_id==device.id).all()
+    except:
+      print('ERROR: Failed find fault inputs for device id {} in database'.format(device.id))
+      return None
+
+    # From the fault inputs find which integrators are being used
+    fa_names = ['', '', '', '']
+
+    for fi in fault_inputs:
+      faults = self.session.query(models.Fault).filter(models.Fault.id==fi.fault_id).all()
+      for fa in faults:
+        fa_names[fa.get_integrator_index()] = fa.name
+    
+    if (len(fault_inputs) == 0):
+      return None
+
     for i in range(4):
-      bypass = runtime.Bypass(device_id=device.id, startdate=int(time.time()), duration=0, device_integrator=i)
+      pv_name = self.mps_names.getAnalogDeviceName(device)
+      if (fa_names[i] == ''):
+        pv_name = ''
+      else:
+        pv_name = pv_name + ':' + fa_names[i]
+      bypass = runtime.Bypass(device_id=device.id, startdate=int(time.time()),
+                              duration=0, device_integrator=i, pv_name=pv_name)
       self.rt_session.add(bypass)
 
-  def add_device_input_bypass(self, device_input):
-    bypass = runtime.Bypass(device_input=device_input, startdate=int(time.time()), duration=0)
+  def add_device_input_bypass(self, device_input, rt_device_input):
+    pv_name = self.mps_names.getDeviceInputName(device_input)
+    bypass = runtime.Bypass(device_input=rt_device_input, startdate=int(time.time()),
+                            duration=0, pv_name=pv_name)
     self.rt_session.add(bypass)
 
   def add_runtime_thresholds(self, device):
@@ -1150,7 +1177,6 @@ class DatabaseImporter:
     self.rt_session.add(t)
 
   def create_runtime_database(self):
-    mpsName = MpsName(self.session)
     print 'Creating thresholds/bypass database'
     devices = self.session.query(models.Device).all()
     for d in devices:
@@ -1161,14 +1187,14 @@ class DatabaseImporter:
       analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==d.id).all()
       if (len(analog_devices)==1):
         self.add_runtime_thresholds(rt_d)
-        self.add_analog_bypass(rt_d)
+        self.add_analog_bypass(d, rt_d)
 
     device_inputs = self.session.query(models.DeviceInput).all()
     for di in device_inputs:
-      di_pv = mpsName.getDeviceInputNameFromId(di.id)
+      di_pv = self.mps_names.getDeviceInputNameFromId(di.id)
       rt_di = runtime.DeviceInput(mpsdb_id = di.id, device_id = di.digital_device.id, pv_name = di_pv)
       self.rt_session.add(rt_di)
-      self.add_device_input_bypass(rt_di)
+      self.add_device_input_bypass(di, rt_di)
     self.rt_session.commit()
 
   # Removes crates/link nodes if import is for LCLS-I only
@@ -1239,19 +1265,19 @@ importer.add_beam_classes('import/BeamClasses.csv')
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
 importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
+importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+importer.add_digital_device('import/PROF')
 
 if (False):
 #if (True):
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
+  importer.add_digital_device('import/TEMP')
   importer.add_analog_device('import/BEND', card_name="Generic ADC") 
   importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
-  importer.add_digital_device('import/PROF')
-  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_analog_device('import/BLM', card_name="Generic ADC")
-  importer.add_digital_device('import/TEMP')
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/WIRE_PARK')

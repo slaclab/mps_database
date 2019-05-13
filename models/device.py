@@ -62,6 +62,12 @@ class Device(Base):
     else:
       return False
 
+  def is_bpm(self):
+    if (self.device_type.name == 'BPMS'):
+      return True
+    else:
+      return False
+
 class MitigationDevice(Device):
   """
   MitigationDevice class (mitigation_devices table)

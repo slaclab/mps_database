@@ -11,19 +11,55 @@ import time
 import sys
 import os
 import re
+import epics
+from epics import PV
 from argparse import RawTextHelpFormatter
 
 class BypassManager:
-  def __init__(self, db, rt_db):
+  def __init__(self, db, rt_db, verbose, force_write):
     self.mps = MPSConfig(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
     self.session = self.mps.session
     self.rt_session = self.mps.runtime_session
     self.mps_names = MpsName(self.session)
     self.rt = RuntimeChecker(self.session, self.rt_session, False)
+    self.force_write = force_write
+    self.verbose = verbose
 
   def __exit__(self):
     self.session.close()
     self.rt_session.close()
+
+  def set_digital_bypass(self, device_input_id, device_input_pv, user, reason, duration, value):
+    """
+    Set bypass for a digital input (device_input), which is one of potetially multiple
+    inputs to a digital device (e.g. YAG01 device has 2 inputs, IN_LMTSW and OUT_LMTSW.
+
+    Functionality similar to set_analog_bypass().
+    """
+    if (value != None):
+      if (value != 0 and value != 1):
+        print('ERROR: Expected value for digital bypass must be 0 or 1, value={} is not supported'.\
+                format(value))
+        return False
+    
+    # This is the current time
+    time_now = int(time.time())
+
+    if (device_input_id < 0 or device_input_id == None):
+      device_input_id = self.rt.get_device_id_from_name(device_name)
+      if (device_input_id == None):
+        return False
+
+    [device_input, rt_device_input] = self.rt.check_device_input(device_input_id)
+    if (device_input == None):
+      return False
+
+    if (self.set_bypass(rt_device_input.bypass, time_now, user, reason, duration, 'digital', value)):
+      return True
+    else:
+      return False
+
+    return True
 
   def set_analog_bypass(self, device_id, device_name, integrator, user, reason, duration):
     """
@@ -46,26 +82,121 @@ class BypassManager:
         return False
 
     [device, rt_device] = self.rt.check_device(device_id)
+    if (device == None):
+      return False
 
+    # Select bypass based on the specified integrator
     for b in rt_device.bypasses:
       if (b.device_integrator == integrator):
         bypass = b
 
-    if (self.set_bypass(bypass, time_now, user, reason, duration)):
-#      addAnalogBypassHistory(session, rt_session, rt_d, user, reason, time_now, duration)
+    if (self.set_bypass(bypass, time_now, user, reason, duration, 'analog')):
       return True
     else:
       return False
 
-  def set_bypass(self, bypass, time_now, user, reason, duration):
+  def write_pv(self, pv, value):
+    if (self.verbose):
+      print('INFO: Writing {}={}'.format(pv.pvname, value))
+
+    try:
+      pv.put(value)
+    except epics.ca.CASeverityException:
+      if (self.force_write):
+        return True
+      else:
+        print('ERROR: Tried to write to a read-only PV ({}={})'.format(pv.pvname, value))
+        return False
+
+  def read_pv(self, pv):
+    try:
+      if (self.verbose):
+        sys.stdout.write('INFO: Reading {}'.format(pv.pvname))
+        value = pv.get()
+      if (self.verbose):
+        print('={}'.format(value))
+      return value
+    except epics.ca.CASeverityException:
+      print('ERROR: Failed to read PV ({})'.format(pv.pvname))
+      return None
+
+  def check_digital_bypass_pvs(self, bypass):
+    bad_return = [None, None, None]
+    bypd_pv = PV(bypass.pv_name + '_BYPD')
+    byps_pv = PV(bypass.pv_name + '_BYPS')
+    bypv_pv = PV(bypass.pv_name + '_BYPV')
+    if (bypd_pv.host == None):
+      print('ERROR: Cannot reach PV {}, bypass not activated'.format(bypd_pv.pvname))
+      return bad_return
+
+    if (byps_pv.host == None):
+      print('ERROR: Cannot reach PV {}, bypass not activated'.format(byps_pv.pvname))
+      return bad_return
+
+    if (bypv_pv.host == None):
+      print('ERROR: Cannot reach PV {}, bypass not activated'.format(bypv_pv.pvname))
+      return bad_return
+
+    return [bypd_pv, byps_pv, bypv_pv]
+
+  def check_analog_bypass_pvs(self, bypass):
+    bad_return = [None, None]
+    bypd_pv = PV(bypass.pv_name + '_BYPD')
+    byps_pv = PV(bypass.pv_name + '_BYPS')
+
+    if (bypd_pv.host == None):
+      print('ERROR: Cannot reach PV {}, bypass not activated'.format(bypd_pv.pvname))
+      return bad_return
+
+    if (byps_pv.host == None):
+      print('ERROR: Cannot reach PV {}, bypass not activated'.format(byps_pv.pvname))
+      return bad_return
+
+    return [bypd_pv, byps_pv]
+
+  def write_bypass_pv(self, bypass, bypd_pv, byps_pv, bypv_pv, duration_value, expected_status_value, bypass_value=None):
+    if (bypv_pv != None and bypass_value != None):
+      if self.write_pv(bypv_pv, bypass_value):
+        v = self.read_pv(bypv_pv)
+        if (v != bypass_value):
+          print('ERROR: Failed to set bypass value to {}={}, bypass not completed'.\
+                  format(bypv_pv.pvname, bypass_value))
+          return False
+
+    if self.write_pv(bypd_pv, duration_value):
+      v = self.read_pv(byps_pv)
+      if (v != expected_status_value):
+        print('ERROR: Bypass change for {} requested, however the status PV {}={} does not have the expected value {}.\nOperation failed.'.\
+                format(bypass.pv_name, byps_pv.pvname, v, expected_status_value))
+        return False
+    return True
+
+  def set_bypass(self, bypass, time_now, user, reason, duration, bypass_type, bypass_value=None):
     # Bypass would expire at
     new_expiration = time_now + duration
 
+    if (bypass_type == 'analog'):
+      [bypd_pv, byps_pv] = self.check_analog_bypass_pvs(bypass)
+      if (bypd_pv == None):
+        return False
+      bypv_pv = None
+    else:
+      [bypd_pv, byps_pv, bypv_pv] = self.check_digital_bypass_pvs(bypass)
+      if (bypd_pv == None):
+        return False
+    
     # Set bypass if new expiration date is greater than existing
     prev_expiration = bypass.startdate + bypass.duration
     if (duration == 0):
-      bypass.duration = 0
-      self.rt_session.commit()
+      if (self.write_bypass_pv(bypass, bypd_pv, byps_pv, duration, 0)):
+        if (bypass_value != None):
+          bypass.value = bypass_value
+        bypass.duration = duration
+        self.rt_session.commit()
+        self.add_history(user, reason, bypass)
+      else:
+        print('ERROR: Bypass *not* cancelled.')
+        return False
     elif (new_expiration != prev_expiration):
       if (bypass.duration == 0 or 
           (bypass.duration > 0 and prev_expiration < time_now)):
@@ -79,6 +210,17 @@ class BypassManager:
         print ('INFO: Setting bypass to expire later (previous date: {0}, new date: {1}'.\
                  format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
                         time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+
+      if (self.write_bypass_pv(bypass, bypd_pv, byps_pv, bypv_pv, duration, 1, bypass_value)):
+        bypass.duration = duration
+        if (bypass_value != None):
+          bypass.value = bypass_value
+        self.rt_session.commit()
+        self.add_history(user, reason, bypass)
+      else:
+        print('ERROR: Bypass *not* enabled.')
+        return False
+
       bypass.startdate = time_now
       bypass.duration = duration
       self.rt_session.commit()
@@ -88,167 +230,14 @@ class BypassManager:
 
     return True
 
-def isAnalog(session, dev_id):
-  analog_devices = session.query(models.AnalogDevice).filter(models.AnalogDevice.id==dev_id).all()
-  if (len(analog_devices)==1):
+  def add_history(self, user, reason, bypass):
+    bypass_hist = BypassHistory(user=user, reason=reason, device_id=bypass.device_id,
+                                device_input_id=bypass.device_input_id, startdate=bypass.startdate,
+                                duration=bypass.duration)
+    self.rt_session.add(bypass_hist)
+    self.rt_session.commit()
+
     return True
-  else:
-    digital_devices = session.query(models.DigitalDevice).filter(models.DigitalDevice.id==dev_id).all()
-    if (len(digital_devices)==0):
-      print 'ERROR: Device not found (invalid device id {0})'.format(dev_id)
-    return False
-
-def addHistory(rt_session, table_k, t_index, rt_d, t_table, user, reason):
-  hist_name = getThresholdHistoryName(table_k, t_index)
-  hist_class = globals()[hist_name]
-  hist = hist_class(user=user, reason=reason, device_id=rt_d.id)
-
-  # Copy thresholds from rt_d.threshold to history
-  for k in getattr(rt_d, t_table).__dict__.keys():
-    if (re.match('i[0-3]_[lh]', k)):
-      db_value = float(getattr(getattr(rt_d, t_table), k))
-#      print '{0} {1}'.format(k, db_value)
-      setattr(hist, k, db_value)
-      
-  rt_session.add(hist)
-  rt_session.commit()
-
-  return True
-
-#
-# Update the thresholds in database and make enty in the history table.
-#
-def changeThresholds(session, rt_session, rt_d, table, user, reason):
-  log = '=== Threshold Change for device "{0}" ===\n'.format(rt_d.mpsdb_name)
-  log = log + 'User: {0}\n'.format(user)
-  log = log + 'Reason: {0}\n'.format(reason)
-  log = log + 'Date: {0}\n\n'.format(time.strftime("%Y/%m/%d %H:%M:%S"))
-
-  for table_k, table_v in table.items():
-    for threshold_k, threshold_v in table_v.items():
-      for integrator_k, integrator_v in threshold_v.items():
-        # Get threshold table
-        t_table = getThresholdTableName(table_k, integrator_k, threshold_k)
-        for value_k, value_v in integrator_v.items():
-          old_value = getattr(getattr(rt_d, t_table), '{1}_{2}'.format(t_table, integrator_k, value_k))
-          log = log + 'threshold={0} integrator={1} type={2} prev={3} new={4}\n'.format(threshold_k, integrator_k, value_k, old_value, value_v)
-          updateThreshold(rt_session, rt_d, t_table, integrator_k, value_k, value_v)
-
-      addHistory(rt_session, table_k, threshold_k, rt_d, t_table, user, reason)
-
-  log = log + "===\n"
-  print log
-  return True
-
-
-def addDeviceInputBypassHistory(session, rt_session, rt_di, user, reason, startdate, duration):
-  bypass_hist = runtime.BypassHistory(startdate=startdate, duration=duration,
-                                      value=0, user=user, reason=reason, device_input_id=rt_di.id)
-  rt_session.add(bypass_hist)
-  rt_session.commit()
-  
-  return True
-
-def addAnalogBypassHistory(session, rt_session, rt_d, user, reason, startdate, duration):
-  bypass_hist = runtime.BypassHistory(startdate=startdate, duration=duration,
-                                      value=0, user=user, reason=reason, device_id=rt_d.id)
-  rt_session.add(bypass_hist)
-  rt_session.commit()
-  
-  return True
-
-
-#
-# Set bypass for device input
-#
-def setDeviceInputBypass(session, rt_session, rt_di, user, reason, duration):
-  # This is the current time
-  time_now = int(time.time())
-
-  if (setBypass(session, rt_session, rt_di.bypass, time_now, user, reason, duration)):
-    addDeviceInputBypassHistory(session, rt_session, rt_di, user, reason, time_now, duration)
-    return True
-  else:
-    return False
-
-               
-def checkDeviceInput(session, rt_session, device_input_id, device_input_pv):
-  rt_di = None
-  rt_di_id = -1
-  if (device_input_id < 0):
-    try:
-      rt_di = rt_session.query(runtime.DeviceInput).filter(runtime.DeviceInput.pv_name==device_input_pv).one()
-      rt_di_id = rt_di.id
-    except:
-      print 'ERROR: Cannot find device input with the PV name "{0}" in runtime database'.\
-          format(device_input_pv)
-      return False
-  else:
-    try:
-      rt_di = rt_session.query(runtime.DeviceInput).filter(runtime.DeviceInput.mpsdb_id == device_input_id).one()
-    except:
-      print 'ERROR: Cannot find device input with id={0} in runtime database'.\
-          format(device_input_id)
-      return False
-
-  # 
-  # Make sure the databases are in sync, i.e. ids are consistent
-  #
-  if (rt_di == None):
-    return False
-  else:
-    # 1) Find the device_inputs from MPS database (from the id stored in the runtime DB)
-    try:
-      di = session.query(models.DeviceInput).filter(models.DeviceInput.id == rt_di.mpsdb_id).one()
-    except:
-      print 'ERROR: Failed to find device input in MPS database (it exists in runtime). Please check databases, there are inconsistencies!'.\
-          format()
-      return False
-
-    # 2) Find the device in the MPS database associated with the device_input
-    try:
-      d = session.query(models.Device).filter(models.Device.id == di.digital_device_id).one()
-    except:
-      print 'ERROR: Failed to find digital device associated with digital input in MPS database, please check database'
-      return False
-
-    # 3) Find the same device, but now in the runtime DB. 
-    try:
-      rt_d = rt_session.query(runtime.Device).filter(runtime.Device.mpsdb_id == di.digital_device_id).one()
-    except:
-      print 'ERROR: Failed to find digital device associated with digital input in runtime database, please check database'
-
-    # 4) Device names must be the same
-    if d.name != rt_d.mpsdb_name:
-      print 'ERROR: Device names do not match in config ({0}) and runtime databases ({1})'.\
-          format(d.name, rt_d.mpsdb_name)
-      return False
-
-  return rt_di
-
-def checkAnalogDevice(session, rt_session, dev_id, dev_name):
-  if (dev_id < 0):
-    try:
-      d = session.query(models.Device).filter(models.Device.name==dev_name).one()
-      dev_id = d.id
-    except:
-      print 'ERROR: Cannot find device "{0}"'.format(dev_name)
-      return False
-
-  if (isAnalog(session, dev_id)):
-    try:
-      rt_d = rt_session.query(runtime.Device).filter(runtime.Device.id==dev_id).one()
-      d = session.query(models.Device).filter(models.Device.id==dev_id).one()
-    except:
-      print 'ERROR: Cannot find device "{0}"'.format(dev_id)
-      return False
-
-  else:
-    print 'ERROR: Cannot set bypass for digital device, must specify device input information'
-    return False
-
-  print rt_d.mpsdb_name
-  return rt_d
 
 #=== MAIN ==================================================================================
 
@@ -261,38 +250,64 @@ parser.add_argument('--reason', metavar='Reason for the bypass setting', type=st
 parser.add_argument('--time', metavar='seconds', type=int, nargs=1,
                     help='Bypass duration is seconds, starting from now.\n' +
                     'Use zero seconds to cancel bypass', required=True)
+parser.add_argument('-f', action='store_true', default=False,
+                    dest='force_write', help='Change thresholds even if PVs are not writable (changes only the database)')
+parser.add_argument('-v', action='store_true', default=False,
+                    dest='verbose', help='verbose output')
+
 
 top_group_list = parser.add_mutually_exclusive_group()
 group_list = top_group_list.add_mutually_exclusive_group()
 group_list_analog = group_list.add_mutually_exclusive_group()
-group_list_analog.add_argument('--analog-device-id', metavar='ID', type=int, nargs='?',
+group_list_analog.add_argument('--analog-device-id', metavar='ID', type=int, nargs=1,
                                help='Database id for the device - must be analog device')
 group_list_analog.add_argument('--analog-device-name', metavar='NAME', 
-                               type=str, nargs='?', help='Analog device name as found in the MPS database (e.g. BPM1B)')
+                               type=str, nargs=1, help='Analog device name as found in the MPS database (e.g. BPM1B)')
 parser.add_argument('--integrator', metavar='INDEX', type=int, nargs=1,
                     help='analog device integrator (0..3), for BPMs: X=0, Y=1, TMIT=2')
 group_list_digital = group_list.add_mutually_exclusive_group()
-group_list_digital.add_argument('--device-input-id', metavar='ID', type=int, nargs='?',
+group_list_digital.add_argument('--device-input-id', metavar='ID', type=int, nargs=1,
                                 help='Database id for the device input - use for digital devices')
 group_list_digital.add_argument('--device-input-pv', metavar='PV', 
-                               type=str, nargs='?', help='Device input PV (e.g. PROF:GUNB:753:IN_SWITCH)')
+                               type=str, nargs=1, help='Device input PV (e.g. PROF:GUNB:753:IN_SWITCH)')
+parser.add_argument('--value', metavar='0 or 1', type=int, nargs=1,
+                    help='Expected digital value')
 
 proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
 user = proc.stdout.readline().rstrip()
 
 args = parser.parse_args()
 
-bm = BypassManager(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db')
+bm = BypassManager(args.database[0].name, args.database[0].name.split('.')[0]+'_runtime.db',
+                   args.verbose, args.force_write)
 
-if (args.analog_device_id or args.analog_device_name):
+if (args.analog_device_id != None or args.analog_device_name != None):
   if (not args.integrator):
     print('ERROR: Must specify an integrator for analog devices (--integrator switch)')
     exit(1)
   else:
-    bm.set_analog_bypass(args.analog_device_id, args.analog_device_name,
-                         int(args.integrator[0]), user, args.reason[0], int(args.time[0]))
+    if (args.analog_device_id == None):
+      analog_device_id = None
+    else:
+      analog_device_id = int(args.analog_device_id[0])
+
+    if (args.analog_device_name == None):
+      analog_device_name = None
+    else:
+      analog_device_name = args.analog_device_name[0]
+
+    if (not bm.set_analog_bypass(analog_device_id, analog_device_name,
+                                 int(args.integrator[0]), user, args.reason[0], int(args.time[0]))):
+      exit(2)
 
 if (args.device_input_id or args.device_input_pv):
-  print('Set digital bypass')
+  value = None
+  if (args.value != None):
+    value = int(args.value[0])
+
+  if (not bm.set_digital_bypass(int(args.device_input_id[0]), args.device_input_pv,
+                                user, args.reason[0], int(args.time[0]), value)):
+    exit(3)
+
 exit(0)
 

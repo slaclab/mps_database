@@ -10,8 +10,9 @@ class Bypass(RuntimeBase):
   Properties:
     startdate: when the bypass started
     duration: bypass time in seconds since startdate
-    value: threshold value (either high or low)
+    value: bypass value (either 1 or 0)
     device_integrator: index of the bypassed integrator (for analog devices)
+    pv_name: base name for the bypass pvs (for both analog and digital)
 
   References:
     device_id: points to the device that owns this threshold
@@ -21,12 +22,10 @@ class Bypass(RuntimeBase):
   startdate = Column(Integer) #time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
   duration = Column(Integer)
   value = Column(Integer)
+  pv_name = Column(String)
 
-#  device_id = Column(Integer)
   device_integrator = Column(Integer, default=0)
-#  device = relationship("Device", uselist=False, back_populates="bypass0")
   device_id = Column(Integer, ForeignKey('devices.id'))
 
-#  device_input_id = Column(Integer)
   device_input = relationship("DeviceInput", uselist=False, back_populates="bypass")
-  device_input_id = Column(Integer, ForeignKey('device_inputs.id'))
+  device_input_id = Column(Integer)

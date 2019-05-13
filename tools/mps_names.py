@@ -86,6 +86,9 @@ class MpsName:
         
         return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)
 
+    def getBypassPv(self):
+        return ''
+
     def getThresholdPv(self, base, table, threshold, integrator, value_type, is_bpm=False):
         """
         Builds the threashold PV for a given combination of table, threshold,

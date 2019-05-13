@@ -30,6 +30,9 @@ class RuntimeChecker:
     self.verbose = verbose
     self.mps_names = MpsName(session)
 
+  def get_device_input_id_from_pv(self, pv_name):
+    return False
+
   def get_device_id_from_name(self, name):
     try:
       d = self.session.query(models.Device).filter(models.Device.name==name).one()
@@ -166,22 +169,46 @@ class RuntimeChecker:
           filter(models.Device.id==device_id).one()
     except:
       print('ERROR: Failed to find device id {} in database'.format(device_id))
-      return None
+      return [None, None]
 
     try:
       rt_device = self.rt_session.query(runtime.Device).\
           filter(runtime.Device.mpsdb_id==device_id).one()
     except:
       print('ERROR: Failed to find device id {} in runtime database'.format(device_id))
-      return None
+      return [None, None]
 
     if (rt_device.mpsdb_name != device.name):
       print('ERROR: Device names are different in MPS database and runtime database:')
       print(' * MPS Database name: {}'.format(device.name))
       print(' * RT  Database name: {}'.format(rt_device.mpsdb_name))
-      return None
+      return [None, None]
 
     return [device, rt_device]
+
+  def check_device_input(self, device_input_id):
+    """
+    Verify if device_input_id is mapped on both databases.
+    Returns None if there is a mismatch, and a pair [device_input, rt_device_input]
+    if device_input_id is valid on both
+    """
+    try:
+      device_input = self.session.query(models.DeviceInput).\
+          filter(models.DeviceInput.id==device_input_id).one()
+    except Exception as ex:
+      print ex
+      print('ERROR: Failed to find device_input id {} in database'.format(device_input_id))
+      return [None, None]
+
+    try:
+      rt_device_input = self.rt_session.query(runtime.DeviceInput).\
+          filter(runtime.DeviceInput.mpsdb_id==device_input_id).one()
+    except Exception as ex:
+      print ex
+      print('ERROR: Failed to find device_input id {} in runtime database'.format(device_input_id))
+      return [None, None]
+
+    return [device_input, rt_device_input]
 
   def check_databases(self):
     self.mps_name = MpsName(self.session)
