@@ -67,10 +67,14 @@ class DatabaseImporter:
 
         locations=[crate_info['ln_location']]
         slots=[crate_info['ln_slot']]
+        lcls1_ids=[crate_info['lcls1_id']]
+
         if (';' in crate_info['ln_location'] and
-            ';' in crate_info['ln_slot']):
+            ';' in crate_info['ln_slot'] and
+            ';' in crate_info['lcls1_id']):
           locations=crate_info['ln_location'].split(';')
           slots=crate_info['ln_slot'].split(';')
+          lcls1_ids=crate_info['lcls1_id'].split(';')
 
         crate = models.Crate(crate_id=crate_info['crate_id'],
                              num_slots=crate_info['num_slots'],
@@ -83,17 +87,17 @@ class DatabaseImporter:
 
         self.session.add(crate)
 
-        for l,s in zip(locations,slots):
+        for l,s,i in zip(locations,slots,lcls1_ids):
           lcls1_id = 0
-          if (s == '2'):
-            lcls1_id = crate_info['lcls1_id']
+#          if (s == '2'):
+#            lcls1_id = crate_info['lcls1_id']
 
           ln = models.LinkNode(area=crate_info['ln_area'], location=l,
                                cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
                                group=crate_info['group'], group_link=crate_info['group_link'],
                                group_link_destination=crate_info['group_link_destination'],
                                group_drawing=crate_info['network_drawing'],
-                               slot_number=s, lcls1_id=lcls1_id, crate=crate)
+                               slot_number=s, lcls1_id=i, crate=crate)
 
           if (s == '2'):
             slot2_ln = ln
@@ -1268,8 +1272,8 @@ importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=Tr
 importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_digital_device('import/PROF')
 
-if (False):
-#if (True):
+#if (False):
+if (True):
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')

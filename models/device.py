@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 from models import Base
 
@@ -104,6 +104,14 @@ class AnalogDevice(Device):
   """
   AnalogDevice class (analog_devices table)
 
+  Properties:
+  auto_reset: defines whether faults detected by an analog device are
+              automatic cleared when a good reading is received, i.e.
+              fault does not latch. This field is here for completeness
+              because the analog devices/faults are evaluated in FW,
+              which does not provide auto-reset feature - all faults
+              (analog or digital) are latched.
+
   References:
     channel_id: reference to the AnalogChannel that is connected to
                 to the actual device
@@ -115,7 +123,6 @@ class AnalogDevice(Device):
   __tablename__ = 'analog_devices'
   __mapper_args__ = {'polymorphic_identity': 'analog_device'}
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
-#  analog_device_type_id = Column(Integer, ForeignKey('analog_device_types.id'), nullable=False)
+  auto_reset = Column(Boolean, default=False)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
   ignore_conditions = relationship("IgnoreCondition", backref='analog_device')
-#  threshold_faults = relationship("ThresholdFault", backref='analog_device')

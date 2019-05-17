@@ -4,6 +4,7 @@ record(longout, "$(P):$(R)") {
     field(PINI, "NO")
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR))$(PARAM)")
+    field(ASG,  "$(ASG)")
 }
 
 record(longin, "$(P):$(R)_RBV") {
@@ -12,5 +13,6 @@ record(longin, "$(P):$(R)_RBV") {
     field(PINI, "NO")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT),$(ADDR))$(PARAM)")
+    field(ASG,  "$(ASG)")
 }
 

@@ -6,6 +6,7 @@ record(ao, "$(P):$(R)_L") {
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
     field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
+    field(ASG,  "$(ASG)")
 }
 
 record(ai,  "$(P):$(R)_L_RBV") {
@@ -16,6 +17,7 @@ record(ai,  "$(P):$(R)_L_RBV") {
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
     field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
+    field(ASG,  "$(ASG)")
 }
 
 record(ao, "$(P):$(R)_H") {
@@ -26,6 +28,8 @@ record(ao, "$(P):$(R)_H") {
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
     field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
+    field(ASG,  "$(ASG)")
+    field(ASG,  "$(ASG)")
 }
 
 record(ai,  "$(P):$(R)_H_RBV") {
@@ -36,6 +40,7 @@ record(ai,  "$(P):$(R)_H_RBV") {
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
     field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
+    field(ASG,  "$(ASG)")
 }
 
 record(bo, "$(P):$(R)_L_EN") {
@@ -46,6 +51,7 @@ record(bo, "$(P):$(R)_L_EN") {
     field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
+    field(ASG,  "$(ASG)")
 }
 
 record(bi, "$(P):$(R)_L_EN_RBV") {
@@ -56,6 +62,7 @@ record(bi, "$(P):$(R)_L_EN_RBV") {
     field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
+    field(ASG,  "$(ASG)")
 }
 
 record(bo,      "$(P):$(R)_H_EN") {
@@ -66,6 +73,7 @@ record(bo,      "$(P):$(R)_H_EN") {
     field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
+    field(ASG,  "$(ASG)")
 }
 
 record(bi,      "$(P):$(R)_H_EN_RBV") {
@@ -76,4 +84,5 @@ record(bi,      "$(P):$(R)_H_EN_RBV") {
     field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
+    field(ASG,  "$(ASG)")
 }

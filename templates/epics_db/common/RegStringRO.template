@@ -6,5 +6,6 @@ record(waveform, "$(P):$(R)") {
     field(NELM,    "40")
     field(FTVL,    "CHAR")
     field(INP,     "@asyn($(PORT),$(ADDR))$(PARAM)")
+    field(ASG,  "$(ASG)")
 }
 

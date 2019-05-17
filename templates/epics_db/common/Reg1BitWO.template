@@ -6,5 +6,6 @@ record(bo, "$(P):$(R)") {
     field(OUT,  "@asynMask($(PORT),$(ADDR),0x01)$(PARAM)")
     field(ZNAM, "$(ZNAM)")
     field(ONAM, "$(ONAM)")
+    field(ASG,  "$(ASG)")
 }
 

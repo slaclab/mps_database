@@ -9,6 +9,7 @@ record(ao,      "$(P):$(R)") {
     field(DOL,  "$(SCALE_PV)")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALE_$(CH)")
+    field(ASG,  "$(ASG)")
 }
 
 record(ai,      "$(P):$(R)_RBV") {
@@ -18,4 +19,5 @@ record(ai,      "$(P):$(R)_RBV") {
     field(PREC, "$(PREC)")
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALE_$(CH)")
+    field(ASG,  "$(ASG)")
 }
