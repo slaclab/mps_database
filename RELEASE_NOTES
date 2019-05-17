@@ -18,7 +18,8 @@ mps_database:
   * Scripts to change thresholds and bypass now change the runtime
     database and set the CN/LN PVs as well
   * Addition of Channel Access Security Group "MCC" for all PVs
-  * Addition of tool to export alhConfig files (export_alarms.py)
+  * Addition of tool to export alhConfig files (export_alarms.py), along
+    with template files (templates/alarms dir)
 
 mps_database-R1-2-0: (Apr 26 2019)
   * Charge in export_apps_epics.py to generate records for virtual

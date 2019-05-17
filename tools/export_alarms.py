@@ -122,6 +122,7 @@ class MpsAlarmReader:
         try:
             app_cards = mps_db_session.query(models.ApplicationCard).all()
             faults = mps_db_session.query(models.Fault).all()
+            destinations = mps_db_session.query(models.BeamDestination).all()
         except exc.SQLAlchemyError as e:
             raise
 
@@ -132,7 +133,7 @@ class MpsAlarmReader:
         if len(faults) == 0:
             return 
 
-        # Faults for Global area
+        # Alarms for app status (i.e. alarm when an APP is not updating MPS)
         for app_card in app_cards:
             area = self.check_area(app_card.area.upper())
 
@@ -144,10 +145,12 @@ class MpsAlarmReader:
                 alarm_area['app'] = []
                 self.alarm_info[area] = alarm_area
 
-            alarm_area['app'].append('SIOC:SYS2:MP01:APP{}_STATUS'.format(app_card.global_id))
+            # The $(BASE) macro defines in which central node this PV lives
+            # Currenly it is set to SIOC:SYS2:MP01 in this script
+            alarm_area['app'].append('$(BASE):APP{}_STATUS'.format(app_card.global_id))
 
 
-        # Faults for all other areas
+        # Alarms for faults for all other areas
         for fault in faults:
             pv = self.mps_name.getFaultName(fault)
             area = self.check_area(pv.split(":")[1].upper())
@@ -162,6 +165,22 @@ class MpsAlarmReader:
             
             alarm_area['pv'].append(pv)
             
+        # Alarms for beam destinations
+        area = 'global2'
+        alarm_area = {}
+        alarm_area['pv'] = []
+        alarm_area['app'] = []
+        for destination in destinations:
+            pv = self.mps_name.getBeamDestinationName(destination)
+            alarm_area['pv'].append(pv)
+        self.alarm_info[area] = alarm_area
+
+        # Save a list of areas in a separate array
+        self.areas = []
+        for area in self.alarm_info:
+            if (area != 'NONE'):
+                self.areas.append(area)
+        
     def check_area(self, area):
         if not area in self.areas:
             if (area.startswith('BPN')):
@@ -175,7 +194,8 @@ class MpsAlarmReader:
         else:
             return area
 
-    def generate_alarm_files(self, template_body_name, template_header_name):
+    def generate_alarm_files(self, template_body_name,
+                             template_header_name, template_include_name):
         """
         Generate the EPICS database and configuration files from the application data obtained by the
         extract_alarms method.
@@ -199,42 +219,88 @@ class MpsAlarmReader:
             alh_filename = '{}mps_{}_apps.alhConfig'.format(self.dest_path, area.lower())
             self.generate_alh_file(template_body_name, template_header_name,
                                    area, alarm_info['app'], alh_filename)
+        
+        self.generate_mps_alh_file(template_header_name, template_include_name)
+
+
+    def generate_mps_alh_file(self, template_header_name, template_include_name):
+        area = 'mps'
+        system_macro = 'all2'
+        substitution_header_file = '{}mps_{}_header.substitution'.format(self.dest_path, area.lower())
+        self.generate_substitution_header_file(substitution_header_file,
+                                               template_header_name, area, system_macro)
+
+        generated_template_header = '{}mps_{}.template.header'.format(self.dest_path, area.lower())
+        self.run_msi(substitution_header_file, generated_template_header)
+
+        substitution_include_file = '{}mps_{}_include.substitution'.format(self.dest_path, area.lower())
+        self.generate_substitution_include_file(substitution_include_file, template_include_name,
+                                                'all2', 'mps', self.areas)
+
+        generated_template_body = '{}mps_{}.template.body'.format(self.dest_path, area.lower())
+        self.run_msi(substitution_include_file, generated_template_body)
+
+        alh_file = '{}mps.alhConfig'.format(self.dest_path)
+        self.concatenate_files(alh_file, generated_template_header, generated_template_body)
+
+        return
+
+    def generate_substitution_include_file(self, file_name, template_body_name, system, subsystem, areas):
+        with open(file_name, 'w') as f:
+            f.write('file "{}alarms/{}" {{ pattern\n'.\
+                        format(self.template_path, template_body_name))
+            f.write('{SYSTEM, SUBSYSTEM, SUBSYSTEM_LOWER, AREA_LOWER}\n')
+            for area in areas:
+                f.write('{{ {}, {}, {}, {} }}\n'.\
+                            format(system.upper(), subsystem.upper(),
+                                   subsystem.lower(), area.lower()))
+            f.write('}\n')
+
+    def generate_substitution_header_file(self, file_name, template_header_name, area, system_macro):
+        # Generate substitutions file
+        with open(file_name, 'w') as f:
+            f.write('file "{}alarms/{}" {{ pattern\n'.\
+                        format(self.template_path, template_header_name))
+            f.write('{AREA, SYSTEM, BASE}\n')
+            f.write('{{ {}, {}, SIOC:SYS2:MP01 }}\n'.\
+                        format(area.upper(), system_macro.upper()))
+            f.write('}\n')
+
+    def generate_substitution_body_file(self, file_name, template_body_name, area, system_macro, pvs):
+        with open(file_name, 'w') as f:
+            f.write('file "{}alarms/{}" {{ pattern\n'.\
+                        format(self.template_path, template_body_name))
+            f.write('{AREA, SYSTEM, BASE, FAULT_PV}\n')
+            for pv in pvs:
+                f.write('{{ {}, MPS, SIOC:SYS2:MP01 {} }}\n'.format(area.upper(), pv.upper()))
+            f.write('}\n')
+
+    def run_msi(self, substitution_file, template_file):
+        msi_cmd = 'msi -V -S {} -o {}'.\
+            format(substitution_file, template_file)
+        os.system(msi_cmd)
+        os.system('rm -f {}'.format(substitution_file))
+
+    def concatenate_files(self, output, header, body):
+        os.system('mv -f {} {}'.format(header, output))
+        os.system('cat {} >> {}'.format(body, output))
+        os.system('rm -f {}'.format(body))
 
     def generate_alh_file(self, template_body_name, template_header_name, area, pvs, alh_filename):
         # Generate substitutions file
         substitution_header_file = '{}mps_{}_header.substitution'.format(self.dest_path, area.lower())
-        with open(substitution_header_file, 'w') as f:
-            f.write('file "{}alarms/common/{}" {{ pattern\n'.format(self.template_path, template_header_name))
-            f.write('{AREA}\n')
-            f.write('{{ {} }}\n'.format(area.upper()))
-            f.write('}\n')
+        self.generate_substitution_header_file(substitution_header_file, template_header_name, area, 'MPS')
 
         substitution_body_file = '{}mps_{}_body.substitution'.format(self.dest_path, area.lower())
-        with open(substitution_body_file, 'w') as f:
-            f.write('file "{}alarms/common/{}" {{ pattern\n'.format(self.template_path, template_body_name))
-            f.write('{AREA, FAULT_PV}\n')
-            for pv in pvs:
-                f.write('{{ {}, {} }}\n'.format(area.upper(), pv.upper()))
-            f.write('}\n')
+        self.generate_substitution_body_file(substitution_body_file, template_body_name, area, 'MPS', pvs)
 
         generated_template_header = '{}mps_{}.template.header'.format(self.dest_path, area.lower())
-        msi_header_cmd = 'msi -V -S {} -o {}'.\
-            format(substitution_header_file, generated_template_header)
-        os.system(msi_header_cmd)
+        self.run_msi(substitution_header_file, generated_template_header)
 
         generated_template_body = '{}mps_{}.template.body'.format(self.dest_path, area.lower())
-        msi_cmd = 'msi -V -S {} -o {}'.\
-            format(substitution_body_file, generated_template_body)
-        os.system(msi_cmd)
+        self.run_msi(substitution_body_file, generated_template_body)
 
-        # cleanup
-        os.system('rm -f {}'.format(substitution_header_file))
-        os.system('rm -f {}'.format(substitution_body_file))
-
-        os.system('mv -f {} {}'.format(generated_template_header, alh_filename))
-        os.system('cat {} >> {}'.format(generated_template_body, alh_filename))
-        os.system('rm -f {}'.format(generated_template_body))
-
+        self.concatenate_files(alh_filename, generated_template_header, generated_template_body)
 
     def print_alarm_data(self):
         """
@@ -242,7 +308,7 @@ class MpsAlarmReader:
         """
         print('+- Area --+- # Alarm PVs -+- # App PVs -+')
         for key, value in self.alarm_info.iteritems():
-            sys.stdout.write('| {0: >5}   |      {1: >3}      | {2: >3}'.format(key, len(value['pv']), len(value['app'])))
+            sys.stdout.write('| {0: >7} |      {1: >3}      | {2: >3}'.format(key, len(value['pv']), len(value['app'])))
 #            for pv in value['global_id']:
 #                sys.stdout.write('{0: >3} '.format(pv))
             print('')
@@ -264,7 +330,9 @@ def main(db_file, dest_path, template_path=None, app_id=None, verbose=False):
     mps_alarm_reader.print_alarm_data()
 
     # Generate the alarm files
-    mps_alarm_reader.generate_alarm_files('mps_area.template', 'mps_area_header.template')
+    mps_alarm_reader.generate_alarm_files('mps_group.template',
+                                          'mps_group_header.template',
+                                          'mps_include.template')
 
 if __name__ == "__main__":
 

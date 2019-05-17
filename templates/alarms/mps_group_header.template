@@ -1,0 +1,7 @@
+GROUP NULL $(SYSTEM):$(AREA):1
+$ALIAS  $(AREA)
+$GUIDANCE 
+$(AREA) $(SYSTEM)
+  Group Name: $(SYSTEM):$(AREA):1
+  Summary PV: $(SYSTEM):$(AREA):1:STATSUMY
+$END

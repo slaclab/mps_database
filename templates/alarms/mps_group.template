@@ -1,0 +1,3 @@
+
+CHANNEL  MPS:$(AREA):1     $(FAULT_PV)		-----
+   $FORCEPV $(FAULT_PV) -DATL 1 0
