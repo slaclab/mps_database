@@ -1143,12 +1143,16 @@ class Exporter:
     self.tf.write('# Link Nodes\n')
 
     cols=[{'name':'c1', 'width':'0.20*'},
-          {'name':'c2', 'width':'0.30*'},
-          {'name':'c3', 'width':'0.10*'},
-          {'name':'c4', 'width':'0.25*'}]
+          {'name':'c2', 'width':'0.10*'},
+          {'name':'c3', 'width':'0.30*'},
+          {'name':'c4', 'width':'0.10*'},
+          {'name':'c5', 'width':'0.10*'},
+          {'name':'c6', 'width':'0.25*'}]
 
     header=[{'name':'SIOC', 'namest':None, 'nameend':None},
+            {'name':'LN ID', 'namest':None, 'nameend':None},
             {'name':'Crate', 'namest':None, 'nameend':None},
+            {'name':'Slot', 'namest':None, 'nameend':None},
             {'name':'Group', 'namest':None, 'nameend':None},
             {'name':'Drawing', 'namest':None, 'nameend':None},]
     
@@ -1160,7 +1164,10 @@ class Exporter:
     for ln in linkNodes:
       sioc_info = '{0}'.format(ln.get_name())
       crate_info = '<link linkend=\'crate.{0}\'>{1}</link>'.format(ln.crate.id, ln.crate.get_name())
-      rows.append([sioc_info, crate_info, ln.group, ln.group_drawing])
+      ln_id = 'LN{}'.format(ln.lcls1_id)
+      if (ln.lcls1_id == 0):
+        ln_id = '-'
+      rows.append([sioc_info, ln_id, crate_info, ln.slot_number, ln.group, ln.group_drawing])
       self.tf.write('[LN {0}] SIOC: {1}; Crate: {2}\n'.\
                       format(ln.id, sioc_info, ln.crate.get_name()))
 

@@ -67,14 +67,11 @@ class DatabaseImporter:
 
         locations=[crate_info['ln_location']]
         slots=[crate_info['ln_slot']]
-        lcls1_ids=[crate_info['lcls1_id']]
 
         if (';' in crate_info['ln_location'] and
-            ';' in crate_info['ln_slot'] and
-            ';' in crate_info['lcls1_id']):
+            ';' in crate_info['ln_slot']):
           locations=crate_info['ln_location'].split(';')
           slots=crate_info['ln_slot'].split(';')
-          lcls1_ids=crate_info['lcls1_id'].split(';')
 
         crate = models.Crate(crate_id=crate_info['crate_id'],
                              num_slots=crate_info['num_slots'],
@@ -87,17 +84,17 @@ class DatabaseImporter:
 
         self.session.add(crate)
 
-        for l,s,i in zip(locations,slots,lcls1_ids):
+        for l,s in zip(locations,slots):
           lcls1_id = 0
-#          if (s == '2'):
-#            lcls1_id = crate_info['lcls1_id']
+          if (s == '2'):
+            lcls1_id = crate_info['lcls1_id']
 
           ln = models.LinkNode(area=crate_info['ln_area'], location=l,
                                cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
                                group=crate_info['group'], group_link=crate_info['group_link'],
                                group_link_destination=crate_info['group_link_destination'],
                                group_drawing=crate_info['network_drawing'],
-                               slot_number=s, lcls1_id=i, crate=crate)
+                               slot_number=s, lcls1_id=lcls1_id, crate=crate)
 
           if (s == '2'):
             slot2_ln = ln
@@ -607,10 +604,15 @@ class DatabaseImporter:
     if (self.lcls1_only and card_name == "BPM Card"):
       return
 
-    print 'Adding ' + directory
+    sys.stdout.write('Adding {}\n'.format(directory))
     file_name = directory + '/DeviceType.csv'
     [device_type, evaluation_string, measured_device_type_id] = self.check_device_type(file_name)
-    if device_type == None:
+    if (device_type == None):
+      return
+
+    if (self.lcls1_only and (device_type.name == 'PBLM' or
+                             device_type.name == 'LBLM')):
+      print('* Skipping {} devices'.format(device_type.name))
       return
 
     file_name = directory + '/DeviceStates.csv'
@@ -1236,6 +1238,12 @@ class DatabaseImporter:
             self.session.query(models.LinkNode).filter(models.LinkNode.id == ln.id).delete()
           self.session.query(models.Crate).filter(models.Crate.id == c.id).delete()
 
+      # remove link nodes that have no cards
+      link_nodes = self.session.query(models.LinkNode).all()
+      for ln in link_nodes:
+        if (len(ln.cards) == 0):
+          self.session.query(models.LinkNode).filter(models.LinkNode.id == ln.id).delete()
+
       self.session.query(models.LinkNode).filter(models.LinkNode.ln_type==2).delete()
 
 ### MAIN
@@ -1247,7 +1255,10 @@ args = parser.parse_args()
 
 lcls1 = False
 if args.lcls1:
-  print 'Import only LCLS-I data (not implemented)'
+  print('-- Importing only LCLS-I data --')
+  print('* excludes: BPMS, PBLM and LBLM devices')
+  print('* empty application cards are not added to the database')
+  print('---')
   lcls1 = True
 
 verbose=False
