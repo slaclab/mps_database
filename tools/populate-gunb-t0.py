@@ -21,6 +21,9 @@ session = conf.session
 linac = models.BeamDestination(name="Linac", description="Linac destination", destination_mask=0x01)
 session.add(linac)
 
+aom_destination = models.BeamDestination(name="AOM", description="AOM", destination_mask=0x02)
+session.add(aom_destination)
+
 #Make some beam classes.
 # integration_window in units of 1uS
 # min_period in units of 1uS
@@ -173,7 +176,7 @@ session.add_all([shutter_device_type, aom_device_type])
 shutter = models.MitigationDevice(name="MS", description="Mechanical Shutter", position=100, beam_destination=linac,
                                   digital_out_channel=shutter_channel, area="GUNB", card = link_node_card,
                                   device_type = shutter_device_type)
-aom = models.MitigationDevice(name="AOM", description="AOM", position=100, beam_destination=linac,
+aom = models.MitigationDevice(name="AOM", description="AOM", position=100, beam_destination=aom_destination,
                               digital_out_channel=aom_channel, area="GUNB", card = link_node_card,
                               device_type = aom_device_type)
 session.add_all([shutter, aom])
@@ -382,10 +385,10 @@ fc_temp = models.DigitalDevice(name="Faraday Cup Temperature", device_type = tem
                                measured_device_type_id = fc_device_type.id)
 sol01_temp = models.DigitalDevice(name="SOL1B Temp", position=212, z_location=-32, description="SOL1B Temperature",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
-                                  measured_device_type_id = sol_curr_device_type.id)
+                                  measured_device_type_id = sol_curr_device_type.id, evaluation=0)
 sol02_temp = models.DigitalDevice(name="SOL2B Temp", position=823, z_location=-27,  description="SOL2B Temperature",
                                   device_type = temp_device_type, card = link_node_card, area="GUNB",
-                                  measured_device_type_id = sol_curr_device_type.id)
+                                  measured_device_type_id = sol_curr_device_type.id, evaluation=0)
 sol_flow = models.DigitalDevice(name="SOL1B/SOL2B Flow", position=212, z_location=-32, description="SOL1B and SOL2B Waterflow Status",
                                   device_type = flow_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = sol_curr_device_type.id)
@@ -396,9 +399,9 @@ buncher_flow = models.DigitalDevice(name="Buncher Flow", position=455, z_locatio
                                   device_type = flow_device_type, card = link_node_card, area="GUNB",
                                   measured_device_type_id = buncher_device_type.id)
 vvr1 = models.DigitalDevice(name="VVR01", position=100, z_location=-35, description="Vacuum Gate Valve VVR01",
-                            device_type = vvr_device_type, card = link_node_card, area="GUNB")
+                            device_type = vvr_device_type, card = link_node_card, area="GUNB", evaluation=1)
 vvr2 = models.DigitalDevice(name="VVR02", position=941, z_location=-35, description="Vacuum Gate Valve VVR02",
-                            device_type = vvr_device_type, card = link_node_card, area="GUNB")
+                            device_type = vvr_device_type, card = link_node_card, area="GUNB", evaluation=1)
 shutter_status = models.DigitalDevice(name="Mech. Shutter", position=100, z_location=-35, description="Mechanical Shutter Status",
                                       device_type = shutter_status_device_type, card = link_node_card, area="GUNB")
 gun_temp = models.DigitalDevice(name="Gun Temp", position=100, z_location=-36,  description="Gun Temperature",
@@ -680,7 +683,7 @@ if not two_apps:
     fc_int1_fault_states.append(fc_int1_fault_state)
 
 
-# Fault states allowed beam classes.
+# Fault states allowed beam classes. (Linac destination)
 yag_fault_in.add_allowed_class(beam_class=class_1, beam_destination=linac)
 yag_fault_moving.add_allowed_class(beam_class=class_0, beam_destination=linac)
 yag_fault_broken.add_allowed_class(beam_class=class_0, beam_destination=linac)
@@ -699,35 +702,66 @@ vvmg1_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 gunwg_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 fc_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
 
+# AOM Destination
+yag_fault_in.add_allowed_class(beam_class=class_1, beam_destination=aom_destination)
+yag_fault_moving.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+yag_fault_broken.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+fc_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+sol01_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+sol02_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+sol_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+buncher_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+buncher_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+vvr1_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+vvr2_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+shutter_fault_broken.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+gun_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+gun_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+vvmg1_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+gunwg_temp_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+fc_flow_fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
+
+
 for fault_state in sol1_int1_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+  fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
 
 for fault_state in sol2_int1_fault_states:
   fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+  fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
 
 # Allowed beam classes for the BPM01/BPM02 FaultStates
 if not two_apps:
   for fault_state in bpm01_x_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
   for fault_state in bpm01_y_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
   for fault_state in bpm01_t_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
 
   for fault_state in bpm02_x_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
   for fault_state in bpm02_y_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
   for fault_state in bpm02_t_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
 
   for fault_state in im01_charge_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
   for fault_state in im01_diff_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
 
   for fault_state in fc_int1_fault_states:
     fault_state.add_allowed_class(beam_class=class_0, beam_destination=linac)
+    fault_state.add_allowed_class(beam_class=class_0, beam_destination=aom_destination)
 
 # 1) If YAG01 is IN, ignore SOL2B current
 # value=1 means the condition is met when the yag01_condition_input is faulted
