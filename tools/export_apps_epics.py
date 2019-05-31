@@ -94,6 +94,9 @@ class MpsAppReader:
         # This is the list of all applications
         self.analog_apps = []
         self.digital_apps= []
+        
+        # List of Link Nodes by cpu_name + slot - track if it has only digital, analog or both apps
+        self.link_nodes = {}
 
         # Open a session to the MPS database
         with MpsDbReader(db_file) as mps_db_session:
@@ -172,14 +175,20 @@ class MpsAppReader:
             if (app_id == None):
                 app_cards = mps_db_session.query(models.ApplicationCard).all()
             else:
-                app_cards = mps_db_session.query(models.ApplicationCard).filter(models.ApplicationCard.global_id == app_id).all()
+                app_cards = mps_db_session.query(models.ApplicationCard).\
+                    filter(models.ApplicationCard.global_id == app_id).all()
+            link_nodes = mps_db_session.query(models.LinkNode).all()
         except exc.SQLAlchemyError as e:
             raise
+
+        if (len(link_nodes) > 0):
+            for ln in link_nodes:
+                name = ln.get_name()
+                self.link_nodes[name] = 'Unknown'
 
         # Check if there were applications defined in the database
         if len(app_cards) == 0:
             return
-
 
         # Iterate over all the found applications
         for app_card in app_cards:
@@ -201,16 +210,25 @@ class MpsAppReader:
             # Process the analog devices
             if len(analog_devices):
 
+                ln_name = app_card.link_node.get_name()
+
                 # Get this application data
                 app_data = {}
                 app_data["app_id"] = app_card.global_id
                 app_data["cpu_name"] = app_card.link_node.cpu
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["slot_number"] = app_card.slot_number
+                app_data["link_node_name"] = ln_name
                 app_data["link_node_area"] = app_card.link_node.area
                 app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
+
+                if (ln_name in self.link_nodes):
+                    if (self.link_nodes[ln_name] == 'Unknown'):
+                        self.link_nodes[ln_name] = 'Analog'
+                    else:
+                        self.link_nodes[ln_name] = 'Mixed'
 
                 # Defines whether the IOC_NAME env var should be added no the mps.env
                 # file. In order to add only once we need to figure out if there are
@@ -290,6 +308,8 @@ class MpsAppReader:
             # Process the digital devices
             if len(digital_devices):
 
+                ln_name = app_card.link_node.get_name()
+
                 # Get this application data
                 app_data = {}
                 app_data["app_id"] = app_card.global_id
@@ -297,13 +317,20 @@ class MpsAppReader:
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["slot_number"] = app_card.slot_number
                 app_data["link_node_area"] = app_card.link_node.area
+                app_data["link_node_name"] = ln_name
                 app_data["link_node_location"] = app_card.link_node.location
                 app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
                 app_data["virtual"] = False
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
-                    app_data["virtual"] = True
+                    app_data["virtual"] = true
+
+                if (ln_name in self.link_nodes):
+                    if (self.link_nodes[ln_name] == 'Unknown'):
+                        self.link_nodes[ln_name] = 'Digital'
+                    else:
+                        self.link_nodes[ln_name] = 'Mixed'
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:
@@ -374,59 +401,7 @@ class MpsAppReader:
         print("== Generating EPICS DB and configuration files: ==")
         print("==================================================")
             
-        # Generates analog application related databases and configuration files
         if (self.verbose):
-            print("--------------------------")
-            print("--  Analog applications --")
-            print("--------------------------")
-        for app in self.analog_apps:
-            app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
-            app_prefix = 'MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])
-
-            if (self.verbose):
-                print("Application path   : {}".format(app_path))
-                print("Application prefix : {}".format(app_prefix))
-
-            self.__write_mps_db(path=app_path, macros={"P":app_prefix})
-            self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
-            self.__write_thresholds_off_config(path=app_path)
-            self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
-
-            # Add the IOC name environmental variable for the Link Nodes
-            if app["analog_link_node"]:
-                self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
-                                                                "LOCATION":app["link_node_location"].upper()})
-                self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
-
-            for device in app["devices"]:
-                device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
-
-                if (self.verbose):
-                    print("  Device prefix : {}".format(device_prefix))
-
-                for fault in device["faults"].values():
-
-                    macros = {  "P":device_prefix,
-                                "BAY":str(device["bay_number"]),
-                                "APP":self.__get_app_type_name(device["type_name"]),
-                                "FAULT":fault["name"],
-                                "FAULT_INDEX":self.__get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
-                                "DESC":fault["description"],
-                                "EGU":self.__get_app_units(device["type_name"],fault["name"]) }
-
-                    self.__write_thr_base_db(path=app_path, macros=macros)
-
-                    for bit in fault["bit_positions"]:
-                        fault_prefix = "{}_T{}".format(fault["name"], bit)
-
-                        if (self.verbose):
-                            print("    Fault prefix : {}".format(fault_prefix))
-
-                        macros["BIT_POSITION"] = str(bit)
-                        self.__write_thr_db(path=app_path, macros=macros)
-        if (self.verbose):
-            print("--------------------------")
-
         # Generate digital application related databases and configuration files
             print("----------------------------")
             print("--  Digital applications  --")
@@ -439,12 +414,26 @@ class MpsAppReader:
                 print("Application path   : {}".format(app_path))
                 print("Application prefix : {}".format(app_prefix))
 
-            # self.write_mps_db(path=app_path, macros={"P":app_prefix} )
+            if (app["link_node_name"] in self.link_nodes):
+                if (self.link_nodes[app["link_node_name"]] == 'Digital' or 
+                    self.link_nodes[app["link_node_name"]] == 'Mixed'):
+                    self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+                elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
+                    print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
+                    exit(2)
+
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
             # Add the IOC name environmental variable for the Link Nodes
-            self.__write_iocname_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
-                                                            "LOCATION":app["link_node_location"].upper()})
+            self.__write_header_env(path=app_path, macros={})
+            self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
+                                                            "LOCATION":app["link_node_location"].upper(),
+                                                            "LOCATION_INDEX":"0{}".format(5),
+                                                            "CARD_INDEX":str(app["card_index"]),
+                                                            "APP_ID":str(app["app_id"])})
+            self.__write_app_id_env(path=app_path, macros={"APP_TYPE":"MPS_DIG_APP",
+                                                           "APP_ID_NAME":"MPS_DIG_APP_ID",
+                                                           "APP_ID":str(app["app_id"])})
             self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
 
             for device in app["devices"]:
@@ -487,6 +476,88 @@ class MpsAppReader:
             print("==================================================")
             print("")
 
+        # Generates analog application related databases and configuration files
+        if (self.verbose):
+            print("--------------------------")
+            print("--  Analog applications --")
+            print("--------------------------")
+        for app in self.analog_apps:
+            app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
+            app_prefix = 'MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])
+
+            if (self.verbose):
+                print("Application path   : {}".format(app_path))
+                print("Application prefix : {}".format(app_prefix))
+
+            if (app["link_node_name"] in self.link_nodes):
+                if (self.link_nodes[app["link_node_name"]] == 'Analog'):
+                    self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+                elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
+                    print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
+                    exit(2)
+
+            self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
+            self.__write_thresholds_off_config(path=app_path)
+            self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
+
+            # Add the IOC name environmental variable for the Link Nodes
+            if app["analog_link_node"]:
+                self.__write_header_env(path=app_path, macros={})
+                self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
+                                                                "LOCATION":app["link_node_location"].upper(),
+                                                                "LOCATION_INDEX":"0{}".format(5),
+                                                                "CARD_INDEX":str(app["card_index"])})
+                self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
+
+            self.__write_app_id_env(path=app_path, macros={"APP_TYPE":"MPS_ANA_APP",
+                                                           "APP_ID_NAME":"MPS_ANA_APP_ID",
+                                                           "APP_ID":str(app["app_id"])})
+
+            for device in app["devices"]:
+                device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
+
+                if (self.verbose):
+                    print("  Device prefix : {}".format(device_prefix))
+
+                for fault in device["faults"].values():
+
+                    macros = {  "P":device_prefix,
+                                "BAY":str(device["bay_number"]),
+                                "APP":self.__get_app_type_name(device["type_name"]),
+                                "FAULT":fault["name"],
+                                "FAULT_INDEX":self.__get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
+                                "DESC":fault["description"],
+                                "EGU":self.__get_app_units(device["type_name"],fault["name"]) }
+
+                    self.__write_thr_base_db(path=app_path, macros=macros)
+
+
+                    for bit in fault["bit_positions"]:
+                        fault_prefix = "{}_T{}".format(fault["name"], bit)
+
+                        if (self.verbose):
+                            print("    Fault prefix : {}".format(fault_prefix))
+
+                        macros["BIT_POSITION"] = str(bit)
+                        self.__write_thr_db(path=app_path, macros=macros)
+
+                    macros = { "BAY_INP_NAME_MACRO": 'BAY{}_INP{}'.format(str(device["bay_number"]),
+                                                                          str(device["channel_number"])),
+                               "BAY_INP_NAME_DEFINE": "",
+                               "BAY_DB_FILE_MACRO": 'BAY{}_DB_FILE'.format(str(device["bay_number"])),
+                               "BAY_DB_FILE": 'db/mps_blm.db',
+                               "BAY_INP_NAME_MACRO": 'BAY{}_INP{}_NAME'.format(str(device["bay_number"]),
+                                                                          str(device["channel_number"])),
+                               "BAY_INP_NAME": device_prefix}
+                    self.__write_analog_input_env(path=app_path, macros=macros)
+#                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME_DEFINE)")
+#                    epicsEnvSet("$(BAY_DB_FILE_MACRO)", "$(BAY_DB_FILE)")
+#                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME)")
+
+
+        if (self.verbose):
+            print("--------------------------")
+
 
     def print_app_data(self):
         """
@@ -495,7 +566,7 @@ class MpsAppReader:
         print("===================================")
         print("==            REULTS:            ==")
         print("===================================")
-        
+
         # Analog application results
         print("--------------------------")
         print("--  Analog applications --")
@@ -582,6 +653,10 @@ class MpsAppReader:
 
 
         print("===================================")
+
+        for k,v in self.link_nodes.items():
+            print '{}: {}'.format(k, v)
+
 
     def __get_card_id(self, slot_number, type_id):
         """
@@ -815,6 +890,30 @@ class MpsAppReader:
         """
         self.__write_epics_db(path=path, template_name="thr.template", macros=macros)
 
+    def __write_analog_input_env(self, path, macros):
+        """
+        Write the macros for loading analog input records
+
+        This environmental variable will be loaded by all analog applications
+        """
+        self.__write_epics_env(path=path, template_name="analog_inputs.template", macros=macros)
+
+    def __write_app_id_env(self, path, macros):
+        """
+        Write the appID to the environmental variable file.
+
+        This environmental variable will be loaded by all applications.
+        """
+        self.__write_epics_env(path=path, template_name="app_id.template", macros=macros)
+
+    def __write_header_env(self, path, macros):
+        """
+        Write the header for the MPS file containing environmental variables.
+
+        This environmental variable will be loaded by all applications.
+        """
+        self.__write_epics_env(path=path, template_name="header.template", macros=macros)
+
     def __write_prefix_env(self, path, macros):
         """
         Write the  mps PV name prefix environmental variable file.
@@ -823,13 +922,13 @@ class MpsAppReader:
         """
         self.__write_epics_env(path=path, template_name="prefix.template", macros=macros)
 
-    def __write_iocname_env(self, path, macros):
+    def __write_iocinfo_env(self, path, macros):
         """
-        Write the  LN IOC name environmental variable file.
+        Write the LN IOC related environmental variable file.
 
         This environmental variable will be loaded by all link nodes.
         """
-        self.__write_epics_env(path=path, template_name="ioc_name.template", macros=macros)
+        self.__write_epics_env(path=path, template_name="ioc_info.template", macros=macros)
 
     def __write_lc1_id_env(self, path, macros):
         """
@@ -895,10 +994,9 @@ class MpsAppReader:
         If the directory of the output file does not exist, it will be created.
         """
         create_dir(file)
-
         with open(file, 'a') as db, open(template, 'r') as template:
             for line in template:
- #               print("*** {}".format(line))
+                #print("*** {}".format(line))
                 db.write(self.__expand_macros(line, macros))
 
     def __expand_macros(self, text, macros):

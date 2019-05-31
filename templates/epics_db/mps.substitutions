@@ -90,3 +90,17 @@ file "common/RegStringRO.template" { pattern
 { R,              DESC,                             PARAM,          ADDR, ASG    }
 { APP_TYPE,       "Application type",               APP_TYPE,       "2",  "MCC" }
 }
+
+file "common/Reg2BitsRW.template" { pattern
+{ R,              DESC,                                     ZRST,       ONST,       TWST,           THST,       SCAN,          PARAM                     }
+{ ANA_AMCEN,      "Disable analog AMC card",                "Both",     "B1 Only",  "B0 Only",      "None",     "1 second",    ANACORE_InputDisable      }
+{ TIM_SRC_RTM0,   "Timing source for RTM #0",               "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_0              }
+{ TIM_SRC_FPGA,   "Timing source for FPGA",                 "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_1              }
+{ TIM_SRC_BP,     "Timing source for Backplane",            "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_2              }
+{ TIM_SRC_RTM1,   "Timing source for RTM #1",               "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_3              }
+}
+
+file "common/RegCharArrayRO.template" { pattern
+{ R,                    DESC,                               PINI,   SCAN,           NELM,   PARAM           }
+{ FPGA_BUILDSTAMP,      "FPGA's firmware build string",     "YES",  "1 second",     256,    AV_BuildStamp   }
+}

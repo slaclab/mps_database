@@ -1,0 +1,20 @@
+#
+# These macros are defined as "#" to enable/disabling configuration
+# of analog/digital MPS configuration
+#
+epicsEnvSet("MPS_ANA_APP", "#")
+epicsEnvSet("MPS_DIG_APP", "#")
+epicsEnvSet("MPS_ANA_APP_ID", "0")
+epicsEnvSet("MPS_DIG_APP_ID", "0")
+
+epicsEnvSet("BAY0_INP0", "#")
+epicsEnvSet("BAY0_INP1", "#")
+epicsEnvSet("BAY0_INP2", "#")
+epicsEnvSet("BAY1_INP0", "#")
+epicsEnvSet("BAY1_INP1", "#")
+epicsEnvSet("BAY1_INP2", "#")
+
+#
+# Definition of MPS variables
+#
+

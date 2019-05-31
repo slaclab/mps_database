@@ -8,7 +8,7 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
-mps_database:
+mps_database-R1-3-0:
   * Modified the device.position field - it is now a string because
     there are PVs fields that need characters besides the location
     number. This was added for the LBLMs, which need to have chains

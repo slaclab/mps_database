@@ -1,0 +1,4 @@
+epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME_DEFINE)")
+epicsEnvSet("$(BAY_DB_FILE_MACRO)", "$(BAY_DB_FILE)")
+epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME)")
+
