@@ -1,0 +1,12 @@
+record(ai,  "$(P):$(R)") {
+    field(DTYP, "asynInt32")
+    field(DESC, "$(DESC)")
+    field(EGU,  "$(EGU)")
+    field(PINI, "$(PINI)")
+    field(SCAN, "$(SCAN)")
+    field(LINR, "$(LINR)")
+    field(EGUL, "$(EGUL)")
+    field(EGUF, "$(EGUF)")
+    field(PREC, "$(PREC)")
+    field(INP,  "@asyn($(PORT),0)$(PARAM)")
+}

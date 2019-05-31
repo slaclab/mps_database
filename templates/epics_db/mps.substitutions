@@ -100,7 +100,256 @@ file "common/Reg2BitsRW.template" { pattern
 { TIM_SRC_RTM1,   "Timing source for RTM #1",               "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_3              }
 }
 
-file "common/RegCharArrayRO.template" { pattern
+#
+# From YCPSW mpsLN.dict (from l2MpsLN mpsLN.substitutions)
+#
+# ======================================
+# Registers with ScalVal_RO interfaces
+# ======================================
+file "common/RegRO_YCPSW.template" { pattern
+{ R,                        DESC,                                       PINI,   SCAN,       EGU,        PARAM                       }
+{ CON_LOCSIZE,              "Number Of Local Channels",                 "YES",  "Passive",  "",         CONCEN_LocSize              }
+{ CON_PGPSIZE,              "Number Of PGP Channels",                   "YES",  "Passive",  "",         CONCEN_PgpSize              }
+{ CON_TOTSIZE,              "Total Number Of Channels",                 "YES",  "Passive",  "",         CONCEN_Size                 }
+{ CON_ARBSIZE,              "Arbiter Count Size",                       "YES",  "Passive",  "",         CONCEN_ArbCount             }
+{ CON_PACKCNT,              "Total packet count (TX)",                  "YES",  "1 second", "",         CONCEN_PacketCount          }
+{ CON_PACKRATE,             "Total Packet Rate",                        "YES",  "1 second", "",         CONCEN_PacketRate           }
+{ CON_WORDCNT,              "Total Word Count",                         "YES",  "1 second", "",         CONCEN_WordCount            }
+{ CON_WORDRATE,             "Total Word Rate",                          "YES",  "1 second", "",         CONCEN_WordRate             }
+{ CON_PACKDROPCNT_0,        "Packet Drop count ch 0",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_0    }
+{ CON_PACKDROPCNT_1,        "Packet Drop count ch 1",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_1    }
+{ CON_PACKDROPCNT_2,        "Packet Drop count ch 2",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_2    }
+{ CON_PACKDROPCNT_3,        "Packet Drop count ch 3",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_3    }
+{ CON_PACKDROPCNT_4,        "Packet Drop count ch 4",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_4    }
+{ CON_PACKDROPCNT_5,        "Packet Drop count ch 5",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_5    }
+{ CON_PACKDROPCNT_6,        "Packet Drop count ch 6",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_6    }
+{ CON_PACKDROPCNT_7,        "Packet Drop count ch 7",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_7    }
+{ CON_PACKDROPCNT_8,        "Packet Drop count ch 8",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_8    }
+{ CON_PACKDROPCNT_9,        "Packet Drop count ch 9",                   "YES",  "1 second", "",         CONCEN_PacketDropCount_9    }
+{ CON_PACKDROPCNT_10,       "Packet Drop count ch 10",                  "YES",  "1 second", "",         CONCEN_PacketDropCount_10   }
+{ CON_PACKDROPCNT_11,       "Packet Drop count ch 11",                  "YES",  "1 second", "",         CONCEN_PacketDropCount_11   }
+{ CON_PACKOFCNT_0,          "Packet Overflow count ch 0",               "YES",  "1 second", "",         CONCEN_OverflowCount_0      }
+{ CON_PACKOFCNT_1,          "Packet Overflow count ch 1",               "YES",  "1 second", "",         CONCEN_OverflowCount_1      }
+{ CON_PACKOFCNT_2,          "Packet Overflow count ch 2",               "YES",  "1 second", "",         CONCEN_OverflowCount_2      }
+{ CON_PACKOFCNT_3,          "Packet Overflow count ch 3",               "YES",  "1 second", "",         CONCEN_OverflowCount_3      }
+{ CON_PACKOFCNT_4,          "Packet Overflow count ch 4",               "YES",  "1 second", "",         CONCEN_OverflowCount_4      }
+{ CON_PACKOFCNT_5,          "Packet Overflow count ch 5",               "YES",  "1 second", "",         CONCEN_OverflowCount_5      }
+{ CON_PACKOFCNT_6,          "Packet Overflow count ch 6",               "YES",  "1 second", "",         CONCEN_OverflowCount_6      }
+{ CON_PACKOFCNT_7,          "Packet Overflow count ch 7",               "YES",  "1 second", "",         CONCEN_OverflowCount_7      }
+{ CON_PACKOFCNT_8,          "Packet Overflow count ch 8",               "YES",  "1 second", "",         CONCEN_OverflowCount_8      }
+{ CON_PACKOFCNT_9,          "Packet Overflow count ch 9",               "YES",  "1 second", "",         CONCEN_OverflowCount_9      }
+{ CON_PACKOFCNT_10,         "Packet Overflow count ch 10",              "YES",  "1 second", "",         CONCEN_OverflowCount_10     }
+{ CON_PACKOFCNT_11,         "Packet Overflow count ch 11",              "YES",  "1 second", "",         CONCEN_OverflowCount_11     }
+{ CON_PAUSECNT_0,           "Pause Detection count ch 0",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_0        }
+{ CON_PAUSECNT_1,           "Pause Detection count ch 1",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_1        }
+{ CON_PAUSECNT_2,           "Pause Detection count ch 2",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_2        }
+{ CON_PAUSECNT_3,           "Pause Detection count ch 3",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_3        }
+{ CON_PAUSECNT_4,           "Pause Detection count ch 4",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_4        }
+{ CON_PAUSECNT_5,           "Pause Detection count ch 5",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_5        }
+{ CON_PAUSECNT_6,           "Pause Detection count ch 6",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_6        }
+{ CON_PAUSECNT_7,           "Pause Detection count ch 7",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_7        }
+{ CON_PAUSECNT_8,           "Pause Detection count ch 8",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_8        }
+{ CON_PAUSECNT_9,           "Pause Detection count ch 9",               "YES",  "1 second", "",         CONCEN_PauseDetCnt_9        }
+{ CON_PAUSECNT_10,          "Pause Detection count ch 10",              "YES",  "1 second", "",         CONCEN_PauseDetCnt_10       }
+{ CON_PAUSECNT_11,          "Pause Detection count ch 11",              "YES",  "1 second", "",         CONCEN_PauseDetCnt_11       }
+{ DIG_BYTESCNT,             "Number of digital bytes in message",       "YES",  "Passive",  "",         DIGMES_DigitalBytes         }
+{ DIG_DBIN,                 "Debounced Input Values",                   "YES",  "1 second", "",         DIGMES_RegInputBits         }
+{ DIG_SWBYTECNT,            "Number of software bytes in message",      "YES",  "Passive",  "",         DIGMES_SwBytes              }
+{ ADC_VALID_0,              "Adc valid flags, Bay 0",                   "YES",  "1 second", "",         AMCADC_AdcValid_0           }
+{ ADC_VALID_1,              "Adc valid flags, Bay 1",                   "YES",  "1 second", "",         AMCADC_AdcValid_1           }
+{ MITMSG_CLASS_0,           "Mit msg power class limits,dest 0",        "YES",  "1 second", "",         MITIG_mitMsgClass_0         }
+{ MITMSG_CLASS_1,           "Mit msg power class limits,dest 1",        "YES",  "1 second", "",         MITIG_mitMsgClass_1         }
+{ MITMSG_CLASS_2,           "Mit msg power class limits,dest 2",        "YES",  "1 second", "",         MITIG_mitMsgClass_2         }
+{ MITMSG_CLASS_3,           "Mit msg power class limits,dest 3",        "YES",  "1 second", "",         MITIG_mitMsgClass_3         }
+{ MITMSG_CLASS_4,           "Mit msg power class limits,dest 4",        "YES",  "1 second", "",         MITIG_mitMsgClass_4         }
+{ MITMSG_CLASS_5,           "Mit msg power class limits,dest 5",        "YES",  "1 second", "",         MITIG_mitMsgClass_5         }
+{ MITMSG_CLASS_6,           "Mit msg power class limits,dest 6",        "YES",  "1 second", "",         MITIG_mitMsgClass_6         }
+{ MITMSG_CLASS_7,           "Mit msg power class limits,dest 7",        "YES",  "1 second", "",         MITIG_mitMsgClass_7         }
+{ MITMSG_CLASS_8,           "Mit msg power class limits,dest 8",        "YES",  "1 second", "",         MITIG_mitMsgClass_8         }
+{ MITMSG_CLASS_9,           "Mit msg power class limits,dest 9",        "YES",  "1 second", "",         MITIG_mitMsgClass_9         }
+{ MITMSG_CLASS_10,          "Mit msg power class limits,dest 10",       "YES",  "1 second", "",         MITIG_mitMsgClass_10        }
+{ MITMSG_CLASS_11,          "Mit msg power class limits,dest 11",       "YES",  "1 second", "",         MITIG_mitMsgClass_11        }
+{ MITMSG_CLASS_12,          "Mit msg power class limits,dest 12",       "YES",  "1 second", "",         MITIG_mitMsgClass_12        }
+{ MITMSG_CLASS_13,          "Mit msg power class limits,dest 13",       "YES",  "1 second", "",         MITIG_mitMsgClass_13        }
+{ MITMSG_CLASS_14,          "Mit msg power class limits,dest 14",       "YES",  "1 second", "",         MITIG_mitMsgClass_14        }
+{ MITMSG_CLASS_15,          "Mit msg power class limits,dest 15",       "YES",  "1 second", "",         MITIG_mitMsgClass_15        }
+{ MITMSG_TMSTMP,            "Mit msg time stamp",                       "YES",  "1 second", "",         MITIG_mitMsgTimeStamp       }
+{ MITMSG_ERRORCNT,          "Mit msg error counter",                    "YES",  "1 second", "",         MITIG_mpsErrorCnt           }
+{ MITMSG_TIMEOUTCNT,        "Mit msg timeout counter",                  "YES",  "1 second", "",         MITIG_mpsTimeoutCnt         }
+{ RTM_DI,                   "RTM digital input status",                 "YES",  "1 second", "",         RTM_DIN                     }
+{ RTM_DO,                   "RTM digital output status",                "YES",  "1 second", "",         RTM_DOUT                    }
+{ FPGA_VER,                 "FPGA's Firmware Version Number",           "YES",  "1 second", "",         AV_FpgaVersion              }
+{ FPGA_UPTIMECNT,           "FPGA's seconds since last reset",          "YES",  "1 second", "s",        AV_UpTimeCnt                }
+{ PGP_RX_CLK_0,             "Pgp2bAxi 0 RX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_RxClkFreq_0             }
+{ PGP_RX_FRAME_CNT_0,       "Pgp2bAxi 0 RX Frame Count",                "YES",  "1 second", "frames",   PGP_RxFrameCnt_0            }
+{ PGP_RX_FRAME_ERR_CNT_0,   "Pgp2bAxi 0 RX Frame Error Count",          "YES",  "1 second", "frames",   PGP_RxFrameErrCnt_0         }
+{ PGP_RX_LINK_DOWN_CNT_0,   "Pgp2bAxi 0 RX Link Down Count",            "YES",  "1 second", "",         PGP_RxLinkDownCnt_0         }
+{ PGP_RX_LINK_ERR_CNT_0,    "Pgp2bAxi 0 RX Link Error Count",           "YES",  "1 second", "",         PGP_RxLinkErrCnt_0          }
+{ PGP_RX_CLK_1,             "Pgp2bAxi 1 RX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_RxClkFreq_1             }
+{ PGP_RX_FRAME_CNT_1,       "Pgp2bAxi 1 RX Frame Count",                "YES",  "1 second", "frames",   PGP_RxFrameCnt_1            }
+{ PGP_RX_FRAME_ERR_CNT_1,   "Pgp2bAxi 1 RX Frame Error Count",          "YES",  "1 second", "frames",   PGP_RxFrameErrCnt_1         }
+{ PGP_RX_LINK_DOWN_CNT_1,   "Pgp2bAxi 1 RX Link Down Count",            "YES",  "1 second", "",         PGP_RxLinkDownCnt_1         }
+{ PGP_RX_LINK_ERR_CNT_1,    "Pgp2bAxi 1 RX Link Error Count",           "YES",  "1 second", "",         PGP_RxLinkErrCnt_1          }
+{ PGP_RX_CLK_2,             "Pgp2bAxi 2 RX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_RxClkFreq_2             }
+{ PGP_RX_FRAME_CNT_2,       "Pgp2bAxi 2 RX Frame Count",                "YES",  "1 second", "frames",   PGP_RxFrameCnt_2            }
+{ PGP_RX_FRAME_ERR_CNT_2,   "Pgp2bAxi 2 RX Frame Error Count",          "YES",  "1 second", "frames",   PGP_RxFrameErrCnt_2         }
+{ PGP_RX_LINK_DOWN_CNT_2,   "Pgp2bAxi 2 RX Link Down Count",            "YES",  "1 second", "",         PGP_RxLinkDownCnt_2         }
+{ PGP_RX_LINK_ERR_CNT_2,    "Pgp2bAxi 2 RX Link Error Count",           "YES",  "1 second", "",         PGP_RxLinkErrCnt_2          }
+{ PGP_RX_CLK_3,             "Pgp2bAxi 3 RX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_RxClkFreq_3             }
+{ PGP_RX_FRAME_CNT_3,       "Pgp2bAxi 3 RX Frame Count",                "YES",  "1 second", "frames",   PGP_RxFrameCnt_3            }
+{ PGP_RX_FRAME_ERR_CNT_3,   "Pgp2bAxi 3 RX Frame Error Count",          "YES",  "1 second", "frames",   PGP_RxFrameErrCnt_3         }
+{ PGP_RX_LINK_DOWN_CNT_3,   "Pgp2bAxi 3 RX Link Down Count",            "YES",  "1 second", "",         PGP_RxLinkDownCnt_3         }
+{ PGP_RX_LINK_ERR_CNT_3,    "Pgp2bAxi 3 RX Link Error Count",           "YES",  "1 second", "",         PGP_RxLinkErrCnt_3          }
+{ PGP_TX_CLK_0,             "Pgp2bAxi 0 TX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_TxClkFreq_0             }
+{ PGP_TX_FRAME_CNT_0,       "Pgp2bAxi 0 TX Frame Count",                "YES",  "1 second", "frames",   PGP_TxFrameCnt_0            }
+{ PGP_TX_FRAME_ERR_CNT_0,   "Pgp2bAxi 0 TX Frame Error Count",          "YES",  "1 second", "frames",   PGP_TxFrameErrCnt_0         }
+{ PGP_TX_CLK_1,             "Pgp2bAxi 1 TX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_TxClkFreq_1             }
+{ PGP_TX_FRAME_CNT_1,       "Pgp2bAxi 1 TX Frame Count",                "YES",  "1 second", "frames",   PGP_TxFrameCnt_1            }
+{ PGP_TX_FRAME_ERR_CNT_1,   "Pgp2bAxi 1 TX Frame Error Count",          "YES",  "1 second", "frames",   PGP_TxFrameErrCnt_1         }
+{ PGP_TX_CLK_2,             "Pgp2bAxi 2 TX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_TxClkFreq_2             }
+{ PGP_TX_FRAME_CNT_2,       "Pgp2bAxi 2 TX Frame Count",                "YES",  "1 second", "frames",   PGP_TxFrameCnt_2            }
+{ PGP_TX_FRAME_ERR_CNT_2,   "Pgp2bAxi 2 TX Frame Error Count",          "YES",  "1 second", "frames",   PGP_TxFrameErrCnt_2         }
+{ PGP_TX_CLK_3,             "Pgp2bAxi 3 TX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_TxClkFreq_3             }
+{ PGP_TX_FRAME_CNT_3,       "Pgp2bAxi 3 TX Frame Count",                "YES",  "1 second", "frames",   PGP_TxFrameCnt_3            }
+{ PGP_TX_FRAME_ERR_CNT_3,   "Pgp2bAxi 3 TX Frame Error Count",          "YES",  "1 second", "frames",   PGP_TxFrameErrCnt_3         }
+}
+
+#======================================
+# Register with Command interfaces
+#======================================
+file "common/RegCmd_YCPSW.template" { pattern
+{ R,                    DESC,                                   PINI,   SCAN,       PARAM               }
+{ CON_USRRST,           "Counter Reset",                        "NO",   "Passive",  CONCEN_ResetUser    }
+{ CON_CNTRST,           "Counter Reset",                        "NO",   "Passive",  CONCEN_ResetCount   }
+{ MITMSG_CLRTIMEOUT,    "Clear Timeout",                        "NO",   "Passive",  MITIG_clrTimeout    }
+{ PGP_CNTRST_0,         "Pgp2bAxi 0 reset counters",            "NO",   "Passive",  PGP_RstCnt_0        }
+{ PGP_CNTRST_1,         "Pgp2bAxi 1 reset counters",            "NO",   "Passive",  PGP_RstCnt_1        }
+{ PGP_CNTRST_2,         "Pgp2bAxi 2 reset counters",            "NO",   "Passive",  PGP_RstCnt_2        }
+{ PGP_CNTRST_3,         "Pgp2bAxi 3 reset counters",            "NO",   "Passive",  PGP_RstCnt_3        }
+}
+#======================================
+# Register with ScalVal interfaces
+#======================================
+file "common/RegRW_YCPSW.template" { pattern
+{ R,                DESC,                                       SCAN,       EGU,        PARAM                       }
+{ ANA_INTCNT_0,     "Integration count (channel 0)",            "1 second", "counts",   ANACORE_IntegrationCount_0  }
+{ ANA_INTCNT_1,     "Integration count (channel 1)",            "1 second", "counts",   ANACORE_IntegrationCount_1  }
+{ ANA_INTCNT_2,     "Integration count (channel 2)",            "1 second", "counts",   ANACORE_IntegrationCount_2  }
+{ ANA_INTCNT_3,     "Integration count (channel 3)",            "1 second", "counts",   ANACORE_IntegrationCount_3  }
+{ ANA_INTCNT_4,     "Integration count (channel 4)",            "1 second", "counts",   ANACORE_IntegrationCount_4  }
+{ ANA_INTCNT_5,     "Integration count (channel 5)",            "1 second", "counts",   ANACORE_IntegrationCount_5  }
+{ ANA_INTCNT_6,     "Integration count (channel 6)",            "1 second", "counts",   ANACORE_IntegrationCount_6  }
+{ ANA_INTCNT_7,     "Integration count (channel 7)",            "1 second", "counts",   ANACORE_IntegrationCount_7  }
+{ ANA_INTCNT_8,     "Integration count (channel 8)",            "1 second", "counts",   ANACORE_IntegrationCount_8  }
+{ ANA_INTCNT_9,     "Integration count (channel 9)",            "1 second", "counts",   ANACORE_IntegrationCount_9  }
+{ ANA_INTCNT_10,    "Integration count (channel 10)",           "1 second", "counts",   ANACORE_IntegrationCount_10 }
+{ ANA_INTCNT_11,    "Integration count (channel 11)",           "1 second", "counts",   ANACORE_IntegrationCount_11 }
+{ ANA_INTCNT_12,    "Integration count (channel 12)",           "1 second", "counts",   ANACORE_IntegrationCount_12 }
+{ ANA_INTCNT_13,    "Integration count (channel 13)",           "1 second", "counts",   ANACORE_IntegrationCount_13 }
+{ ANA_INTCNT_14,    "Integration count (channel 14)",           "1 second", "counts",   ANACORE_IntegrationCount_14 }
+{ ANA_INTCNT_15,    "Integration count (channel 15)",           "1 second", "counts",   ANACORE_IntegrationCount_15 }
+{ ANA_INTCNT_16,    "Integration count (channel 16)",           "1 second", "counts",   ANACORE_IntegrationCount_16 }
+{ ANA_INTCNT_17,    "Integration count (channel 17)",           "1 second", "counts",   ANACORE_IntegrationCount_17 }
+{ ANA_INTCNT_18,    "Integration count (channel 18)",           "1 second", "counts",   ANACORE_IntegrationCount_18 }
+{ ANA_INTCNT_19,    "Integration count (channel 19)",           "1 second", "counts",   ANACORE_IntegrationCount_19 }
+{ ANA_INTCNT_20,    "Integration count (channel 20)",           "1 second", "counts",   ANACORE_IntegrationCount_20 }
+{ ANA_INTCNT_21,    "Integration count (channel 21)",           "1 second", "counts",   ANACORE_IntegrationCount_21 }
+{ ANA_INTCNT_22,    "Integration count (channel 22)",           "1 second", "counts",   ANACORE_IntegrationCount_22 }
+{ ANA_INTCNT_23,    "Integration count (channel 23)",           "1 second", "counts",   ANACORE_IntegrationCount_23 }
+{ ANA_PROCSEL_0,    "Processing Selection (channel 0)",         "1 second", "",         ANACORE_ProcessingSelect_0  }
+{ ANA_PROCSEL_1,    "Processing Selection (channel 1)",         "1 second", "",         ANACORE_ProcessingSelect_1  }
+{ ANA_PROCSEL_2,    "Processing Selection (channel 2)",         "1 second", "",         ANACORE_ProcessingSelect_2  }
+{ ANA_PROCSEL_3,    "Processing Selection (channel 3)",         "1 second", "",         ANACORE_ProcessingSelect_3  }
+{ ANA_PROCSEL_4,    "Processing Selection (channel 4)",         "1 second", "",         ANACORE_ProcessingSelect_4  }
+{ ANA_PROCSEL_5,    "Processing Selection (channel 5)",         "1 second", "",         ANACORE_ProcessingSelect_5  }
+{ ANA_SLOPE_0,      "Equation slope (channel 0)",               "1 second", "",         ANACORE_Slope_0             }
+{ ANA_SLOPE_1,      "Equation slope (channel 1)",               "1 second", "",         ANACORE_Slope_1             }
+{ ANA_SLOPE_2,      "Equation slope (channel 2)",               "1 second", "",         ANACORE_Slope_2             }
+{ ANA_SLOPE_3,      "Equation slope (channel 3)",               "1 second", "",         ANACORE_Slope_3             }
+{ ANA_SLOPE_4,      "Equation slope (channel 4)",               "1 second", "",         ANACORE_Slope_4             }
+{ ANA_SLOPE_5,      "Equation slope (channel 5)",               "1 second", "",         ANACORE_Slope_5             }
+{ ANA_INTERCEPT_0,  "Equation intercept (channel 0)",           "1 second", "",         ANACORE_Intercept_0         }
+{ ANA_INTERCEPT_1,  "Equation intercept (channel 1)",           "1 second", "",         ANACORE_Intercept_1         }
+{ ANA_INTERCEPT_2,  "Equation intercept (channel 2)",           "1 second", "",         ANACORE_Intercept_2         }
+{ ANA_INTERCEPT_3,  "Equation intercept (channel 3)",           "1 second", "",         ANACORE_Intercept_3         }
+{ ANA_INTERCEPT_4,  "Equation intercept (channel 4)",           "1 second", "",         ANACORE_Intercept_4         }
+{ ANA_INTERCEPT_5,  "Equation intercept (channel 5)",           "1 second", "",         ANACORE_Intercept_5         }
+{ ANA_FPEAKVAL_0,   "Force peak value (channel 0)",             "1 second", "",         ANACORE_ForcePeakValue_0    }
+{ ANA_FPEAKVAL_1,   "Force peak value (channel 1)",             "1 second", "",         ANACORE_ForcePeakValue_1    }
+{ ANA_FPEAKVAL_2,   "Force peak value (channel 2)",             "1 second", "",         ANACORE_ForcePeakValue_2    }
+{ ANA_FPEAKVAL_3,   "Force peak value (channel 3)",             "1 second", "",         ANACORE_ForcePeakValue_3    }
+{ ANA_FPEAKVAL_4,   "Force peak value (channel 4)",             "1 second", "",         ANACORE_ForcePeakValue_4    }
+{ ANA_FPEAKVAL_5,   "Force peak value (channel 5)",             "1 second", "",         ANACORE_ForcePeakValue_5    }
+{ DIG_APPID,        "Application ID",                           "Passive",  "",         DIGMES_AppId                }
+{ DIG_FORCEBITS,    "Digital Force Bits",                       "1 second", "",         DIGMES_DigitalForceBits     }
+{ DIG_SWBITERR,     "Value to set for sw bits when timeout",    "1 second", "",         DIGMES_SwBitError           }
+{ DIG_SWBIT,        "Value to set for sw bits",                 "1 second", "",         DIGMES_SwBitValue           }
+{ MITMSG_AMCDEST_0, "Destination for AMC channel 0",            "1 second", "",         MITIG_mpsAmcDest_0          }
+{ MITMSG_AMCDEST_1, "Destination for AMC channel 1",            "1 second", "",         MITIG_mpsAmcDest_1          }
+{ MITMSG_AMCDEST_2, "Destination for AMC channel 2",            "1 second", "",         MITIG_mpsAmcDest_2          }
+{ MITMSG_AMCDEST_3, "Destination for AMC channel 3",            "1 second", "",         MITIG_mpsAmcDest_3          }
+{ MITMSG_RTMDEST_0, "Destination for RTM channel 0",            "1 second", "",         MITIG_mpsRtmDest_0          }
+{ MITMSG_RTMDEST_1, "Destination for RTM channel 1",            "1 second", "",         MITIG_mpsRtmDest_1          }
+{ MITMSG_RTMDEST_2, "Destination for RTM channel 2",            "1 second", "",         MITIG_mpsRtmDest_2          }
+{ MITMSG_RTMDEST_3, "Destination for RTM channel 3",            "1 second", "",         MITIG_mpsRtmDest_3          }
+{ MITMSG_RTMDEST_4, "Destination for RTM channel 4",            "1 second", "",         MITIG_mpsRtmDest_4          }
+{ MITMSG_RTMDEST_5, "Destination for RTM channel 5",            "1 second", "",         MITIG_mpsRtmDest_5          }
+{ MITMSG_RTMDEST_6, "Destination for RTM channel 6",            "1 second", "",         MITIG_mpsRtmDest_6          }
+{ MITMSG_RTMDEST_7, "Destination for RTM channel 7",            "1 second", "",         MITIG_mpsRtmDest_7          }
+}
+
+#======================================
+# 1-bit Register with ScalVal interfaces
+#======================================
+file "common/Reg1BitRW_YCPSW.template" { pattern
+{ R,                  DESC,                                     ZNAM,       ONAM,       SCAN,          PARAM                    }
+{ ANA_FORCEPEAKEN,    "Enable Analog Force Peak Values",        "Disable",  "Enable",   "1 second",    ANACORE_ForcePeakValEn   }
+{ DIG_L1POL_0,        "Digital Bit Polarity for LCLS2",         "INVERSE",  "DIRECT",   "1 second",    DIGMES_L1Polarity_0      }
+{ DIG_L2POL_0,        "Digital Bit Polarity for LCLS1",         "INVERSE",  "DIRECT",   "1 second",    DIGMES_L2Polarity_0      }
+{ DIG_FORCEBITSEN,    "Enable Digital Force Bits",              "Disable",  "Enable",   "1 second",    DIGMES_DigitalForceEn    }
+{ TIM_CLK_SRC,        "Timinig source",                         "LCLS-1",   "LCLS-2",   "1 second",    TIM_CLK_SEL              }
+}
+
+#======================================
+# 1-bit Register with ScalVal_RO interfaces
+#======================================
+file "common/Reg1BitRO_YCPSW.template" { pattern
+{ R,                  DESC,                                     ZNAM,           ONAM,       SCAN,           PARAM                }
+{ TIM_LINK_STAT       "Timing Rx link status",                  "Non-locked",   "Locked",   "1 second",     TIM_RX_LINK          }
+{ PGP_RX_PHY_RDY_0    "Pgp2bAxi 0 RX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_RxPhyReady_0     }
+{ PGP_RX_LOC_RDY_0    "Pgp2bAxi 0 Rx Local Link Ready",         "Not ready",    "Ready",    "1 second",     PGP_RxLocLinkReady_0 }
+{ PGP_RX_PHY_RDY_1    "Pgp2bAxi 1 RX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_RxPhyReady_1     }
+{ PGP_RX_LOC_RDY_1    "Pgp2bAxi 1 Rx Local Link Ready",         "Not ready",    "Ready",    "1 second",     PGP_RxLocLinkReady_1 }
+{ PGP_RX_PHY_RDY_2    "Pgp2bAxi 2 RX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_RxPhyReady_2     }
+{ PGP_RX_LOC_RDY_2    "Pgp2bAxi 2 Rx Local Link Ready",         "Not ready",    "Ready",    "1 second",     PGP_RxLocLinkReady_2 }
+{ PGP_RX_PHY_RDY_3    "Pgp2bAxi 3 RX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_RxPhyReady_3     }
+{ PGP_RX_LOC_RDY_3    "Pgp2bAxi 3 Rx Local Link Ready",         "Not ready",    "Ready",    "1 second",     PGP_RxLocLinkReady_3 }
+{ PGP_TX_PHY_RDY_0    "Pgp2bAxi 0 TX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_TxPhyReady_0     }
+{ PGP_TX_LINK_RDY_0   "Pgp2bAxi 0 Tx Link Ready",               "Not ready",    "Ready",    "1 second",     PGP_TxLinkReady_0    }
+{ PGP_TX_PHY_RDY_1    "Pgp2bAxi 1 TX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_TxPhyReady_1     }
+{ PGP_TX_LINK_RDY_1   "Pgp2bAxi 1 Tx Link Ready",               "Not ready",    "Ready",    "1 second",     PGP_TxLinkReady_1    }
+{ PGP_TX_PHY_RDY_2    "Pgp2bAxi 2 TX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_TxPhyReady_2     }
+{ PGP_TX_LINK_RDY_2   "Pgp2bAxi 2 Tx Link Ready",               "Not ready",    "Ready",    "1 second",     PGP_TxLinkReady_2    }
+{ PGP_TX_PHY_RDY_3    "Pgp2bAxi 3 TX Phy is Ready",             "Not ready",    "Ready",    "1 second",     PGP_TxPhyReady_3     }
+{ PGP_TX_LINK_RDY_3   "Pgp2bAxi 3 Tx Link Ready",               "Not ready",    "Ready",    "1 second",     PGP_TxLinkReady_3    }
+}
+
+#======================================
+# 2-bit Register with ScalVal interfaces
+#======================================
+file "common/Reg2BitsRW_YCPSW.template" { pattern
+{ R,              DESC,                                     ZRST,       ONST,       TWST,           THST,       SCAN,          PARAM                     }
+{ ANA_AMCEN,      "Disable analog AMC card",                "Both",     "B1 Only",  "B0 Only",      "None",     "1 second",    ANACORE_InputDisable      }
+{ TIM_SRC_RTM0,   "Timing source for RTM #0",               "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_0              }
+{ TIM_SRC_FPGA,   "Timing source for FPGA",                 "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_1              }
+{ TIM_SRC_BP,     "Timing source for Backplane",            "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_2              }
+{ TIM_SRC_RTM1,   "Timing source for RTM #1",               "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_3              }
+}
+
+#======================================
+# Char Array Registers with ScalVal_RO interfaces
+#======================================
+file "common/RegCharArrayRO_YCPSW.template" { pattern
 { R,                    DESC,                               PINI,   SCAN,           NELM,   PARAM           }
 { FPGA_BUILDSTAMP,      "FPGA's firmware build string",     "YES",  "1 second",     256,    AV_BuildStamp   }
 }

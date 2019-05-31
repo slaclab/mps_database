@@ -15,6 +15,20 @@ epicsEnvSet("BAY1_INP1", "#")
 epicsEnvSet("BAY1_INP2", "#")
 
 #
+# These macros are redefined after loading the link node specific mps.env file
+#
+epicsEnvSet("BAY0_DB_FILE", "not set")
+epicsEnvSet("BAY1_DB_FILE", "not set")
+
+epicsEnvSet("BAY0_INP0_NAME", "not set")
+epicsEnvSet("BAY0_INP1_NAME", "not set")
+epicsEnvSet("BAY0_INP2_NAME", "not set")
+epicsEnvSet("BAY1_INP0_NAME", "not set")
+epicsEnvSet("BAY1_INP1_NAME", "not set")
+epicsEnvSet("BAY1_INP2_NAME", "not set")
+
+
+#
 # Definition of MPS variables
 #
 

@@ -8,6 +8,10 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database:
+  * Moved Link Node database substitution files from the l2MpsLN
+    app into the database for automatic generation.
+
 mps_database-R1-3-0:
   * Modified the device.position field - it is now a string because
     there are PVs fields that need characters besides the location

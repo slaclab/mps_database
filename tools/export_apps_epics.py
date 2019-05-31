@@ -496,6 +496,7 @@ class MpsAppReader:
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
 
+            self.__write_analog_db(path=app_path, macros={"P":app_prefix})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
@@ -541,9 +542,9 @@ class MpsAppReader:
                         macros["BIT_POSITION"] = str(bit)
                         self.__write_thr_db(path=app_path, macros=macros)
 
-                    macros = { "BAY_INP_NAME_MACRO": 'BAY{}_INP{}'.format(str(device["bay_number"]),
-                                                                          str(device["channel_number"])),
-                               "BAY_INP_NAME_DEFINE": "",
+                    macros = { "BAY_INP_ENABLE_MACRO": 'BAY{}_INP{}'.format(str(device["bay_number"]),
+                                                                            str(device["channel_number"])),
+                               "BAY_INP_ENABLE_DEFINE": "",
                                "BAY_DB_FILE_MACRO": 'BAY{}_DB_FILE'.format(str(device["bay_number"])),
                                "BAY_DB_FILE": 'db/mps_blm.db',
                                "BAY_INP_NAME_MACRO": 'BAY{}_INP{}_NAME'.format(str(device["bay_number"]),
@@ -859,6 +860,14 @@ class MpsAppReader:
         This configuration will be load by all applications.
         """
         self.__write_fw_config(path=path, template_name="thresholds_off.template", macros={})
+
+    def __write_analog_db(self, path, macros):
+        """
+        Write the records for analog inputs to the application EPICS database file.
+
+        These records will be loaded once per each device.
+        """
+        self.__write_epics_db(path=path, template_name="analog.template", macros=macros)
 
     def __write_mps_db(self, path, macros):
         """

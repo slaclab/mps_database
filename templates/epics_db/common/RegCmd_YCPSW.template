@@ -1,0 +1,9 @@
+record(bo,      "$(P):$(R)") {
+    field(DTYP, "asynUInt32Digital")
+    field(DESC, "$(DESC)")
+    field(PINI, "$(PINI)")
+    field(SCAN, "$(SCAN)")
+    field(OUT,  "@asynMask($(PORT),4,1)$(PARAM)")
+    field(ZNAM, "Run")
+    field(ONAM, "Stop")
+}

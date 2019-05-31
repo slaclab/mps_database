@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Database names
-NAMES="mps thr_base thr"
+NAMES="mps thr_base thr analog"
 
 # File names
 for n in $NAMES
