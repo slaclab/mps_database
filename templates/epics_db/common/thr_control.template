@@ -1,0 +1,10 @@
+record(bo, "$(P):THR_LOADED") {
+    field(DESC, "Set by MpsManager after IOC reboots")
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(ASG,  "$(ASG)")
+    field(ZSV,  "MAJOR")
+}
+
