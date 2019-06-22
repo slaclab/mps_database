@@ -6,7 +6,7 @@ record(ao, "$(P):$(R)_L") {
     field(DTYP, "asynFloat64")
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
-    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
+    field(OUT,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
     field(ASG,  "$(ASG)")
     info(autosaveFields, "VAL")
 }
@@ -18,7 +18,7 @@ record(ai,  "$(P):$(R)_L_RBV") {
     field(DTYP, "asynFloat64")
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
-    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
+    field(INP,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
     field(ASG,  "$(ASG)")
 }
 
@@ -30,7 +30,7 @@ record(ao, "$(P):$(R)_H") {
     field(DTYP, "asynFloat64")
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
-    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
+    field(OUT,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
     field(ASG,  "$(ASG)")
     info(autosaveFields, "VAL")
 }
@@ -42,7 +42,7 @@ record(ai,  "$(P):$(R)_H_RBV") {
     field(DTYP, "asynFloat64")
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
-    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
+    field(INP,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
     field(ASG,  "$(ASG)")
 }
 
@@ -52,7 +52,7 @@ record(bo, "$(P):$(R)_L_EN") {
     field(PINI, "YES")
     field(PHAS, "2")
     field(DTYP, "asynUInt32Digital")
-    field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
+    field(OUT,  "@asynMask($(L2MPSASYN_PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(ASG,  "$(ASG)")
@@ -64,7 +64,7 @@ record(bi, "$(P):$(R)_L_EN_RBV") {
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
-    field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
+    field(INP,  "@asynMask($(L2MPSASYN_PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
     field(ASG,  "$(ASG)")
@@ -76,7 +76,7 @@ record(bo,      "$(P):$(R)_H_EN") {
     field(PINI, "YES")
     field(PHAS, "2")
     field(DTYP, "asynUInt32Digital")
-    field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
+    field(OUT,  "@asynMask($(L2MPSASYN_PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(ASG,  "$(ASG)")
@@ -88,7 +88,7 @@ record(bi,      "$(P):$(R)_H_EN_RBV") {
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
-    field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
+    field(INP,  "@asynMask($(L2MPSASYN_PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disabled")
     field(ONAM, "Enabled")
     field(ASG,  "$(ASG)")

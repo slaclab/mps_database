@@ -571,7 +571,7 @@ class MpsAppReader:
                         self.__write_thr_base_db(path=app_path, macros=macros)
 
                         # Writes the PVs used as inputs for scale factors (*_FWSLO and *_FWOFF)
-                        macros["PROPERTY"] = fault["name"]
+                        macros["PROPERTY"] = '{}_SF'.format(fault["name"])
                         macros["SLOPE"] = "555.86e-6"
                         macros["OFFSET"] = "32768"
                         self.__write_mps_scale_factor_cmd(path=app_path, macros=macros)

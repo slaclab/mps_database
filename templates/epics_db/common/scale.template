@@ -31,7 +31,7 @@ record(ao,      "$(P):$(R)_SS") {
     field(OIF,  "Full")
     field(DOL,  "$(P):$(R)_FWSLO")
     field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALESLOPE_$(CH)")
+    field(OUT,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_SCALESLOPE_$(CH)")
 }
 
 record(ai,      "$(P):$(R)_SS_RBV") {
@@ -40,7 +40,7 @@ record(ai,      "$(P):$(R)_SS_RBV") {
     field(EGU,  "$(EGU)/raw")
     field(PREC, "$(PREC)")
     field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALESLOPE_$(CH)")
+    field(INP,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_SCALESLOPE_$(CH)")
 }
 
 # Scale Offset PVs
@@ -55,7 +55,7 @@ record(ao,      "$(P):$(R)_SO") {
     field(OIF,  "Full")
     field(DOL,  "$(P):$(R)_FWOFF")
     field(DTYP, "asynFloat64")
-    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALEOFFSET_$(CH)")
+    field(OUT,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_SCALEOFFSET_$(CH)")
 }
 
 record(ai,      "$(P):$(R)_SO_RBV") {
@@ -64,6 +64,6 @@ record(ai,      "$(P):$(R)_SO_RBV") {
     field(EGU,  "raw")
     field(PREC, "0")
     field(DTYP, "asynFloat64")
-    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALEOFFSET_$(CH)")
+    field(INP,  "@asyn($(L2MPSASYN_PORT),$(BAY))$(APP)_SCALEOFFSET_$(CH)")
 }
 
