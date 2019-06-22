@@ -1,12 +1,14 @@
 record(ao, "$(P):$(R)_L") {
     field(DESC, "$(DESC)")
     field(SCAN, "Passive")
-    field(PINI, "NO")
+    field(PINI, "YES")
+    field(PHAS, "2")
     field(DTYP, "asynFloat64")
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
     field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(CH)$(TABLE)$(THR)")
     field(ASG,  "$(ASG)")
+    info(autosaveFields, "VAL")
 }
 
 record(ai,  "$(P):$(R)_L_RBV") {
@@ -23,13 +25,14 @@ record(ai,  "$(P):$(R)_L_RBV") {
 record(ao, "$(P):$(R)_H") {
     field(DESC, "$(DESC)")
     field(SCAN, "Passive")
-    field(PINI, "NO")
+    field(PINI, "YES")
+    field(PHAS, "2")
     field(DTYP, "asynFloat64")
     field(EGU,  "$(EGU)")
     field(PREC, "$(PREC)")
     field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(CH)$(TABLE)$(THR)")
     field(ASG,  "$(ASG)")
-    field(ASG,  "$(ASG)")
+    info(autosaveFields, "VAL")
 }
 
 record(ai,  "$(P):$(R)_H_RBV") {
@@ -46,12 +49,14 @@ record(ai,  "$(P):$(R)_H_RBV") {
 record(bo, "$(P):$(R)_L_EN") {
     field(DESC, "$(DESC)")
     field(SCAN, "Passive")
-    field(PINI, "NO")
+    field(PINI, "YES")
+    field(PHAS, "2")
     field(DTYP, "asynUInt32Digital")
     field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(ASG,  "$(ASG)")
+    info(autosaveFields, "VAL")
 }
 
 record(bi, "$(P):$(R)_L_EN_RBV") {
@@ -68,12 +73,14 @@ record(bi, "$(P):$(R)_L_EN_RBV") {
 record(bo,      "$(P):$(R)_H_EN") {
     field(DESC, "$(DESC)")
     field(SCAN, "Passive")
-    field(PINI, "NO")
+    field(PINI, "YES")
+    field(PHAS, "2")
     field(DTYP, "asynUInt32Digital")
     field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(CH)$(TABLE)$(THR)")
     field(ZNAM, "Disable")
     field(ONAM, "Enable")
     field(ASG,  "$(ASG)")
+    info(autosaveFields, "VAL")
 }
 
 record(bi,      "$(P):$(R)_H_EN_RBV") {

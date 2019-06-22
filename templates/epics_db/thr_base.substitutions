@@ -27,8 +27,8 @@ file "common/RegRO.template" { pattern
 
 ### Tables enable PVs ###
 file "common/Reg1BitRW.template" { pattern
-{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM,      ASG     }
-{ $(FAULT)_IDL_EN,  "IDLE table enabled",       $(APP)_IDLEEN_$(FAULT_INDEX),   "$(BAY)",   "Disabled", "Enabled", "MCC"   }
+{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM,      ZSV,       ASG     }
+{ $(FAULT)_IDL_EN,  "IDLE table enabled",       $(APP)_IDLEEN_$(FAULT_INDEX),   "$(BAY)",   "Disabled", "Enabled", "NO_ALARM", "MCC"   }
 }
 
 file "common/Reg1BitRO.template" { pattern
@@ -49,3 +49,4 @@ file "common/scale.template" { pattern
 { R,                DESC,              APP,         EGU,        PREC,   CH,                 SCALE_PV,               SCAN,       ASG   }
 { $(FAULT)_SF,      "Scale factor",    "$(APP)",    "$(EGU)",   "4",    "$(FAULT_INDEX)",   "$(P):$(FAULT)_FWSCL",  "1 second", "MCC" }
 }
+

@@ -81,9 +81,9 @@ file "common/RegRW.template" { pattern
 }
 
 file "common/Reg1BitRW.template" { pattern
-{ R,                DESC,                                       PARAM,          ADDR,   ZNAM,       ONAM,       ASG   }
-{ MPS_EN,           "MPS Enabled",                              MPS_EN,         "2",    "Disabled", "Enabled",  "MCC" }
-{ LC1_MODE,         "LCLS operation mode",                      LCLS1_MODE,     "2",    "Disabled", "Enabled",  "MCC" }
+{ R,                DESC,                                       PARAM,          ADDR,   ZNAM,       ONAM,       ZSV,        ASG   }
+{ MPS_EN,           "MPS Enabled",                              MPS_EN,         "2",    "Disabled", "Enabled",  "MAJOR",    "MCC" }
+{ LC1_MODE,         "LCLS operation mode",                      LCLS1_MODE,     "2",    "Disabled", "Enabled",  "NO_ALARM", "MCC" }
 }
 
 file "common/RegStringRO.template" { pattern
@@ -99,6 +99,15 @@ file "common/Reg2BitsRW.template" { pattern
 { TIM_SRC_BP,     "Timing source for Backplane",            "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_2              }
 { TIM_SRC_RTM1,   "Timing source for RTM #1",               "RTM_0",    "FPGA",     "Backplane",    "RTM_1",    "1 second",    TIM_CB_OUT_3              }
 }
+
+#
+# Record to control threshold setting
+#
+file "common/thr_control.template" { pattern
+{ASG}
+{"MCC"}
+}
+
 
 #
 # From YCPSW mpsLN.dict (from l2MpsLN mpsLN.substitutions)
@@ -212,6 +221,12 @@ file "common/RegRO_YCPSW.template" { pattern
 { PGP_TX_CLK_3,             "Pgp2bAxi 3 TX Clock Frequency",            "YES",  "1 second", "Hz",       PGP_TxClkFreq_3             }
 { PGP_TX_FRAME_CNT_3,       "Pgp2bAxi 3 TX Frame Count",                "YES",  "1 second", "frames",   PGP_TxFrameCnt_3            }
 { PGP_TX_FRAME_ERR_CNT_3,   "Pgp2bAxi 3 TX Frame Error Count",          "YES",  "1 second", "frames",   PGP_TxFrameErrCnt_3         }
+{ LC1_UDP_DHCP_IP,          "LCLS-I DHCP Server IP Address",            "YES",  "1 second", "",         LC1_UdpDhcpIP               }
+{ LC1_UDP_LOCAL_MAC,        "LCLS-I Port Local MAC address",            "YES",  "1 second", "",         LC1_UdplocalMac             }
+{ LC1_TIMEOUT_STATUS,       "LCLS-I timeout status (11-bits)",          "YES",  "1 second", "",         LC1_TimeoutStatusMask       }
+{ LC1_MSG_ERROR_CNT,        "LCLS-I Message Error Counter",             "YES",  "1 second", "",         LC1_lcls1MessageError       }
+{ LC2_MSG_ERROR_CNT,        "LCLS-II Message Error Counter",            "YES",  "1 second", "",         LC1_lcls2MessageError       }
+{ LC1_MAC_ADDR,             "LCLS-I Port MAC Address. Set by BSI",      "YES",  "1 second", "",         LC1_MacAddr                 }
 }
 
 #======================================
@@ -226,6 +241,7 @@ file "common/RegCmd_YCPSW.template" { pattern
 { PGP_CNTRST_1,         "Pgp2bAxi 1 reset counters",            "NO",   "Passive",  PGP_RstCnt_1        }
 { PGP_CNTRST_2,         "Pgp2bAxi 2 reset counters",            "NO",   "Passive",  PGP_RstCnt_2        }
 { PGP_CNTRST_3,         "Pgp2bAxi 3 reset counters",            "NO",   "Passive",  PGP_RstCnt_3        }
+{ LC1_CLRTIMEOUT,       "LCLS-I Clear timeout error",           "NO",   "Passive",  LC1_ClearTout       }
 }
 #======================================
 # Register with ScalVal interfaces
@@ -296,6 +312,22 @@ file "common/RegRW_YCPSW.template" { pattern
 { MITMSG_RTMDEST_5, "Destination for RTM channel 5",            "1 second", "",         MITIG_mpsRtmDest_5          }
 { MITMSG_RTMDEST_6, "Destination for RTM channel 6",            "1 second", "",         MITIG_mpsRtmDest_6          }
 { MITMSG_RTMDEST_7, "Destination for RTM channel 7",            "1 second", "",         MITIG_mpsRtmDest_7          }
+{ LC1_UDP_BC_IP,    "LCLS-I Port UDP Broadcast IP address",     "1 second", "",         LC1_UdpBroadcastIP          }
+{ LC1_TIMEOUT,      "LCLS-I Application timeout (0 - 7us)",     "1 second", "us",       LC1_TimeoutTime             }
+{ LC1_TIMEOUT_MASK, "LCLS-I Application timeout mask",          "1 second", "",         LC1_TimeoutMask             }
+{ LC1_NODE_ID,      "LCLS-I Link Node BLM Application ID",      "1 second", "",         LC1_NodeId                  }
+{ LC1_IP_ADDR,      "LCLS-I Port IP Address",                   "1 second", "",         LC1_IpAddr                  }
+{ LC1_REMAP_ID_0,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_0            }
+{ LC1_REMAP_ID_1,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_1            }
+{ LC1_REMAP_ID_2,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_2            }
+{ LC1_REMAP_ID_3,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_3            }
+{ LC1_REMAP_ID_4,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_4            }
+{ LC1_REMAP_ID_5,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_5            }
+{ LC1_REMAP_ID_6,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_6            }
+{ LC1_REMAP_ID_7,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_7            }
+{ LC1_REMAP_ID_8,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_8            }
+{ LC1_REMAP_ID_9,   "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_9            }
+{ LC1_REMAP_ID_10,  "LCLS-I in-crate AppID Remap to 0-10",      "1 second", "",         LC1_appIdRemap_10           }
 }
 
 #======================================

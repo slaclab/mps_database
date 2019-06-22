@@ -18,7 +18,7 @@ record(calc, "$(N)_CALC") {
     field(FLNK, "$(N)_INPUT")
     field(INPA, "$(N).SEVR CPP MS")
     field(INPB, "$(N).STAT CPP MS")
-    field(CALC, "(A+B)>0?$(ALSTATE):$(NALSTATE)"
+    field(CALC, "(A+B)>0?$(ALSTATE):$(NALSTATE)")
 }
 
 record(bo, "$(N)_INPUT") {

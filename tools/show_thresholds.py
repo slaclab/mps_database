@@ -95,24 +95,6 @@ class ThresholdManager:
 
     print(tabulate(table, tablefmt='grid'))
 
-#    std_thresholds = get_thresholds(threshold_list, '')
-#    for x in std_thresholds:
-#      print x
-#    print_threshold()
-
-
-#    for t in threshold_list:
-#      print t
-#      print t['pv'].pvname
-#      restore_item = {}
-#      if (threshold_item['active']):
-#        restore_item['device'] = rt_d
-#        restore_item['pv'] = threshold_item['pv']
-#        restore_item['value'] = threshold_item['value']
-##        restore_list.append(restore_item)
-#        if (self.verbose):
-#          print('{}={}'.format(threshold_item['pv'].pvname, threshold_item['value']))
-
     return True
 
   def is_analog(self, dev_id):

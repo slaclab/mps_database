@@ -245,13 +245,14 @@ class ThresholdManager:
   #
   # Build a table/dictionary from the command line parameters
   #
-  def buildThresholdTable(self, rt_d, t, force_write):
+  def buildThresholdTable(self, rt_d, t, force_write, ignore_pv):
     # fist check the parameters
     valid_pvs = True
     bad_pv_names = ''
     ro_pvs = False
     ro_pv_names = '' # read-only pv names
     self.force_write = force_write
+    self.ignore_pv = ignore_pv
     for l in t:
       [table_name, t_index, integrator, t_type, value] = l
 
@@ -358,8 +359,9 @@ class ThresholdManager:
         pv = PV(pv_name)
         self.table[table_name][t_index][integrator]['pv']=pv
         if (pv.host == None):
-          valid_pvs = False
-          bad_pv_names = '{} * {}\n'.format(bad_pv_names, pv_name)
+          if (not ignore_pv):
+            valid_pvs = False
+            bad_pv_names = '{} * {}\n'.format(bad_pv_names, pv_name)
         elif (not force_write):
           if (not pv.write_access):
             ro_pvs = True
@@ -403,6 +405,8 @@ group_list.add_argument('--device-id', metavar='database device id', type=int, n
 group_list.add_argument('--device-name', metavar='database device name (e.g. BPM1B)', type=str, nargs='?', help='device name as found in the MPS database')
 parser.add_argument('-f', action='store_true', default=False,
                     dest='force_write', help='Change thresholds even if PVs are not writable (changes only the database)')
+parser.add_argument('-i', action='store_true', default=False,
+                    dest='ignore_pv', help='Change thresholds even if PVs are not accessible on the network (changes only the database)')
 
 proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
 user = proc.stdout.readline().rstrip()
@@ -424,7 +428,7 @@ tm = ThresholdManager(args.database[0].name, args.database[0].name.split('.')[0]
 rt_d = tm.checkDevice(device_id, device_name)
 
 if (rt_d):
-  if (tm.buildThresholdTable(rt_d, args.t, args.force_write)):
+  if (tm.buildThresholdTable(rt_d, args.t, args.force_write, args.ignore_pv)):
     if (tm.verifyThresholds(rt_d)):
       if (not tm.changeThresholds(rt_d, user, reason)):
         exit(-1);

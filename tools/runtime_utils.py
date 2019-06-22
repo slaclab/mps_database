@@ -15,6 +15,12 @@ class RuntimeChecker:
                       'threshold_alt0', 'threshold_alt1','threshold_alt2', 'threshold_alt3',
                       'threshold_alt4', 'threshold_alt5','threshold_alt6', 'threshold_alt7',
                       'threshold_lc1', 'threshold_idl']
+  std_threshold_tables = ['threshold0','threshold1','threshold2','threshold3',
+                          'threshold4','threshold5','threshold6','threshold7']
+  alt_threshold_tables = ['threshold_alt0', 'threshold_alt1','threshold_alt2', 'threshold_alt3',
+                          'threshold_alt4', 'threshold_alt5','threshold_alt6', 'threshold_alt7']
+  lc1_tables = ['threshold_lc1']
+  idl_tables = ['threshold_idl']
   threshold_tables_pv = ['lc2', 'lc2', 'lc2', 'lc2', 'lc2', 'lc2', 'lc2', 'lc2',
                          'alt', 'alt', 'alt', 'alt', 'alt', 'alt', 'alt', 'alt', 
                          'lc1', 'idl']
@@ -68,8 +74,8 @@ class RuntimeChecker:
       is_bpm = True
 
     for t_index, t_table in enumerate(self.threshold_tables):
-      for t_type in self.threshold_types:
-        for integrator in self.integrators:
+      for integrator in self.integrators:
+        for t_type in self.threshold_types:
           threshold_item = {}
           pv_name = self.mps_names.getThresholdPv(self.mps_names.getAnalogDeviceNameFromId(device.id),
                                                   self.threshold_tables_pv[t_index], self.threshold_index[t_index],
@@ -138,7 +144,6 @@ class RuntimeChecker:
 
     return True
 
-
   def check_app_thresholds(self, app_id):
     """
     Check whether the runtime database thresholds are the same as the values set
@@ -154,6 +159,9 @@ class RuntimeChecker:
     if (len(app.analog_channels) > 0):
       for c in app.analog_channels:
         [device, rt_device] = self.check_device(c.analog_device.id)
+        if (device == None):
+          print('ERROR: Cannot check device')
+          return False
         self.check_device_thresholds(device)
 
     return True

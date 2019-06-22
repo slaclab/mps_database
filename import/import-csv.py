@@ -101,7 +101,7 @@ class DatabaseImporter:
 
           self.session.add(ln)
         
-        print('INFO: Added crate {}, with slot 2 LN {}'.format(crate.get_name(), slot2_ln.get_name()))
+#        print('INFO: Added crate {}, with slot 2 LN {}'.format(crate.get_name(), slot2_ln.get_name()))
 
         
     self.session.commit()
@@ -481,7 +481,9 @@ class DatabaseImporter:
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
 
         if self.verbose:
-          print "  + {0}".format(mitigation_info['device_location'])
+          print "  + {}: state {}; \"{}\"".format(mitigation_info['device_location'],
+                                                  mitigation_info['state_name'],
+                                                  mitigation_info['fault_description'])
 
     f.close()
     
@@ -601,8 +603,8 @@ class DatabaseImporter:
 
 
   def add_analog_device(self, directory, card_name, add_ignore=False):
-    if (self.lcls1_only and card_name == "BPM Card"):
-      return
+#    if (self.lcls1_only and card_name == "BPM Card"):
+#      return
 
     sys.stdout.write('Adding {}\n'.format(directory))
     file_name = directory + '/DeviceType.csv'
@@ -766,10 +768,12 @@ class DatabaseImporter:
 
         else: # if fault=='all'
           mit_location = device_info['mitigation']
+#          print(faults)
+#          print(mitigation)
           for k in mitigation[mit_location]:
             device_fault = self.getFault(faults, k)
             if (device_fault == None):
-              print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['device'])
+              print 'ERROR: Failed to find Fault for device "{}" (mitigation={})'.format(device_info['device'], k)
               exit(-1)
 #            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
 #                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
@@ -1256,7 +1260,7 @@ args = parser.parse_args()
 lcls1 = False
 if args.lcls1:
   print('-- Importing only LCLS-I data --')
-  print('* excludes: BPMS, PBLM and LBLM devices')
+  print('* excludes: PBLM and LBLM devices')
   print('* empty application cards are not added to the database')
   print('---')
   lcls1 = True
@@ -1279,6 +1283,7 @@ importer.add_beam_classes('import/BeamClasses.csv')
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
+importer.add_analog_device('import/BLM', card_name="Generic ADC")
 importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
 importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_digital_device('import/PROF')
@@ -1292,16 +1297,16 @@ if (True):
   importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
-  importer.add_analog_device('import/BLM', card_name="Generic ADC")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
+#  importer.add_digital_device('import/BEND_DCCT_STATUS')
+  importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/WIRE_PARK')
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
   importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
-  importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/XTES')
 
 importer.cleanup()

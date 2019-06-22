@@ -1,2 +1,3 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description,
-I0_T0,1,Beam Loss,1,1,I0,Beam Loss Fault,
+I0_T0,1,Beam Loss,1,1,I0,Beam Loss Fault (inst),
+I1_T0,2,Beam Loss (1 sec),256,256,I1,Beam Loss Fault (1 second),

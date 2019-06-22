@@ -98,6 +98,8 @@ class MpsAppReader:
         # List of Link Nodes by cpu_name + slot - track if it has only digital, analog or both apps
         self.link_nodes = {}
 
+        self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
+
         # Open a session to the MPS database
         with MpsDbReader(db_file) as mps_db_session:
 
@@ -221,11 +223,13 @@ class MpsAppReader:
                 app_data["link_node_name"] = ln_name
                 app_data["link_node_area"] = app_card.link_node.area
                 app_data["link_node_location"] = app_card.link_node.location
-                app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+#                app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+                app_data["card_index"] = app_card.get_card_id()
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
 
                 if (ln_name in self.link_nodes):
-                    if (self.link_nodes[ln_name] == 'Unknown'):
+                    if (self.link_nodes[ln_name] == 'Unknown' or
+                        self.link_nodes[ln_name] == 'Analog'):
                         self.link_nodes[ln_name] = 'Analog'
                     else:
                         self.link_nodes[ln_name] = 'Mixed'
@@ -262,7 +266,8 @@ class MpsAppReader:
                         # get this device data
                         device_data = {}
                         device_data["type_name"] = self.__get_device_type_name(mps_db_session, device.device_type_id)
-                        device_data["bay_number"], device_data["channel_number"] = self.__get_bay_ch_number(mps_db_session, device.channel_id, app_card.type_id)
+                        device_data["bay_number"], device_data["channel_number"], device_data["channel_index"] = \
+                            self.__get_bay_ch_number(mps_db_session, device.channel_id, app_card.type_id)
                         device_data["area"] = device.area
                         device_data["position"] = device.position
                         device_data["faults"] = {}
@@ -319,12 +324,13 @@ class MpsAppReader:
                 app_data["link_node_area"] = app_card.link_node.area
                 app_data["link_node_name"] = ln_name
                 app_data["link_node_location"] = app_card.link_node.location
-                app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+#                app_data["card_index"] = self.__get_card_id(app_card.slot_number, app_card.type_id)
+                app_data["card_index"] = app_card.get_card_id()
                 app_data["virtual"] = False
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
-                    app_data["virtual"] = true
+                    app_data["virtual"] = True
 
                 if (ln_name in self.link_nodes):
                     if (self.link_nodes[ln_name] == 'Unknown'):
@@ -418,9 +424,14 @@ class MpsAppReader:
                 if (self.link_nodes[app["link_node_name"]] == 'Digital' or 
                     self.link_nodes[app["link_node_name"]] == 'Mixed'):
                     self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+#                    print('> mps.template for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
+#                else:
+#                    print(">> ERROR")
+#            else:
+#                print(">> No mps.template for {} (type {})".format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
 
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
@@ -435,7 +446,10 @@ class MpsAppReader:
                                                            "APP_ID_NAME":"MPS_DIG_APP_ID",
                                                            "APP_ID":str(app["app_id"])})
             self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
+            self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"DIGITAL_APP_PREFIX",
+                                                               "APP_PREFIX":app_prefix})
 
+            has_virtual = False
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
 
@@ -445,6 +459,7 @@ class MpsAppReader:
                 for input in device["inputs"]:
 
                     if app["virtual"]:
+                        has_virtual = True
                         if (input["bit_position"]>=32):
                             print("Virtual Input: {}, number={}".format(input["name"], input["bit_position"]))
                             vmacros = {  "P":device_prefix,
@@ -470,6 +485,11 @@ class MpsAppReader:
                     if (self.verbose):
                         print("    Digital Input : {}".format(input["name"]))
                     #self.write_thr_base_db(path=app_path, macros=macros)
+
+            if (has_virtual):
+                self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"VIRTUAL_APP_PREFIX",
+                                                                   "APP_PREFIX":"VIRTUAL"})
+
         if (self.verbose):
             print("----------------------------")
 
@@ -495,11 +515,14 @@ class MpsAppReader:
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
+#                else:
+#                    print('>> ERROR for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
 
-            self.__write_analog_db(path=app_path, macros={"P":app_prefix})
+#            self.__write_analog_db(path=app_path, macros={"P":app_prefix})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
+            self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"ANALOG_APP_PREFIX", "APP_PREFIX":app_prefix})
 
             # Add the IOC name environmental variable for the Link Nodes
             if app["analog_link_node"]:
@@ -520,37 +543,49 @@ class MpsAppReader:
                 if (self.verbose):
                     print("  Device prefix : {}".format(device_prefix))
 
-                for fault in device["faults"].values():
+                if (device["type_name"] not in self.non_link_node_types):
+                    macros = { "P":app_prefix,
+                               "BAY":str(device["bay_number"]),
+                               "CH":str(device["channel_number"]),
+                               "R":'ADC_DATA_{}'.format(device["channel_index"]),
+                               "P_DEV":device_prefix,
+                               "R_DEV":self.__get_analog_type_name(device["type_name"])
+                               }
+                    self.__write_analog_db(path=app_path, macros=macros)
 
-                    macros = {  "P":device_prefix,
-                                "BAY":str(device["bay_number"]),
-                                "APP":self.__get_app_type_name(device["type_name"]),
-                                "FAULT":fault["name"],
-                                "FAULT_INDEX":self.__get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
-                                "DESC":fault["description"],
-                                "EGU":self.__get_app_units(device["type_name"],fault["name"]) }
+                    macros = { "BAY_DB_FILE": 'db/mps_blm.db',
+                               "BAY_INP_NAME": device_prefix,
+                               "BAY":str(device["bay_number"]),
+                               "INP":str(device["channel_number"])}
+                    self.__write_mps_analog_channels_cmd(path=app_path, macros=macros)
 
-                    self.__write_thr_base_db(path=app_path, macros=macros)
+                    for fault in device["faults"].values():
+                        macros = {  "P":device_prefix,
+                                    "BAY":str(device["bay_number"]),
+                                    "APP":self.__get_app_type_name(device["type_name"]),
+                                    "FAULT":fault["name"],
+                                    "FAULT_INDEX":self.__get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
+                                    "DESC":fault["description"],
+                                    "EGU":self.__get_app_units(device["type_name"],fault["name"]) }
+
+                        self.__write_thr_base_db(path=app_path, macros=macros)
+
+                        # Writes the PVs used as inputs for scale factors (*_FWSLO and *_FWOFF)
+                        macros["PROPERTY"] = fault["name"]
+                        macros["SLOPE"] = "555.86e-6"
+                        macros["OFFSET"] = "32768"
+                        self.__write_mps_scale_factor_cmd(path=app_path, macros=macros)
+
+                        for bit in fault["bit_positions"]:
+                            fault_prefix = "{}_T{}".format(fault["name"], bit)
+
+                            if (self.verbose):
+                                print("    Fault prefix : {}".format(fault_prefix))
+
+                            macros["BIT_POSITION"] = str(bit)
+                            self.__write_thr_db(path=app_path, macros=macros)
 
 
-                    for bit in fault["bit_positions"]:
-                        fault_prefix = "{}_T{}".format(fault["name"], bit)
-
-                        if (self.verbose):
-                            print("    Fault prefix : {}".format(fault_prefix))
-
-                        macros["BIT_POSITION"] = str(bit)
-                        self.__write_thr_db(path=app_path, macros=macros)
-
-                    macros = { "BAY_INP_ENABLE_MACRO": 'BAY{}_INP{}'.format(str(device["bay_number"]),
-                                                                            str(device["channel_number"])),
-                               "BAY_INP_ENABLE_DEFINE": "",
-                               "BAY_DB_FILE_MACRO": 'BAY{}_DB_FILE'.format(str(device["bay_number"])),
-                               "BAY_DB_FILE": 'db/mps_blm.db',
-                               "BAY_INP_NAME_MACRO": 'BAY{}_INP{}_NAME'.format(str(device["bay_number"]),
-                                                                          str(device["channel_number"])),
-                               "BAY_INP_NAME": device_prefix}
-                    self.__write_analog_input_env(path=app_path, macros=macros)
 #                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME_DEFINE)")
 #                    epicsEnvSet("$(BAY_DB_FILE_MACRO)", "$(BAY_DB_FILE)")
 #                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME)")
@@ -686,6 +721,24 @@ class MpsAppReader:
         else:
             return slot_number + 1
 
+    def __get_analog_type_name(self, device_type_name):
+        """
+        Return the fourth PV field for the analog measument type 
+        according to the device type:
+          * SOLN, BEND => CURRENT
+          * PBLM, LBLM, CBLM => LOSS
+          * TORO, FARC => CHARGE
+        """
+        if device_type_name in ["SOLN", "BEND"]:
+            return "CURRENT"
+        elif device_type_name in ["PBLM", "LBLM", "CBLM"]:
+            return "LOSS"
+        elif device_type_name in ["TORO", "FARC"]:
+            return "CHARGE"
+        else:
+            raise ValueError("Function \"get_analog_type_name(device_type_name={})\". Invalid device type name"
+                             .format(device_type_name))
+
     def __get_app_type_name(self, device_type_name):
         """
         Get the app type name used in the EPICS DB.
@@ -695,7 +748,7 @@ class MpsAppReader:
           * TORO, FARC => BCM
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "LBLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN"]:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -707,6 +760,24 @@ class MpsAppReader:
             raise ValueError("Function \"get_app_name(device_type_id={})\". Invalid device type name"
                 .format(device_type_name))
 
+    def __get_scale_units(self, device_type_name, channel_number):
+        """
+        Get the engineering units used for the scale factor PVs (slope/offset).
+        The unit varies based on the device type and the channel number.
+        """
+        if device_type_name == "BPMS":
+            if channel_number == 0:
+                fault_name = "X"
+            elif channel_number == 1:
+                fault_name = "Y"
+            elif channel_number == 2:
+                fault_name = "TMIT"
+            else:
+                raise ValueError("Function \"get_app_name(device_type_name={}, channel_number={})\". Invalid channel number for BPMS device type"
+                                 .format(device_type_name, channel_number))
+            return self.__get_app_units(device_type_name, fault_name)
+        else:
+            return self.__get_app_units(device_type_name, "")
 
     def __get_app_units(self, device_type_name, fault_name):
         """
@@ -719,7 +790,7 @@ class MpsAppReader:
           * TORO, FARC => Nel
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "LBLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN"]:
             # Solenoid devices use 'uA'.
             return "uA"
         elif device_type_name == "BPMS":
@@ -750,7 +821,7 @@ class MpsAppReader:
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "BLM", "LBLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN"]:
             # For SOLN devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = int(fault_name[-1])
@@ -786,7 +857,7 @@ class MpsAppReader:
 
     def __get_bay_ch_number(self, mps_db_session, channel_id, type_id):
         """
-        Return the bay and channel number corresponding to the analog channel
+        Return the bay, channel number corresponding to the analog channel and the channel number (from 0 to 5)
         with id = channel_id of of type id = type_id
         """
         analog_channel = mps_db_session.query(models.AnalogChannel).filter(models.AnalogChannel.id==channel_id).all()
@@ -802,10 +873,10 @@ class MpsAppReader:
         if (type_id == 2):
             # For these cards, channel.numbers [0:2] are in bay 0, channel [0:2];
             # and channal.numbers [3:5] are in bay 1, channel [0:2]
-            return analog_channel[0].number // 3, analog_channel[0].number % 3
+            return analog_channel[0].number // 3, analog_channel[0].number % 3, analog_channel[0].number
         else:
             # For other cards the channel number is the bay number, and the channel is 0
-            return analog_channel[0].number, 0
+            return analog_channel[0].number, 0, analog_channel[0].number
 
     def __get_fault(self, mps_db_session, fault_id):
         """
@@ -867,7 +938,7 @@ class MpsAppReader:
 
         These records will be loaded once per each device.
         """
-        self.__write_epics_db(path=path, template_name="analog.template", macros=macros)
+        self.__write_epics_db(path=path, template_name="analog_input.template", macros=macros)
 
     def __write_mps_db(self, path, macros):
         """
@@ -875,6 +946,7 @@ class MpsAppReader:
 
         These records will be loaded once per each device.
         """
+#        print(">>> mps.template for {}".format(macros['P']))
         self.__write_epics_db(path=path, template_name="mps.template", macros=macros)
 
     def __write_virtual_db(self, path, macros):
@@ -899,13 +971,21 @@ class MpsAppReader:
         """
         self.__write_epics_db(path=path, template_name="thr.template", macros=macros)
 
-    def __write_analog_input_env(self, path, macros):
+    def __write_mps_analog_channels_cmd(self, path, macros):
         """
-        Write the macros for loading analog input records
+        Write the records used as analog inputs - with the actual device names used an PV names
 
-        This environmental variable will be loaded by all analog applications
+        These records will be load once per each analog channel
         """
-        self.__write_epics_env(path=path, template_name="analog_inputs.template", macros=macros)
+        self.__write_mps_analog_cmd(path=path, template_name="mps_analog_channels_cmd.template", macros=macros)
+
+    def __write_mps_scale_factor_cmd(self, path, macros):
+        """
+        Write the records used as slope/offset inputs for the analog channel scale factors
+
+        These records will be load once per each analog channel
+        """
+        self.__write_mps_sf_cmd(path=path, template_name="mps_scale_factor_cmd.template", macros=macros)
 
     def __write_app_id_env(self, path, macros):
         """
@@ -930,6 +1010,14 @@ class MpsAppReader:
         This environmental variable will be loaded by all applications.
         """
         self.__write_epics_env(path=path, template_name="prefix.template", macros=macros)
+
+    def __write_app_prefix_env(self, path, macros):
+        """
+        Write the mps application PV name prefix environmental variable file.
+
+        This environmental variable will be loaded by all applications.
+        """
+        self.__write_epics_env(path=path, template_name="app_prefix.template", macros=macros)
 
     def __write_iocinfo_env(self, path, macros):
         """
@@ -990,6 +1078,16 @@ class MpsAppReader:
         """
         file = "{}config.yaml".format(path)
         template = "{}fw_config/{}".format(self.template_path, template_name)
+        self.__write_file_from_template(file=file, template=template, macros=macros)
+
+    def __write_mps_sf_cmd(self, path, template_name, macros):
+        file = "{}mps_scale_factor.cmd".format(path)
+        template = "{}epics_env/{}".format(self.template_path, template_name)
+        self.__write_file_from_template(file=file, template=template, macros=macros)
+
+    def __write_mps_analog_cmd(self, path, template_name, macros):
+        file = "{}mps_analog_channels.cmd".format(path)
+        template = "{}epics_env/{}".format(self.template_path, template_name)
         self.__write_file_from_template(file=file, template=template, macros=macros)
 
     def __write_file_from_template(self, file, template, macros):
