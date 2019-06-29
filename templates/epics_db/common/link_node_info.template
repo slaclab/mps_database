@@ -1,0 +1,20 @@
+record(stringin, "$(P):CONFIG_VERSION") {
+  field(DESC, "MPS Configuration Database Version")
+  field(VAL, "$(MPS_CONFIG_VERSION)")
+}
+
+record(stringin, "$(P):LN_TYPE") {
+  field(DESC, "MPS Link Node Type")
+  field(VAL, "$(MPS_LINK_NODE_TYPE)")
+}
+
+record(longin, "$(P):LN_ID") {
+  field(DESC, "MPS Link Node ID")
+  field(VAL, "$(MPS_LINK_NODE_ID)")
+}
+
+record(stringin, "$(P):LN_SIOC") {
+  field(DESC, "MPS Link Node SIOC")
+  field(VAL, "$(MPS_LINK_NODE_SIOC)")
+}
+

@@ -14,4 +14,5 @@ epicsEnvSet("VIRTUAL_APP_PREFIX", "not set")
 #
 # Definition of MPS variables
 #
+epicsEnvSet("MPS_LINK_NODE", "$(MPS_LINK_NODE)")
 

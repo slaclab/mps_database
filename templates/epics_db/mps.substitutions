@@ -331,6 +331,7 @@ file "common/Reg1BitRW_YCPSWASYN.template" { pattern
 { DIG_L2POL_0,        "Digital Bit Polarity for LCLS1",         "INVERSE",  "DIRECT",   "1 second",    DIGMES_L2Polarity_0      }
 { DIG_FORCEBITSEN,    "Enable Digital Force Bits",              "Disable",  "Enable",   "1 second",    DIGMES_DigitalForceEn    }
 { TIM_CLK_SRC,        "Timinig source",                         "LCLS-1",   "LCLS-2",   "1 second",    TIM_CLK_SEL              }
+{ LC1_TIMEOUT_EN,     "Enable LCLS-I Application Timeouts",     "Disable",  "Enable",   "1 second",    LC1_TimeoutEnable        }
 }
 
 #======================================
@@ -375,4 +376,12 @@ file "common/Reg2BitsRW_YCPSWASYN.template" { pattern
 file "common/RegCharArrayRO_YCPSWASYN.template" { pattern
 { R,                    DESC,                               PINI,   SCAN,           NELM,   PARAM           }
 { FPGA_BUILDSTAMP,      "FPGA's firmware build string",     "YES",  "1 second",     256,    AV_BuildStamp   }
+}
+
+#======================================
+# Link Node Information
+#======================================
+file "common/link_node_info.template" { pattern
+{}
+{}
 }

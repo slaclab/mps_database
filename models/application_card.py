@@ -127,26 +127,15 @@ class ApplicationCard(Base):
     slot number and application type id.
     
     If the application is a Link Nodes (slot # 2) then
-    the card number will be:
-    - 1 for analog cards (type id: 2)
-    - 2 for digital cards (type id: 1)
-    - 3 for virtual cards (type id: 6)
+    the card number will be 1
 
     For other applications, the card number will be
     the slot number + 1.
     """
     if self.slot_number == 2:
-      if self.name == "Generic ADC":
-        return 2
-      elif self.name == "Digital Card":
-        return 1
-      elif self.type_id == "Virtual":
-        return 3
-      else:
-        raise ValueError("Function \"get_card_id(slot_number={}, type_id={})\". Invalid type_id for a Link Node"
-                         .format(self.slot_number, self.type_id))
+      return 1
     else:
-      return self.slot_number + 1
+      return self.slot_number
 
   def get_pv_name(self):
     return 'MPLN:{}:{}:{}'.format(self.link_node.area, self.link_node.location, self.get_card_id())

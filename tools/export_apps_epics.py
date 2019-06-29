@@ -100,6 +100,8 @@ class MpsAppReader:
 
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
 
+        self.config_version = os.path.basename(db_file).lstrip("mps_config-").rstrip(".db")
+
         # Open a session to the MPS database
         with MpsDbReader(db_file) as mps_db_session:
 
@@ -423,7 +425,11 @@ class MpsAppReader:
             if (app["link_node_name"] in self.link_nodes):
                 if (self.link_nodes[app["link_node_name"]] == 'Digital' or 
                     self.link_nodes[app["link_node_name"]] == 'Mixed'):
-                    self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+                    self.__write_mps_db(path=app_path, macros={"P":app_prefix,
+                                                               "MPS_LINK_NODE_SIOC":app["link_node_name"],
+                                                               "MPS_LINK_NODE_ID":app["lc1_node_id"],
+                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]],
+                                                               "MPS_CONFIG_VERSION":self.config_version})
 #                    print('> mps.template for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
@@ -436,7 +442,7 @@ class MpsAppReader:
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
             # Add the IOC name environmental variable for the Link Nodes
-            self.__write_header_env(path=app_path, macros={})
+            self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"]})
             self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                             "LOCATION":app["link_node_location"].upper(),
                                                             "LOCATION_INDEX":"0{}".format(5),
@@ -511,7 +517,11 @@ class MpsAppReader:
 
             if (app["link_node_name"] in self.link_nodes):
                 if (self.link_nodes[app["link_node_name"]] == 'Analog'):
-                    self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+                    self.__write_mps_db(path=app_path, macros={"P":app_prefix,
+                                                               "MPS_LINK_NODE_SIOC":app["link_node_name"],
+                                                               "MPS_LINK_NODE_ID":app["lc1_node_id"],
+                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]],
+                                                               "MPS_CONFIG_VERSION":self.config_version})
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
@@ -521,18 +531,18 @@ class MpsAppReader:
 #            self.__write_analog_db(path=app_path, macros={"P":app_prefix})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
-            self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
-            self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"ANALOG_APP_PREFIX", "APP_PREFIX":app_prefix})
 
             # Add the IOC name environmental variable for the Link Nodes
             if app["analog_link_node"]:
-                self.__write_header_env(path=app_path, macros={})
+                self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"]})
                 self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                                 "LOCATION":app["link_node_location"].upper(),
                                                                 "LOCATION_INDEX":"0{}".format(5),
                                                                 "CARD_INDEX":str(app["card_index"])})
                 self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
 
+            self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
+            self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"ANALOG_APP_PREFIX", "APP_PREFIX":app_prefix})
             self.__write_app_id_env(path=app_path, macros={"APP_TYPE":"MPS_ANA_APP",
                                                            "APP_ID_NAME":"MPS_ANA_APP_ID",
                                                            "APP_ID":str(app["app_id"])})
@@ -570,12 +580,6 @@ class MpsAppReader:
 
                         self.__write_thr_base_db(path=app_path, macros=macros)
 
-                        # Writes the PVs used as inputs for scale factors (*_FWSLO and *_FWOFF)
-                        macros["PROPERTY"] = '{}_SF'.format(fault["name"])
-                        macros["SLOPE"] = "555.86e-6"
-                        macros["OFFSET"] = "32768"
-                        self.__write_mps_scale_factor_cmd(path=app_path, macros=macros)
-
                         for bit in fault["bit_positions"]:
                             fault_prefix = "{}_T{}".format(fault["name"], bit)
 
@@ -584,6 +588,12 @@ class MpsAppReader:
 
                             macros["BIT_POSITION"] = str(bit)
                             self.__write_thr_db(path=app_path, macros=macros)
+
+                        # Writes the PVs used as inputs for scale factors (*_FWSLO and *_FWOFF)
+                        macros["PROPERTY"] = '{}_SF'.format(fault["name"])
+                        macros["SLOPE"] = "555.86e-6"
+                        macros["OFFSET"] = "32768"
+                        self.__write_mps_scale_factor_cmd(path=app_path, macros=macros)
 
 
 #                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME_DEFINE)")
@@ -690,8 +700,9 @@ class MpsAppReader:
 
         print("===================================")
 
+        print('Found {} link nodes:'.format(len(self.link_nodes)))
         for k,v in self.link_nodes.items():
-            print '{}: {}'.format(k, v)
+            print('{}: {}'.format(k, v))
 
 
     def __get_card_id(self, slot_number, type_id):
@@ -731,7 +742,7 @@ class MpsAppReader:
         """
         if device_type_name in ["SOLN", "BEND"]:
             return "CURRENT"
-        elif device_type_name in ["PBLM", "LBLM", "CBLM"]:
+        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM"]:
             return "LOSS"
         elif device_type_name in ["TORO", "FARC"]:
             return "CHARGE"
@@ -748,7 +759,7 @@ class MpsAppReader:
           * TORO, FARC => BCM
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM"]:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -790,7 +801,7 @@ class MpsAppReader:
           * TORO, FARC => Nel
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM"]:
             # Solenoid devices use 'uA'.
             return "uA"
         elif device_type_name == "BPMS":
@@ -821,7 +832,7 @@ class MpsAppReader:
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM"]:
             # For SOLN devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = int(fault_name[-1])
