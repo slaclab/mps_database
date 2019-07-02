@@ -10,6 +10,20 @@ generated substitution files to create alhConfig files.
 
 ## Alarm tree structure
 
+This is the generated alarm tree (export_alarms.py):
+
+* mps.alhConfig
+  * mps_global2.alhConfig 
+    * mps_global2_faults.alhConfig
+  * mps_<AREA>.alhConfig
+    * mps_<AREA>_faults.alhConfig
+    * mps_<AREA>_apps.alhConfig
+    * mps_<AREA>_<LN>.alhConfig
+
+where:
+* <AREA>: GUNB, ... DMPS, DMPH, FEES, FEEH
+* <LN>: link node MPxx string (e.g. MP01, MP02, ...)
+
 ## List of substitution and generated template files
 
 This is a list of substitutions files, which template files are generated from
