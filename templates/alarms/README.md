@@ -15,14 +15,14 @@ This is the generated alarm tree (export_alarms.py):
 * mps.alhConfig
   * mps_global2.alhConfig 
     * mps_global2_faults.alhConfig
-  * mps_<AREA>.alhConfig
-    * mps_<AREA>_faults.alhConfig
-    * mps_<AREA>_apps.alhConfig
-    * mps_<AREA>_<LN>.alhConfig
+  * mps_AREA.alhConfig
+    * mps_AREA_faults.alhConfig
+    * mps_AREA_apps.alhConfig
+    * mps_AREA_LN.alhConfig
 
 where:
-* <AREA>: GUNB, ... DMPS, DMPH, FEES, FEEH
-* <LN>: link node MPxx string (e.g. MP01, MP02, ...)
+* AREA: GUNB, ... DMPS, DMPH, FEES, FEEH
+* LN: link node MPxx string (e.g. MP01, MP02, ...)
 
 ## List of substitution and generated template files
 
