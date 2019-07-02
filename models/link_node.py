@@ -71,3 +71,6 @@ class LinkNode(Base):
 
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()
+
+  def get_pv_base(self):
+    return 'MPLN:' + self.area.upper() + ':' + self.location.upper()

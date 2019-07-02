@@ -136,8 +136,8 @@ class MpsName:
         is_digital = True
 
         if len(fault.inputs) <= 0:
-            print 'ERROR: Fault {0} (id={1}) has no inputs, can\'t proceed. exiting...'.format(fault.name, fault.id)
-            exit(1)
+            print 'ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id)
+            return None
 
 #        print 'len: {0}'.format(len(fault.inputs))
 
@@ -167,7 +167,11 @@ class MpsName:
         return base + ":" + fault.name
 
     def getFaultName(self, fault):
-        return self.getBaseFaultName(fault) + "_FLT"
+        base = self.getBaseFaultName(fault)
+        if base != None:
+            return base + "_FLT"
+        else:
+            return None
 
     def getConditionName(self, condition):
         return "$(BASE):" + condition.name.upper() + "_COND"
