@@ -17,4 +17,3 @@ record(stringin, "$(P):LN_SIOC") {
   field(DESC, "MPS Link Node SIOC")
   field(VAL, "$(MPS_LINK_NODE_SIOC)")
 }
-

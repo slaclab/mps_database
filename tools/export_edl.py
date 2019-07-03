@@ -5,13 +5,14 @@ from Cheetah.Template import Template
 from mps_config import MPSConfig, models
 from mps_names import MpsName
 from sqlalchemy import func
+from mps_app_reader import MpsAppReader
 
 import os
 import sys
 import argparse
 
-def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
-  data=templateFile.read()
+def generate_analog_devices_EDL(edl_file, template_file, analog_devices, mps_name):
+  data=template_file.read()
 
   crates=[]
   cards=[]
@@ -29,8 +30,8 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
   ign=[]
 
   bitCounter = 0
-  for analogDevice in analogDevices:
-    name = mpsName.getAnalogDeviceName(analogDevice)
+  for analogDevice in analog_devices:
+    name = mps_name.getAnalogDeviceName(analogDevice)
 
     faultInputs = session.query(models.FaultInput).filter(models.FaultInput.device_id==analogDevice.id).all()
     for fi in faultInputs:
@@ -90,7 +91,7 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
     
 #  print "Found " + str(bitCounter) + " bits."
 
-  nameSpace={'ANALOG_DEVICES': str(bitCounter),#str(len(analogDevices)),
+  macros={'ANALOG_DEVICES': str(bitCounter),#str(len(analog_devices)),
              'AD_CRATE': crates,
              'AD_CARD': cards,
              'AD_CHANNEL': channels,
@@ -107,13 +108,13 @@ def generateAnalogDevicesEDL(edlFile, templateFile, analogDevices, mpsName):
              'AD_PV_UNLATCH': unlatch,
              }
 
-  t = Template(data, searchList=[nameSpace])
-  edlFile.write("%s" % t)
-#  templateFile.close()
-  edlFile.close()
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+#  template_file.close()
+  edl_file.close()
 
-def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
-  data=templateFile.read()
+def generate_device_inputs_EDL(edl_file, template_file, device_inputs, mps_name):
+  data=template_file.read()
 
   crates=[]
   cards=[]
@@ -128,8 +129,8 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
   latched=[]
   unlatch=[]
 
-  for deviceInput in deviceInputs:
-    name = mpsName.getDeviceInputName(deviceInput)
+  for deviceInput in device_inputs:
+    name = mps_name.getDeviceInputName(deviceInput)
 
     crates.append(deviceInput.channel.card.crate.get_name())#number)
     slot=str(deviceInput.channel.card.slot_number)
@@ -153,7 +154,7 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
     latched.append('{0}_MPS'.format(name))
     unlatch.append('{0}_UNLH'.format(name))
     
-  nameSpace={'DEVICE_INPUTS': str(len(deviceInputs)),
+  macros={'DEVICE_INPUTS': str(len(device_inputs)),
              'DI_TEST': '1',
              'DI_CRATE': crates,
              'DI_CARD': cards,
@@ -169,13 +170,13 @@ def generateDeviceInputsEDL(edlFile, templateFile, deviceInputs, mpsName):
              'DI_PV_UNLATCH': unlatch,
              }
 
-  t = Template(data, searchList=[nameSpace])
-  edlFile.write("%s" % t)
-#  templateFile.close()
-  edlFile.close()
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+#  template_file.close()
+  edl_file.close()
 
-def generateFaultsEDL(edlFile, templateFile, faults, mpsName):
-  data=templateFile.read()
+def generateFaultsEDL(edl_file, template_file, faults, mps_name):
+  data=template_file.read()
 
   desc=[]
   fault_pv=[]
@@ -184,7 +185,7 @@ def generateFaultsEDL(edlFile, templateFile, faults, mpsName):
   unlatch=[]
 
   for fault in faults:
-    name = mpsName.getFaultName(fault)
+    name = mps_name.getFaultName(fault)
 
     desc.append(fault.description)
     fault_pv.append(name)
@@ -192,7 +193,7 @@ def generateFaultsEDL(edlFile, templateFile, faults, mpsName):
     ignore.append(name + "_IGN")
     unlatch.append(name + "_UNLH")
     
-  nameSpace={'FAULTS': str(len(faults)),
+  macros={'FAULTS': str(len(faults)),
              'DESC': desc,
              'FLT_PV': fault_pv,
              'FLT_PV_LATCHED': latched,
@@ -200,13 +201,13 @@ def generateFaultsEDL(edlFile, templateFile, faults, mpsName):
              'FLT_PV_UNLATCH': unlatch,
              }
 
-  t = Template(data, searchList=[nameSpace])
-  edlFile.write("%s" % t)
-#  templateFile.close()
-  edlFile.close()
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+#  template_file.close()
+  edl_file.close()
 
-def generateAnalogBypassEDL(edlFile, templateFile, analogDevices, mpsName):
-  data=templateFile.read()
+def generate_analog_bypass_EDL(edl_file, template_file, analog_devices, mps_name):
+  data=template_file.read()
 
   byps=[]
   bypd=[]
@@ -219,8 +220,8 @@ def generateAnalogBypassEDL(edlFile, templateFile, analogDevices, mpsName):
   rtim=[]
 
   bitCounter = 0
-  for analogDevice in analogDevices:
-    name = mpsName.getAnalogDeviceName(analogDevice)
+  for analogDevice in analog_devices:
+    name = mps_name.getAnalogDeviceName(analogDevice)
 
     faultInputs = session.query(models.FaultInput).filter(models.FaultInput.device_id==analogDevice.id).all()
     for fi in faultInputs:
@@ -247,7 +248,7 @@ def generateAnalogBypassEDL(edlFile, templateFile, analogDevices, mpsName):
           expd.append('{0}:{1}_BYP_END'.format(name, fa.name))
           rtim.append('{0}:{1}_BYPT'.format(name, fa.name))
 
-  nameSpace={'ANALOG_DEVICES': str(bitCounter),#str(len(analogDevices)),
+  macros={'ANALOG_DEVICES': str(bitCounter),#str(len(analog_devices)),
              'DEVICE_INPUTS': '0',
              'DI_BYPS': byps,
              'DI_BYPD': bypd,
@@ -259,13 +260,13 @@ def generateAnalogBypassEDL(edlFile, templateFile, analogDevices, mpsName):
              'DI_RTIM': rtim,
              }
 
-  t = Template(data, searchList=[nameSpace])
-  edlFile.write("%s" % t)
-#  templateFile.close()
-  edlFile.close()
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+#  template_file.close()
+  edl_file.close()
 
-def generateBypassEDL(edlFile, templateFile, deviceInputs, mpsName):
-  data=templateFile.read()
+def generate_bypass_EDL(edl_file, template_file, device_inputs, mps_name):
+  data=template_file.read()
 
   byps=[]
   bypv=[]
@@ -276,8 +277,8 @@ def generateBypassEDL(edlFile, templateFile, deviceInputs, mpsName):
   expd=[]
   rtim=[]
 
-  for deviceInput in deviceInputs:
-    name = mpsName.getDeviceInputName(deviceInput)
+  for deviceInput in device_inputs:
+    name = mps_name.getDeviceInputName(deviceInput)
 
 #    cards.append(deviceInput.channel.card.number)
     byps.append('{0}_BYPS'.format(name))
@@ -289,7 +290,7 @@ def generateBypassEDL(edlFile, templateFile, deviceInputs, mpsName):
     expd.append('{0}_BYP_END'.format(name))
     rtim.append('{0}_BYPT'.format(name))
     
-  nameSpace={'DEVICE_INPUTS': str(len(deviceInputs)),
+  macros={'DEVICE_INPUTS': str(len(device_inputs)),
              'DI_BYPS': byps,
              'DI_BYPV': bypv,
              'DI_BYPD': bypd,
@@ -300,22 +301,66 @@ def generateBypassEDL(edlFile, templateFile, deviceInputs, mpsName):
              'DI_RTIM': rtim,
              }
 
-  t = Template(data, searchList=[nameSpace])
-  edlFile.write("%s" % t)
-#  templateFile.close()
-  edlFile.close()
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+  edl_file.close()
 
-def createLinkNodeDirectories(linkNodeDir, linkNodes, mpsName):
-  if not os.path.isdir(linkNodeDir):
-    print 'INFO: {0} directory for link node files does not exist, trying to create it'.format(linkNodeDir)
+def generate_link_node_EDL(edl_file, template_file, session, link_node, mps_name, mps_app_reader, verbose):
+#  mps_app_reader.print_app_data()
+  data=template_file.read()
+
+  if verbose:
+    print mps_app_reader.link_nodes[link_node.get_name()]
+
+  try:
+    app_cards = session.query(models.ApplicationCard).\
+        filter(models.ApplicationCard.link_node_id==link_node.id).all()
+  except Exception as e:
+    print e
+    print('ERROR')
+    return
+
+  ln_app_card = filter (lambda x : x.slot_number == 2 and x.amc == 1, app_cards)
+  if not ln_app_card:
+    if len(app_cards) != 1:
+      print('ERROR: There must be only one app card for link node {}. Found {}.'.\
+              format(link_node.get_name(), len(app_cards)))
+      for a in app_cards:
+        print('Slot {}: {}'.format(a.slot_number, a.name))
+      return
+    ln_app = "None"
+  else:
+    app_cards = filter (lambda x : x.slot_number != 2, app_cards)
+    ln_app = ln_app_card[0].name
+
+  apps = {}
+  for a in app_cards:
+    if (a.slot_number != 2):
+      apps['S{}'.format(a.slot_number)] = a.name
+  
+
+  macros={'APPS': apps,
+          'LN_APP':ln_app,
+          'link_node':link_node,
+          'app_reader':mps_app_reader,
+          'template_dir':os.path.dirname(template_file.name)
+          }
+ 
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+  edl_file.close()
+
+def create_link_node_directories(link_node_dir, link_nodes, mps_name):
+  if not os.path.isdir(link_node_dir):
+    print 'INFO: {0} directory for link node files does not exist, trying to create it'.format(link_node_dir)
     try:
-      os.mkdir(linkNodeDir)
+      os.mkdir(link_node_dir)
     except:
-      print 'ERROR: Failed to create {0} directory'.format(linkNodeDir)
+      print 'ERROR: Failed to create {0} directory'.format(link_node_dir)
       exit(-1)
 
-  for ln in linkNodes:
-    ln_dir = linkNodeDir + '/' + ln.get_name()
+  for ln in link_nodes:
+    ln_dir = link_node_dir + '/' + ln.get_name()
     if not os.path.isdir(ln_dir):
       os.mkdir(ln_dir)
 
@@ -325,191 +370,182 @@ parser = argparse.ArgumentParser(description='Export EPICS template database')
 parser.add_argument('database', metavar='db', type=file, nargs=1, 
                     help='database file name (e.g. mps_gun.db)')
 
-parser.add_argument('--device-inputs-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
-                    help='epics template file name for digital channels (e.g. device_inputs.edl)')
 parser.add_argument('--device-inputs-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for digital channels (e.g. device_inputs.tmpl)')
 
-parser.add_argument('--analog-devices-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
-                    help='epics template file name for analog channels (e.g. analog_devices.edl)')
 parser.add_argument('--analog-devices-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for analog channels (e.g. analog_devices.tmpl)')
 
-parser.add_argument('--faults-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
-                    help='epics template file name for faults (e.g. faults.edl)')
 parser.add_argument('--faults-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for faults (e.g. faults.tmpl)')
 
-parser.add_argument('--bypass-digital-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
-                    help='epics template file name for bypass info panel (e.g. bypass-digital.edl)')
-parser.add_argument('--bypass-analog-edl', metavar='file', type=argparse.FileType('w'), nargs='?',
-                    help='epics template file name for bypass info panel (e.g. bypass-analog.edl)')
 parser.add_argument('--bypass-digital-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for bypass (e.g. bypass.tmpl)')
+
 parser.add_argument('--bypass-analog-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for bypass (e.g. bypass.tmpl)')
+
+parser.add_argument('--link-node-template', metavar='file', type=argparse.FileType('r'), nargs='?',
+                    help='Cheetah template file name for link node screen (e.g. link_node.tmpl)')
+
 parser.add_argument('--link-nodes', metavar='link_node_dir', type=str, nargs='?',
                     help='Generate link node screens under the specified directory' \
                       'need --device-inputs, --analog-devices, --faults and --bypass options!')
+
 parser.add_argument('--link-node', metavar='link_node_name', type=str, nargs='?',
                     help='If provided generate screens only for the specified link node'\
                       'need --link-nodes and related options specified')
 
+parser.add_argument('-v', action='store_true', default=False,
+                    dest='verbose', help='Verbose output')
+
 args = parser.parse_args()
+verbose = args.verbose
+
+mps_app_reader = MpsAppReader(db_file=args.database[0].name, verbose=args.verbose)
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
-mpsName = MpsName(session)
+mps_name = MpsName(session)
 
-linkNodes = None
-linkNode = None
+link_nodes = None
+link_node = None
 if (args.link_nodes):
-  linkNodes = session.query(models.LinkNode).all()
-  createLinkNodeDirectories(args.link_nodes, linkNodes, mpsName)
+  link_nodes = session.query(models.LinkNode).all()
+  create_link_node_directories(args.link_nodes, link_nodes, mps_name)
   if (args.link_node):
-    linkNode = args.link_node
-    if (len(filter (lambda x : x.get_name() == linkNode, linkNodes)) != 1):
-      print 'ERROR: Can\'t find sioc named {0}'.format(linkNode)
+    link_node = args.link_node
+    if (len(filter (lambda x : x.get_name() == link_node, link_nodes)) != 1):
+      print 'ERROR: Can\'t find sioc named {0}'.format(link_node)
       exit(0)
     else:
-      linkNodes = filter (lambda x : x.get_name() == linkNode, linkNodes)
-      print 'INFO: Producing screens for SIOC {0} only'.format(linkNode)
+      link_nodes = filter (lambda x : x.get_name() == link_node, link_nodes)
+      print 'INFO: Producing screens for SIOC {0} only'.format(link_node)
 
-if (args.device_inputs_edl and args.device_inputs_template):
-  if linkNodes == None:
-    generateDeviceInputsEDL(args.device_inputs_edl, args.device_inputs_template,
-                            session.query(models.DeviceInput).all(), mpsName, None)
-  else:
-    # Generate one edl file per link node
-    fileName = args.device_inputs_edl.name.split('/')[len(args.device_inputs_edl.name.split('/'))-1]
-    for ln in linkNodes:
-      dirName = args.link_nodes + '/' + ln.get_name() + '/'
+if (args.device_inputs_template):
+  # Generate one edl file per link node
+  file_name = 'device_inputs.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/' + ln.get_name() + '/'
 
-      deviceInputs = []
-      for c in ln.crate.cards:
-        if len(c.digital_channels) > 0:
-          for dc in c.digital_channels:
-            deviceInputs.append(dc.device_input)
+    device_inputs = []
+    for c in ln.crate.cards:
+      if len(c.digital_channels) > 0:
+        for dc in c.digital_channels:
+          device_inputs.append(dc.device_input)
 
-      if len(deviceInputs) > 0:
-        f = open(dirName + fileName, 'w')
-        generateDeviceInputsEDL(f, args.device_inputs_template,
-                                deviceInputs, mpsName)
-        
-        args.device_inputs_template.seek(0)
+    if len(device_inputs) > 0:
+      f = open(dir_name + file_name, 'w')
+      generate_device_inputs_EDL(f, args.device_inputs_template,
+                                 device_inputs, mps_name)
 
-if (args.analog_devices_edl and args.analog_devices_template):
-  if linkNodes == None:
-    generateAnalogDevicesEDL(args.analog_devices_edl, args.analog_devices_template,
-                             session.query(models.AnalogDevice).all(), mpsName)
-  else:
-    # Generate one edl file per link node
-    fileName = args.analog_devices_edl.name.split('/')[len(args.analog_devices_edl.name.split('/'))-1]
-    for ln in linkNodes:
-      dirName = args.link_nodes + '/' + ln.get_name() + '/'
+      args.device_inputs_template.seek(0)
 
-      analogDevices = []
-      for c in ln.crate.cards:
-        if len(c.analog_channels) > 0:
-          for ac in c.analog_channels:
-            ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
-            analogDevices.append(ad)
+if (args.analog_devices_template):
+  # Generate one edl file per link node
+  file_name = 'analog_devices.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/' + ln.get_name() + '/'
 
-      if len(analogDevices) > 0:
-        f = open(dirName + fileName, 'w')
-        generateAnalogDevicesEDL(f, args.analog_devices_template,
-                                 analogDevices, mpsName)
-        
-        args.analog_devices_template.seek(0)
+    analog_devices = []
+    for c in ln.crate.cards:
+      if len(c.analog_channels) > 0:
+        for ac in c.analog_channels:
+          ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
+          analog_devices.append(ad)
 
-if (args.faults_edl and args.faults_template):
-  if linkNodes == None:
-    generateFaultsEDL(args.faults_edl, args.faults_template,
-                      session.query(models.Fault).all(), mpsName)
-  else:
-    # Generate one edl file per link node
-    fileName = args.faults_edl.name.split('/')[len(args.faults_edl.name.split('/'))-1]
-    for ln in linkNodes:
-      dirName = args.link_nodes + '/' + ln.get_name() + '/'
+    if len(analog_devices) > 0:
+      f = open(dir_name + file_name, 'w')
+      generate_analog_devices_EDL(f, args.analog_devices_template,
+                                  analog_devices, mps_name)
 
-      faults = []
-      for c in ln.crate.cards:
-        if len(c.digital_channels) > 0:
-          # Digital Faults
-          for digitalChannel in c.digital_channels:
-            device = session.query(models.DigitalDevice).\
-                filter(models.DigitalDevice.id==digitalChannel.device_input.digital_device_id).one()
-            fault_inputs = session.query(models.FaultInput).\
-                filter(models.FaultInput.device_id==device.id)
-            for fi in fault_inputs:
-              flt = session.query(models.Fault).filter(models.Fault.id ==fi.fault_id).one()
-              faults.append(flt)
-            
-          # Analog Faults
-        if len(c.analog_channels) > 0:
-          for analogChannel in c.analog_channels:
-            device = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==analogChannel.id).one()
-            fault_inputs = session.query(models.FaultInput).\
-                filter(models.FaultInput.device_id==device.id)
-            for fi in fault_inputs:
-              flt = session.query(models.Fault).filter(models.Fault.id ==fi.fault_id).one()
-              faults.append(flt)
+      args.analog_devices_template.seek(0)
 
-      if len(faults) > 0:
-        f = open(dirName + fileName, 'w')
-        generateFaultsEDL(f, args.faults_template,
-                          faults, mpsName)
-        
-        args.faults_template.seek(0)
+if (args.faults_template):
+  # Generate one edl file per link node
+  file_name = 'faults.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/' + ln.get_name() + '/'
+
+    faults = []
+    for c in ln.crate.cards:
+      if len(c.digital_channels) > 0:
+        # Digital Faults
+        for digitalChannel in c.digital_channels:
+          device = session.query(models.DigitalDevice).\
+              filter(models.DigitalDevice.id==digitalChannel.device_input.digital_device_id).one()
+          fault_inputs = session.query(models.FaultInput).\
+              filter(models.FaultInput.device_id==device.id)
+          for fi in fault_inputs:
+            flt = session.query(models.Fault).filter(models.Fault.id ==fi.fault_id).one()
+            faults.append(flt)
+
+        # Analog Faults
+      if len(c.analog_channels) > 0:
+        for analogChannel in c.analog_channels:
+          device = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==analogChannel.id).one()
+          fault_inputs = session.query(models.FaultInput).\
+              filter(models.FaultInput.device_id==device.id)
+          for fi in fault_inputs:
+            flt = session.query(models.Fault).filter(models.Fault.id ==fi.fault_id).one()
+            faults.append(flt)
+
+    if len(faults) > 0:
+      f = open(dir_name + file_name, 'w')
+      generateFaultsEDL(f, args.faults_template,
+                        faults, mps_name)
+
+      args.faults_template.seek(0)
     
 
-if (args.bypass_digital_edl and args.bypass_digital_template):
-  if linkNodes == None:
-    generateBypassEDL(args.bypass_digital_edl, args.bypass_digital_template,
-                      session.query(models.DeviceInput).all(), mpsName)
-  else:
-    # Generate one edl file per link node
-    fileName = args.bypass_digital_edl.name.split('/')[len(args.bypass_digital_edl.name.split('/'))-1]
-    for ln in linkNodes:
-      dirName = args.link_nodes + '/' + ln.get_name() + '/'
+if (args.bypass_digital_template):
+  # Generate one edl file per link node
+  file_name = 'bypass_digital.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/' + ln.get_name() + '/'
 
-      deviceInputs = []
-      for c in ln.crate.cards:
-        if len(c.digital_channels) > 0:
-          for dc in c.digital_channels:
-            deviceInputs.append(dc.device_input)
+    device_inputs = []
+    for c in ln.crate.cards:
+      if len(c.digital_channels) > 0:
+        for dc in c.digital_channels:
+          device_inputs.append(dc.device_input)
 
-      if len(deviceInputs) > 0:
-        f = open(dirName + fileName, 'w')
-        generateBypassEDL(f, args.bypass_digital_template,
-                          deviceInputs, mpsName)
-        
-        args.bypass_digital_template.seek(0)
+    if len(device_inputs) > 0:
+      f = open(dir_name + file_name, 'w')
+      generate_bypass_EDL(f, args.bypass_digital_template,
+                          device_inputs, mps_name)
 
-if (args.bypass_analog_edl and args.bypass_analog_template):
-  if linkNodes == None:
-    generateAnalogBypassEDL(args.bypass_analog_edl, args.bypass_analog_template,
-                            session.query(models.AnalogDevice).all(), mpsName)
-  else:
-    # Generate one edl file per link node
-    fileName = args.bypass_analog_edl.name.split('/')[len(args.bypass_analog_edl.name.split('/'))-1]
-    for ln in linkNodes:
-      dirName = args.link_nodes + '/' + ln.get_name() + '/'
+      args.bypass_digital_template.seek(0)
 
-      analogDevices = []
-      for c in ln.crate.cards:
-        if len(c.analog_channels) > 0:
-          for ac in c.analog_channels:
-            ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
-            analogDevices.append(ad)
+if (args.bypass_analog_template):
+  # Generate one edl file per link node
+  file_name = 'bypass_analog.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/' + ln.get_name() + '/'
 
-      if len(analogDevices) > 0:
-        f = open(dirName + fileName, 'w')
-        generateAnalogBypassEDL(f, args.bypass_analog_template,
-                                analogDevices, mpsName)
-        
-        args.bypass_analog_template.seek(0)
+    analog_devices = []
+    for c in ln.crate.cards:
+      if len(c.analog_channels) > 0:
+        for ac in c.analog_channels:
+          ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
+          analog_devices.append(ad)
 
+    if len(analog_devices) > 0:
+      f = open(dir_name + file_name, 'w')
+      generate_analog_bypass_EDL(f, args.bypass_analog_template,
+                                 analog_devices, mps_name)
+
+      args.bypass_analog_template.seek(0)
+
+if (args.link_node_template):
+  file_name = 'link_node.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/' + ln.get_name() + '/'
+    f = open(dir_name + file_name, 'w')
+    generate_link_node_EDL(f, args.link_node_template, session, ln, mps_name, mps_app_reader, verbose)
+#    mps_app_reader.pretty_print()
+
+  args.link_node_template.seek(0)
 
 session.close()
 

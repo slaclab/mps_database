@@ -1,0 +1,102 @@
+#import math
+#set $BUTTON_LABEL=$link_node.get_name()
+#set $CH_NAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $P_CH=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $LN_BASE=$link_node.get_pv_base()+":1"
+#set $LN_MACROS="P="+$LN_BASE
+#set $SLOT_NAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $SLOT_PVNAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $SLOT_FILE_NAME=["mps_bpm_app_hps", "mps_bpm_app_hps", "mps_bpm_app_hps", "mps_bpm_app_hps", "mps_bpm_app_hps", "mps_bpm_app_hps"]
+#set link_node_name=$link_node.get_name()
+
+#for $app in $app_reader.analog_apps
+#if $app['link_node_name'] == $link_node_name
+#if $app['slot_number'] == 2
+#for $device in $app['devices']
+#set $index=$device['channel_index']
+#set $CH_NAME[$device['channel_index']]=$device['device_name']
+#set $P_CH[$device['channel_index']]=$device['prefix']
+#end for
+#end if
+#end if
+#end for
+
+## Set macros for analog channels
+#for $i in range(0,6)
+#set $LN_MACROS=$LN_MACROS+",CH"+str($i)+"_NAME="+$CH_NAME[$i]
+#set $LN_MACROS=$LN_MACROS+",P_CH"+str($i)+"="+$P_CH[$i]
+#end for
+
+## Set file name for slot buttons according to the application type
+#for $i in range(2,8)
+#if $i in $app_reader.link_nodes[link_node_name]['slots']
+#set $SLOT_NAME[$i-2]=$app_reader.link_nodes[link_node_name]['slots'][$i]['pv_base']
+#set $SLOT_PVNAME[$i-2]=$app_reader.link_nodes[link_node_name]['slots'][$i]['pv_base']
+#if $app_reader.link_nodes[link_node_name]['slots'][$i]=="Analog Card"
+#set $SLOT_FILE_NAME[$i-2]='mps_bcm_app_hps'
+#end if
+#end if
+#end for
+
+## Set macros for application cards (slots 2 through 7)
+#for $i in range(2,8)
+#set $LN_MACROS=$LN_MACROS+",SLOT"+str($i)+"_NAME="+$SLOT_NAME[$i-2]
+#set $LN_MACROS=$LN_MACROS+",SLOT"+str($i)+"_FILE_NAME="+$SLOT_FILE_NAME[$i-2]
+#set $LN_MACROS=$LN_MACROS+",P_SLOT"+str($i)+"="+$SLOT_PVNAME[$i-2]
+#end for
+
+# === EDM STARTS HERE ===
+
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 117
+y 415
+w 160
+h 37
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 7
+textColor index 14
+ctlFgColor1 index 16
+ctlFgColor2 index 14
+ctlBgColor1 index 4
+ctlBgColor2 index 12
+topShadowColor index 1
+botShadowColor index 11
+title "MPS Link Node"
+showGrid
+snapToGrid
+gridSize 8
+endScreenProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 8
+y 8
+w 144
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "$BUTTON_LABEL..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "mps_linknode.edl"
+}
+symbols {
+  0 "$LN_MACROS"
+}
+endObjectProperties
+
