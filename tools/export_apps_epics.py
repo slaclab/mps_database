@@ -97,12 +97,12 @@ class MpsAppExporter(MpsAppReader):
                 print("Application prefix : {}".format(app_prefix))
 
             if (app["link_node_name"] in self.link_nodes):
-                if (self.link_nodes[app["link_node_name"]] == 'Digital' or 
-                    self.link_nodes[app["link_node_name"]] == 'Mixed'):
+                if (self.link_nodes[app["link_node_name"]]['type'] == 'Digital' or 
+                    self.link_nodes[app["link_node_name"]]['type'] == 'Mixed'):
                     self.__write_mps_db(path=app_path, macros={"P":app_prefix,
                                                                "MPS_LINK_NODE_SIOC":app["link_node_name"],
                                                                "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]],
+                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]]['type'],
                                                                "MPS_CONFIG_VERSION":self.config_version})
 #                    print('> mps.template for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
@@ -190,13 +190,13 @@ class MpsAppExporter(MpsAppReader):
                 print("Application prefix : {}".format(app_prefix))
 
             if (app["link_node_name"] in self.link_nodes):
-                if (self.link_nodes[app["link_node_name"]] == 'Analog'):
+                if (self.link_nodes[app["link_node_name"]]['type'] == 'Analog'):
                     self.__write_mps_db(path=app_path, macros={"P":app_prefix,
                                                                "MPS_LINK_NODE_SIOC":app["link_node_name"],
                                                                "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]],
+                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]]['type'],
                                                                "MPS_CONFIG_VERSION":self.config_version})
-                elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
+                elif (self.link_nodes[app["link_node_name"]]['type'] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
 #                else:
