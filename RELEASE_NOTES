@@ -11,6 +11,12 @@
 mps_database:
   * Moved Link Node database substitution files from the l2MpsLN
     app into the database for automatic generation.
+  * Added logic to the link_node.tmpl cheetah file that extracts
+    information from the dictonary loaded from the database by
+    the MpsAppReader. The export_edl.py generates a link_node.edl
+    file for each sioc in the generated display/link_node/<sioc>
+    areas. The panels loaded by the generated display are in 
+    the l2MpsLN/srcDisplay.
 
 mps_database-R1-3-0:
   * Modified the device.position field - it is now a string because

@@ -96,13 +96,19 @@ class MpsAppExporter(MpsAppReader):
                 print("Application path   : {}".format(app_path))
                 print("Application prefix : {}".format(app_prefix))
 
+            
+            if self.link_nodes[app["link_node_name"]]['type'] == 'Digital':
+                type_number = "0"
+            elif self.link_nodes[app["link_node_name"]]['type'] == 'Mixed':
+                type_number = "2"
+
             if (app["link_node_name"] in self.link_nodes):
                 if (self.link_nodes[app["link_node_name"]]['type'] == 'Digital' or 
                     self.link_nodes[app["link_node_name"]]['type'] == 'Mixed'):
                     self.__write_mps_db(path=app_path, macros={"P":app_prefix,
                                                                "MPS_LINK_NODE_SIOC":app["link_node_name"],
                                                                "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]]['type'],
+                                                               "MPS_LINK_NODE_TYPE":type_number,
                                                                "MPS_CONFIG_VERSION":self.config_version})
 #                    print('> mps.template for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
@@ -194,7 +200,7 @@ class MpsAppExporter(MpsAppReader):
                     self.__write_mps_db(path=app_path, macros={"P":app_prefix,
                                                                "MPS_LINK_NODE_SIOC":app["link_node_name"],
                                                                "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                               "MPS_LINK_NODE_TYPE":self.link_nodes[app["link_node_name"]]['type'],
+                                                               "MPS_LINK_NODE_TYPE":"1",
                                                                "MPS_CONFIG_VERSION":self.config_version})
                 elif (self.link_nodes[app["link_node_name"]]['type'] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
@@ -246,13 +252,13 @@ class MpsAppExporter(MpsAppReader):
                     self.__write_mps_analog_channels_cmd(path=app_path, macros=macros)
 
                     macros = { "P": app_prefix,
-                               "CH":str(device["channel_number"]),
+                               "CH":str(device["channel_index"]),
                                "CH_NAME":device["device_name"],
                                "CH_PVNAME":device_prefix,
                                "CH_SPARE":"0"
                                }
                     self.__write_link_node_channel_info_db(path=app_path, macros=macros)
-                    spare_channels[device["channel_number"]] = -1
+                    spare_channels[device["channel_index"]] = -1
 
                     for fault in device["faults"].values():
                         macros = {  "P":device_prefix,
@@ -295,10 +301,11 @@ class MpsAppExporter(MpsAppReader):
 #                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME)")
 
 
-        for app in self.analog_apps and self.digital_apps:
+        for app in self.analog_apps + self.digital_apps:
             app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             link_node_info=self.link_nodes[app["link_node_name"]]
             if not 'exported' in link_node_info:
+                print("INFO: slot information for {}".format(app["link_node_name"]))
                 for slot in range(2,8):
                     if slot in link_node_info['slots']:
                         macros = { "P": app["app_prefix"],
@@ -314,9 +321,24 @@ class MpsAppExporter(MpsAppReader):
                                    "SLOT_SPARE": "1"}
 
                     self.__write_link_node_slot_info_db(path=app_path, macros=macros)
+
+                # Add CH_* PVs for digital-only link nodes. These are added before 
+                # only if the LN is Mixed or Analog
+                if link_node_info['type'] == 'Digital':
+                    for ch in spare_channels:
+                        macros = { "P": app["app_prefix"],
+                                   "CH":str(ch),
+                                   "CH_NAME":"Not Available",
+                                   "CH_PVNAME":"None",
+                                   "CH_SPARE":"1"
+                                   }
+                        self.__write_link_node_channel_info_db(path=app_path, macros=macros)
+
                 link_node_info['exported']=True
             else:
                 print("already added slot info to {}".format(app['link_node_name']))
+
+
 
         if (self.verbose):
             print("--------------------------")
@@ -349,7 +371,7 @@ class MpsAppExporter(MpsAppReader):
 
     def __write_analog_db(self, path, macros):
         """
-        Write the records for analog inputs to the application EPICS database file.
+        Write the records for analog inputs to the application EPIC database file.
 
         These records will be loaded once per each device.
         """
@@ -556,6 +578,7 @@ def main(db_file, dest_path, template_path=None, app_id=None, verbose=False):
 
     # Generate the Mps application reader object
     mps_app_reader = MpsAppExporter(db_file, template_path, dest_path, app_id, verbose)
+#    mps_app_reader.pretty_print()
 
     # Print a report of the found applications
     mps_app_reader.print_app_data()

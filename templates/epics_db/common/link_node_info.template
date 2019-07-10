@@ -3,9 +3,16 @@ record(stringin, "$(P):CONFIG_VERSION") {
   field(VAL, "$(MPS_CONFIG_VERSION)")
 }
 
-record(stringin, "$(P):LN_TYPE") {
-  field(DESC, "MPS Link Node Type")
-  field(VAL, "$(MPS_LINK_NODE_TYPE)")
+record(mbbi, "$(P):LN_TYPE") {
+    field(DESC, "MPS Link Node Type")
+    field(NOBT, "2")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(VAL, "$(MPS_LINK_NODE_TYPE)")
+    field(ZRST, "Digital")
+    field(ONST, "Analog")
+    field(TWST, "Mixed")
 }
 
 record(longin, "$(P):LN_ID") {

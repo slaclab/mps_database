@@ -239,30 +239,30 @@ file "common/RegCmd_YCPSWASYN.template" { pattern
 #======================================
 file "common/RegRW_YCPSWASYN.template" { pattern
 { R,                DESC,                                       SCAN,       EGU,        PARAM                       }
-{ ANA_INTCNT_0,     "Integration count (channel 0)",            "1 second", "counts",   ANACORE_IntegrationCount_0  }
-{ ANA_INTCNT_1,     "Integration count (channel 1)",            "1 second", "counts",   ANACORE_IntegrationCount_1  }
-{ ANA_INTCNT_2,     "Integration count (channel 2)",            "1 second", "counts",   ANACORE_IntegrationCount_2  }
-{ ANA_INTCNT_3,     "Integration count (channel 3)",            "1 second", "counts",   ANACORE_IntegrationCount_3  }
-{ ANA_INTCNT_4,     "Integration count (channel 4)",            "1 second", "counts",   ANACORE_IntegrationCount_4  }
-{ ANA_INTCNT_5,     "Integration count (channel 5)",            "1 second", "counts",   ANACORE_IntegrationCount_5  }
-{ ANA_INTCNT_6,     "Integration count (channel 6)",            "1 second", "counts",   ANACORE_IntegrationCount_6  }
-{ ANA_INTCNT_7,     "Integration count (channel 7)",            "1 second", "counts",   ANACORE_IntegrationCount_7  }
-{ ANA_INTCNT_8,     "Integration count (channel 8)",            "1 second", "counts",   ANACORE_IntegrationCount_8  }
-{ ANA_INTCNT_9,     "Integration count (channel 9)",            "1 second", "counts",   ANACORE_IntegrationCount_9  }
-{ ANA_INTCNT_10,    "Integration count (channel 10)",           "1 second", "counts",   ANACORE_IntegrationCount_10 }
-{ ANA_INTCNT_11,    "Integration count (channel 11)",           "1 second", "counts",   ANACORE_IntegrationCount_11 }
-{ ANA_INTCNT_12,    "Integration count (channel 12)",           "1 second", "counts",   ANACORE_IntegrationCount_12 }
-{ ANA_INTCNT_13,    "Integration count (channel 13)",           "1 second", "counts",   ANACORE_IntegrationCount_13 }
-{ ANA_INTCNT_14,    "Integration count (channel 14)",           "1 second", "counts",   ANACORE_IntegrationCount_14 }
-{ ANA_INTCNT_15,    "Integration count (channel 15)",           "1 second", "counts",   ANACORE_IntegrationCount_15 }
-{ ANA_INTCNT_16,    "Integration count (channel 16)",           "1 second", "counts",   ANACORE_IntegrationCount_16 }
-{ ANA_INTCNT_17,    "Integration count (channel 17)",           "1 second", "counts",   ANACORE_IntegrationCount_17 }
-{ ANA_INTCNT_18,    "Integration count (channel 18)",           "1 second", "counts",   ANACORE_IntegrationCount_18 }
-{ ANA_INTCNT_19,    "Integration count (channel 19)",           "1 second", "counts",   ANACORE_IntegrationCount_19 }
-{ ANA_INTCNT_20,    "Integration count (channel 20)",           "1 second", "counts",   ANACORE_IntegrationCount_20 }
-{ ANA_INTCNT_21,    "Integration count (channel 21)",           "1 second", "counts",   ANACORE_IntegrationCount_21 }
-{ ANA_INTCNT_22,    "Integration count (channel 22)",           "1 second", "counts",   ANACORE_IntegrationCount_22 }
-{ ANA_INTCNT_23,    "Integration count (channel 23)",           "1 second", "counts",   ANACORE_IntegrationCount_23 }
+{ ANA_INTCNT_0_0,     "Integration count (channel 0 I0)",            "1 second", "counts",   ANACORE_IntegrationCount_0  }
+{ ANA_INTCNT_0_1,     "Integration count (channel 0 I1)",            "1 second", "counts",   ANACORE_IntegrationCount_1  }
+{ ANA_INTCNT_0_2,     "Integration count (channel 0 I2)",            "1 second", "counts",   ANACORE_IntegrationCount_2  }
+{ ANA_INTCNT_0_3,     "Integration count (channel 0 I3)",            "1 second", "counts",   ANACORE_IntegrationCount_3  }
+{ ANA_INTCNT_1_0,     "Integration count (channel 1 I0)",            "1 second", "counts",   ANACORE_IntegrationCount_4  }
+{ ANA_INTCNT_1_1,     "Integration count (channel 1 I1)",            "1 second", "counts",   ANACORE_IntegrationCount_5  }
+{ ANA_INTCNT_1_2,     "Integration count (channel 1 I2)",            "1 second", "counts",   ANACORE_IntegrationCount_6  }
+{ ANA_INTCNT_1_3,     "Integration count (channel 1 I3)",            "1 second", "counts",   ANACORE_IntegrationCount_7  }
+{ ANA_INTCNT_2_0,     "Integration count (channel 2 I0)",            "1 second", "counts",   ANACORE_IntegrationCount_8  }
+{ ANA_INTCNT_2_1,     "Integration count (channel 2 I1)",            "1 second", "counts",   ANACORE_IntegrationCount_9  }
+{ ANA_INTCNT_2_2,    "Integration count (channel 2 I2)",           "1 second", "counts",   ANACORE_IntegrationCount_10 }
+{ ANA_INTCNT_2_3,    "Integration count (channel 2 I3)",           "1 second", "counts",   ANACORE_IntegrationCount_11 }
+{ ANA_INTCNT_3_0,    "Integration count (channel 3 I0)",           "1 second", "counts",   ANACORE_IntegrationCount_12 }
+{ ANA_INTCNT_3_1,    "Integration count (channel 3 I1)",           "1 second", "counts",   ANACORE_IntegrationCount_13 }
+{ ANA_INTCNT_3_2,    "Integration count (channel 3 I2)",           "1 second", "counts",   ANACORE_IntegrationCount_14 }
+{ ANA_INTCNT_3_3,    "Integration count (channel 3 I3)",           "1 second", "counts",   ANACORE_IntegrationCount_15 }
+{ ANA_INTCNT_4_0,    "Integration count (channel 4 I0)",           "1 second", "counts",   ANACORE_IntegrationCount_16 }
+{ ANA_INTCNT_4_1,    "Integration count (channel 4 I1)",           "1 second", "counts",   ANACORE_IntegrationCount_17 }
+{ ANA_INTCNT_4_2,    "Integration count (channel 4 I2)",           "1 second", "counts",   ANACORE_IntegrationCount_18 }
+{ ANA_INTCNT_4_3,    "Integration count (channel 4 I3)",           "1 second", "counts",   ANACORE_IntegrationCount_19 }
+{ ANA_INTCNT_5_0,    "Integration count (channel 5 I0)",           "1 second", "counts",   ANACORE_IntegrationCount_20 }
+{ ANA_INTCNT_5_1,    "Integration count (channel 5 I1)",           "1 second", "counts",   ANACORE_IntegrationCount_21 }
+{ ANA_INTCNT_5_2,    "Integration count (channel 5 I2)",           "1 second", "counts",   ANACORE_IntegrationCount_22 }
+{ ANA_INTCNT_5_3,    "Integration count (channel 5 I3)",           "1 second", "counts",   ANACORE_IntegrationCount_23 }
 { ANA_PROCSEL_0,    "Processing Selection (channel 0)",         "1 second", "",         ANACORE_ProcessingSelect_0  }
 { ANA_PROCSEL_1,    "Processing Selection (channel 1)",         "1 second", "",         ANACORE_ProcessingSelect_1  }
 { ANA_PROCSEL_2,    "Processing Selection (channel 2)",         "1 second", "",         ANACORE_ProcessingSelect_2  }

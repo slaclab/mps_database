@@ -310,7 +310,7 @@ def generate_link_node_EDL(edl_file, template_file, session, link_node, mps_name
   data=template_file.read()
 
   if verbose:
-    print mps_app_reader.link_nodes[link_node.get_name()]
+    print("{} information: {}".format(link_node.get_name(), mps_app_reader.link_nodes[link_node.get_name()]))
 
   try:
     app_cards = session.query(models.ApplicationCard).\
@@ -320,32 +320,13 @@ def generate_link_node_EDL(edl_file, template_file, session, link_node, mps_name
     print('ERROR')
     return
 
-  ln_app_card = filter (lambda x : x.slot_number == 2 and x.amc == 1, app_cards)
-  if not ln_app_card:
-    if len(app_cards) != 1:
-      print('ERROR: There must be only one app card for link node {}. Found {}.'.\
-              format(link_node.get_name(), len(app_cards)))
-      for a in app_cards:
-        print('Slot {}: {}'.format(a.slot_number, a.name))
-      return
-    ln_app = "None"
-  else:
-    app_cards = filter (lambda x : x.slot_number != 2, app_cards)
-    ln_app = ln_app_card[0].name
-
-  apps = {}
-  for a in app_cards:
-    if (a.slot_number != 2):
-      apps['S{}'.format(a.slot_number)] = a.name
-  
-
-  macros={'APPS': apps,
-          'LN_APP':ln_app,
-          'link_node':link_node,
-          'app_reader':mps_app_reader,
-          'template_dir':os.path.dirname(template_file.name)
-          }
+  macros={
+    'link_node':link_node,
+    'app_reader':mps_app_reader,
+    'template_dir':os.path.dirname(template_file.name)
+    }
  
+  # The logic to setup the edl panel is in the template cheetah file
   t = Template(data, searchList=[macros])
   edl_file.write("%s" % t)
   edl_file.close()
@@ -543,7 +524,7 @@ if (args.link_node_template):
     dir_name = args.link_nodes + '/' + ln.get_name() + '/'
     f = open(dir_name + file_name, 'w')
     generate_link_node_EDL(f, args.link_node_template, session, ln, mps_name, mps_app_reader, verbose)
-#    mps_app_reader.pretty_print()
+    mps_app_reader.pretty_print()
 
   args.link_node_template.seek(0)
 

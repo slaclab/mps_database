@@ -220,7 +220,9 @@ class MpsAppReader:
                 app_data["analog_link_node"] = False
                 if (app_card.link_node.slot_number != 2 and app_card.name == "Generic ADC"):
                     app_data["analog_link_node"] = True # Non-slot 2 link node
+                    self.link_nodes[ln_name]['analog_slot'] = app_card.link_node.slot_number
                 elif (app_card.link_node.slot_number == 2):
+                    self.link_nodes[ln_name]['analog_slot'] = 2
                     has_digital = False
                     for c in app_card.link_node.cards:
                         if (c.name == "Digital Card" or c.name == "Generic ADC" and c.id != app_card.id):
