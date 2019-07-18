@@ -1,5 +1,5 @@
 #import math
-
+#
 #set $BUTTON_LABEL=$link_node.get_name()
 #set $ALARM_PVNAME=$link_node.get_pv_base()+":STATSUMY"
 #set $LN_BASE=$link_node.get_pv_base()+":1"
@@ -12,7 +12,7 @@
 ## SLOT Related Macros
 #set $SLOT_NAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
 #set $SLOT_PVNAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
-#set $SLOT_FILE_NAME=["mps_gadc_app_hps", "mps_gadc_app_hps", "mps_gadc_app_hps", "mps_gadc_app_hps", "mps_gadc_app_hps", "mps_gadc_app_hps"]
+#set $SLOT_FILE_NAME=["mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps"]
 #set link_node_name=$link_node.get_name()
 #
 ## Prefix for devices connected to non-Link Node slots (slot 3 through 7)
@@ -73,10 +73,10 @@
 #set $SLOT_NAME[$i-2]=$app_reader.link_nodes[link_node_name]['slots'][$i]['pv_base']
 #set $SLOT_PVNAME[$i-2]=$app_reader.link_nodes[link_node_name]['slots'][$i]['pv_base']
 #if $app_reader.link_nodes[link_node_name]['slots'][$i]['type']=="Analog Card"
-#set $SLOT_FILE_NAME[$i-2]='mps_bcm_app_hps'
+#set $SLOT_FILE_NAME[$i-2]='mps_linknode_bcm_app_hps'
 #end if
 #if $app_reader.link_nodes[link_node_name]['slots'][$i]['type']=="BPM Card"
-#set $SLOT_FILE_NAME[$i-2]='mps_bpm_app_hps'
+#set $SLOT_FILE_NAME[$i-2]='mps_linknode_bpm_app_hps'
 #end if
 #end if
 #end for
@@ -163,7 +163,7 @@ buttonLabel "$BUTTON_LABEL..."
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "mps_linknode.edl"
+  0 "mps_linknode_hps.edl"
 }
 symbols {
   0 "$LN_MACROS"

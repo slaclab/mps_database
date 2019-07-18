@@ -310,7 +310,8 @@ def generate_link_node_EDL(edl_file, template_file, session, link_node, mps_name
   data=template_file.read()
 
   if verbose:
-    print("{} information: {}".format(link_node.get_name(), mps_app_reader.link_nodes[link_node.get_name()]))
+    print("Generating screens for {} ({})".format(link_node.get_name(), link_node.get_type()))
+#    print("{} information: {}".format(link_node.get_name(), mps_app_reader.link_nodes[link_node.get_name()]))
 
   try:
     app_cards = session.query(models.ApplicationCard).\
@@ -524,9 +525,8 @@ if (args.link_node_template):
     dir_name = args.link_nodes + '/' + ln.get_name() + '/'
     f = open(dir_name + file_name, 'w')
     generate_link_node_EDL(f, args.link_node_template, session, ln, mps_name, mps_app_reader, verbose)
-    mps_app_reader.pretty_print()
-
-  args.link_node_template.seek(0)
+    args.link_node_template.seek(0)
+#    mps_app_reader.pretty_print()
 
 session.close()
 

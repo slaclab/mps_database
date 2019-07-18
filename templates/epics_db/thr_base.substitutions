@@ -27,8 +27,8 @@ file "common/RegRO_L2MPSASYN.template" { pattern
 
 ### Tables enable PVs ###
 file "common/Reg1BitRW_L2MPSASYN.template" { pattern
-{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM,      ZSV,       ASG     }
-{ $(FAULT)_IDL_EN,  "IDLE table enabled",       $(APP)_IDLEEN_$(FAULT_INDEX),   "$(BAY)",   "Disabled", "Enabled", "NO_ALARM", "MCC"   }
+{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM,      ZSV,        RBV_ZSV,    ASG  , DISV, SDIS}
+{ $(FAULT)_IDL_EN,  "IDLE table enabled",       $(APP)_IDLEEN_$(FAULT_INDEX),   "$(BAY)",   "Disabled", "Enabled", "NO_ALARM", "NO_ALARM", "MCC", 1   , ""}
 }
 
 file "common/Reg1BitRO_L2MPSASYN.template" { pattern

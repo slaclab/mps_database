@@ -67,11 +67,14 @@ class DatabaseImporter:
 
         locations=[crate_info['ln_location']]
         slots=[crate_info['ln_slot']]
+        lcls1_ids=[crate_info['lcls1_id']]
 
         if (';' in crate_info['ln_location'] and
-            ';' in crate_info['ln_slot']):
+            ';' in crate_info['ln_slot'] and
+            ';' in crate_info['lcls1_id']):
           locations=crate_info['ln_location'].split(';')
           slots=crate_info['ln_slot'].split(';')
+          lcls1_ids=crate_info['lcls1_id'].split(';')
 
         crate = models.Crate(crate_id=crate_info['crate_id'],
                              num_slots=crate_info['num_slots'],
@@ -84,17 +87,15 @@ class DatabaseImporter:
 
         self.session.add(crate)
 
-        for l,s in zip(locations,slots):
+        for l,s,i in zip(locations,slots,lcls1_ids):
           lcls1_id = 0
-          if (s == '2'):
-            lcls1_id = crate_info['lcls1_id']
 
           ln = models.LinkNode(area=crate_info['ln_area'], location=l,
                                cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
                                group=crate_info['group'], group_link=crate_info['group_link'],
                                group_link_destination=crate_info['group_link_destination'],
                                group_drawing=crate_info['network_drawing'],
-                               slot_number=s, lcls1_id=lcls1_id, crate=crate)
+                               slot_number=s, lcls1_id=i, crate=crate)
 
           if (s == '2'):
             slot2_ln = ln
@@ -1209,6 +1210,7 @@ class DatabaseImporter:
 
   # Removes crates/link nodes if import is for LCLS-I only
   def cleanup(self):
+    self.session.commit()
     if (self.lcls1_only):
       crates = self.session.query(models.Crate).all()
       for c in crates:
@@ -1299,15 +1301,16 @@ if (True):
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
-#  importer.add_digital_device('import/BEND_DCCT_STATUS')
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
-  importer.add_digital_device('import/WIRE_PARK')
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
   importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/XTES')
+
+#  importer.add_digital_device('import/WIRE_PARK') DEPRECATED
+#  importer.add_digital_device('import/BEND_DCCT_STATUS') DEPRECATED
 
 importer.cleanup()
 

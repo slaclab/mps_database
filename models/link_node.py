@@ -54,12 +54,12 @@ class LinkNode(Base):
     print('> GroupLink: {0}'.format(self.group_link))
     print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
     print('> GroupDrawing: {0}'.format(self.group_drawing))
-    print('> LinkNodeType: {}'.format(self.get_type()))
+    print('> LinkNodeType: {}'.format(self.get_ln_type()))
     if (self.ln_type == 1 or self.ln_type == 3):
       print('> LinkNodeType: {}'.format(self.get_type()))
       print('> LinkNodeId: {}'.format(self.lcls1_id))
 
-  def get_type(self):
+  def get_ln_type(self):
     if (self.ln_type == 1):
       return 'LCLS-I only'
     elif (self.ln_type == 2):
@@ -68,6 +68,42 @@ class LinkNode(Base):
       return 'LCLS-I and LCLS-II'
     else:
       return 'Invalid type {}'.format(self.ln_type)
+
+  def get_type(self):
+    """
+    Return the link node type based on the application cards defined.
+    If link node has digital inputs only its type is 'Digital'
+    Only analog inputs -> 'Analog'
+    Both types of inputs -> 'Mixed'
+    """
+    has_digital = False
+    has_analog = False
+    is_slot2 = False
+    for c in self.cards:
+      if c.slot_number == 2:
+        is_slot2 = True
+        if c.type.name == 'Digital Card':
+          has_digital = True
+        elif c.type.name == 'Generic ADC':
+          has_analog = True
+
+    if not is_slot2:
+      for c in self.cards:
+        if c.slot_number == 2:
+          is_slot2 = True
+          if c.type.name == 'Digital Card':
+            has_digital = True
+          elif c.type.name == 'Generic ADC':
+            has_analog = True
+
+    if has_digital and has_analog:
+      return 'Mixed'
+    elif has_digital:
+      return 'Digital'
+    elif has_analog:
+      return 'Analog'
+    else:
+      return 'Analog'
 
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()

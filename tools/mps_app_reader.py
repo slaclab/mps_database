@@ -160,7 +160,7 @@ class MpsAppReader:
             for ln in link_nodes:
                 name = ln.get_name()
                 self.link_nodes[name] = {}
-                self.link_nodes[name]['type'] = 'Unknown'
+                self.link_nodes[name]['type'] = ln.get_type() # 'Analog', 'Digital' or 'Mixed'
                 self.link_nodes[name]['slots'] = {}
 
         # Check if there were applications defined in the database
@@ -203,13 +203,6 @@ class MpsAppReader:
                 app_data["app_prefix"] = app_card.get_pv_name()
 
                 self.__add_slot_information(mps_db_session, ln_name, app_card)
-
-                if (ln_name in self.link_nodes):
-                    if (self.link_nodes[ln_name]['type'] == 'Unknown' or
-                        self.link_nodes[ln_name]['type'] == 'Analog'):
-                        self.link_nodes[ln_name]['type'] = 'Analog'
-                    else:
-                        self.link_nodes[ln_name]['type'] = 'Mixed'
 
                 # Defines whether the IOC_NAME env var should be added no the mps.env
                 # file. In order to add only once we need to figure out if there are
@@ -312,12 +305,6 @@ class MpsAppReader:
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
-
-                if (ln_name in self.link_nodes):
-                    if (self.link_nodes[ln_name]['type'] == 'Unknown'):
-                        self.link_nodes[ln_name]['type'] = 'Digital'
-                    else:
-                        self.link_nodes[ln_name]['type'] = 'Mixed'
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:

@@ -47,12 +47,13 @@ class RuntimeChecker:
       print 'ERROR: Cannot find device "{0}"'.format(name)
       return None
 
-  def get_thresholds(self, device):
+  def get_thresholds(self, device, active_only=True):
     """
     Return a list of all possible thresholds for the specified device, including
     the value/active from the database. This is the format:
     [{
     'pv': pyepics_pv for the threshold PV
+    'pv_enable': pyepics_pv for the threshold enable PV
     'db_table': threshold table name in the runtime database
     'integrator': from the array self.integrators
     'threshold_type': from the array self.threshold_type ('l' or 'h')
@@ -80,8 +81,8 @@ class RuntimeChecker:
           pv_name = self.mps_names.getThresholdPv(self.mps_names.getAnalogDeviceNameFromId(device.id),
                                                   self.threshold_tables_pv[t_index], self.threshold_index[t_index],
                                                   integrator, t_type, is_bpm)
+          pv_name_enable = pv_name + '_EN'
           if (pv_name):
-            threshold_item['pv'] = PV(pv_name)
             threshold_item['db_table'] = t_table
             threshold_item['integrator'] = integrator
             threshold_item['threshold_type'] = t_type
@@ -89,7 +90,17 @@ class RuntimeChecker:
                                                       format(integrator, t_type)))
             threshold_item['value'] = float(getattr(getattr(rt_d, threshold_item['db_table']), '{0}_{1}'.\
                                                       format(integrator, t_type)))
-
+            if (active_only):
+              if (threshold_item['active']):
+                threshold_item['pv'] = PV(pv_name)
+                threshold_item['pv_enable'] = PV(pv_name_enable)
+              else:
+                threshold_item['pv'] = None
+                threshold_item['pv_enable'] = None
+            else:
+              threshold_item['pv'] = PV(pv_name)
+              threshold_item['pv_enable'] = PV(pv_name_enable)
+              
             threshold_list.append(threshold_item)
 
     return threshold_list

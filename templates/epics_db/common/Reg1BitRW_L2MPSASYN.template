@@ -8,6 +8,8 @@ record(bo, "$(P):$(R)") {
     field(ONAM, "$(ONAM)")
     field(ASG,  "$(ASG)")
     field(ZSV,  "$(ZSV)")
+    field(DISV, "$(DISV)")
+    field(SDIS, "$(SDIS)")
 }
 
 record(bi, "$(P):$(R)_RBV") {
@@ -19,4 +21,5 @@ record(bi, "$(P):$(R)_RBV") {
     field(ZNAM, "$(ZNAM)")
     field(ONAM, "$(ONAM)")
     field(ASG,  "$(ASG)")
+    field(ZSV,  "$(RBV_ZSV)")
 }

@@ -81,9 +81,9 @@ file "common/RegRW_L2MPSASYN.template" { pattern
 }
 
 file "common/Reg1BitRW_L2MPSASYN.template" { pattern
-{ R,                DESC,                                       PARAM,          ADDR,   ZNAM,       ONAM,       ZSV,        ASG   }
-{ MPS_EN,           "MPS Enabled",                              MPS_EN,         "2",    "Disabled", "Enabled",  "MAJOR",    "MCC" }
-{ LC1_MODE,         "LCLS operation mode",                      LCLS1_MODE,     "2",    "Disabled", "Enabled",  "NO_ALARM", "MCC" }
+{ R,                DESC,                                       PARAM,          ADDR,   ZNAM,       ONAM,       ZSV,        RBV_ZSV,     ASG  , DISV, SDIS}
+{ MPS_EN,           "MPS Enabled",                              MPS_EN,         "2",    "Disabled", "Enabled",  "MAJOR",    "MAJOR",    "MCC" , 0   , "$(P):THR_LOADED"}
+{ LC1_MODE,         "LCLS operation mode",                      LCLS1_MODE,     "2",    "Disabled", "Enabled",  "NO_ALARM", "NO_ALARM", "MCC" , 1   , ""}
 }
 
 file "common/RegStringRO_L2MPSASYN.template" { pattern

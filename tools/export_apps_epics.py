@@ -60,12 +60,13 @@ class MpsAppExporter(MpsAppReader):
     defined in the MPS database, necessary to generate EPICS Databases,
     configuration files, and GUI screens.
     """
-    def __init__(self, db_file, template_path, dest_path, app_id, verbose):
+    def __init__(self, db_file, template_path, dest_path, app_id, manager_info, verbose):
         MpsAppReader.__init__(self, db_file=db_file, app_id=app_id, verbose=verbose)
         self.template_path = template_path
         self.dest_path = dest_path
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
-                
+        self.manager_info = manager_info
+
     def generate_epics_db(self):
         """
         Generate the EPICS database and configuration files from the application data obtained by the
@@ -226,6 +227,8 @@ class MpsAppExporter(MpsAppReader):
             self.__write_app_id_env(path=app_path, macros={"APP_TYPE":"MPS_ANA_APP",
                                                            "APP_ID_NAME":"MPS_ANA_APP_ID",
                                                            "APP_ID":str(app["app_id"])})
+            self.__write_mps_manager_env(path=app_path, macros={"MANAGER_HOST": self.manager_info['host'],
+                                                                "MANAGER_PORT": str(self.manager_info['port'])})
 
             spare_channels = range(0,6)
             for device in app["devices"]:
@@ -296,16 +299,11 @@ class MpsAppExporter(MpsAppReader):
                                }
                     self.__write_link_node_channel_info_db(path=app_path, macros=macros)
 
-#                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME_DEFINE)")
-#                    epicsEnvSet("$(BAY_DB_FILE_MACRO)", "$(BAY_DB_FILE)")
-#                    epicsEnvSet("$(BAY_INP_NAME_MACRO)", "$(BAY_INP_NAME)")
-
-
         for app in self.analog_apps + self.digital_apps:
             app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             link_node_info=self.link_nodes[app["link_node_name"]]
             if not 'exported' in link_node_info:
-                print("INFO: slot information for {}".format(app["link_node_name"]))
+#                print("INFO: slot information for {}".format(app["link_node_name"]))
                 for slot in range(2,8):
                     if slot in link_node_info['slots']:
                         macros = { "P": app["app_prefix"],
@@ -335,8 +333,8 @@ class MpsAppExporter(MpsAppReader):
                         self.__write_link_node_channel_info_db(path=app_path, macros=macros)
 
                 link_node_info['exported']=True
-            else:
-                print("already added slot info to {}".format(app['link_node_name']))
+#            else:
+#                print("already added slot info to {}".format(app['link_node_name']))
 
 
 
@@ -462,6 +460,14 @@ class MpsAppExporter(MpsAppReader):
         """
         self.__write_epics_env(path=path, template_name="app_prefix.template", macros=macros)
 
+    def __write_mps_manager_env(self, path, macros):
+        """
+        Write host/port where the MpsManager server is running. This information is needed
+        for all link nodes with analog inputs as well as any other analog app that uses
+        thresholds.
+        """
+        self.__write_epics_env(path=path, template_name="mps_manager.template", macros=macros)
+
     def __write_iocinfo_env(self, path, macros):
         """
         Write the LN IOC related environmental variable file.
@@ -571,13 +577,14 @@ class MpsAppExporter(MpsAppReader):
 ### Main Body ###
 #################
 
-def main(db_file, dest_path, template_path=None, app_id=None, verbose=False):
+def main(db_file, dest_path, template_path=None, app_id=None, 
+         manager_info={'host': 'lcls-daemon2', 'port':1975}, verbose=False):
 
     if (template_path==None):
         template_path='templates/'
 
     # Generate the Mps application reader object
-    mps_app_reader = MpsAppExporter(db_file, template_path, dest_path, app_id, verbose)
+    mps_app_reader = MpsAppExporter(db_file, template_path, dest_path, app_id, manager_info, verbose)
 #    mps_app_reader.pretty_print()
 
     # Print a report of the found applications
@@ -601,6 +608,10 @@ if __name__ == "__main__":
     parser.add_argument('-v', action='store_true', default=False,
                         dest='verbose', help='Verbose output')
     parser.add_argument('--app-id', type=int, help='Generate database only for this app')
+    parser.add_argument('--manager-host', metavar='host', help='Host for MpsManager server (default=lcls-daemon2)',
+                        default='lcls-daemon2')
+    parser.add_argument('--manager-port', metavar='port', help='Port for MpsManager server (default=1975)',
+                        default=1975)
 
     args = parser.parse_args()
 
@@ -629,4 +640,5 @@ if __name__ == "__main__":
             print("EPICS DB template directory '{}' not found.".format(template_path))
             exit(1)
 
-    main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id = app_id, verbose=verbose)
+    main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id=app_id,
+         manager_info={'host':args.manager_host, 'port':args.manager_port}, verbose=verbose)

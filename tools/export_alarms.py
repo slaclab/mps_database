@@ -216,6 +216,7 @@ class MpsAlarmReader:
             ln_pvs = []
         ln_pvs.append('{}:{}:MPS_EN'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
         ln_pvs.append('{}:{}:TIM_LINK_STAT'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
+#        ln_pvs.append('{}:{}:THR_LOADED'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
         return ln_pvs
 
     def check_area(self, area):
@@ -413,7 +414,7 @@ class MpsAlarmReader:
         msi_cmd = 'msi -V -S {} -o {}'.\
             format(substitution_file, template_file)
         os.system(msi_cmd)
-#        os.system('rm -f {}'.format(substitution_file))
+        os.system('rm -f {}'.format(substitution_file))
 
     def concatenate_files(self, output, header, body):
         os.system('mv -f {} {}'.format(header, output))
