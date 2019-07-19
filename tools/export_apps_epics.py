@@ -80,12 +80,12 @@ class MpsAppExporter(MpsAppReader):
         Using the <cpu_name>, <crate_id>, and <slot_number> defined in each application.
 
         """
-        print("==================================================")
-        print("== Generating EPICS DB and configuration files: ==")
-        print("==================================================")
-            
         if (self.verbose):
         # Generate digital application related databases and configuration files
+            print("==================================================")
+            print("== Generating EPICS DB and configuration files: ==")
+            print("==================================================")
+            
             print("----------------------------")
             print("--  Digital applications  --")
             print("----------------------------")
@@ -588,7 +588,8 @@ def main(db_file, dest_path, template_path=None, app_id=None,
 #    mps_app_reader.pretty_print()
 
     # Print a report of the found applications
-    mps_app_reader.print_app_data()
+    if (verbose):
+        mps_app_reader.print_app_data()
 
     # Generated the application output file
     mps_app_reader.generate_epics_db()
@@ -629,7 +630,7 @@ if __name__ == "__main__":
     dest_path = format_path(dest_path)
 
     # Create a new clean output directory in the specified path
-    create_dir(dest_path, clean=clean, debug=True)
+    create_dir(dest_path, clean=clean, debug=False)
 
     # If the template path is specified, check its format and if it exists
     if template_path:

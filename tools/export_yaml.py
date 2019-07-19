@@ -61,5 +61,3 @@ db_info_file.close()
 
 cmd = "cat {0} >> {1}".format(db_info_file_name, args.yaml[0])
 os.system(cmd)
-
-print 'Done.'

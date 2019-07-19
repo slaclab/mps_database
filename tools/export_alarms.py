@@ -62,20 +62,16 @@ class MpsDbReader:
     It is intended to be called in a 'with-as' code block.
     """
     def __init__(self, db_file):
-        print("Creating DB reader object with '{}'".format(db_file))
         self.db_file = db_file
 
     def __enter__(self):
         # Open the MPS database
-        print("Opening MPS Db session")
         self.mps_db = MPSConfig(self.db_file)
 
         # Return a session to the database
         return self.mps_db.session
 
     def __exit__(self, exc_type, exc_value, traceback):
-        print("Closing MPS Db session")
-
         # Close the MPS database
         self.mps_db.session.close()
 
@@ -203,7 +199,6 @@ class MpsAlarmReader:
         self.areas = self.sort_areas()
 
     def sort_areas(self):
-        print self.areas
         sorted_areas = []
         for a in self.areas_in_order:
             if a in self.areas:
@@ -252,9 +247,10 @@ class MpsAlarmReader:
                   |- mps_<AREA>_mpXXX.alhConfig (link node XXX alarms)
 
         """
-        print("==================================================")
-        print("== Generating alarm handler files:              ==")
-        print("==================================================")
+        if (self.verbose):
+            print("==================================================")
+            print("== Generating alarm handler files:              ==")
+            print("==================================================")
         for area in self.areas_in_order:
             if not area in self.alarm_info:
                 continue
@@ -472,7 +468,8 @@ def main(db_file, dest_path, template_path=None, app_id=None, verbose=False):
     mps_alarm_reader = MpsAlarmReader(db_file, template_path, dest_path, app_id, verbose)
 
     # Print a report of the found applications
-    mps_alarm_reader.print_alarm_data()
+    if (verbose):
+        mps_alarm_reader.print_alarm_data()
 
     # Generate the alarm files
     mps_alarm_reader.generate_alarm_files('mps_group.template',
@@ -509,7 +506,7 @@ if __name__ == "__main__":
     dest_path = format_path(dest_path)
 
     # Create a new clean output directory in the specified path
-    create_dir(dest_path, clean=clean, debug=True)
+    create_dir(dest_path, clean=clean, debug=False)
 
     # If the template path is specified, check its format and if it exists
     if template_path:

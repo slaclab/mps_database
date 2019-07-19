@@ -16,20 +16,16 @@ class MpsDbReader:
     It is intended to be called in a 'with-as' code block.
     """
     def __init__(self, db_file):
-        print("Creating DB reader object with '{}'".format(db_file))
         self.db_file = db_file
 
     def __enter__(self):
         # Open the MPS database
-        print("Opening MPS Db session")
         self.mps_db = MPSConfig(self.db_file)
 
         # Return a session to the database
         return self.mps_db.session
 
     def __exit__(self, exc_type, exc_value, traceback):
-        print("Closing MPS Db session")
-
         # Close the MPS database
         self.mps_db.session.close()
 
@@ -375,7 +371,7 @@ class MpsAppReader:
         Print the content of the application data obtained by the extract_apps method.
         """
         print("===================================")
-        print("==            REULTS:            ==")
+        print("==            RESULTS:           ==")
         print("===================================")
 
         # Analog application results

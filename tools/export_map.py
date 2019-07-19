@@ -281,10 +281,14 @@ parser.add_argument('--full', action='store_true')
 parser.add_argument('--output', metavar='output', type=str, nargs='?', 
                     help='directory where the maps are generated')
 
+parser.add_argument('-v', action='store_true', default=False,
+                    dest='verbose', help='Verbose output')
+
 args = parser.parse_args()
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
+verbose = args.verbose
 
 output_dir = './'
 if (args.output):
@@ -294,7 +298,8 @@ if (args.output):
     exit(-1)
 
 if (args.full):
-  print 'INFO: Generation single map with all link node inputs'
+  if (verbose):
+    print('INFO: Generation single map with all link node inputs')
   name = 'link_nodes'
   dot_file = open('{0}/{1}.dot'.format(output_dir, name), "w")
   export(session, dot_file, 'All')
@@ -321,10 +326,12 @@ if (args.ln):
 #  cmd = 'rm {}'.format(dot_file.name)
 #  os.system(cmd)
 else:
-  print 'INFO: Generating maps for {0} link nodes'.format(len(link_nodes))
+  if (verbose):
+    print 'INFO: Generating maps for {0} link nodes'.format(len(link_nodes))
   for ln in link_nodes:
     ln_name = ln.get_name()
-    print ' * {0}'.format(ln_name)
+    if (verbose):
+      print ' * {0}'.format(ln_name)
     dot_file = open('{0}/{1}.dot'.format(output_dir,ln_name), "w")
     export(session, dot_file, ln_name)
     exportPDF('{0}/{1}'.format(output_dir,ln_name))
