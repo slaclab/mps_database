@@ -47,6 +47,9 @@ mps_database-R1-2-0: (Apr 26 2019)
       cards are present. That is the case for cards that read
       LBLMs/PBLMs that are not in slot 2.
 
+mps_database-R1-1-3-eic: (May 28 2019)
+  * Branch for EIC
+
 mps_database-R1-1-2: (Jan 14 2019)
   * Change in bypass PV names: BYPD -> BYPC
                                BYPD_STR -> BYP_END
