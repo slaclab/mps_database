@@ -3,7 +3,8 @@ record(longout, "$(P):$(R)") {
     field(SCAN, "Passive")
     field(PINI, "NO")
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR))$(PARAM)")
+    field(OUT,  "@asyn($(L2MPSASYN_PORT),$(ADDR))$(PARAM)")
+    field(ASG,  "$(ASG)")
 }
 
 record(longin, "$(P):$(R)_RBV") {
@@ -11,6 +12,7 @@ record(longin, "$(P):$(R)_RBV") {
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR))$(PARAM)")
+    field(INP,  "@asyn($(L2MPSASYN_PORT),$(ADDR))$(PARAM)")
+    field(ASG,  "$(ASG)")
 }
 

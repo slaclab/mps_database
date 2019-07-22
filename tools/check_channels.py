@@ -126,6 +126,7 @@ def checkDigitalChannels(session):
 def checkLinkNodes(session):
   link_nodes = session.query(models.LinkNode).all()
   for ln in link_nodes:
+    print('{} at {}'.format(ln.get_name(), ln.cpu))
     for ln2 in link_nodes:
       if (ln.get_name() == ln2.get_name() and
           ln.id != ln2.id):
@@ -178,7 +179,7 @@ rt_session = mps.runtime_session
 
 checkChannels(session)
 checkLinkNodes(session)
-checkRuntime(session, rt_session)
+#checkRuntime(session, rt_session)
 
 session.close()
 

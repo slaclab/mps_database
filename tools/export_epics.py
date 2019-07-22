@@ -19,6 +19,7 @@ import os
 #     field(ONAM, "FAULTED")
 #     field(INP, "@asyn(CENTRAL_NODE 0 3)DIGITAL_CHANNEL")
 #}
+verbose=False
 
 def openArchiveFile(archiveLocation, archiveFileName):
   if (archiveLocation==None):
@@ -976,7 +977,8 @@ def exportVirtualCard(link_node, directory, session):
   file_name = ln_dir + '/virtual_inputs.db'
   f = open(file_name, 'w')
 
-  print ' + {0} ({1})'.format(link_node.get_name(), link_node.crate.location)
+  if (verbose):
+    print ' + {0} ({1})'.format(link_node.get_name(), link_node.crate.location)
   hasVirtual = True
 
   for d in virtual_card.devices:
@@ -1005,7 +1007,8 @@ def exportVirtualCard(link_node, directory, session):
 
   f.close()
   if not hasVirtual:
-    print ' + no Virtual Cards found.'
+    if verbose:
+      print ' + no Virtual Cards found.'
 
 def exportLinkNodeDatabases(directory, session):
   if not os.path.isdir(directory):
@@ -1013,7 +1016,8 @@ def exportLinkNodeDatabases(directory, session):
     exit(-1)
 
   link_nodes = session.query(models.LinkNode).all()
-  print 'Virtual Cards:'
+  if (verbose):
+    print 'Virtual Cards:'
   for ln in link_nodes:
     exportVirtualCard(ln, directory, session)
 
@@ -1045,11 +1049,14 @@ parser.add_argument('--prod-location', metavar='prod_location', type=str, nargs=
                     help='directory where database versions are kept in production (please use $PHYSICS_TOP/mps_config string ;). If not specified use the location pointed by the --location option')
 parser.add_argument('--version', metavar='version', type=str, nargs=1,
                     help='database version to be configured')
+parser.add_argument('-v', action='store_true', default=False,
+                    dest='verbose', help='Verbose output')
 
 args = parser.parse_args()
 
 mps = MPSConfig(args.database[0].name)
 session = mps.session
+verbose = args.verbose
 
 if (args.prod_location):
   if not os.path.isdir(args.prod_location):

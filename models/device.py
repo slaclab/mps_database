@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 from models import Base
 
@@ -13,7 +13,9 @@ class Device(Base):
     name: unique device name (possibly MAD device name)
     description: some extra information about this device
     position: 100 to 999 number that defines approximatelly where the device
-              is within the area. This field is used to create PVs
+              is within the area. This field is used to create PVs - the type is 
+              String because for some devices the field stores extra information 
+              (e.g. <position>:A or <position>:B for LBLM devices)
     z_location: z location in ft along the linac
     area: sector where the device is installed (e.g. GUNB, LI30, DMPB,...), this
           is used to create the PVs (second field). This field is used
@@ -37,7 +39,7 @@ class Device(Base):
   discriminator = Column('type', String(50))
   name = Column(String, unique=True, nullable=False)
   description = Column(String, nullable=False)
-  position = Column(Integer, nullable=False)
+  position = Column(String, nullable=False)
   z_location = Column(Float, nullable=False, default=0)
   area = Column(String, nullable=False)
   evaluation = Column(Integer, nullable=False, default=0)
@@ -56,6 +58,12 @@ class Device(Base):
 
   def is_analog(self):
     if self.discriminator == 'analog_device':
+      return True
+    else:
+      return False
+
+  def is_bpm(self):
+    if (self.device_type.name == 'BPMS'):
       return True
     else:
       return False
@@ -96,6 +104,14 @@ class AnalogDevice(Device):
   """
   AnalogDevice class (analog_devices table)
 
+  Properties:
+  auto_reset: defines whether faults detected by an analog device are
+              automatic cleared when a good reading is received, i.e.
+              fault does not latch. This field is here for completeness
+              because the analog devices/faults are evaluated in FW,
+              which does not provide auto-reset feature - all faults
+              (analog or digital) are latched.
+
   References:
     channel_id: reference to the AnalogChannel that is connected to
                 to the actual device
@@ -107,7 +123,6 @@ class AnalogDevice(Device):
   __tablename__ = 'analog_devices'
   __mapper_args__ = {'polymorphic_identity': 'analog_device'}
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
-#  analog_device_type_id = Column(Integer, ForeignKey('analog_device_types.id'), nullable=False)
+  auto_reset = Column(Boolean, default=False)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
   ignore_conditions = relationship("IgnoreCondition", backref='analog_device')
-#  threshold_faults = relationship("ThresholdFault", backref='analog_device')

@@ -60,5 +60,4 @@ class Device(RuntimeBase):
   threshold_idl_id = Column(Integer, ForeignKey('thresholds_idl.id'))
   threshold_idl = relationship("ThresholdIdl", back_populates="device")
 
-  bypass_id = Column(Integer, ForeignKey('bypasses.id'))
-  bypass = relationship("Bypass", back_populates="device")
+  bypasses = relationship("Bypass")

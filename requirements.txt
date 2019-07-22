@@ -2,3 +2,4 @@ sqlalchemy
 alembic
 PyYAML
 Cheetah
+pyepics

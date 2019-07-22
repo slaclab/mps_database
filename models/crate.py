@@ -24,7 +24,8 @@ class Crate(Base):
     cards: each ApplicationCard has a reference to a crate 
 
   References:
-    link_node_id: points to the link node for this crate
+    link_node_id: points to the link node (in slot 2) for this crate. There may be more
+                  link nodes connected to other cards in the same crate (non-slot 2)
   """
   __tablename__ = 'crates'
   id = Column(Integer, primary_key=True)
@@ -36,8 +37,7 @@ class Crate(Base):
   rack = Column(String, nullable=False)
   elevation = Column(Integer, nullable=False, default=0)
   cards = relationship("ApplicationCard", backref='crate')
-  link_node_id = Column(Integer, ForeignKey('link_nodes.id'), nullable=False)
-  link_node = relationship("LinkNode", back_populates="crate")
+  link_nodes = relationship("LinkNode", backref='crate')
 
   def get_name(self):
     return self.location #+ '-' + self.rack #+ str(self.elevation)
@@ -58,7 +58,7 @@ class Crate(Base):
       raise ValueError("Card cannot use slot_number > num_slots.")
     
     if new_card.slot_number == None:
-      raise ValueError('Slot number is None')
+      raise ValueError('Slot number is None (card "{}")'.format(new_card.name))
 
     if new_card.slot_number < 0:
       raise ValueError('Slot number must be positive (slot_number={0}).'.format(new_card.slot_number))

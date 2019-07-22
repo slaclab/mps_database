@@ -1,0 +1,1 @@
+dbLoadRecords("$(BAY_DB_FILE)", "P=$(BAY_INP_NAME), BAY=$(BAY), INP=$(INP), PORT=${L2MPSASYN_PORT}")

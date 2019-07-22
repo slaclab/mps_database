@@ -22,3 +22,6 @@ class DeviceInput(RuntimeBase):
   bypass_id = Column(Integer, ForeignKey('bypasses.id'))
   bypass = relationship("Bypass", back_populates="device_input")
 
+  def show(self):
+    print('{} {} {}'.format(self.pv_name, self.device_id, self.mpsdb_id))
+    

@@ -15,11 +15,12 @@
 #    * BLEN    => 0
 #  - BIT_POSITION : Fault bit position (0-7)
 #  - EGU          : Engineering units
+#  - ASG          : Channel Access Security Group (Default to MCC)
 #=========================================================================================#
 
 file "common/thr.template" { pattern
-{ R,                                APP,        EGU,        PREC,   CH,                 TABLE,  THR,               }
-{ $(FAULT)_T$(BIT_POSITION),        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "2",    "$(BIT_POSITION)"   }
-{ $(FAULT)_T$(BIT_POSITION)_ALT,    "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "3",    "$(BIT_POSITION)"   }
+{ R,                                APP,        EGU,        PREC,   CH,                 TABLE,  THR,               ASG  }
+{ $(FAULT)_T$(BIT_POSITION),        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "2",    "$(BIT_POSITION)", "MCC"  }
+{ $(FAULT)_T$(BIT_POSITION)_ALT,    "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "3",    "$(BIT_POSITION)", "MCC"  }
 }
 

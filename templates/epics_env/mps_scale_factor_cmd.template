@@ -1,0 +1,1 @@
+dbLoadRecords("db/mps_scale_factor.db", "P=$(P),PROPERTY=$(PROPERTY),EGU=$(EGU),PREC=4,SLOPE=$(SLOPE),OFFSET=$(OFFSET)")

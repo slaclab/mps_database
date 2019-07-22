@@ -1,0 +1,68 @@
+EicHistoryServer.py
+- MPS history server for EIC - writes received messages to txt files
+
+central_node_test.py
+- Used to test CN running in SW only mode (no FW)
+
+change_threshold.py
+- Script to change thresholds of an analog device - thresholds are 
+recorded in runtime database and also written to the appropriate PVs
+
+check_channels.py
+- Check for duplicate channels in the MPS database
+
+check_runtime.py
+- Check runtime database: verifies that devices are the same in both
+databases. The databases must be consistent.
+
+docbook.py
+- Helper python class to write out documentation in docbook format
+
+export_apps_epics.py
+- Generate configuration (yaml, epics db) for link node applications
+
+export_docs.py
+- Generate pdf documents for MPS link nodes and database information
+
+export_edl.py
+- Generate EDM files for the PVs from the Central Node
+
+export_epics.py
+- Generate epics databases for the Central Node
+
+export_map.py
+- Generate graphic maps for link node inputs
+
+export_yaml.py
+- Export MPS database as a loadable file for the Central Node
+
+mps_names.py
+- Helper class that genarate PV names
+
+populate-gunb-t0.py
+- Generate EIC database
+
+restore_threshold.py
+- Restore threshold values from the runtime database
+
+runtime_utils.py
+- Utilities to help with the runtime database
+
+set_bypass.py
+- Set device bypass for analog devices/device inputs, by first
+recording information to database and then changing the bypass PVs
+
+restore_bypass.py
+- Restore active bypasses, reading the values from the runtime database
+and setting the PVs
+
+* Not is use:
+export_pydm.py
+export_thresholds.py
+populate-gunb-t0-test-fast-digital.py
+populate-gunb-t1.py
+populate-gunb.py
+populate-huge.py
+populate-sxrss.py
+populate-test.py
+populate-test2.py

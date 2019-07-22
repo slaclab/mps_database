@@ -3,7 +3,8 @@ record(bi, "$(P):$(R)") {
     field(SCAN, "I/O Intr")
     field(PINI, "NO")
     field(DTYP, "asynUInt32Digital")
-    field(INP,  "@asynMask($(PORT),$(ADDR),0x01)$(PARAM)")
+    field(INP,  "@asynMask($(L2MPSASYN_PORT),$(ADDR),0x01)$(PARAM)")
     field(ZNAM, "$(ZNAM)")
     field(ONAM, "$(ONAM)")
+    field(ASG,  "$(ASG)")
 }

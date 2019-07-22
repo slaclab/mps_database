@@ -86,6 +86,39 @@ class MpsName:
         
         return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)
 
+    def getBypassPv(self):
+        return ''
+
+    def getThresholdPv(self, base, table, threshold, integrator, value_type, is_bpm=False):
+        """
+        Builds the threashold PV for a given combination of table, threshold,
+        integrator and type, where:
+        * table: 'lc2' for LCLS-II tables
+                 'alt' for LCLS-II ALT tables
+                 'lc1' for LCLS-I tables
+                 'idl' for idle tables (no beam)
+        * threshold: 't<0..7>' (for lc1 and idl the only threshold is t0.
+        * integrator: 'i<0..4>', if the device is a BPM (is_bpm=True) then
+                      'i0'=='x', 'i1'=='y', 'i2'=='tmit'
+        * value_type: 'l' or 'h'
+        """
+        if (is_bpm):
+          if (integrator == 'i0'):
+            integrator = 'x'
+          elif (integrator == 'i1'):
+            integrator = 'y'
+          elif (integrator == 'i2'):
+            integrator = 'tmit'
+          else:
+            return None
+
+        if (table == 'lc2'):
+          pv_name = base + ':' + integrator + '_' + threshold + '_' + value_type
+        else:
+          pv_name = base + ':' + integrator + '_' + threshold + '_' + table + '_' + value_type
+
+        return pv_name.upper()
+
     def getBeamDestinationNameFromId(self, beamDestinationId):
         beamDestination = self.session.query(models.BeamDestination).filter(models.BeamDestination.id==beamDestinationId).one()
         
@@ -103,8 +136,8 @@ class MpsName:
         is_digital = True
 
         if len(fault.inputs) <= 0:
-            print 'ERROR: Fault {0} (id={1}) has no inputs, can\'t proceed. exiting...'.format(fault.name, fault.id)
-            exit(1)
+            print 'ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id)
+            return None
 
 #        print 'len: {0}'.format(len(fault.inputs))
 
@@ -134,7 +167,11 @@ class MpsName:
         return base + ":" + fault.name
 
     def getFaultName(self, fault):
-        return self.getBaseFaultName(fault) + "_FLT"
+        base = self.getBaseFaultName(fault)
+        if base != None:
+            return base + "_FLT"
+        else:
+            return None
 
     def getConditionName(self, condition):
         return "$(BASE):" + condition.name.upper() + "_COND"

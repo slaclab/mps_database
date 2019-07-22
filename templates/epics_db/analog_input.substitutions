@@ -1,0 +1,6 @@
+# Single register with on AI records
+file "common/analog_input.template" { pattern
+{ DESC,                                                PINI,   SCAN,       EGU,    LINR,       EGUF,           EGUL,           PREC, FLNK, PARAM                        }
+{ "Adc raw data (slow rate), Bay $(BAY), ch $(CH)",    "YES",  ".1 second", "V",    "LINEAR",   "607.14e-3",    "-607.14e-3",  3,    "$(P_DEV):$(R_DEV)", "AMCADC_AdcData_$(BAY)$(CH)" }
+}
+

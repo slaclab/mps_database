@@ -29,12 +29,14 @@ class ApplicationCard(Base):
    analog_channels: there are zero or more entries in the
                     digital_channels table pointing to an application_card
                     entry.
+   devices:
+   link_node:
   """
   __tablename__ = 'application_cards'
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
   area = Column(String, nullable=False)
-  location = Column(String, nullable=False, unique=False)
+#  location = Column(String, nullable=False, unique=False)
   slot_number = Column(Integer, nullable=False)
   amc = Column(Integer, nullable=False, default=0)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
@@ -46,7 +48,8 @@ class ApplicationCard(Base):
   name = Column(String, unique=False, nullable=False)
   description = Column(String, nullable=True)
   devices = relationship("Device", backref='card')
-  
+  link_node_id = Column(Integer, ForeignKey('link_nodes.id'), nullable=False)
+
   def show(self):
     print('> Name: {0}'.format(self.name))
     print('> Number: {0}'.format(self.number))
@@ -117,3 +120,22 @@ class ApplicationCard(Base):
         raise ValueError("This slot is already taken by another card in the crate.")
 
     return new_slot
+
+  def get_card_id(self):
+    """
+    Return the card ID based on the application
+    slot number and application type id.
+    
+    If the application is a Link Nodes (slot # 2) then
+    the card number will be 1
+
+    For other applications, the card number will be
+    the slot number + 1.
+    """
+    if self.slot_number == 2:
+      return 1
+    else:
+      return self.slot_number
+
+  def get_pv_name(self):
+    return 'MPLN:{}:{}:{}'.format(self.link_node.area, self.link_node.location, self.get_card_id())

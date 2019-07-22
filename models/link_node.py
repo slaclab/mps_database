@@ -13,7 +13,7 @@ class LinkNode(Base):
   Properties:
    area: sector where the card is installed (e.g. GUNB, LI30, DMPB,...).
              This is used for creating the LinkNode PVs (second field)
-   location: this is the location field to generate LinkNode PVs (third field)
+   location: this is the location field to generate LinkNode PVs (third field, e.g. MP02)
    cpu: name of the LinuxRT CPU where the SIOC is running
    group: MPS update network group number (i.e. CN port the chain connects to)
           group 100 is the CN in LI00, group 200 is the CN in B005
@@ -24,6 +24,8 @@ class LinkNode(Base):
             to devices that see beam from both injectors)
    lcls1_id: link node id for LCLS-I. This is used to build the link node IP address,
              it goes into the NodeID register.
+   slot_number: link nodes connect to only one slots, usually slot 2.
+                In some instances they need to connect to cards in other slots.
    
   References:
    crate_id: specifies the crate that contains this link node
@@ -39,8 +41,10 @@ class LinkNode(Base):
   group_drawing = Column(String, unique=False)
   ln_type = Column(Integer, nullable=False, default=2)
   lcls1_id = Column(Integer, nullable=False, default=0)
-  crate = relationship("Crate", uselist=False, back_populates="link_node")
-  
+  slot_number = Column(Integer, nullable=False, default=2)
+  crate_id = Column(Integer, ForeignKey('crates.id'))
+  cards = relationship("ApplicationCard", backref='link_node')
+
   def show(self):
     print('> Area: {0}'.format(self.area))
     print('> Location: {0}'.format(self.location))
@@ -50,12 +54,12 @@ class LinkNode(Base):
     print('> GroupLink: {0}'.format(self.group_link))
     print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
     print('> GroupDrawing: {0}'.format(self.group_drawing))
-    print('> LinkNodeType: {}'.format(self.get_type()))
+    print('> LinkNodeType: {}'.format(self.get_ln_type()))
     if (self.ln_type == 1 or self.ln_type == 3):
       print('> LinkNodeType: {}'.format(self.get_type()))
       print('> LinkNodeId: {}'.format(self.lcls1_id))
 
-  def get_type(self):
+  def get_ln_type(self):
     if (self.ln_type == 1):
       return 'LCLS-I only'
     elif (self.ln_type == 2):
@@ -65,5 +69,44 @@ class LinkNode(Base):
     else:
       return 'Invalid type {}'.format(self.ln_type)
 
+  def get_type(self):
+    """
+    Return the link node type based on the application cards defined.
+    If link node has digital inputs only its type is 'Digital'
+    Only analog inputs -> 'Analog'
+    Both types of inputs -> 'Mixed'
+    """
+    has_digital = False
+    has_analog = False
+    is_slot2 = False
+    for c in self.cards:
+      if c.slot_number == 2:
+        is_slot2 = True
+        if c.type.name == 'Digital Card':
+          has_digital = True
+        elif c.type.name == 'Generic ADC':
+          has_analog = True
+
+    if not is_slot2:
+      for c in self.cards:
+        if c.slot_number == 2:
+          is_slot2 = True
+          if c.type.name == 'Digital Card':
+            has_digital = True
+          elif c.type.name == 'Generic ADC':
+            has_analog = True
+
+    if has_digital and has_analog:
+      return 'Mixed'
+    elif has_digital:
+      return 'Digital'
+    elif has_analog:
+      return 'Analog'
+    else:
+      return 'Analog'
+
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()
+
+  def get_pv_base(self):
+    return 'MPLN:' + self.area.upper() + ':' + self.location.upper()

@@ -1,0 +1,18 @@
+#
+# These macros are defined as "#" to enable/disabling configuration
+# of analog/digital MPS configuration
+#
+epicsEnvSet("MPS_ANA_APP", "#")
+epicsEnvSet("MPS_DIG_APP", "#")
+epicsEnvSet("MPS_ANA_APP_ID", "0")
+epicsEnvSet("MPS_DIG_APP_ID", "0")
+
+epicsEnvSet("DIGITAL_APP_PREFIX", "not set")
+epicsEnvSet("ANALOG_APP_PREFIX", "not set")
+epicsEnvSet("VIRTUAL_APP_PREFIX", "not set")
+
+#
+# Definition of MPS variables
+#
+epicsEnvSet("MPS_LINK_NODE", "$(MPS_LINK_NODE)")
+

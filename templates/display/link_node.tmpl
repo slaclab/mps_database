@@ -1,0 +1,172 @@
+#import math
+#
+#set $BUTTON_LABEL=$link_node.get_name()
+#set $ALARM_PVNAME=$link_node.get_pv_base()+":STATSUMY"
+#set $LN_BASE=$link_node.get_pv_base()+":1"
+#
+## Link Node Analog Channels
+#set $CH_NAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $P_CH=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $P_TYPE=["INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID"]
+#
+## SLOT Related Macros
+#set $SLOT_NAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $SLOT_PVNAME=["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+#set $SLOT_FILE_NAME=["mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps"]
+#set link_node_name=$link_node.get_name()
+#
+## Prefix for devices connected to non-Link Node slots (slot 3 through 7)
+#set $SLOT_CH_PREFIX_INFO=[[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]]]
+#set $SLOT_CH_NAME_INFO=[[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]],[["-","-","-"],["-","-","-"]]]
+##set $SLOT_CH_PREFIX_INFO=[[["S3_Bay0_CH0", "S3_Bay0_CH1", "S3_Bay0_CH2"], ["S3_Bay1_CH0", "S3_Bay1_CH1", "S3_Bay1_CH2"]],[["S4_Bay0_CH0", "S4_Bay0_CH1", "S4_Bay0_CH2"], ["S4_Bay1_CH0", "S4_Bay1_CH1", "S4_Bay1_CH2"]],[["S5_Bay0_CH0", "S5_Bay0_CH1", "S5_Bay0_CH2"], ["S5_Bay1_CH0", "S5_Bay1_CH1", "S5_Bay1_CH2"]],[["S6_Bay0_CH0", "S6_Bay0_CH1", "S6_Bay0_CH2"], ["S6_Bay1_CH0", "S6_Bay1_CH1", "S6_Bay1_CH2"]],[["S7_Bay0_CH0", "S7_Bay0_CH1", "S7_Bay0_CH2"], ["S7_Bay1_CH0", "S7_Bay1_CH1", "S7_Bay1_CH2"]]]
+##set $SLOT_CH_NAME_INFO=[[["S3_Bay0_Name0", "S3_Bay0_Name1", "S3_Bay0_Name2"], ["S3_Bay1_Name0", "S3_Bay1_Name1", "S3_Bay1_Name2"]],[["S4_Bay0_Name0", "S4_Bay0_Name1", "S4_Bay0_Name2"], ["S4_Bay1_Name0", "S4_Bay1_Name1", "S4_Bay1_Name2"]],[["S5_Bay0_Name0", "S5_Bay0_Name1", "S5_Bay0_Name2"], ["S5_Bay1_Name0", "S5_Bay1_Name1", "S5_Bay1_Name2"]],[["S6_Bay0_Name0", "S6_Bay0_Name1", "S6_Bay0_Name2"], ["S6_Bay1_Name0", "S6_Bay1_Name1", "S6_Bay1_Name2"]],[["S7_Bay0_Name0", "S7_Bay0_Name1", "S7_Bay0_Name2"], ["S7_Bay1_Name0", "S7_Bay1_Name1", "S7_Bay1_Name2"]]]
+#
+#for $app in $app_reader.analog_apps
+#if $app['link_node_name'] == $link_node_name
+#if $app['analog_link_node'] or $app_reader.link_nodes[$link_node_name]['type']=='Mixed'
+#if $app['slot_number'] == $app_reader.link_nodes[$link_node_name]['analog_slot']
+#if $app['slot_number'] == 2
+#set $LN_BASE=$link_node.get_pv_base()+":1"
+#else
+#set $LN_BASE=$link_node.get_pv_base()+":"+str($app['slot_number'])
+#end if
+#for $device in $app['devices']
+#set $index=$device['channel_index']
+#set $CH_NAME[$device['channel_index']]=$device['device_name']
+#set $P_CH[$device['channel_index']]=$device['prefix']
+#if $device['type_name'] != 'BPMS':
+#set $P_TYPE[$device['channel_index']]=$app_reader.get_analog_type_name($device['type_name'])
+#end if
+#end for
+#end if
+#end if
+#
+## Set channel name/prefix for slots 3 through 7
+#set $slot=$app['slot_number']
+#for $device in $app.devices
+#set $bay=$device['bay_number']
+#set $channel=$device['channel_number']
+#if $slot > 1
+##$device['device_name'] $bay $channel $slot
+#set $SLOT_CH_PREFIX_INFO[$slot-2][$bay][$channel]=$device['prefix']
+#set $SLOT_CH_NAME_INFO[$slot-2][$bay][$channel]=$device['device_name']
+#end if
+#end for
+#
+#end if
+#end for
+#
+## Macro for the Link Node base (MPLN:<AREA>:<LOCATION>, e.g. MPLN:UNDS:MP04)
+#set $LN_MACROS="P="+$LN_BASE
+#set $LN_MACROS=$LN_MACROS+",LN_SIOC="+$link_node_name
+#
+## Set macros for analog channels
+#for $i in range(0,6)
+#set $LN_MACROS=$LN_MACROS+",CH"+str($i)+"_NAME="+$CH_NAME[$i]
+#set $LN_MACROS=$LN_MACROS+",P_CH"+str($i)+"="+$P_CH[$i]
+#set $LN_MACROS=$LN_MACROS+",P_TYPE"+str($i)+"="+$P_TYPE[$i]
+#end for
+#
+## Set file name for slot buttons according to the application type
+#for $i in range(2,8)
+#if $i in $app_reader.link_nodes[link_node_name]['slots']
+#set $SLOT_NAME[$i-2]=$app_reader.link_nodes[link_node_name]['slots'][$i]['pv_base']
+#set $SLOT_PVNAME[$i-2]=$app_reader.link_nodes[link_node_name]['slots'][$i]['pv_base']
+#if $app_reader.link_nodes[link_node_name]['slots'][$i]['type']=="Analog Card"
+#set $SLOT_FILE_NAME[$i-2]='mps_linknode_bcm_app_hps'
+#end if
+#if $app_reader.link_nodes[link_node_name]['slots'][$i]['type']=="BPM Card"
+#set $SLOT_FILE_NAME[$i-2]='mps_linknode_bpm_app_hps'
+#end if
+#end if
+#end for
+#
+## Set macros for application cards (slots 2 through 7)
+#for $i in range(2,8)
+#set $LN_MACROS=$LN_MACROS+",SLOT"+str($i)+"_NAME="+$SLOT_NAME[$i-2]
+#set $LN_MACROS=$LN_MACROS+",SLOT"+str($i)+"_FILE_NAME="+$SLOT_FILE_NAME[$i-2]
+#set $LN_MACROS=$LN_MACROS+",P_SLOT"+str($i)+"="+$SLOT_PVNAME[$i-2]
+#end for
+#
+## Set macros for analog channels for slots 2 through 7
+#for $slot in range(2,8)
+#for $bay in range(0,2)
+#for $channel in range(0,3)
+#set $LN_MACROS=$LN_MACROS+",P_S"+str($slot)+"_B"+str($bay)+"_CH"+str($channel)+"="+$SLOT_CH_PREFIX_INFO[$slot-2][$bay][$channel]
+#set $LN_MACROS=$LN_MACROS+",S"+str($slot)+"_B"+str($bay)+"_CH"+str($channel)+"_NAME="+$SLOT_CH_NAME_INFO[$slot-2][$bay][$channel]
+#end for
+#end for
+#end for
+#
+# === EDM STARTS HERE ===
+
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 117
+y 415
+w 160
+h 37
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 7
+textColor index 14
+ctlFgColor1 index 16
+ctlFgColor2 index 14
+ctlBgColor1 index 4
+ctlBgColor2 index 12
+topShadowColor index 1
+botShadowColor index 11
+title "MPS Link Node"
+showGrid
+snapToGrid
+gridSize 8
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 6
+y 6
+w 148
+h 28
+lineColor index 15
+lineAlarm
+fillColor index 4
+lineWidth 2
+alarmPv "$ALARM_PVNAME"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 8
+y 8
+w 144
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "$BUTTON_LABEL..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "mps_linknode_hps.edl"
+}
+symbols {
+  0 "$LN_MACROS"
+}
+endObjectProperties
+

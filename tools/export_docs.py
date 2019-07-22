@@ -328,11 +328,11 @@ class Exporter:
       channelFaultState.append(state)
       channelDeviceState.append(deviceState)
 
-    self.docbook.para('Table "<xref linkend="fault_states.{1}{4}"/>" lists the {0} fault input bits for the {2} device. MPS supports up to eight comparators for {0}, this database version {3}.'.format(fault.name, fault.id, device.name, len(fault.states), device.id))
+    self.docbook.para('Table "<xref linkend="fault_states.{1}-{4}"/>" lists the {0} fault input bits for the {2} device. MPS supports up to eight comparators for {0}, this database has {3} comparators.'.format(fault.name, fault.id, device.name, len(fault.states), device.id))
 
     # Fault States
     table_name = '{0} Fault States'.format(fault.name)
-    table_id = 'fault_states.{0}{1}'.format(fault.id, device.id)
+    table_id = 'fault_states.{0}-{1}'.format(fault.id, device.id)
 
     max_bits = 8 # max number of analog thresholds
     numBeamDestinations = self.session.query(models.BeamDestination).count()
@@ -440,7 +440,7 @@ class Exporter:
 
     self.docbook.table(table_name, cols, header, rows, table_id)
 
-    self.docbook.para('Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}{2}"/>" table are defined in this database.'.format(fault.name, fault.id, device.id))
+    self.docbook.para('Check all {0} faults caused by inputs crossing the high and low thresholds for all comparators (there are up to eight comparators for each fault (input bits A through H). Only the fault states listed on "<xref linkend="fault_states.{1}-{2}"/>" table are defined in this database.'.format(fault.name, fault.id, device.id))
 
     if (self.checkout):
       self.docbook.para('Table "<xref linkend="fault_checkout_table.{0}.{1}"/>" lists the PVs that should be changed to test the faults. Set the LOW/HIGH PVs with values that cause MPS mitigation actions and write down the power classes.'.format(fault.id, device.id))
@@ -502,12 +502,14 @@ class Exporter:
 
       self.docbook.table(table_name, cols, header, rows, table_id)
 
-  def writeFault(self, fault, device):
-    self.docbook.openSection('{0} Fault'.format(fault.name), 'fault.{0}.{1}'.format(fault.id, device.id))
+  def writeFault(self, fault, fault_input, device):
+    self.docbook.openSection('{0} Fault'.format(fault.name),
+                             'fault.{}.{}.{}'.format(fault.id, fault_input.id, device.id))
     if (self.verbose):
-      print 'INFO: {} Fault (id={}, device={}, inputs={})'.\
-          format(fault.name, fault.id, device.name, len(fault.inputs))
+      print 'INFO: {} Fault (id={}, fault_input_id={}, device={}, inputs={})'.\
+          format(fault.name, fault.id, fault_input.id, device.name, len(fault.inputs))
 
+    one_input = True
     for inp in fault.inputs:
       if (inp.device_id == device.id):
         digital = True
@@ -519,14 +521,16 @@ class Exporter:
           digital = False
 
         if (not digital):
-          try:
-            analogDevice = self.session.query(models.AnalogDevice).\
-                filter(models.AnalogDevice.id==inp.device_id).one()
-          except:
-            print("ERROR: Can't find device for fault[{0}] (fault id={1}, desc[{2}], device id: {3}, fault_input id: {4}".\
-                    format(fault.name, fault.id, fault.description, inp.device_id, inp.id))
-            exit(-1)
-          self.writeAnalogFault(fault, analogDevice)
+          if (one_input):
+            try:
+              analogDevice = self.session.query(models.AnalogDevice).\
+                  filter(models.AnalogDevice.id==inp.device_id).one()
+            except:
+              print("ERROR: Can't find device for fault[{0}] (fault id={1}, desc[{2}], device id: {3}, fault_input id: {4}".\
+                      format(fault.name, fault.id, fault.description, inp.device_id, inp.id))
+              exit(-1)
+            self.writeAnalogFault(fault, analogDevice)
+            one_input = False
 
     self.docbook.closeSection()
 
@@ -546,7 +550,8 @@ class Exporter:
     rows=[]
     for fault_input in device.fault_outputs:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
-      rows.append(['<link linkend=\'fault.{0}.{2}\'>{1}</link>'.format(fault.id, fault.name, device.id),
+      rows.append(['<link linkend=\'fault.{0}.{3}.{2}\'>{1}</link>'.\
+                     format(fault.id, fault.name, device.id, fault_input.id),
                    fault.description, self.mpsName.getFaultName(fault)])
       self.tf.write('[Fault {0}] Name: {1}; DeviceId: {2}; DeviceName: {3}\n'.
                     format(fault.id, fault.name, device.id, device.name))
@@ -559,9 +564,12 @@ class Exporter:
     if (self.verbose):
       print 'INFO: {} device fault outputs found'.format(len(device.fault_outputs))
 
+    fault_ids = []
     for fault_input in device.fault_outputs:
       fault = self.session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).one()
-      self.writeFault(fault, device)
+      if (not fault_input.fault_id in fault_ids):
+        self.writeFault(fault, fault_input, device)
+        fault_ids.append(fault_input.fault_id)
 
     self.docbook.closeSection()
 
@@ -925,7 +933,8 @@ class Exporter:
     cards = self.session.query(models.ApplicationCard).all()
 
     if (link_node):
-      cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
+#      cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
+      cards = filter (lambda x : x.link_node.id == link_node.id, cards)
 
     if (self.verbose):
       print('Link Node: {} has {} cards'.format(link_node.get_name(), len(cards)))
@@ -1074,8 +1083,16 @@ class Exporter:
 
     devices = self.session.query(models.Device).all()
 
-    if (link_node):      
-      devices = filter (lambda x : x.card.crate.link_node.id == link_node.id, devices)
+    if (link_node):
+      print('LN: {}, devices={}'.format(link_node.get_name(), len(devices)))
+#      devices = filter (lambda x : x.card.crate.link_node.id == link_node.id, devices)
+      try:
+        devices = filter (lambda x : x.card != None and x.card.link_node.id == link_node.id, devices)
+      except Exception as ex:
+        print ex
+        print('ERROR: Failed to get devices for LN {}'.\
+                format(link_node.get_name()))
+        exit(1)
     
     for device in devices:
       if (device.name != "AOM" and device.name != "MS"):
@@ -1099,8 +1116,9 @@ class Exporter:
           filter(models.FaultState.id==input.fault_state_id).one()
       deviceState = self.session.query(models.DeviceState).filter(models.DeviceState.id==faultState.device_state_id).one()
       fault = self.session.query(models.Fault).filter(models.Fault.id==faultState.fault_id).one()
-      rows.append(['<link linkend=\'fault.{0}.{2}\'>{1}</link>\n'.format(fault.id, fault.name, device.id),
-                   deviceState.name, input.bit_position])
+#      rows.append(['<link linkend=\'fault.{0}.{2}\'>{1}</link>\n'.format(fault.id, fault.name, device.id),
+#                   deviceState.name, input.bit_position])
+      rows.append([fault.name, deviceState.name, input.bit_position])
 
     table_name = 'Condition Inputs'
     table_id = 'condition.{0}'.format(condition.id)
@@ -1140,13 +1158,19 @@ class Exporter:
     self.docbook.openSection('Link Nodes')
     self.tf.write('# Link Nodes\n')
 
-    cols=[{'name':'c1', 'width':'0.20*'},
-          {'name':'c2', 'width':'0.30*'},
-          {'name':'c3', 'width':'0.10*'},
-          {'name':'c4', 'width':'0.25*'}]
+    cols=[{'name':'c1', 'width':'0.25*'},
+          {'name':'c2', 'width':'0.10*'},
+          {'name':'c3', 'width':'0.20*'},
+          {'name':'c4', 'width':'0.05*'},
+          {'name':'c5', 'width':'0.25*'},
+          {'name':'c6', 'width':'0.08*'},
+          {'name':'c7', 'width':'0.25*'}]
 
     header=[{'name':'SIOC', 'namest':None, 'nameend':None},
+            {'name':'LN ID', 'namest':None, 'nameend':None},
             {'name':'Crate', 'namest':None, 'nameend':None},
+            {'name':'Slot', 'namest':None, 'nameend':None},
+            {'name':'CPU', 'namest':None, 'nameend':None},
             {'name':'Group', 'namest':None, 'nameend':None},
             {'name':'Drawing', 'namest':None, 'nameend':None},]
     
@@ -1158,7 +1182,12 @@ class Exporter:
     for ln in linkNodes:
       sioc_info = '{0}'.format(ln.get_name())
       crate_info = '<link linkend=\'crate.{0}\'>{1}</link>'.format(ln.crate.id, ln.crate.get_name())
-      rows.append([sioc_info, crate_info, ln.group, ln.group_drawing])
+      ln_id = 'LN{}'.format(ln.lcls1_id)
+      if (ln.lcls1_id == 0):
+        ln_id = '-'
+      rows.append([sioc_info, ln_id, crate_info,
+                   ln.slot_number, ln.cpu,
+                   ln.group, ln.group_drawing])
       self.tf.write('[LN {0}] SIOC: {1}; Crate: {2}\n'.\
                       format(ln.id, sioc_info, ln.crate.get_name()))
 
@@ -1173,7 +1202,8 @@ class Exporter:
     self.tf.write('# Crates\n')
     crates = self.session.query(models.Crate).all()
     if (link_node):
-      crates = filter (lambda x : x.link_node.id == link_node.id, crates)
+#      crates = filter (lambda x : x.link_node.id == link_node.id, crates)
+      crates = filter (lambda x : x.id == link_node.crate_id, crates)
 
     for crate in crates:
       self.writeCrate(crate)

@@ -1,0 +1,26 @@
+record(stringin, "$(P):CONFIG_VERSION") {
+  field(DESC, "MPS Configuration Database Version")
+  field(VAL, "$(MPS_CONFIG_VERSION)")
+}
+
+record(mbbi, "$(P):LN_TYPE") {
+    field(DESC, "MPS Link Node Type")
+    field(NOBT, "2")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(VAL, "$(MPS_LINK_NODE_TYPE)")
+    field(ZRST, "Digital")
+    field(ONST, "Analog")
+    field(TWST, "Mixed")
+}
+
+record(longin, "$(P):LN_ID") {
+  field(DESC, "MPS Link Node ID")
+  field(VAL, "$(MPS_LINK_NODE_ID)")
+}
+
+record(stringin, "$(P):LN_SIOC") {
+  field(DESC, "MPS Link Node SIOC")
+  field(VAL, "$(MPS_LINK_NODE_SIOC)")
+}

@@ -6,6 +6,7 @@ import argparse
 import time
 import yaml
 import os
+import sys
 
 class DatabaseImporter:
   conf = None # MPSConfig
@@ -25,6 +26,7 @@ class DatabaseImporter:
 #    self.session.autoflush=True
     self.lcls1_only = is_lcls1
     self.verbose = verbose
+    self.mps_names = MpsName(self.session)
 
     self.rt_session = self.conf.runtime_session
 
@@ -63,23 +65,46 @@ class DatabaseImporter:
           crate_info[fields[field_index]]=property
           field_index = field_index + 1
 
-        ln = models.LinkNode(area=crate_info['ln_area'], location=crate_info['ln_location'],
-                             cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
-                             group=crate_info['group'], group_link=crate_info['group_link'],
-                             group_link_destination=crate_info['group_link_destination'],
-                             group_drawing=crate_info['network_drawing'])
-        self.session.add(ln)
-        
+        locations=[crate_info['ln_location']]
+        slots=[crate_info['ln_slot']]
+        lcls1_ids=[crate_info['lcls1_id']]
+
+        if (';' in crate_info['ln_location'] and
+            ';' in crate_info['ln_slot'] and
+            ';' in crate_info['lcls1_id']):
+          locations=crate_info['ln_location'].split(';')
+          slots=crate_info['ln_slot'].split(';')
+          lcls1_ids=crate_info['lcls1_id'].split(';')
+
         crate = models.Crate(crate_id=crate_info['crate_id'],
-                               num_slots=crate_info['num_slots'],
+                             num_slots=crate_info['num_slots'],
                              shelf_number=int(crate_info['shelf_number']),
                              location=crate_info['location'],
                              rack=crate_info['rack'],
                              elevation=crate_info['elevation'],
-                               sector=crate_info['sector'],
-                             link_node=ln)
+                             sector=crate_info['sector'])
+#                             link_node=slot2_ln)
+
         self.session.add(crate)
-      
+
+        for l,s,i in zip(locations,slots,lcls1_ids):
+          lcls1_id = 0
+
+          ln = models.LinkNode(area=crate_info['ln_area'], location=l,
+                               cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
+                               group=crate_info['group'], group_link=crate_info['group_link'],
+                               group_link_destination=crate_info['group_link_destination'],
+                               group_drawing=crate_info['network_drawing'],
+                               slot_number=s, lcls1_id=i, crate=crate)
+
+          if (s == '2'):
+            slot2_ln = ln
+
+          self.session.add(ln)
+        
+#        print('INFO: Added crate {}, with slot 2 LN {}'.format(crate.get_name(), slot2_ln.get_name()))
+
+        
     self.session.commit()
     f.close()
 
@@ -117,6 +142,25 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
 
+  def find_app_link_node(self, crate, slot):
+    """
+    Return the link node that connects to the specified slot for the crate
+    """
+    slots = []
+    for ln in crate.link_nodes:
+      slots.append(ln.slot_number)
+
+    link_node = None
+    for ln in crate.link_nodes:
+      if (slot == ln.slot_number):
+        return ln
+      elif (ln.slot_number == 2 and not slot in slots):
+        return ln
+      elif (not slot in slots and slot == ln.slot_number):
+        return ln
+
+    return link_node
+
   def add_cards(self, file_name):
     f = open(file_name)
 
@@ -150,15 +194,22 @@ class DatabaseImporter:
             print('ERROR: Cannot find crate with number {0}, exiting...'.format(app_card_info['crate_number']))
             return
 
+
+        link_node = self.find_app_link_node(app_crate, int(app_card_info['slot']))
+        if (link_node == None):
+          print('ERROR: Cannot find link_node associated to slot {} in crate {}'.\
+                  format(app_card_info['slot'], app_crate.get_name()))
+
         app_card = models.ApplicationCard(name=app_card_info['name'],
                                           number=int(app_card_info['number']),
                                           area=app_card_info['area'],
-                                          location=app_card_info['location'],
+#                                          location=app_card_info['location'],
                                           type=app_card_type,
                                           slot_number=int(app_card_info['slot']),
                                           amc=int(app_card_info['amc']),
                                           global_id=int(app_card_info['global_id']),
-                                          description=app_card_info['description'])
+                                          description=app_card_info['description'],
+                                          link_node=link_node)
         
         app_crate.cards.append(app_card)
         self.session.add(app_card)
@@ -431,7 +482,9 @@ class DatabaseImporter:
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
 
         if self.verbose:
-          print "  + {0}".format(mitigation_info['device_location'])
+          print "  + {}: state {}; \"{}\"".format(mitigation_info['device_location'],
+                                                  mitigation_info['state_name'],
+                                                  mitigation_info['fault_description'])
 
     f.close()
     
@@ -551,13 +604,18 @@ class DatabaseImporter:
 
 
   def add_analog_device(self, directory, card_name, add_ignore=False):
-    if (self.lcls1_only and card_name == "BPM Card"):
-      return
+#    if (self.lcls1_only and card_name == "BPM Card"):
+#      return
 
-    print 'Adding ' + directory
+    sys.stdout.write('Adding {}\n'.format(directory))
     file_name = directory + '/DeviceType.csv'
     [device_type, evaluation_string, measured_device_type_id] = self.check_device_type(file_name)
-    if device_type == None:
+    if (device_type == None):
+      return
+
+    if (self.lcls1_only and (device_type.name == 'PBLM' or
+                             device_type.name == 'LBLM')):
+      print('* Skipping {} devices'.format(device_type.name))
       return
 
     file_name = directory + '/DeviceStates.csv'
@@ -711,10 +769,12 @@ class DatabaseImporter:
 
         else: # if fault=='all'
           mit_location = device_info['mitigation']
+#          print(faults)
+#          print(mitigation)
           for k in mitigation[mit_location]:
             device_fault = self.getFault(faults, k)
             if (device_fault == None):
-              print 'ERROR: Failed to find Fault for device "{0}"'.format(device_info['device'])
+              print 'ERROR: Failed to find Fault for device "{}" (mitigation={})'.format(device_info['device'], k)
               exit(-1)
 #            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
 #                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
@@ -771,8 +831,18 @@ class DatabaseImporter:
           filter(models.Crate.id==app_card.crate_id).one()
     except:
       return False
+    
+    slots = []
 
-    if (app_crate.link_node.ln_type == 3 or app_crate.link_node.ln_type == 1):
+    for n in app_crate.link_nodes:
+      slots.append(n.slot_number)
+
+    for ln in app_crate.link_nodes:
+      if (app_card.slot_number == ln.slot_number or
+          (ln.slot_number == 2 and not app_card.slot_number in slots)):
+        link_node = ln
+
+    if (link_node.ln_type == 3 or link_node.ln_type == 1):
       return True
     else:
       return False
@@ -1041,12 +1111,39 @@ class DatabaseImporter:
     self.session.flush()
     f.close()
 
-  def add_analog_bypass(self, device):
-    bypass = runtime.Bypass(device=device, startdate=int(time.time()), duration=0)
-    self.rt_session.add(bypass)
+  def add_analog_bypass(self, device, rt_device):
+    # Get the fault inputs that use the analog device
+    try:
+      fault_inputs = self.session.query(models.FaultInput).filter(models.FaultInput.device_id==device.id).all()
+    except:
+      print('ERROR: Failed find fault inputs for device id {} in database'.format(device.id))
+      return None
 
-  def add_device_input_bypass(self, device_input):
-    bypass = runtime.Bypass(device_input=device_input, startdate=int(time.time()), duration=0)
+    # From the fault inputs find which integrators are being used
+    fa_names = ['', '', '', '']
+
+    for fi in fault_inputs:
+      faults = self.session.query(models.Fault).filter(models.Fault.id==fi.fault_id).all()
+      for fa in faults:
+        fa_names[fa.get_integrator_index()] = fa.name
+    
+    if (len(fault_inputs) == 0):
+      return None
+
+    for i in range(4):
+      pv_name = self.mps_names.getAnalogDeviceName(device)
+      if (fa_names[i] == ''):
+        pv_name = ''
+      else:
+        pv_name = pv_name + ':' + fa_names[i]
+      bypass = runtime.Bypass(device_id=device.id, startdate=int(time.time()),
+                              duration=0, device_integrator=i, pv_name=pv_name)
+      self.rt_session.add(bypass)
+
+  def add_device_input_bypass(self, device_input, rt_device_input):
+    pv_name = self.mps_names.getDeviceInputName(device_input)
+    bypass = runtime.Bypass(device_input=rt_device_input, startdate=int(time.time()),
+                            duration=0, pv_name=pv_name)
     self.rt_session.add(bypass)
 
   def add_runtime_thresholds(self, device):
@@ -1091,54 +1188,67 @@ class DatabaseImporter:
     self.rt_session.add(t)
 
   def create_runtime_database(self):
-    mpsName = MpsName(self.session)
     print 'Creating thresholds/bypass database'
     devices = self.session.query(models.Device).all()
     for d in devices:
       rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
       self.rt_session.add(rt_d)
+      self.rt_session.commit()
       # Add thresholds - if device is analog
       analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==d.id).all()
       if (len(analog_devices)==1):
         self.add_runtime_thresholds(rt_d)
-        self.add_analog_bypass(rt_d)
+        self.add_analog_bypass(d, rt_d)
 
     device_inputs = self.session.query(models.DeviceInput).all()
     for di in device_inputs:
-      di_pv = mpsName.getDeviceInputNameFromId(di.id)
+      di_pv = self.mps_names.getDeviceInputNameFromId(di.id)
       rt_di = runtime.DeviceInput(mpsdb_id = di.id, device_id = di.digital_device.id, pv_name = di_pv)
       self.rt_session.add(rt_di)
-      self.add_device_input_bypass(rt_di)
+      self.add_device_input_bypass(di, rt_di)
     self.rt_session.commit()
 
   # Removes crates/link nodes if import is for LCLS-I only
   def cleanup(self):
+    self.session.commit()
     if (self.lcls1_only):
       crates = self.session.query(models.Crate).all()
       for c in crates:
         # Removes LCLS-II only cards/crates
-        if (c.link_node.ln_type == 2):
+        if (c.link_nodes[0].ln_type == 2):
           cards = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.crate_id==c.id).delete()
-          print('Deleting cards for crate #{}'.format(c.id))
-          self.session.query(models.LinkNode).filter(models.LinkNode.id == c.link_node_id).delete()
+          print('INFO: Deleting cards for crate {} (#{})'.format(c.get_name(), c.id))
+          sys.stdout.write('INFO: `Link Nodes: ')
+          for ln in c.link_nodes:
+            sys.stdout.write('{} '.format(ln.get_name()))
+            l = self.session.query(models.LinkNode).\
+                filter(models.LinkNode.id == ln.id).delete()
+            print('')
           self.session.query(models.Crate).filter(models.Crate.id == c.id).delete()
         else:
           cards = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.crate_id==c.id).all()
           for c in cards:
             if (len(c.devices) == 0):
-              print('Deleting card #{}'.format(c.id))
+              print('Deleting card #{} ({})'.format(c.id, c.name))
               self.session.query(models.ApplicationCard).filter(models.ApplicationCard.id == c.id).delete()
+
       # remove crates that end up with no cards
       for c in crates:
         cards = self.session.query(models.ApplicationCard).\
             filter(models.ApplicationCard.crate_id==c.id).all()
         if (len(cards) == 0):
           print('Crate #{} has no cards'.format(c.id))
-          self.session.query(models.LinkNode).filter(models.LinkNode.id == c.link_node_id).delete()
+          for ln in c.link_nodes:
+            self.session.query(models.LinkNode).filter(models.LinkNode.id == ln.id).delete()
           self.session.query(models.Crate).filter(models.Crate.id == c.id).delete()
 
+      # remove link nodes that have no cards
+      link_nodes = self.session.query(models.LinkNode).all()
+      for ln in link_nodes:
+        if (len(ln.cards) == 0):
+          self.session.query(models.LinkNode).filter(models.LinkNode.id == ln.id).delete()
 
       self.session.query(models.LinkNode).filter(models.LinkNode.ln_type==2).delete()
 
@@ -1151,7 +1261,10 @@ args = parser.parse_args()
 
 lcls1 = False
 if args.lcls1:
-  print 'Import only LCLS-I data (not implemented)'
+  print('-- Importing only LCLS-I data --')
+  print('* excludes: PBLM and LBLM devices')
+  print('* empty application cards are not added to the database')
+  print('---')
   lcls1 = True
 
 verbose=False
@@ -1172,29 +1285,32 @@ importer.add_beam_classes('import/BeamClasses.csv')
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
-importer.add_digital_device('import/QUAD', card_name="Virtual Card")
-importer.add_analog_device('import/BEND', card_name="Generic ADC") 
+importer.add_analog_device('import/BLM', card_name="Generic ADC")
+importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
+importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+importer.add_digital_device('import/PROF')
 
+#if (False):
 if (True):
-  importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
-  importer.add_digital_device('import/PROF')
-  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
-  importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
-  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
-  importer.add_analog_device('import/TORO', card_name="Analog Card")
-  importer.add_analog_device('import/BLM', card_name="Generic ADC")
+  importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
+  importer.add_analog_device('import/BEND', card_name="Generic ADC") 
+  importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
+  importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
+  importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
-  importer.add_digital_device('import/WIRE_PARK')
+  importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
   importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
-  importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/XTES')
+
+#  importer.add_digital_device('import/WIRE_PARK') DEPRECATED
+#  importer.add_digital_device('import/BEND_DCCT_STATUS') DEPRECATED
 
 importer.cleanup()
 

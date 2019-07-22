@@ -14,8 +14,8 @@ FARC,12,Faraday Cup,1
 TORO,13,Toroid,2
 BPMS,14,Beam Position Monitor,3
 BLEN,15,Bunch Length Monitor,1
-BLM,16,Beam Loss Monitor,1
-BEND,17,Dipole,1
+CBLM,16,Beam Loss Monitor,2
+BEND,17,Dipole Current (DCCT),1
 STOP,18,Stopper,0
 WIRE,19,Fast Wire Scanner,0
 COLL,20,Collimator,0
@@ -26,7 +26,8 @@ QUAD,24,Quad Current (Soft),0
 BEND_STATE,25,Dipole On/Off State,0
 PBLM,26,Point BLM,1
 LLRF,27,Low Level RF,0
-BEND_STATUS,28,Dipole Current DCCT Status,0
+BEND_DCCT_STATUS,28,Dipole DCCT Status,0
 KICK_STATUS,29,Kicker Status,0
 XTES,30,XTES Beam Class,0
-LBLM,31,BCS BLM,1
+LBLM,31,BCS Fiber BLM,1
+WAVEGUIDE,32,Waveguide,0
