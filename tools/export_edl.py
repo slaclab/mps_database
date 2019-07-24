@@ -10,6 +10,7 @@ from mps_app_reader import MpsAppReader
 import os
 import sys
 import argparse
+from pprint import *
 
 def generate_analog_devices_EDL(edl_file, template_file, analog_devices, mps_name):
   data=template_file.read()
@@ -305,27 +306,150 @@ def generate_bypass_EDL(edl_file, template_file, device_inputs, mps_name):
   edl_file.write("%s" % t)
   edl_file.close()
 
-def generate_link_node_EDL(edl_file, template_file, session, link_node, mps_name, mps_app_reader, verbose):
-#  mps_app_reader.print_app_data()
+def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir, verbose):
+  areas = ['GUNB', 'L0B', 'HTR', 'L1B', 'BC1B', 'L2B',
+           'BC2B', 'L3B', 'EXT', 'DOG', 'BYP',
+           'SLTH', 'SLTS', 'BSYH', 'BSYS', 'LTUH',
+           'LTUS', 'UNDH', 'UNDS', 'DMPH', 'DMPS', 
+           'FEEH', 'FEES']
+
+  for area in areas:
+    area_link_nodes = filter (lambda x : x.area == area, link_nodes)
+    if (len(area_link_nodes) > 0):
+      data=template_file.read()
+      file_name = areas_dir + 'mps_{}_link_nodes.edl'.format(area.lower())
+      f = open(file_name, 'w')
+
+      link_node_names=[]
+      link_node_sioc_prefix=[]
+      link_node_prefix=[]
+      link_node_index=[]
+      link_node_macros=[]
+      alarm_pvnames=[]
+      for l in area_link_nodes:
+        name = l.get_name()
+        link_node_names.append(name)
+        link_node_sioc_prefix.append(l.get_sioc_pv_base())
+        link_node_prefix.append(l.get_pv_base())
+        link_node_index.append(l.get_crate_index_number())
+        link_node_macros.append(ln_macros[name]['ln_macros'])
+        alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
+
+      macros = {'LINK_NODE_COUNT':len(area_link_nodes),
+                'LINK_NODE_MACROS':link_node_macros,
+                'LINK_NODE_NAME':link_node_names,
+                'LINK_NODE_SIOC_PREFIX':link_node_sioc_prefix,
+                'LINK_NODE_PREFIX':link_node_prefix,
+                'LINK_NODE_INDEX':link_node_index,
+                'ALARM_PVNAME':alarm_pvnames,
+                'AREA':area}
+ 
+      # The logic to setup the edl panel is in the template cheetah file
+      t = Template(data, searchList=[macros])
+      f.write("%s" % t)
+      f.close()
+      template_file.seek(0)
+
+      if (verbose):
+        print('Generating link node panel for {} area ({})'.format(area, file_name))
+
+def generate_link_node_macros(link_node, app_reader, template_dir):
+  alarm_pvname = link_node.get_pv_base() + ":STATSUMY"
+  ln_base = link_node.get_pv_base() + ":1"
+
+  ch_name = ["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+  p_ch = ["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+  p_type=["INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID"]
+
+  ## SLOT Related Macros
+  slot_name = ["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+  slot_pvname = ["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
+  slot_file_name = ["mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps"]
+  link_node_name = link_node.get_name()
+
+  ## Prefix for devices connected to non-Link Node slots (slot 3 through 7)
+  slot_ch_prefix_info=[[["-","-","-"],["-","-","-"]],
+                       [["-","-","-"],["-","-","-"]],
+                       [["-","-","-"],["-","-","-"]],
+                       [["-","-","-"],["-","-","-"]],
+                       [["-","-","-"],["-","-","-"]],
+                       [["-","-","-"],["-","-","-"]]]
+  slot_ch_name_info=[[["-","-","-"],["-","-","-"]],
+                     [["-","-","-"],["-","-","-"]],
+                     [["-","-","-"],["-","-","-"]],
+                     [["-","-","-"],["-","-","-"]],
+                     [["-","-","-"],["-","-","-"]],
+                     [["-","-","-"],["-","-","-"]]]
+
+  for app in app_reader.analog_apps:
+    if app['link_node_name'] == link_node_name:
+      if app['analog_link_node'] or app_reader.link_nodes[link_node_name]['type']=='Mixed':
+        if app['slot_number'] == app_reader.link_nodes[link_node_name]['analog_slot']:
+          if app['slot_number'] == 2:
+            ln_base = link_node.get_pv_base() + ":1"
+          else:
+            ln_base = link_node.get_pv_base() + ":" + str(app['slot_number'])
+
+          for device in app['devices']:
+            index = device['channel_index']
+            ch_name[device['channel_index']] = device['device_name']
+            p_ch[device['channel_index']] = device['prefix']
+            if device['type_name'] != 'BPMS':
+              p_type[device['channel_index']] = app_reader.get_analog_type_name(device['type_name'])
+
+    ## Set channel name/prefix for slots 3 through 7
+    slot = app['slot_number']
+    for device in app['devices']:
+      bay = device['bay_number']
+      channel = device['channel_number']
+      if slot > 1:
+        slot_ch_prefix_info[slot-2][bay][channel] = device['prefix']
+        slot_ch_name_info[slot-2][bay][channel] = device['device_name']
+
+  ## Macro for the Link Node base (MPLN:<AREA>:<LOCATION>, e.g. MPLN:UNDS:MP04)
+  ln_macros = "P=" + ln_base
+  ln_macros = ln_macros + ",LN_SIOC=" + link_node_name
+
+  ## Set macros for analog channels
+  for i in range(0,6):
+    ln_macros = ln_macros + ",CH" + str(i)+"_NAME=" + ch_name[i]
+    ln_macros = ln_macros + ",P_CH" + str(i)+"=" + p_ch[i]
+    ln_macros = ln_macros + ",P_TYPE" + str(i)+"=" + p_type[i]
+
+  ## Set file name for slot buttons according to the application type
+  for i in range(2,8):
+    if i in app_reader.link_nodes[link_node_name]['slots']:
+      slot_name[i-2] = app_reader.link_nodes[link_node_name]['slots'][i]['pv_base']
+      slot_pvname[i-2] = app_reader.link_nodes[link_node_name]['slots'][i]['pv_base']
+      if app_reader.link_nodes[link_node_name]['slots'][i]['type']=="Analog Card":
+        slot_file_name[i-2] = 'mps_linknode_bcm_app_hps'
+      if app_reader.link_nodes[link_node_name]['slots'][i]['type']=="BPM Card":
+        slot_file_name[i-2] = 'mps_linknode_bpm_app_hps'
+
+  ## Set macros for application cards (slots 2 through 7)
+  for i in range(2,8):
+    ln_macros = ln_macros + ",SLOT" + str(i) + "_NAME=" + slot_name[i-2]
+    ln_macros = ln_macros + ",SLOT" + str(i) + "_FILE_NAME=" + slot_file_name[i-2]
+    ln_macros = ln_macros + ",P_SLOT" + str(i) + "=" + slot_pvname[i-2]
+
+  ## Set macros for analog channels for slots 2 through 7
+  for slot in range(2,8):
+    for bay in range(0,2):
+      for channel in range(0,3):
+        ln_macros = ln_macros + ",P_S" + str(slot) + "_B" + str(bay) + "_CH" + str(channel) + "=" + slot_ch_prefix_info[slot-2][bay][channel]
+        ln_macros = ln_macros + ",S" + str(slot) + "_B" + str(bay) + "_CH" + str(channel) + "_NAME=" + slot_ch_name_info[slot-2][bay][channel]
+
+  return ln_macros, alarm_pvname
+
+def generate_link_node_EDL(edl_file, template_file, link_node, ln_macros, verbose):
   data=template_file.read()
 
   if verbose:
     print("Generating screens for {} ({})".format(link_node.get_name(), link_node.get_type()))
-#    print("{} information: {}".format(link_node.get_name(), mps_app_reader.link_nodes[link_node.get_name()]))
 
-  try:
-    app_cards = session.query(models.ApplicationCard).\
-        filter(models.ApplicationCard.link_node_id==link_node.id).all()
-  except Exception as e:
-    print e
-    print('ERROR')
-    return
-
-  macros={
-    'link_node':link_node,
-    'app_reader':mps_app_reader,
-    'template_dir':os.path.dirname(template_file.name)
-    }
+  macros={'LN_MACROS':ln_macros['ln_macros'],
+          'ALARM_PVNAME':ln_macros['alarm_pvname'],
+          'LN_NAME':link_node.get_name()}
  
   # The logic to setup the edl panel is in the template cheetah file
   t = Template(data, searchList=[macros])
@@ -345,6 +469,10 @@ def create_link_node_directories(link_node_dir, link_nodes, mps_name):
     ln_dir = link_node_dir + '/' + ln.get_name()
     if not os.path.isdir(ln_dir):
       os.mkdir(ln_dir)
+
+  ln_dir = link_node_dir + '/areas'
+  if not os.path.isdir(ln_dir):
+    os.mkdir(ln_dir)
 
 #=== MAIN ==================================================================================
 
@@ -369,6 +497,9 @@ parser.add_argument('--bypass-analog-template', metavar='file', type=argparse.Fi
 
 parser.add_argument('--link-node-template', metavar='file', type=argparse.FileType('r'), nargs='?',
                     help='Cheetah template file name for link node screen (e.g. link_node.tmpl)')
+
+parser.add_argument('--link-node-area-template', metavar='file', type=argparse.FileType('r'), nargs='?',
+                    help='Cheetah template file name for link node area screen (e.g. link_node_area.tmpl)')
 
 parser.add_argument('--link-nodes', metavar='link_node_dir', type=str, nargs='?',
                     help='Generate link node screens under the specified directory' \
@@ -521,12 +652,25 @@ if (args.bypass_analog_template):
 
 if (args.link_node_template):
   file_name = 'link_node.edl'
+  all_ln_macros = {}
   for ln in link_nodes:
+    ln_macros={}
+    ln_macros['ln_macros'], ln_macros['alarm_pvname'] = generate_link_node_macros(ln, mps_app_reader,
+                                                                                  os.path.dirname(args.link_node_template.name))
+    all_ln_macros[ln.get_name()] = ln_macros
+
     dir_name = args.link_nodes + '/' + ln.get_name() + '/'
     f = open(dir_name + file_name, 'w')
-    generate_link_node_EDL(f, args.link_node_template, session, ln, mps_name, mps_app_reader, verbose)
+    generate_link_node_EDL(f, args.link_node_template, ln, ln_macros, verbose)
     args.link_node_template.seek(0)
 #    mps_app_reader.pretty_print()
+
+  # If generating panels for all link nodes, then create area panels too
+  if (not args.link_node and args.link_node_area_template):
+#    pp=PrettyPrinter(indent=4)
+#    pp.pprint(all_ln_macros)
+    generate_link_node_areas_EDL(link_nodes, all_ln_macros, args.link_node_area_template,
+                                 args.link_nodes + '/areas/', verbose)
 
 session.close()
 

@@ -105,8 +105,34 @@ class LinkNode(Base):
     else:
       return 'Analog'
 
+  def get_crate_index_number(self):
+    """
+    Return the index number of the link node card in the crate. Usually it is in slot 2
+    (which is index 1), but on crates that have more than 6 analog inputs the additional 
+    channels are handled by separate link node cards on slots 3 through 7 - for non-slot
+    2 cases, the index is the slot number
+    """
+    has_digital = False
+    has_analog = False
+    is_slot2 = False
+    for c in self.cards:
+      if c.slot_number == 2:
+        return 1
+      
+    if len(self.cards) == 1:
+      return self.cards[0].slot_number
+    else:
+      print("WARN: Link node ({}) has multiple cards, but none in slot 2".\
+              format(self.get_name()))
+#      raise ValueError("Link node ({}) has multiple cards, but none in slot 2".\
+#                         format(self.get_name()))
+      return 1
+
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()
+
+  def get_sioc_pv_base(self):
+    return 'SIOC:' + self.area.upper() + ':' + self.location.upper()
 
   def get_pv_base(self):
     return 'MPLN:' + self.area.upper() + ':' + self.location.upper()
