@@ -1,5 +1,1 @@
-epicsEnvSet("IOC_LOCATION", "$(LOCATION)")
 epicsEnvSet("IOC_NAME", "SIOC:$(AREA):$(LOCATION)")
-epicsEnvSet("IOC_LOCATION_INDEX", "$(LOCATION_INDEX)")
-epicsEnvSet("IOC_CARD_INDEX", "$(CARD_INDEX)")
-epicsEnvSet("IOC_AREA", "$(AREA)")

@@ -1,8 +1,0 @@
-record(longin, "$(P):$(R)") {
-    field(DESC, "$(DESC)")
-    field(SCAN, "I/O Intr")
-    field(PINI, "NO")
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(L2MPSASYN_PORT),$(ADDR))$(PARAM)")
-    field(ASG,  "$(ASG)")
-}

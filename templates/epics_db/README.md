@@ -10,8 +10,6 @@ The template files are defined as substitutions files, which can be expanded wit
 
 This is a list of substitutions files, which template files are generated from them, and a description of their use case.
 
-Substitution File       | Generated template File  | Description
-------------------------|--------------------------|------------------------------------
-mps.substitutions       | mps.template             | Records commons to all analog devices.
-thr_base.substitutions  | thr_base.template        | Records commons to all analog faults.
-thr.substitutions       | thr.template             | Records commons to each bit in each analog fault.
+Substitution File          | Generated template File  | Description
+---------------------------|--------------------------|------------------------------------
+analog_input.substitutions | analog_input.template    | Records defining named analog inputs

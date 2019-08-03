@@ -5,7 +5,7 @@ files using the parameters obtained from the MPS database.
 
 ## Generating the templates
 
-The script <TOP>/tools/export_alarms.py uses the template files along with
+The script `<TOP>/tools/export_alarms.py` uses the template files along with
 generated substitution files to create alhConfig files.
 
 ## Alarm tree structure

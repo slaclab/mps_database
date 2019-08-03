@@ -8,6 +8,15 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R1-4-0:
+  * Compatible with l2MpsAsyn-R3.1.0
+  * Removed PVs that connect to YCPSWASYN_PORT, these are
+    loaded using the mpsLN.db file provided by l2MpsLN
+  * Removed threshold PVs, they belong to l2MpsAsyn module,
+    using mps.db file
+  * Removed all template files related to registers, they
+    also belong to l2MpsAsyn module
+
 mps_database-R1-3-1:
   * Moved Link Node database substitution files from the l2MpsLN
     app into the database for automatic generation.

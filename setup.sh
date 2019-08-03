@@ -15,7 +15,7 @@ else
     echo "ERROR: use '. ./setup.sh install' command first"
     exit -1
   fi
-  export PYTHONPATH=/u/cd/lpiccoli/lcls2/EIC/mps_database:$PYTHONPATH
+#  export PYTHONPATH=/u/cd/lpiccoli/lcls2/EIC/mps_database:$PYTHONPATH
 fi
 
 #export LD_LIBRARY_PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/lib:$LD_LIBRARY_PATH

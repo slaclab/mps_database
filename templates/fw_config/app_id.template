@@ -1,5 +1,6 @@
 # Analog application AppID
-- AmcCarrierCore: 
-  - AppMps:
-    - AppMpsRegBase:
-      - mpsAppId: !<value> $(ID)
+- mmio:
+  - AmcCarrierCore: 
+    - AppMps:
+      - AppMpsRegBase:
+        - mpsAppId: !<value> $(ID)

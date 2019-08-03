@@ -1,1 +1,0 @@
-epicsEnvSet("$(APP_PREFIX_NAME)", "$(APP_PREFIX)")

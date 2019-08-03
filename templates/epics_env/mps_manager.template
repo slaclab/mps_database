@@ -1,2 +1,0 @@
-epicsEnvSet("MPS_MANAGER_HOST", "$(MANAGER_HOST)")
-epicsEnvSet("MPS_MANAGER_PORT", "$(MANAGER_PORT)")

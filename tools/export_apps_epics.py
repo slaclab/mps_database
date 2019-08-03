@@ -9,6 +9,7 @@ import os
 import errno
 import re
 import shutil
+import datetime
 
 def create_dir(path, clean=False, debug=False):
     """
@@ -106,35 +107,21 @@ class MpsAppExporter(MpsAppReader):
             if (app["link_node_name"] in self.link_nodes):
                 if (self.link_nodes[app["link_node_name"]]['type'] == 'Digital' or 
                     self.link_nodes[app["link_node_name"]]['type'] == 'Mixed'):
-                    self.__write_mps_db(path=app_path, macros={"P":app_prefix,
+                    self.__write_link_node_info_db(path=app_path, macros={"P":app_prefix,
                                                                "MPS_LINK_NODE_SIOC":app["link_node_name"],
                                                                "MPS_LINK_NODE_ID":app["lc1_node_id"],
                                                                "MPS_LINK_NODE_TYPE":type_number,
                                                                "MPS_CONFIG_VERSION":self.config_version})
-#                    print('> mps.template for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
                 elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
-#                else:
-#                    print(">> ERROR")
-#            else:
-#                print(">> No mps.template for {} (type {})".format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
-
-            self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
             # Add the IOC name environmental variable for the Link Nodes
-            self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"]})
+            self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"],
+                                                           "MPS_DB_VERSION":self.config_version,
+                                                           "DATE":datetime.datetime.now().strftime('%Y.%m.%d-%H:%M:%S')})
             self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
-                                                            "LOCATION":app["link_node_location"].upper(),
-                                                            "LOCATION_INDEX":"0{}".format(5),
-                                                            "CARD_INDEX":str(app["card_index"]),
-                                                            "APP_ID":str(app["app_id"])})
-            self.__write_app_id_env(path=app_path, macros={"APP_TYPE":"MPS_DIG_APP",
-                                                           "APP_ID_NAME":"MPS_DIG_APP_ID",
-                                                           "APP_ID":str(app["app_id"])})
-            self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
-            self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"DIGITAL_APP_PREFIX",
-                                                               "APP_PREFIX":app_prefix})
+                                                            "LOCATION":app["link_node_location"].upper()})
 
             has_virtual = False
             for device in app["devices"]:
@@ -173,10 +160,6 @@ class MpsAppExporter(MpsAppReader):
                         print("    Digital Input : {}".format(input["name"]))
                     #self.write_thr_base_db(path=app_path, macros=macros)
 
-            if (has_virtual):
-                self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"VIRTUAL_APP_PREFIX",
-                                                                   "APP_PREFIX":"VIRTUAL"})
-
         if (self.verbose):
             print("----------------------------")
 
@@ -198,37 +181,28 @@ class MpsAppExporter(MpsAppReader):
 
             if (app["link_node_name"] in self.link_nodes):
                 if (self.link_nodes[app["link_node_name"]]['type'] == 'Analog'):
-                    self.__write_mps_db(path=app_path, macros={"P":app_prefix,
-                                                               "MPS_LINK_NODE_SIOC":app["link_node_name"],
-                                                               "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                               "MPS_LINK_NODE_TYPE":"1",
-                                                               "MPS_CONFIG_VERSION":self.config_version})
+                    self.__write_link_node_info_db(path=app_path,
+                                                   macros={"P":app_prefix,
+                                                           "MPS_LINK_NODE_SIOC":app["link_node_name"],
+                                                           "MPS_LINK_NODE_ID":app["lc1_node_id"],
+                                                           "MPS_LINK_NODE_TYPE":"1",
+                                                           "MPS_CONFIG_VERSION":self.config_version})
                 elif (self.link_nodes[app["link_node_name"]]['type'] == 'Unknown'):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
-#                else:
-#                    print('>> ERROR for {} (type {})'.format(app["link_node_name"], self.link_nodes[app["link_node_name"]]))
 
-#            self.__write_analog_db(path=app_path, macros={"P":app_prefix})
-            self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
 
             # Add the IOC name environmental variable for the Link Nodes
             if app["analog_link_node"]:
-                self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"]})
+                self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"],
+                                                               "MPS_DB_VERSION":self.config_version,
+                                                               "DATE":datetime.datetime.now().strftime('%Y.%m.%d-%H:%M:%S')})
+
                 self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
-                                                                "LOCATION":app["link_node_location"].upper(),
-                                                                "LOCATION_INDEX":"0{}".format(5),
-                                                                "CARD_INDEX":str(app["card_index"])})
-                self.__write_lc1_id_env(path=app_path, macros={"NODE_ID":app["lc1_node_id"]})
+                                                                "LOCATION":app["link_node_location"].upper()})
 
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
-            self.__write_app_prefix_env(path=app_path, macros={"APP_PREFIX_NAME":"ANALOG_APP_PREFIX", "APP_PREFIX":app_prefix})
-            self.__write_app_id_env(path=app_path, macros={"APP_TYPE":"MPS_ANA_APP",
-                                                           "APP_ID_NAME":"MPS_ANA_APP_ID",
-                                                           "APP_ID":str(app["app_id"])})
-            self.__write_mps_manager_env(path=app_path, macros={"MANAGER_HOST": self.manager_info['host'],
-                                                                "MANAGER_PORT": str(self.manager_info['port'])})
 
             spare_channels = range(0,6)
             for device in app["devices"]:
@@ -272,19 +246,14 @@ class MpsAppExporter(MpsAppReader):
                                     "DESC":fault["description"],
                                     "EGU":self.get_app_units(device["type_name"],fault["name"]) }
 
-                        self.__write_thr_base_db(path=app_path, macros=macros)
-
                         for bit in fault["bit_positions"]:
                             fault_prefix = "{}_T{}".format(fault["name"], bit)
 
                             if (self.verbose):
                                 print("    Fault prefix : {}".format(fault_prefix))
 
-                            macros["BIT_POSITION"] = str(bit)
-                            self.__write_thr_db(path=app_path, macros=macros)
-
                         # Writes the PVs used as inputs for scale factors (*_FWSLO and *_FWOFF)
-                        macros["PROPERTY"] = '{}_SF'.format(fault["name"])
+                        macros["PROPERTY"] = '{}'.format(fault["name"])
                         macros["SLOPE"] = "555.86e-6"
                         macros["OFFSET"] = "32768"
                         self.__write_mps_scale_factor_cmd(path=app_path, macros=macros)
@@ -303,7 +272,6 @@ class MpsAppExporter(MpsAppReader):
             app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             link_node_info=self.link_nodes[app["link_node_name"]]
             if not 'exported' in link_node_info:
-#                print("INFO: slot information for {}".format(app["link_node_name"]))
                 for slot in range(2,8):
                     if slot in link_node_info['slots']:
                         macros = { "P": app["app_prefix"],
@@ -333,31 +301,10 @@ class MpsAppExporter(MpsAppReader):
                         self.__write_link_node_channel_info_db(path=app_path, macros=macros)
 
                 link_node_info['exported']=True
-#            else:
-#                print("already added slot info to {}".format(app['link_node_name']))
-
-
 
         if (self.verbose):
             print("--------------------------")
 
-
-
-    def __write_app_id_config(self, path, macros):
-        """
-        Write the appID configuration section to the application configuration file.
-
-        This configuration will be load by all applications.
-        """
-        self.__write_fw_config(path=path, template_name="app_id.template", macros=macros)
-
-    def __write_dig_app_id_confg(self, path, macros):
-        """
-        Write the digital appID configuration section to the application configuration file.
-
-        This configuration will be load by all link nodes.
-        """
-        self.__write_fw_config(path=path, template_name="dig_app_id.template", macros=macros)
 
     def __write_thresholds_off_config(self, path):
         """
@@ -375,36 +322,19 @@ class MpsAppExporter(MpsAppReader):
         """
         self.__write_epics_db(path=path, template_name="analog_input.template", macros=macros)
 
-    def __write_mps_db(self, path, macros):
+    def __write_link_node_info_db(self, path, macros):
         """
         Write the base mps records to the application EPICS database file.
 
         These records will be loaded once per each device.
         """
-#        print(">>> mps.template for {}".format(macros['P']))
-        self.__write_epics_db(path=path, template_name="mps.template", macros=macros)
+        self.__write_epics_db(path=path, template_name="link_node_info.template", macros=macros)
 
     def __write_virtual_db(self, path, macros):
         """
         Write records for digital virtual inputs
         """
         self.__write_epics_db(path=path, template_name="virtual.template", macros=macros)
-
-    def __write_thr_base_db(self, path, macros):
-        """
-        Write the base threshold record to the application EPICS database file.
-
-        These records will be loaded once per each fault.
-        """
-        self.__write_epics_db(path=path, template_name="thr_base.template", macros=macros)
-
-    def __write_thr_db(self, path, macros):
-        """
-        Write the threshold records to the application EPICS database file.
-
-        These records will be load once per each bit in each fault.
-        """
-        self.__write_epics_db(path=path, template_name="thr.template", macros=macros)
 
     def __write_link_node_channel_info_db(self, path, macros):
         self.__write_epics_db(path=path, template_name="link_node_channel_info.template", macros=macros)
@@ -428,14 +358,6 @@ class MpsAppExporter(MpsAppReader):
         """
         self.__write_mps_sf_cmd(path=path, template_name="mps_scale_factor_cmd.template", macros=macros)
 
-    def __write_app_id_env(self, path, macros):
-        """
-        Write the appID to the environmental variable file.
-
-        This environmental variable will be loaded by all applications.
-        """
-        self.__write_epics_env(path=path, template_name="app_id.template", macros=macros)
-
     def __write_header_env(self, path, macros):
         """
         Write the header for the MPS file containing environmental variables.
@@ -452,22 +374,6 @@ class MpsAppExporter(MpsAppReader):
         """
         self.__write_epics_env(path=path, template_name="prefix.template", macros=macros)
 
-    def __write_app_prefix_env(self, path, macros):
-        """
-        Write the mps application PV name prefix environmental variable file.
-
-        This environmental variable will be loaded by all applications.
-        """
-        self.__write_epics_env(path=path, template_name="app_prefix.template", macros=macros)
-
-    def __write_mps_manager_env(self, path, macros):
-        """
-        Write host/port where the MpsManager server is running. This information is needed
-        for all link nodes with analog inputs as well as any other analog app that uses
-        thresholds.
-        """
-        self.__write_epics_env(path=path, template_name="mps_manager.template", macros=macros)
-
     def __write_iocinfo_env(self, path, macros):
         """
         Write the LN IOC related environmental variable file.
@@ -475,14 +381,6 @@ class MpsAppExporter(MpsAppReader):
         This environmental variable will be loaded by all link nodes.
         """
         self.__write_epics_env(path=path, template_name="ioc_info.template", macros=macros)
-
-    def __write_lc1_id_env(self, path, macros):
-        """
-        Write the LN LCLS-I node ID (used to assemble the LN IP address)
-
-        This environmental variable will be loaded by all LCLS-I connected link nodes.
-        """
-        self.__write_epics_env(path=path, template_name="lc1_node_id.template", macros=macros)
 
     def __write_epics_db(self, path, template_name, macros):
         """
@@ -552,7 +450,6 @@ class MpsAppExporter(MpsAppReader):
         create_dir(file)
         with open(file, 'a') as db, open(template, 'r') as template:
             for line in template:
-                #print("*** {}".format(line))
                 db.write(self.__expand_macros(line, macros))
 
     def __expand_macros(self, text, macros):

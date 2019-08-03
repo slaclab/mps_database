@@ -1,3 +1,0 @@
-epicsEnvSet("$(APP_TYPE)", "")
-epicsEnvSet("$(APP_ID_NAME)", "$(APP_ID)")
-

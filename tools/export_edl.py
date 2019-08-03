@@ -397,14 +397,14 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
             if device['type_name'] != 'BPMS':
               p_type[device['channel_index']] = app_reader.get_analog_type_name(device['type_name'])
 
-    ## Set channel name/prefix for slots 3 through 7
-    slot = app['slot_number']
-    for device in app['devices']:
-      bay = device['bay_number']
-      channel = device['channel_number']
-      if slot > 1:
-        slot_ch_prefix_info[slot-2][bay][channel] = device['prefix']
-        slot_ch_name_info[slot-2][bay][channel] = device['device_name']
+      ## Set channel name/prefix for slots 3 through 7
+      slot = app['slot_number']
+      for device in app['devices']:
+        bay = device['bay_number']
+        channel = device['channel_number']
+        if slot > 1:
+          slot_ch_prefix_info[slot-2][bay][channel] = device['prefix']
+          slot_ch_name_info[slot-2][bay][channel] = device['device_name']
 
   ## Macro for the Link Node base (MPLN:<AREA>:<LOCATION>, e.g. MPLN:UNDS:MP04)
   ln_macros = "P=" + ln_base
@@ -661,7 +661,9 @@ if (args.link_node_template):
 
     dir_name = args.link_nodes + '/' + ln.get_name() + '/'
     f = open(dir_name + file_name, 'w')
-    generate_link_node_EDL(f, args.link_node_template, ln, ln_macros, verbose)
+    pp=PrettyPrinter(indent=4)
+#    pp.pprint(ln_macros)
+#    generate_link_node_EDL(f, args.link_node_template, ln, ln_macros, verbose)
     args.link_node_template.seek(0)
 #    mps_app_reader.pretty_print()
 
