@@ -290,3 +290,102 @@ class RuntimeChecker:
         return False
     if (self.verbose):
       print(' done.')
+
+  def add_device_input_bypass(self, device_input, rt_device_input):
+    pv_name = self.mps_names.getDeviceInputName(device_input)
+    bypass = runtime.Bypass(device_input=rt_device_input, startdate=int(time.time()),
+                            duration=0, pv_name=pv_name)
+    self.rt_session.add(bypass)
+
+  def add_analog_bypass(self, device, rt_device):
+    # Get the fault inputs that use the analog device
+    try:
+      fault_inputs = self.session.query(models.FaultInput).filter(models.FaultInput.device_id==device.id).all()
+    except:
+      print('ERROR: Failed find fault inputs for device id {} in database'.format(device.id))
+      return None
+
+    # From the fault inputs find which integrators are being used
+    fa_names = ['', '', '', '']
+
+    for fi in fault_inputs:
+      faults = self.session.query(models.Fault).filter(models.Fault.id==fi.fault_id).all()
+      for fa in faults:
+        fa_names[fa.get_integrator_index()] = fa.name
+    
+    if (len(fault_inputs) == 0):
+      return None
+
+    for i in range(4):
+      pv_name = self.mps_names.getAnalogDeviceName(device)
+      if (fa_names[i] == ''):
+        pv_name = ''
+      else:
+        pv_name = pv_name + ':' + fa_names[i]
+      bypass = runtime.Bypass(device_id=device.id, startdate=int(time.time()),
+                              duration=0, device_integrator=i, pv_name=pv_name)
+      self.rt_session.add(bypass)
+
+  def add_runtime_thresholds(self, device):
+    t0 = runtime.Threshold0(device=device, device_id=device.id)
+    self.rt_session.add(t0)
+    t1 = runtime.Threshold1(device=device, device_id=device.id)
+    self.rt_session.add(t1)
+    t2 = runtime.Threshold2(device=device, device_id=device.id)
+    self.rt_session.add(t2)
+    t3 = runtime.Threshold3(device=device, device_id=device.id)
+    self.rt_session.add(t3)
+    t4 = runtime.Threshold4(device=device, device_id=device.id)
+    self.rt_session.add(t4)
+    t5 = runtime.Threshold5(device=device, device_id=device.id)
+    self.rt_session.add(t5)
+    t6 = runtime.Threshold6(device=device, device_id=device.id)
+    self.rt_session.add(t6)
+    t7 = runtime.Threshold7(device=device, device_id=device.id)
+    self.rt_session.add(t7)
+
+    t0 = runtime.ThresholdAlt0(device=device, device_id=device.id)
+    self.rt_session.add(t0)
+    t1 = runtime.ThresholdAlt1(device=device, device_id=device.id)
+    self.rt_session.add(t1)
+    t2 = runtime.ThresholdAlt2(device=device, device_id=device.id)
+    self.rt_session.add(t2)
+    t3 = runtime.ThresholdAlt3(device=device, device_id=device.id)
+    self.rt_session.add(t3)
+    t4 = runtime.ThresholdAlt4(device=device, device_id=device.id)
+    self.rt_session.add(t4)
+    t5 = runtime.ThresholdAlt5(device=device, device_id=device.id)
+    self.rt_session.add(t5)
+    t6 = runtime.ThresholdAlt6(device=device, device_id=device.id)
+    self.rt_session.add(t6)
+    t7 = runtime.ThresholdAlt7(device=device, device_id=device.id)
+    self.rt_session.add(t7)
+
+    t = runtime.ThresholdLc1(device=device, device_id=device.id)
+    self.rt_session.add(t)
+
+    t = runtime.ThresholdIdl(device=device, device_id=device.id)
+    self.rt_session.add(t)
+
+  def create_runtime_database(self):
+    print 'Creating thresholds/bypass database'
+
+    devices = self.session.query(models.Device).all()
+    for d in devices:
+      rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
+      self.rt_session.add(rt_d)
+      self.rt_session.commit()
+      # Add thresholds - if device is analog
+      analog_devices = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==d.id).all()
+      if (len(analog_devices)==1):
+        self.add_runtime_thresholds(rt_d)
+        self.add_analog_bypass(d, rt_d)
+
+    device_inputs = self.session.query(models.DeviceInput).all()
+    for di in device_inputs:
+      di_pv = self.mps_names.getDeviceInputNameFromId(di.id)
+      rt_di = runtime.DeviceInput(mpsdb_id = di.id, device_id = di.digital_device.id, pv_name = di_pv)
+      self.rt_session.add(rt_di)
+      self.add_device_input_bypass(di, rt_di)
+    self.rt_session.commit()
+
