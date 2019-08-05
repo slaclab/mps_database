@@ -1,0 +1,43 @@
+#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-write registers                         #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - R       : Record name                                                      #
+#   - DESC    : Description                                                      #
+#   - PORT    : Asyn port name                                                   #
+#   - ADDR    : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)  #
+#   - PARAM   : Asyn parameter name                                              #
+#   - ZNAM    : Label for the "0" state                                          #
+#   - ONAM    : Label for the "1" state                                          #
+#   - ASG     : Access security group                                            #
+#   - ZSV     : Alarm for zero state                                             #
+#   - RBV_ZSV : Alarm for zero state                                             #
+#   - DISV    : Disable value (if SDIS has this value record is disabled)        #
+#   - SDIS    : Source of disable value                                          #
+#================================================================================#
+
+record(bo, "$(P):$(R)") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),$(ADDR),0x01)$(PARAM)")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ASG,  "$(ASG)")
+    field(ZSV,  "$(ZSV)")
+    field(DISV, "$(DISV)")
+    field(SDIS, "$(SDIS)")
+}
+
+record(bi, "$(P):$(R)_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),$(ADDR),0x01)$(PARAM)")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ASG,  "$(ASG)")
+    field(ZSV,  "$(RBV_ZSV)")
+}

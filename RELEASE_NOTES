@@ -8,6 +8,16 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R2-0-0:
+  * BLM threshold PVs moved back to the generated mps.db
+  * Removed mps_*.cmd files generated, not needed after
+    records moved back to mps.db file.
+  * Restored several template files to templates/epics_db
+    area
+  * Database import: all threshold PVs are generated for
+    the integrators defined in the configuration, not
+    only those that define faults.
+
 mps_database-R1-4-0:
   * Compatible with l2MpsAsyn-R3.1.0
   * Removed PVs that connect to YCPSWASYN_PORT, these are

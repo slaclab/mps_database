@@ -12,4 +12,7 @@ This is a list of substitutions files, which template files are generated from t
 
 Substitution File          | Generated template File  | Description
 ---------------------------|--------------------------|------------------------------------
+mps.substitutions          | mps.template             | Records commons to all analog devices.
+thr_base.substitutions     | thr_base.template        | Records commons to all analog faults.
+thr.substitutions          | thr.template             | Records commons to each bit in each analog fault.
 analog_input.substitutions | analog_input.template    | Records defining named analog inputs

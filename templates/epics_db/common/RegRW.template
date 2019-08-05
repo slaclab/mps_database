@@ -1,0 +1,26 @@
+#================================================================================#
+# LCLS-II MPS PV template for read-write registers                               #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longout, "$(P):$(R)") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR))$(PARAM)")
+}
+
+record(longin, "$(P):$(R)_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR))$(PARAM)")
+}

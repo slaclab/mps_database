@@ -116,6 +116,8 @@ class MpsAppExporter(MpsAppReader):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
 
+            self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
+
             # Add the IOC name environmental variable for the Link Nodes
             self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":app["link_node_name"],
                                                            "MPS_DB_VERSION":self.config_version,
@@ -158,7 +160,6 @@ class MpsAppExporter(MpsAppReader):
 
                     if (self.verbose):
                         print("    Digital Input : {}".format(input["name"]))
-                    #self.write_thr_base_db(path=app_path, macros=macros)
 
         if (self.verbose):
             print("----------------------------")
@@ -191,6 +192,8 @@ class MpsAppExporter(MpsAppReader):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
 
+            self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+            self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
 
             # Add the IOC name environmental variable for the Link Nodes
@@ -213,20 +216,11 @@ class MpsAppExporter(MpsAppReader):
 
                 if (device["type_name"] not in self.non_link_node_types):
                     macros = { "P":app_prefix,
-                               "BAY":str(device["bay_number"]),
-                               "CH":str(device["channel_number"]),
                                "R":'ADC_DATA_{}'.format(device["channel_index"]),
                                "P_DEV":device_prefix,
                                "R_DEV":self.get_analog_type_name(device["type_name"])
                                }
                     self.__write_analog_db(path=app_path, macros=macros)
-
-                    macros = { "BAY_DB_FILE": 'db/mps_blm.db',
-                               "BAY_INP_NAME": device_prefix,
-                               "BAY":str(device["bay_number"]),
-                               "INP":str(device["channel_number"])
-                               }
-                    self.__write_mps_analog_channels_cmd(path=app_path, macros=macros)
 
                     macros = { "P": app_prefix,
                                "CH":str(device["channel_index"]),
@@ -246,17 +240,16 @@ class MpsAppExporter(MpsAppReader):
                                     "DESC":fault["description"],
                                     "EGU":self.get_app_units(device["type_name"],fault["name"]) }
 
-                        for bit in fault["bit_positions"]:
-                            fault_prefix = "{}_T{}".format(fault["name"], bit)
+                        self.__write_thr_base_db(path=app_path, macros=macros)
 
+                        # Generate PV for all possible thresholds, even if not defined in database
+                        for bit in range(0,8):#fault["bit_positions"]:
+                            fault_prefix = "{}_T{}".format(fault["name"], bit)
+                            macros["BIT_POSITION"] = str(bit)
+                            self.__write_thr_db(path=app_path, macros=macros)
                             if (self.verbose):
                                 print("    Fault prefix : {}".format(fault_prefix))
 
-                        # Writes the PVs used as inputs for scale factors (*_FWSLO and *_FWOFF)
-                        macros["PROPERTY"] = '{}'.format(fault["name"])
-                        macros["SLOPE"] = "555.86e-6"
-                        macros["OFFSET"] = "32768"
-                        self.__write_mps_scale_factor_cmd(path=app_path, macros=macros)
 
             for ch in spare_channels:
                 if ch > -1:
@@ -305,6 +298,19 @@ class MpsAppExporter(MpsAppReader):
         if (self.verbose):
             print("--------------------------")
 
+    def __write_app_id_config(self, path, macros):
+        """
+        Write the appID configuration section to the application configuration file.
+        This configuration will be load by all applications.
+        """
+        self.__write_fw_config(path=path, template_name="app_id.template", macros=macros)
+
+    def __write_dig_app_id_confg(self, path, macros):
+        """
+        Write the digital appID configuration section to the application configuration file.
+        This configuration will be load by all link nodes.
+        """
+        self.__write_fw_config(path=path, template_name="dig_app_id.template", macros=macros)
 
     def __write_thresholds_off_config(self, path):
         """
@@ -313,6 +319,27 @@ class MpsAppExporter(MpsAppReader):
         This configuration will be load by all applications.
         """
         self.__write_fw_config(path=path, template_name="thresholds_off.template", macros={})
+
+    def __write_mps_db(self, path, macros):
+        """
+        Write the base mps records to the application EPICS database file.
+        These records will be loaded once per each device.
+        """
+        self.__write_epics_db(path=path, template_name="mps.template", macros=macros)
+
+    def __write_thr_base_db(self, path, macros):
+        """
+        Write the base threshold record to the application EPICS database file.
+        These records will be loaded once per each fault.
+        """
+        self.__write_epics_db(path=path, template_name="thr_base.template", macros=macros)
+
+    def __write_thr_db(self, path, macros):
+        """
+        Write the threshold records to the application EPICS database file.
+        These records will be load once per each bit in each fault.
+        """
+        self.__write_epics_db(path=path, template_name="thr.template", macros=macros)
 
     def __write_analog_db(self, path, macros):
         """
@@ -341,22 +368,6 @@ class MpsAppExporter(MpsAppReader):
 
     def __write_link_node_slot_info_db(self, path, macros):
         self.__write_epics_db(path=path, template_name="link_node_slot_info.template", macros=macros)
-
-    def __write_mps_analog_channels_cmd(self, path, macros):
-        """
-        Write the records used as analog inputs - with the actual device names used an PV names
-
-        These records will be load once per each analog channel
-        """
-        self.__write_mps_analog_cmd(path=path, template_name="mps_analog_channels_cmd.template", macros=macros)
-
-    def __write_mps_scale_factor_cmd(self, path, macros):
-        """
-        Write the records used as slope/offset inputs for the analog channel scale factors
-
-        These records will be load once per each analog channel
-        """
-        self.__write_mps_sf_cmd(path=path, template_name="mps_scale_factor_cmd.template", macros=macros)
 
     def __write_header_env(self, path, macros):
         """

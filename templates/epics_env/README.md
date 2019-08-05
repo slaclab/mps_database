@@ -10,6 +10,4 @@ Template File                    | Description
 ---------------------------------|---------------------------------------------------------------------
 header.template                  | Link node name and information about the MPS database
 ioc_info.template                | IOC_NAME environment variable used by iocAdmin
-mps_analog_channels_cmd.template | Used to define the named analog channels in the link node
-mps_scale_factor_cmd.template    | Used for the scale factors of the analog channels
 prefix.template                  | MPS PV name prefix env variable (L2MPS_PREFIX), used by all applications.

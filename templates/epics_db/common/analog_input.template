@@ -1,5 +1,0 @@
-record(ai, "$(P_DEV):$(R_DEV)") {
-    field(EGU, "$(EGU)")
-    field(SCAN, "$(SCAN)")
-    field(INP, "$(P):$(R)")
-}

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Database names
-NAMES="analog_input"
+#NAMES="analog_input"
+NAMES="mps thr_base thr"
 
 # File names
 for n in $NAMES

@@ -1,0 +1,16 @@
+#================================================================================#
+# LCLS-II MPS PV template for MpsManager threshold control                       #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - ASG     : Access security group                                            #
+#================================================================================#
+record(bo, "$(P):THR_LOADED") {
+    field(DESC, "Set by MpsManager after IOC reboots")
+    field(PINI, "YES")
+    field(VAL,  "0")
+    field(ZNAM, "Not loaded")
+    field(ONAM, "Loaded")
+    field(ASG,  "$(ASG)")
+    field(ZSV,  "MAJOR")
+}
+

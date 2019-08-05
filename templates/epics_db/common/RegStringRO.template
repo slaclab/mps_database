@@ -1,0 +1,20 @@
+#================================================================================#
+# LCLS-II MPS PV template for read-only registers holding strings                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(waveform, "$(P):$(R)") {
+    field(DESC,    "$(DESC)")
+    field(PINI,    "NO")
+    field(SCAN,    "I/O Intr")
+    field(DTYP,    "asynOctetRead")
+    field(NELM,    "40")
+    field(FTVL,    "CHAR")
+    field(INP,     "@asyn($(PORT),$(ADDR))$(PARAM)")
+}
