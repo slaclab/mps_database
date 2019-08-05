@@ -8,6 +8,10 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R2-0-1:
+  * Generation of runtime database for EIC
+  * EIC version 2019-08-05-eic
+
 mps_database-R2-0-0:
   * BLM threshold PVs moved back to the generated mps.db
   * Removed mps_*.cmd files generated, not needed after
