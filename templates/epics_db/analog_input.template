@@ -1,0 +1,5 @@
+record(ai, "$(P_DEV):$(R_DEV)") {
+    field(EGU, "V")
+    field(SCAN, "1 second")
+    field(INP, "$(P):$(R)")
+}
