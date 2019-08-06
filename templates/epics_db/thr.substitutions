@@ -1,0 +1,24 @@
+#=========================================================================================#
+# PVs for each analog fault threshold
+# Macro description:
+#  - BAY          : AMC bay where the application card is installed (0: bay 0, 1: bay 2)
+#  - DESC         : Fault description
+#  - APP          : Application type name (for example: BPM, BLM, BCM, BLEN)
+#  - FAULT        : Fault name (application specific)
+#    * BPMS      => X, Y, or TIMIT
+#    * TORO, FCS => CHARGE, DIFF
+#    * SOLN      => Ix (Intergration channle x, where x can be [0:3])
+#  - FAULT_INDEX  : Fault index (application specific)
+#    * SOLN    => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
+#    * BPM     => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)
+#    * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
+#    * BLEN    => 0
+#  - BIT_POSITION : Fault bit position (0-7)
+#  - EGU          : Engineering units
+#=========================================================================================#
+
+file "common/thr.template" { pattern
+{ R,                                APP,        EGU,        PREC,   CH,                 TABLE,  THR,               }
+{ $(FAULT)_T$(BIT_POSITION),        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "2",    "$(BIT_POSITION)"   }
+{ $(FAULT)_T$(BIT_POSITION)_ALT,    "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "3",    "$(BIT_POSITION)"   }
+}

@@ -1,0 +1,50 @@
+#=========================================================================================#
+# PVs present on each channel
+# Macro description:
+#  - BAY          : AMC bay where the application card is installed (0: bay 0, 1: bay 2)
+#  - DESC         : Fault description
+#  - APP          : Application type name (for example: BPM, BLM, BCM, BLEN)
+#  - FAULT        : Fault name (application specific)
+#    * BPMS      => X, Y, or TIMIT
+#    * TORO, FCS => CHARGE, DIFF
+#    * SOLN      => Ix (Intergration channle x, where x can be [0:3])
+#  - FAULT_INDEX  : Fault index (application specific)
+#    * SOLN    => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
+#    * BPM     => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)
+#    * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
+#    * BLEN    => 0
+#  - EGU          : Engineering units
+#=========================================================================================#
+
+### Threshold information ###
+file "common/RegRO.template" { pattern
+{ R,                    DESC,                   PARAM,                          ADDR        }
+{ $(FAULT)_THR_CH,      "Threshold channel",    $(APP)_THRNUM_$(FAULT_INDEX),   "$(BAY)"    }
+{ $(FAULT)_THR_CNT,     "Threshold count",      $(APP)_THRCNT_$(FAULT_INDEX),   "$(BAY)"    }
+{ $(FAULT)_THR_BYTEMAP, "Threshold byte map",   $(APP)_BYTEMAP_$(FAULT_INDEX),  "$(BAY)"    }
+}
+
+### Tables enable PVs ###
+file "common/Reg1BitRW.template" { pattern
+{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM        }
+{ $(FAULT)_IDL_EN,  "IDLE table enabled",       $(APP)_IDLEEN_$(FAULT_INDEX),   "$(BAY)",   "Disabled", "Enabled"   }
+}
+
+file "common/Reg1BitRO.template" { pattern
+{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM        }
+{ $(FAULT)_ALT_EN,  "ALT table enabled",        $(APP)_ALTEN_$(FAULT_INDEX),    "$(BAY)",   "Disabled", "Enabled"   }
+{ $(FAULT)_LC1_EN,  "LCLS1 table enabled",      $(APP)_LCLS1EN_$(FAULT_INDEX),  "$(BAY)",   "Disabled", "Enabled"   }
+}
+
+### LCLS-I and IDLE Threshold PVs ###
+file "common/thr.template" { pattern
+{ R,                APP,        EGU,        PREC,   CH,                 TABLE,  THR,    }
+{ $(FAULT)_T0_LC1,  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "0",   "0",    }
+{ $(FAULT)_T0_IDL,  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "1",   "0",    }
+}
+
+### Scale PVs ###
+file "common/scale.template" { pattern
+{ R,                DESC,              APP,         EGU,        PREC,   CH,                 SCALE_PV,               SCAN        }
+{ $(FAULT),      "Scale factor",    "$(APP)",    "$(EGU)",   "4",    "$(FAULT_INDEX)",   "$(P):$(FAULT)_FWSCL",  "1 second"  }
+}
