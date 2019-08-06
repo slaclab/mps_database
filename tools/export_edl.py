@@ -663,7 +663,7 @@ if (args.link_node_template):
     f = open(dir_name + file_name, 'w')
     pp=PrettyPrinter(indent=4)
 #    pp.pprint(ln_macros)
-#    generate_link_node_EDL(f, args.link_node_template, ln, ln_macros, verbose)
+    generate_link_node_EDL(f, args.link_node_template, ln, ln_macros, verbose)
     args.link_node_template.seek(0)
 #    mps_app_reader.pretty_print()
 
