@@ -124,6 +124,9 @@ class MpsAppExporter(MpsAppReader):
                                                            "DATE":datetime.datetime.now().strftime('%Y.%m.%d-%H:%M:%S')})
             self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                             "LOCATION":app["link_node_location"].upper()})
+            if self.link_nodes[app["link_node_name"]]['type'] == 'Digital':
+                self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
+                self.__write_app_id_config(path=app_path, macros={"ID":"0"}) # If there are no analog cards, set ID to invalid
 
             has_virtual = False
             for device in app["devices"]:

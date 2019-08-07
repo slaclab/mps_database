@@ -1,6 +1,7 @@
 # Digital application AppID
-- AppTop:
-  - AppCore:
-    - MpsLinkNodeCore:
-      - MpsDigitalMessage:
-        - AppId: !<value> $(ID)
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsLinkNodeCore:
+        - MpsDigitalMessage:
+          - AppId: !<value> $(ID)
