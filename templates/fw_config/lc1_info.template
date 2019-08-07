@@ -1,0 +1,7 @@
+# Analog application AppID
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsLinkNodeCore:
+        - MpsLcls1Core:
+          - NodeId: !<value> $(ID)
