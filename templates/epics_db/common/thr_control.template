@@ -7,7 +7,7 @@
 record(bo, "$(P):THR_LOADED") {
     field(DESC, "Set by MpsManager after IOC reboots")
     field(PINI, "YES")
-    field(VAL,  "0")
+    field(VAL,  "$(THR_LOADED)")
     field(ZNAM, "Not loaded")
     field(ONAM, "Loaded")
     field(ASG,  "$(ASG)")

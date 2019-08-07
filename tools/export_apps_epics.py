@@ -126,7 +126,7 @@ class MpsAppExporter(MpsAppReader):
                                                             "LOCATION":app["link_node_location"].upper()})
             if self.link_nodes[app["link_node_name"]]['type'] == 'Digital':
                 self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
-                self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+                self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"1"})
                 self.__write_app_id_config(path=app_path, macros={"ID":"0"}) # If there are no analog cards, set ID to invalid
 
             has_virtual = False
@@ -196,7 +196,7 @@ class MpsAppExporter(MpsAppReader):
                     print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
                     exit(2)
 
-            self.__write_mps_db(path=app_path, macros={"P":app_prefix})
+            self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
             self.__write_thresholds_off_config(path=app_path)
 
