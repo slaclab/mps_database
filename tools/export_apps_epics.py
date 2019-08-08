@@ -10,6 +10,7 @@ import errno
 import re
 import shutil
 import datetime
+import ipaddress
 
 def create_dir(path, clean=False, debug=False):
     """
@@ -128,7 +129,7 @@ class MpsAppExporter(MpsAppReader):
                 self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
                 self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"1"})
                 self.__write_app_id_config(path=app_path, macros={"ID":"0"}) # If there are no analog cards, set ID to invalid
-                self.__write_lc1_info_config(path=app_path, macros={"ID":str(app["lc1_node_id"])})
+                self.__write_lc1_info_config(path=app_path, app=app)
 
             has_virtual = False
             for device in app["devices"]:
@@ -199,7 +200,7 @@ class MpsAppExporter(MpsAppReader):
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
-            self.__write_lc1_info_config(path=app_path, macros={"ID":str(app["lc1_node_id"])})
+            self.__write_lc1_info_config(path=app_path, app=app)
             self.__write_thresholds_off_config(path=app_path)
 
             # Add the IOC name environmental variable for the Link Nodes
@@ -244,7 +245,7 @@ class MpsAppExporter(MpsAppReader):
                                     "FAULT":fault["name"],
                                     "FAULT_INDEX":self.get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
                                     "DESC":fault["description"],
-                                    "EGU":self.get_app_units(device["type_name"],fault["name"]) }
+                                    "EGU":self.get_app_units(device["type_name"],fault["name"])}
 
                         self.__write_thr_base_db(path=app_path, macros=macros)
 
@@ -304,10 +305,19 @@ class MpsAppExporter(MpsAppReader):
         if (self.verbose):
             print("--------------------------")
 
-    def __write_lc1_info_config(self, path, macros):
+    def __write_lc1_info_config(self, path, app):
         """
         Write the LCLS-I link node ID to the configuration file.
         """
+        if app["lc1_node_id"] == 0:
+            ip_str = u'192.168.{0}.{0}'.format(app["app_id"])
+            print('WARN: Setting link node ip address to {} - LCLS1 ID is zero'.format(ip_str))
+        else:
+            ip_str = u'192.168.0.{}'.format(app["lc1_node_id"])
+
+        ip_address = int(ipaddress.ip_address(ip_str))
+        macros={"ID":str(app["lc1_node_id"]),
+                "IP_ADDR":str(ip_address)}
         self.__write_fw_config(path=path, template_name="lc1_info.template", macros=macros)
 
     def __write_app_id_config(self, path, macros):

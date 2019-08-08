@@ -3,5 +3,8 @@
   - AppTop:
     - AppCore:
       - MpsLinkNodeCore:
+        - UdpBroadcastIP: !<value> 4294967295
         - MpsLcls1Core:
           - NodeId: !<value> $(ID)
+          - IpAddr: !<value> $(IP_ADDR)
+
