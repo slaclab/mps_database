@@ -45,6 +45,12 @@ file "common/thr.template" { pattern
 
 ### Scale PVs ###
 file "common/scale.template" { pattern
-{ R,                DESC,              APP,         EGU,        PREC,   CH,                 SCALE_PV,               SCAN        }
-{ $(FAULT),      "Scale factor",    "$(APP)",    "$(EGU)",   "4",    "$(FAULT_INDEX)",   "$(P):$(FAULT)_FWSCL",  "1 second"  }
+{ R,        DESC,            APP,     EGU,      PREC, CH,               SCALE_SLOPE_PV,        SCALE_OFFSET_PV,      SCAN        }
+{ $(FAULT), "Scale factor", "$(APP)", "$(EGU)", "4",  "$(FAULT_INDEX)", "$(P):$(FAULT)_FWSLO", "$(P):$(FAULT)_FWOFF", "1 second"  }
+}
+
+### MPS Scale PVs ###
+file "common/mps_scale_factor.template" { pattern
+{ P, PROPERTY, EGU, PREC, SLOPE, OFFSET }
+{ $(P), "$(FAULT)", "$(EGU)", "4", "0.00055586", "32768"}
 }
