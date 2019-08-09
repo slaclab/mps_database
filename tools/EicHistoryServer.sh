@@ -15,7 +15,7 @@ if [ $files != '1' ]; then
   echo '       historyServer is confused and cannot run.'
 fi
 
-db_file=`ls $current_db/mps_config*.db`
+db_file=`ls $current_db/mps_config*.db | grep -v runtime`
 
 if [ `hostname` == 'lcls-dev3' ]; then
   history_files=/tmp/mps_history
