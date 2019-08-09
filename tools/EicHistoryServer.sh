@@ -7,7 +7,7 @@ export PYTHONPATH=$PHYSICS_TOP/mps_database:$PYTHON_PATH
 
 current_db=$PHYSICS_TOP/mps_configuration/current
 history_files=$PHYSICS_DATA/mps_history/mps_history
-files=`ls $current_db/mps_config*.db | wc -l`
+files=`ls $current_db/mps_config*.db | grep -v runtime |  wc -l`
 
 if [ $files != '1' ]; then
   echo 'ERROR: found '$files' database files in '$current_db
