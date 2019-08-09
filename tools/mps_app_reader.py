@@ -159,6 +159,7 @@ class MpsAppReader:
                 self.link_nodes[name] = {}
                 self.link_nodes[name]['type'] = ln.get_type() # 'Analog', 'Digital' or 'Mixed'
                 self.link_nodes[name]['slots'] = {}
+                self.link_nodes[name]['app_prefix'] = ln.get_app_prefix()
 
         # Check if there were applications defined in the database
         if len(app_cards) == 0:

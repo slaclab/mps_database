@@ -98,25 +98,7 @@ class MpsAppExporter(MpsAppReader):
             if (self.verbose):
                 print("Application path   : {}".format(app_path))
                 print("Application prefix : {}".format(app_prefix))
-
             
-            if self.link_nodes[app["link_node_name"]]['type'] == 'Digital':
-                type_number = "0"
-            elif self.link_nodes[app["link_node_name"]]['type'] == 'Mixed':
-                type_number = "2"
-
-            if (app["link_node_name"] in self.link_nodes):
-                if (self.link_nodes[app["link_node_name"]]['type'] == 'Digital' or 
-                    self.link_nodes[app["link_node_name"]]['type'] == 'Mixed'):
-                    self.__write_link_node_info_db(path=app_path, macros={"P":app_prefix,
-                                                               "MPS_LINK_NODE_SIOC":app["link_node_name"],
-                                                               "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                               "MPS_LINK_NODE_TYPE":type_number,
-                                                               "MPS_CONFIG_VERSION":self.config_version})
-                elif (self.link_nodes[app["link_node_name"]] == 'Unknown'):
-                    print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
-                    exit(2)
-
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
             # Add the IOC name environmental variable for the Link Nodes
@@ -184,18 +166,6 @@ class MpsAppExporter(MpsAppReader):
             if (self.verbose):
                 print("Application path   : {}".format(app_path))
                 print("Application prefix : {}".format(app_prefix))
-
-            if (app["link_node_name"] in self.link_nodes):
-                if (self.link_nodes[app["link_node_name"]]['type'] == 'Analog'):
-                    self.__write_link_node_info_db(path=app_path,
-                                                   macros={"P":app_prefix,
-                                                           "MPS_LINK_NODE_SIOC":app["link_node_name"],
-                                                           "MPS_LINK_NODE_ID":app["lc1_node_id"],
-                                                           "MPS_LINK_NODE_TYPE":"1",
-                                                           "MPS_CONFIG_VERSION":self.config_version})
-                elif (self.link_nodes[app["link_node_name"]]['type'] == 'Unknown'):
-                    print('ERROR: no app defined for link node {}'.format(app["link_node_name"]))
-                    exit(2)
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
@@ -308,6 +278,7 @@ class MpsAppExporter(MpsAppReader):
         #
         for ln_name,ln in self.link_nodes.items():
             self.__write_lc1_info_config(ln)
+            self.__write_link_node_info_db(ln_name, ln)
 
         if (self.verbose):
             print("--------------------------")
@@ -332,6 +303,32 @@ class MpsAppExporter(MpsAppReader):
         macros={"ID":str(link_node["lc1_node_id"]),
                 "IP_ADDR":str(ip_address)}
         self.__write_fw_config(path=path, template_name="lc1_info.template", macros=macros)
+
+    def __write_link_node_info_db(self, link_node_name, link_node):
+        """
+        Write the base mps records to the application EPICS database file.
+
+        These records will be loaded once per each device.
+        """
+        slot = 2
+        if "analog_slot" in link_node: 
+            slot = link_node["analog_slot"]
+        path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, link_node["cpu_name"], link_node["crate_id"], slot)
+
+        macros={"P":link_node['app_prefix'],
+                "MPS_LINK_NODE_SIOC":link_node_name,
+                "MPS_LINK_NODE_ID":link_node['lc1_node_id'],
+                "MPS_LINK_NODE_TYPE":str(self.__link_node_type_to_number(link_node['type'])),
+                "MPS_CONFIG_VERSION":self.config_version}
+        self.__write_epics_db(path=path, template_name="link_node_info.template", macros=macros)
+
+    def __link_node_type_to_number(self, ln_type):
+        if ln_type == 'Digital':
+            return 0
+        elif ln_type == 'Mixed':
+            return 2
+        else:
+            return 1
 
     def __write_app_id_config(self, path, macros):
         """
@@ -383,14 +380,6 @@ class MpsAppExporter(MpsAppReader):
         These records will be loaded once per each device.
         """
         self.__write_epics_db(path=path, template_name="analog_input.template", macros=macros)
-
-    def __write_link_node_info_db(self, path, macros):
-        """
-        Write the base mps records to the application EPICS database file.
-
-        These records will be loaded once per each device.
-        """
-        self.__write_epics_db(path=path, template_name="link_node_info.template", macros=macros)
 
     def __write_virtual_db(self, path, macros):
         """

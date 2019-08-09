@@ -105,6 +105,39 @@ class LinkNode(Base):
     else:
       return 'Analog'
 
+  def get_app_number(self):
+    is_slot2 = False
+    for c in self.cards:
+      if c.slot_number == 2:
+        return 1
+      
+    ln_type = self.get_type()
+
+    if not is_slot2:
+      if len(self.cards) > 1:
+        if (ln_type != 'Analog'):
+          raise ValueError("LinkNode '{} [id={}]' in non-slot 2 with multiple cards, please check configuration.".\
+                             format(self.get_name(), self.id))
+        else:
+          # If there are multiple cards and the link node type is analog, then
+          # it is a link node without digital inputs and analog inputs in slot 2
+          # The link node app_number is also 1
+          return 1
+      elif len(self.cards) == 0:
+        raise ValueError("LinkNode '{} [id={}]' with no cards, please check configuration.".\
+                           format(self.get_name(), self.id))
+      else:
+        return self.cards[0].slot_number
+
+  def get_app_prefix(self):
+    """
+    Return the PV name composed by self.get_pv_base() + ":<app_number>",
+    where <app_number> is:
+    1 - if the link node has a card in slot 2; or
+    3 through 7 - if the link node is not in slot 2
+    """
+    return '{}:{}'.format(self.get_pv_base(), self.get_app_number())
+
   def get_crate_index_number(self):
     """
     Return the index number of the link node card in the crate. Usually it is in slot 2
