@@ -8,6 +8,13 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R2-0-2:
+  * Minor fix to EicHistoryServer.sh script 
+  * Addition of MPS FW scale/offset PVs for BLM apps for 
+    generated epics databases (mps.db)
+  * Addition of LCLS-1 node Id, IP addr, broadcast addr
+    to the config.yaml file
+
 mps_database-R2-0-1:
   * Generation of runtime database for EIC
   * EIC version 2019-08-05-eic
