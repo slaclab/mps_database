@@ -129,7 +129,6 @@ class MpsAppExporter(MpsAppReader):
                 self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
                 self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"1"})
                 self.__write_app_id_config(path=app_path, macros={"ID":"0"}) # If there are no analog cards, set ID to invalid
-                self.__write_lc1_info_config(path=app_path, app=app)
 
             has_virtual = False
             for device in app["devices"]:
@@ -200,7 +199,6 @@ class MpsAppExporter(MpsAppReader):
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
-            self.__write_lc1_info_config(path=app_path, app=app)
             self.__write_thresholds_off_config(path=app_path)
 
             # Add the IOC name environmental variable for the Link Nodes
@@ -268,6 +266,9 @@ class MpsAppExporter(MpsAppReader):
                                }
                     self.__write_link_node_channel_info_db(path=app_path, macros=macros)
 
+        #
+        # Write db information about slots of each link node
+        #
         for app in self.analog_apps + self.digital_apps:
             app_path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             link_node_info=self.link_nodes[app["link_node_name"]]
@@ -302,21 +303,33 @@ class MpsAppExporter(MpsAppReader):
 
                 link_node_info['exported']=True
 
+        #
+        # Add LCLS-I related FW configuration
+        #
+        for ln_name,ln in self.link_nodes.items():
+            self.__write_lc1_info_config(ln)
+
         if (self.verbose):
             print("--------------------------")
 
-    def __write_lc1_info_config(self, path, app):
+    def __write_lc1_info_config(self, link_node):
         """
         Write the LCLS-I link node ID to the configuration file.
         """
-        if app["lc1_node_id"] == 0:
-            ip_str = u'192.168.{0}.{0}'.format(app["app_id"])
-            print('WARN: Setting link node ip address to {} - LCLS1 ID is zero'.format(ip_str))
+        if link_node["lc1_node_id"] == "0":
+            ip_str = u'192.168.0.0'.format(app["app_id"])
+            print('ERROR: Found invalid link node ID (lcls1_id of 0)')
         else:
-            ip_str = u'192.168.0.{}'.format(app["lc1_node_id"])
+            ip_str = u'192.168.0.{}'.format(link_node["lc1_node_id"])
 
         ip_address = int(ipaddress.ip_address(ip_str))
-        macros={"ID":str(app["lc1_node_id"]),
+
+        slot = 2
+        if "analog_slot" in link_node: 
+            slot = link_node["analog_slot"]
+        path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, link_node["cpu_name"], link_node["crate_id"], slot)
+
+        macros={"ID":str(link_node["lc1_node_id"]),
                 "IP_ADDR":str(ip_address)}
         self.__write_fw_config(path=path, template_name="lc1_info.template", macros=macros)
 
@@ -516,6 +529,7 @@ def main(db_file, dest_path, template_path=None, app_id=None,
     # Generate the Mps application reader object
     mps_app_reader = MpsAppExporter(db_file, template_path, dest_path, app_id, manager_info, verbose)
 #    mps_app_reader.pretty_print()
+#    exit(0)
 
     # Print a report of the found applications
     if (verbose):

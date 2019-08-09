@@ -7,4 +7,14 @@
         - MpsLcls1Core:
           - NodeId: !<value> $(ID)
           - IpAddr: !<value> $(IP_ADDR)
-
+          - appIdRemap[0]: !<value> 1
+          - appIdRemap[1]: !<value> 1
+          - appIdRemap[2]: !<value> 1
+          - appIdRemap[3]: !<value> 1
+          - appIdRemap[4]: !<value> 1
+          - appIdRemap[5]: !<value> 1
+          - appIdRemap[6]: !<value> 1
+          - appIdRemap[7]: !<value> 1
+          - appIdRemap[8]: !<value> 1
+          - appIdRemap[9]: !<value> 1
+          - appIdRemap[10]: !<value> 1

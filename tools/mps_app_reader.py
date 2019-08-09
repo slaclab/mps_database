@@ -66,6 +66,7 @@ class MpsAppReader:
         
         slot_info = {}
         slot_info['pv_base'] = app_card.get_pv_name()
+        slot_info['app_id'] = app_card.global_id
 
         try:
             app_type = mps_db_session.query(models.ApplicationType).\
@@ -198,6 +199,10 @@ class MpsAppReader:
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["app_prefix"] = app_card.get_pv_name()
 
+                self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
+                self.link_nodes[ln_name]["crate_id"] = app_data["crate_id"]
+                self.link_nodes[ln_name]["cpu_name"] = app_data["cpu_name"]
+
                 self.__add_slot_information(mps_db_session, ln_name, app_card)
 
                 # Defines whether the IOC_NAME env var should be added no the mps.env
@@ -301,6 +306,10 @@ class MpsAppReader:
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
+
+                self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
+                self.link_nodes[ln_name]["crate_id"] = app_data["crate_id"]
+                self.link_nodes[ln_name]["cpu_name"] = app_data["cpu_name"]
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:
