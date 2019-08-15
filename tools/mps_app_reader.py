@@ -311,6 +311,7 @@ class MpsAppReader:
                 self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
                 self.link_nodes[ln_name]["crate_id"] = app_data["crate_id"]
                 self.link_nodes[ln_name]["cpu_name"] = app_data["cpu_name"]
+                self.link_nodes[ln_name]["dig_app_id"] = app_data["app_id"]
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:

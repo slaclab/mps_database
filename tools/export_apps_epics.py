@@ -274,7 +274,7 @@ class MpsAppExporter(MpsAppReader):
                 link_node_info['exported']=True
 
         #
-        # Add LCLS-I related FW configuration
+        # Add Link Node related information
         #
         for ln_name,ln in self.link_nodes.items():
             self.__write_lc1_info_config(ln)
@@ -300,8 +300,50 @@ class MpsAppExporter(MpsAppReader):
             slot = link_node["analog_slot"]
         path = '{}app_db/{}/{:04X}/{:02}/'.format(self.dest_path, link_node["cpu_name"], link_node["crate_id"], slot)
 
+        mask = 0
+        remap_dig = 0
+        if link_node["type"] == "Digital":
+            mask = 1
+            remap_dig = link_node["dig_app_id"]
+
+        bpm_index = 0
+        blm_index = 0
+        remap_bpm = [0, 0, 0, 0, 0]
+        remap_blm = [0, 0, 0, 0, 0]
+        for slot_number, slot_info in link_node["slots"].items():
+            if slot_info["type"] == "BPM Card":
+                if bpm_index < 5:
+                    remap_bpm[bpm_index] = slot_info["app_id"]
+                    mask |= 1 << (bpm_index + 1) # Skip first bit, which is for digital app
+                    bpm_index += 1
+                else:
+                    print('ERROR: Cannot remap BPM app id {}, all remap slots are used already'.\
+                              format(slot_info["app_id"]))
+                          
+            elif slot_info["type"] == "Generic ADC":
+                if blm_index < 5:
+                    remap_blm[blm_index] = slot_info["app_id"]
+                    mask |= 1 << (blm_index + 1 + 5) # Skip first bit and 5 BPM bits
+                    blm_index += 1
+                else:
+                    print('ERROR: Cannot remap BLM app id {}, all remap slots are used already'.\
+                              format(slot_info["app_id"]))
+
         macros={"ID":str(link_node["lc1_node_id"]),
-                "IP_ADDR":str(ip_address)}
+                "IP_ADDR":str(ip_address),
+                "REMAP_DIG":str(remap_dig),
+                "REMAP_BPM1":str(remap_bpm[0]),
+                "REMAP_BPM2":str(remap_bpm[1]),
+                "REMAP_BPM3":str(remap_bpm[2]),
+                "REMAP_BPM4":str(remap_bpm[3]),
+                "REMAP_BPM5":str(remap_bpm[4]),
+                "REMAP_BLM1":str(remap_blm[0]),
+                "REMAP_BLM2":str(remap_blm[1]),
+                "REMAP_BLM3":str(remap_blm[2]),
+                "REMAP_BLM4":str(remap_blm[3]),
+                "REMAP_BLM5":str(remap_blm[4]),
+                "REMAP_MASK":str(mask),
+                }
         self.__write_fw_config(path=path, template_name="lc1_info.template", macros=macros)
 
     def __write_link_node_info_db(self, link_node_name, link_node):
