@@ -76,6 +76,9 @@ class RuntimeChecker:
 
     for t_index, t_table in enumerate(self.threshold_tables):
       for integrator in self.integrators:
+        if (integrator == 'i3' and is_bpm): # i3 is not valid for BPMs only i0, i1 and i3 (x, y and tmit)
+          continue
+
         for t_type in self.threshold_types:
           threshold_item = {}
           pv_name = self.mps_names.getThresholdPv(self.mps_names.getAnalogDeviceNameFromId(device.id),
