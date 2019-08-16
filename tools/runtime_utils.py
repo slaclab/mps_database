@@ -81,6 +81,11 @@ class RuntimeChecker:
           pv_name = self.mps_names.getThresholdPv(self.mps_names.getAnalogDeviceNameFromId(device.id),
                                                   self.threshold_tables_pv[t_index], self.threshold_index[t_index],
                                                   integrator, t_type, is_bpm)
+          if (pv_name == None):
+            print('ERROR: Failed to find threshold PV name for device \'{}\' [threshold={}, integrator={}, is_bpm={}]'.\
+                    format(device.name, self.threshold_tables_pv[t_index], integrator, is_bpm))
+            return None
+
           pv_name_enable = pv_name + '_EN'
           if (pv_name):
             threshold_item['db_table'] = t_table
