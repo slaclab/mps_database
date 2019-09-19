@@ -670,7 +670,8 @@ class DatabaseImporter:
           app_card = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
           if app_card.name != card_name:
-            print('ERROR: analog device ({0}) assigned to unexpected card type ({1}), expected {2} card'.format(device_info['device'], app_card.name, card_name))
+            print('ERROR: analog device ({0}) assigned to unexpected card type ({1}), expected {2} card'.\
+                    format(device_info['device'], app_card.name, card_name))
             return
         except:
           print('ERROR: Cannot find application_card with id {0}, exiting...'.format(device_info['application_card_number']))
@@ -696,6 +697,11 @@ class DatabaseImporter:
         self.session.add(analog_channel)
         self.session.commit()
         self.session.refresh(analog_channel)
+
+        # Check if device has an 'enable' colunm, and don't add if it has a 0
+        if 'enable' in device_info:
+          if device_info['enable'] == '0':
+            continue # do not add if device has enable=0
 
         device = models.AnalogDevice(name=device_info['device'],
                                      device_type=device_type,
