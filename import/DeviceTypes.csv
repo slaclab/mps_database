@@ -31,3 +31,4 @@ KICK_STATUS,29,Kicker Status,0
 XTES,30,XTES Beam Class,0
 LBLM,31,BCS Fiber BLM,1
 WAVEGUIDE,32,Waveguide,0
+KICK,33,Kicker Waveform,1

@@ -55,6 +55,7 @@ class LinkNode(Base):
     print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
     print('> GroupDrawing: {0}'.format(self.group_drawing))
     print('> LinkNodeType: {}'.format(self.get_ln_type()))
+    print('> SlotNumber: {0}'.format(self.slot_number))
     if (self.ln_type == 1 or self.ln_type == 3):
       print('> LinkNodeType: {}'.format(self.get_type()))
       print('> LinkNodeId: {}'.format(self.lcls1_id))
@@ -169,3 +170,7 @@ class LinkNode(Base):
 
   def get_pv_base(self):
     return 'MPLN:' + self.area.upper() + ':' + self.location.upper()
+
+  def get_cpu_pv_base(self):
+    cpu_base = self.cpu
+    return cpu_base.replace('-',':').upper()

@@ -1,5 +1,5 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description
 Broken,1,On/Off Disconnected,0,4294967295,BEND_POWER,On/Off Fault (signals low)
 Off,2,Dipole Power OFF,1,4294967295,BEND_POWER,Dipole Power OFF
-On,3,Dipole Power ON,2,4294967295,Dipole Power ON,-
+On,3,Dipole Power ON,2,4294967295,-,-
 Fault,4,On/Off Faulted,3,4294967295,BEND_POWER,On/Off Fault (signals high)

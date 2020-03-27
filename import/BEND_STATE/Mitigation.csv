@@ -8,3 +8,6 @@ SXU,Fault,4,On/Off Fault (both signals high),-,-,1,-
 HXU,Broken,1,On/Off Fault (both signals low),-,-,-,1
 HXU,Off,2,Dipole OFF,-,-,-,1
 HXU,Fault,4,On/Off Fault (both signals high),-,-,-,1
+CLTS,Broken,1,On/Off Fault (both signals low),-,-,-,-
+CLTS,Off,2,Dipole OFF,-,-,-,-
+CLTS,Fault,4,On/Off Fault (both signals high),-,-,-,-

@@ -219,9 +219,13 @@ class MpsAlarmReader:
             if (area.startswith('BPN')):
                 return 'BYP'
             elif (area == 'SPH'):
-                return 'SLTH'
+                return 'BSYH'
             elif (area == 'SPS'):
-                return 'SLTS'
+                return 'BSYS'
+            elif (area == 'SPD'):
+                return 'BSYH'
+            elif (area == 'CLTS'):
+                return 'BSYS'
             else:
                 return 'NONE'
         else:

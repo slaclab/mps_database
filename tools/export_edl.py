@@ -6,6 +6,7 @@ from mps_config import MPSConfig, models
 from mps_names import MpsName
 from sqlalchemy import func
 from mps_app_reader import MpsAppReader
+import sqlalchemy
 
 import os
 import sys
@@ -311,7 +312,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
            'BC2B', 'L3B', 'EXT', 'DOG', 'BYP',
            'SLTH', 'SLTS', 'BSYH', 'BSYS', 'LTUH',
            'LTUS', 'UNDH', 'UNDS', 'DMPH', 'DMPS', 
-           'FEEH', 'FEES']
+           'FEEH', 'FEES','SPD','SPS','SPH','CLTS']
 
   for area in areas:
     area_link_nodes = filter (lambda x : x.area == area, link_nodes)
@@ -319,13 +320,54 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
       data=template_file.read()
       file_name = areas_dir + 'mps_{}_link_nodes.edl'.format(area.lower())
       f = open(file_name, 'w')
-
       link_node_names=[]
       link_node_sioc_prefix=[]
       link_node_prefix=[]
       link_node_index=[]
       link_node_macros=[]
       alarm_pvnames=[]
+      count = 0
+      if (area.upper() == 'BSYS'):
+        area_link_nodes1 = filter (lambda x : x.area == 'SPS', link_nodes)
+        #area_link_nodes2 = filter (lambda x : x.slot_number == 2, area_link_nodes1)
+        area_link_nodes = filter (lambda x: x.cpu == 'cpu-sps-sp05', area_link_nodes1)
+        count += len(area_link_nodes)
+        for l in area_link_nodes:
+          name = l.get_name()
+          link_node_names.append(name)
+          link_node_sioc_prefix.append(l.get_sioc_pv_base())
+          link_node_prefix.append(l.get_pv_base())
+          link_node_index.append(l.get_crate_index_number())
+          link_node_macros.append(ln_macros[name]['ln_macros'])
+          alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
+      if (area.upper() == 'BSYS'):
+        area_link_nodes = filter (lambda x : x.area == 'CLTS', link_nodes)
+        #area_link_nodes = filter (lambda x : x.slot_number == 2, area_link_nodes1)
+        count += len(area_link_nodes)
+        for l in area_link_nodes:
+          name = l.get_name()
+          link_node_names.append(name)
+          link_node_sioc_prefix.append(l.get_sioc_pv_base())
+          link_node_prefix.append(l.get_pv_base())
+          link_node_index.append(l.get_crate_index_number())
+          link_node_macros.append(ln_macros[name]['ln_macros'])
+          alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
+      if (area.upper() == 'BSYH'):
+        area_link_nodes1 = filter (lambda x : x.area == 'SPH', link_nodes)
+        #area_link_nodes2 = filter (lambda x : x.slot_number == 2, area_link_nodes1)
+        area_link_nodes = filter (lambda x: x.cpu == 'cpu-sph-sp06', area_link_nodes1)
+        count += len(area_link_nodes)
+        for l in area_link_nodes:
+          name = l.get_name()
+          link_node_names.append(name)
+          link_node_sioc_prefix.append(l.get_sioc_pv_base())
+          link_node_prefix.append(l.get_pv_base())
+          link_node_index.append(l.get_crate_index_number())
+          link_node_macros.append(ln_macros[name]['ln_macros'])
+          alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
+      area_link_nodes = filter (lambda x : x.area == area, link_nodes)
+      #area_link_nodes = filter (lambda x : x.slot_number == 2, area_link_nodes1)
+      count += len(area_link_nodes)
       for l in area_link_nodes:
         name = l.get_name()
         link_node_names.append(name)
@@ -335,7 +377,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
         link_node_macros.append(ln_macros[name]['ln_macros'])
         alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
 
-      macros = {'LINK_NODE_COUNT':len(area_link_nodes),
+      macros = {'LINK_NODE_COUNT':count,
                 'LINK_NODE_MACROS':link_node_macros,
                 'LINK_NODE_NAME':link_node_names,
                 'LINK_NODE_SIOC_PREFIX':link_node_sioc_prefix,
@@ -366,6 +408,7 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
   slot_pvname = ["Spare", "Spare", "Spare", "Spare", "Spare", "Spare"]
   slot_file_name = ["mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps", "mps_linknode_gadc_app_hps"]
   link_node_name = link_node.get_name()
+  link_node_loca = link_node.crate.location
 
   ## Prefix for devices connected to non-Link Node slots (slot 3 through 7)
   slot_ch_prefix_info=[[["-","-","-"],["-","-","-"]],
@@ -382,10 +425,11 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
                      [["-","-","-"],["-","-","-"]]]
 
   for app in app_reader.analog_apps:
+#    if app['physical'] == link_node_loca:
     if app['link_node_name'] == link_node_name:
       if app['analog_link_node'] or app_reader.link_nodes[link_node_name]['type']=='Mixed':
         if app['slot_number'] == app_reader.link_nodes[link_node_name]['analog_slot']:
-          if app['slot_number'] == 2:
+          if app['slot_number'] == 2:         
             ln_base = link_node.get_pv_base() + ":1"
           else:
             ln_base = link_node.get_pv_base() + ":" + str(app['slot_number'])
@@ -409,6 +453,11 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
   ## Macro for the Link Node base (MPLN:<AREA>:<LOCATION>, e.g. MPLN:UNDS:MP04)
   ln_macros = "P=" + ln_base
   ln_macros = ln_macros + ",LN_SIOC=" + link_node_name
+  ln_macros = ln_macros + ",LOCA=" + link_node.area.upper()
+  ln_macros = ln_macros + ",IOC_UNIT=" + link_node.location.upper()
+  ln_macros = ln_macros + ",INST=" + str(link_node.get_app_number())
+  ln_macros = ln_macros + ",IOC=" + link_node.get_sioc_pv_base()
+  ln_macros = ln_macros + ",CPU=" + link_node.get_cpu_pv_base()
 
   ## Set macros for analog channels
   for i in range(0,6):
@@ -418,12 +467,12 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
 
   ## Set file name for slot buttons according to the application type
   for i in range(2,8):
-    if i in app_reader.link_nodes[link_node_name]['slots']:
-      slot_name[i-2] = app_reader.link_nodes[link_node_name]['slots'][i]['pv_base']
-      slot_pvname[i-2] = app_reader.link_nodes[link_node_name]['slots'][i]['pv_base']
-      if app_reader.link_nodes[link_node_name]['slots'][i]['type']=="Analog Card":
+    if i in app_reader.link_nodes[link_node_loca]['slots']:
+      slot_name[i-2] = app_reader.link_nodes[link_node_loca]['slots'][i]['pv_base']
+      slot_pvname[i-2] = app_reader.link_nodes[link_node_loca]['slots'][i]['pv_base']
+      if app_reader.link_nodes[link_node_loca]['slots'][i]['type']=="Analog Card":
         slot_file_name[i-2] = 'mps_linknode_bcm_app_hps'
-      if app_reader.link_nodes[link_node_name]['slots'][i]['type']=="BPM Card":
+      if app_reader.link_nodes[link_node_loca]['slots'][i]['type']=="BPM Card":
         slot_file_name[i-2] = 'mps_linknode_bpm_app_hps'
 
   ## Set macros for application cards (slots 2 through 7)
@@ -564,7 +613,10 @@ if (args.analog_devices_template):
     for c in ln.crate.cards:
       if len(c.analog_channels) > 0:
         for ac in c.analog_channels:
-          ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
+          try:
+            ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
+          except sqlalchemy.orm.exc.NoResultFound:
+            continue
           analog_devices.append(ad)
 
     if len(analog_devices) > 0:
@@ -596,7 +648,10 @@ if (args.faults_template):
         # Analog Faults
       if len(c.analog_channels) > 0:
         for analogChannel in c.analog_channels:
-          device = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==analogChannel.id).one()
+          try:
+            device = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==analogChannel.id).one()
+          except sqlalchemy.orm.exc.NoResultFound:
+            continue
           fault_inputs = session.query(models.FaultInput).\
               filter(models.FaultInput.device_id==device.id)
           for fi in fault_inputs:
@@ -640,7 +695,10 @@ if (args.bypass_analog_template):
     for c in ln.crate.cards:
       if len(c.analog_channels) > 0:
         for ac in c.analog_channels:
-          ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
+          try:
+            ad = session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==ac.id).one()
+          except sqlalchemy.orm.exc.NoResultFound:
+            continue
           analog_devices.append(ad)
 
     if len(analog_devices) > 0:

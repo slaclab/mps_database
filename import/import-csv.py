@@ -107,9 +107,13 @@ class DatabaseImporter:
         
     self.session.commit()
     f.close()
+    if self.verbose:
+      print "Done: Adding crates... {0}".format(file_name)
 
 
   def add_app_types(self, file_name):
+    if self.verbose:
+      print "Adding Application Types... {0}".format(file_name)
     f = open(file_name)
 
     line = f.readline().strip()
@@ -141,6 +145,8 @@ class DatabaseImporter:
       
     self.session.commit()
     f.close()
+    if self.verbose:
+      print "Done: Adding Application Types... {0}".format(file_name)
 
   def find_app_link_node(self, crate, slot):
     """
@@ -162,6 +168,8 @@ class DatabaseImporter:
     return link_node
 
   def add_cards(self, file_name):
+    if self.verbose:
+      print "Adding Application Cards... {0}".format(file_name)
     f = open(file_name)
 
     line = f.readline().strip()
@@ -216,6 +224,8 @@ class DatabaseImporter:
 
     self.session.commit()
     f.close()
+    if self.verbose:
+      print "Done: Adding Application Cards... {0}".format(file_name)
 
   def add_device_types(self, file_name):
     f = open(file_name)
@@ -955,6 +965,7 @@ class DatabaseImporter:
         field_index = 0
         for property in line.split(','):
           device_info[fields[field_index]]=property
+          #print fields[field_index] + ' ' + device_info[fields[field_index]]
           field_index = field_index + 1
 
         add_device = True
@@ -1295,14 +1306,16 @@ importer.add_analog_device('import/BLM', card_name="Generic ADC")
 importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
 importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_digital_device('import/PROF')
+importer.add_digital_device('import/STOP')
 
 #if (False):
 if (True):
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
+  importer.add_analog_device('import/LBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
   importer.add_analog_device('import/BEND', card_name="Generic ADC") 
-  importer.add_analog_device('import/LBLM', card_name="Generic ADC") 
+  importer.add_analog_device('import/KICK', card_name="Generic ADC") 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
@@ -1312,8 +1325,8 @@ if (True):
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
   importer.add_digital_device('import/COLL')
-  importer.add_digital_device('import/FLOW')
-  importer.add_digital_device('import/XTES')
+#  importer.add_digital_device('import/FLOW')
+#  importer.add_digital_device('import/XTES')
 
 #  importer.add_digital_device('import/WIRE_PARK') DEPRECATED
 #  importer.add_digital_device('import/BEND_DCCT_STATUS') DEPRECATED

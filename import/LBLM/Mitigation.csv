@@ -1,0 +1,4 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU,
+Linac,I0_T0,1,Linac PBLM Fault,1,-,-,-,
+SXU,I0_T0,1,SXU PBLM Fault,-,-,1,-,
+HXU,I0_T0,1,HXU PBLM X Fault,-,-,-,1,

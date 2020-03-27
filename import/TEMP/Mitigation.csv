@@ -3,3 +3,4 @@ Linac,IS_FAULTED,2,Linac Temperature Fault,1,-,-,-
 Diag0,IS_FAULTED,2,Diag0 Temperature Fault,-,1,-,-
 SXU,IS_FAULTED,2,SXU Temperature Fault,-,-,1,-
 HXU,IS_FAULTED,2,HXU Temperature Fault,-,-,-,1
+CLTS,IS_FAULTED,2,CLTS Temperature Fault,-,-,-,-

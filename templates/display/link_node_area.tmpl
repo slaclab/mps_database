@@ -7,7 +7,7 @@ minor 0
 release 1
 x 440
 y 215
-w 600
+w 780
 h $WINDOW_HEIGHT
 ##h 80
 font "helvetica-medium-r-12.0"
@@ -33,7 +33,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 126
+x 160
 y 18
 w 52
 h 16
@@ -51,7 +51,25 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 234
+x 677
+y 18
+w 52
+h 16
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "LN CPU"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 255
 y 18
 w 64
 h 16
@@ -69,7 +87,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 494
+x 465
 y 18
 w 83
 h 14
@@ -89,7 +107,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 410
+x 345
 y 18
 w 81
 h 14
@@ -98,7 +116,7 @@ fgColor index 14
 bgColor index 4
 useDisplayBg
 value {
-  "FPGA Ver."
+  "FPGA Heartbeat"
 }
 autoSize
 endObjectProperties
@@ -109,7 +127,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 310
+x 563
 y 18
 w 92
 h 14
@@ -118,7 +136,7 @@ fgColor index 14
 bgColor index 4
 useDisplayBg
 value {
-  "FPGA Heartbeat"
+  "LN Location"
 }
 autoSize
 endObjectProperties
@@ -177,7 +195,7 @@ minor 0
 release 0
 x 234
 y $WIDGET_Y
-w 72
+w 100
 h 24
 controlPv "$LINK_NODE_SIOC_PREFIX[$i]:HEARTBEAT"
 fgColor index 16
@@ -194,11 +212,11 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 494
+x 550
 y $WIDGET_Y
-w 96
+w 100
 h 24
-controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:CONFIG_VERSION"
+controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:LN_LOCATION"
 fgColor index 16
 fgAlarm
 bgColor index 14
@@ -213,11 +231,11 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 410
+x 446
 y $WIDGET_Y
-w 80
+w 100
 h 24
-controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:FPGA_VER"
+controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:CONFIG_VERSION"
 displayMode "hex"
 fgColor index 16
 fgAlarm
@@ -233,9 +251,9 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 310
+x 340
 y $WIDGET_Y
-w 96
+w 100
 h 24
 controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:FPGA_UPTIMECNT"
 displayMode "decimal"
@@ -277,6 +295,25 @@ y $WIDGET_Y
 w 40
 h 24
 controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:LN_ID"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y $WIDGET_Y
+w 100
+h 24
+controlPv "$LINK_NODE_PREFIX[$i]:$LINK_NODE_INDEX[$i]:LN_CPU_NAME"
 fgColor index 16
 fgAlarm
 bgColor index 14

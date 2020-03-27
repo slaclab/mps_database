@@ -24,3 +24,11 @@ record(stringin, "$(P):LN_SIOC") {
   field(DESC, "MPS Link Node SIOC")
   field(VAL, "$(MPS_LINK_NODE_SIOC)")
 }
+record(stringin, "$(P):LN_LOCATION") {
+  field(DESC, "MPS Link Node Crate Location")
+  field(VAL, "$(MPS_CRATE_LOCATION)")
+}
+record(stringin, "$(P):LN_CPU_NAME") {
+  field(DESC, "MPS CPU Name")
+  field(VAL, "$(MPS_CPU_NAME)")
+}

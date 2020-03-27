@@ -1,1 +1,4 @@
 epicsEnvSet("IOC_NAME", "SIOC:$(AREA):$(LOCATION)")
+epicsEnvSet("LOCATION","$(AREA)")
+epicsEnvSet("LOCATION_INDEX","$(LOC_IDX)")
+epicsEnvSet("CARD_INDEX","$(C_IDX)")

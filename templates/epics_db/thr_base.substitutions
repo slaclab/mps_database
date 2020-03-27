@@ -52,5 +52,5 @@ file "common/scale.template" { pattern
 ### MPS Scale PVs ###
 file "common/mps_scale_factor.template" { pattern
 { P, PROPERTY, EGU, PREC, SLOPE, OFFSET }
-{ $(P), "$(FAULT)", "$(EGU)", "4", "0.00055586", "32768"}
+{ $(P), "$(FAULT)", "$(EGU)", "5", "$(SLOPE)", "$(OFFSET)"}
 }
