@@ -1,5 +1,5 @@
-record(ai, "$(P_DEV):$(R_DEV)") {
-    field(EGU, "V")
+record(ai, "$(P_DEV):$(FAULT)_$(R_DEV)") {
+    field(EGU, $(EGU))
     field(SCAN, "1 second")
     field(INP, "$(P):$(R)")
 }

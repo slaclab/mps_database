@@ -32,3 +32,5 @@ XTES,30,XTES Beam Class,0
 LBLM,31,BCS Fiber BLM,1
 WAVEGUIDE,32,Waveguide,0
 KICK,33,Kicker Waveform,1
+HVPS,34,Beam Loss Monitor HV (soft),0
+WDOG,35,Watchdog (soft),0

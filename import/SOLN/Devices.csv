@@ -1,1 +1,4 @@
 Device,Mitigation,Fault,Area,Linac_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#
+SOL1B,Linac,all,GUNB,-32.115049,212,LKG00-5127,2,L2KA00-0517,0,WD37604005C0
+SOL2B,Linac,all,GUNB,-27.538278,823,LKG00-5127,2,L2KA00-0517,1,WD37604005C0
+

@@ -709,9 +709,9 @@ class DatabaseImporter:
         self.session.refresh(analog_channel)
 
         # Check if device has an 'enable' colunm, and don't add if it has a 0
-        if 'enable' in device_info:
-          if device_info['enable'] == '0':
-            continue # do not add if device has enable=0
+        #if 'enable' in device_info:
+        #  if device_info['enable'] == '0':
+        #    continue # do not add if device has enable=0
 
         device = models.AnalogDevice(name=device_info['device'],
                                      device_type=device_type,
@@ -1298,7 +1298,7 @@ importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
 # Wire scanner not yet defined
-#importer.add_digital_device('import/WIRE') # Treat this one as analog or digital?
+importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as analog or digital?
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
@@ -1308,28 +1308,36 @@ importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_digital_device('import/PROF')
 importer.add_digital_device('import/STOP')
 
+
+
 #if (False):
 if (True):
+#  importer.add_analog_device('import/TEST', card_name="Generic ADC")
+#  importer.add_analog_device('import/TEST2', card_name="Generic ADC")
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_analog_device('import/LBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
   importer.add_analog_device('import/BEND', card_name="Generic ADC") 
-  importer.add_analog_device('import/KICK', card_name="Generic ADC") 
+  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
+  ##importer.add_digital_device('import/KICK_STATUS')
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
-  importer.add_digital_device('import/COLL')
-#  importer.add_digital_device('import/FLOW')
+#  importer.add_digital_device('import/COLL')
+  importer.add_digital_device('import/FLOW')
 #  importer.add_digital_device('import/XTES')
 
 #  importer.add_digital_device('import/WIRE_PARK') DEPRECATED
 #  importer.add_digital_device('import/BEND_DCCT_STATUS') DEPRECATED
+
+  importer.add_digital_device('import/BLMHV', card_name="Virtual Card")
+  importer.add_digital_device('import/WDOG', card_name="Virtual Card")
 
 importer.cleanup()
 

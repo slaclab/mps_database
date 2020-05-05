@@ -77,8 +77,8 @@ class MpsAppReader:
         slot_info['type'] = app_type.name
         self.link_nodes[ln_name]['slots'][app_card.slot_number] = slot_info
 
-    def __add_slot_information_by_crate(self, mps_db_session, crat, app_card):
-        if app_card.slot_number in self.link_nodes[crat]['slots']:
+    def __add_slot_information_by_crate(self, mps_db_session, ln_name, crat, app_card):
+        if app_card.slot_number in self.link_nodes[ln_name]['slots']:
             print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
                       format(ln_name, app_card.slot_number))
             exit(1)
@@ -94,7 +94,7 @@ class MpsAppReader:
             raise
 
         slot_info['type'] = app_type.name
-        self.link_nodes[crat]['slots'][app_card.slot_number] = slot_info
+        self.link_nodes[ln_name]['slots'][app_card.slot_number] = slot_info
 
     def __extract_apps(self, mps_db_session):
         """
@@ -176,15 +176,18 @@ class MpsAppReader:
             for ln in link_nodes:
                 name = ln.get_name()
                 cr = ln.crate.location
+                ln_type = ln.get_type()
+                ln_app_prefix = ln.get_app_prefix()
                 self.link_nodes[name] = {}
-                self.link_nodes[name]['type'] = ln.get_type() # 'Analog', 'Digital' or 'Mixed'
+                self.link_nodes[name]['type'] = ln_type # 'Analog', 'Digital' or 'Mixed'
                 self.link_nodes[name]['slots'] = {}
-                self.link_nodes[name]['app_prefix'] = ln.get_app_prefix()
+                self.link_nodes[name]['app_prefix'] = ln_app_prefix
+                self.link_nodes[name]['physical'] = "Not Installed"
 
-                self.link_nodes[cr] = {}
-                self.link_nodes[cr]['type'] = ln.get_type() # 'Analog', 'Digital' or 'Mixed'
-                self.link_nodes[cr]['slots'] = {}
-                self.link_nodes[cr]['app_prefix'] = ln.get_app_prefix()
+                #self.link_nodes[cr] = {}
+                #self.link_nodes[cr]['type'] = ln_type # 'Analog', 'Digital' or 'Mixed'
+                #self.link_nodes[cr]['slots'] = {}
+                #self.link_nodes[cr]['app_prefix'] = ln_app_prefix
 
         # Check if there were applications defined in the database
         if len(app_cards) == 0:
@@ -212,6 +215,7 @@ class MpsAppReader:
 
                 ln_name = app_card.link_node.get_name()
                 phys = app_card.crate.location
+                #ln_name = app_card.crate.location
 
                 # Get this application data
                 app_data = {}
@@ -227,6 +231,7 @@ class MpsAppReader:
                 app_data["card_index"] = app_card.get_card_id()
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["app_prefix"] = app_card.get_pv_name()
+                app_data['link_node_name_prev'] = app_card.link_node.get_name()
 
 
                 self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
@@ -235,14 +240,14 @@ class MpsAppReader:
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
 
-                self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
-                self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
-                self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
-                self.link_nodes[phys]["physical"] = app_data["physical"]
-                self.link_nodes[phys]["sioc"] = ln_name
+                #self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
+                #self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
+                #self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
+                #self.link_nodes[phys]["physical"] = app_data["physical"]
+                #self.link_nodes[phys]["sioc"] = ln_name
 
                 self.__add_slot_information_by_name(mps_db_session, ln_name, app_card)
-                self.__add_slot_information_by_crate(mps_db_session, phys, app_card)
+                #self.__add_slot_information_by_crate(mps_db_session, phys, app_card)
 
                 # Defines whether the IOC_NAME env var should be added no the mps.env
                 # file. In order to add only once we need to figure out if there are
@@ -254,10 +259,10 @@ class MpsAppReader:
                 if (app_card.link_node.slot_number != 2 and app_card.name == "Generic ADC"):
                     app_data["analog_link_node"] = True # Non-slot 2 link node
                     self.link_nodes[ln_name]['analog_slot'] = app_card.link_node.slot_number
-                    self.link_nodes[phys]['analog_slot'] = app_card.link_node.slot_number
+                    #self.link_nodes[phys]['analog_slot'] = app_card.link_node.slot_number
                 elif (app_card.link_node.slot_number == 2):
                     self.link_nodes[ln_name]['analog_slot'] = 2
-                    self.link_nodes[phys]['analog_slot'] = 2
+                    #self.link_nodes[phys]['analog_slot'] = 2
                     has_digital = False
                     for c in app_card.link_node.cards:
                         if (c.name == "Digital Card" or c.name == "Generic ADC" and c.id != app_card.id):
@@ -310,8 +315,10 @@ class MpsAppReader:
                                 fault_data["name"] = fault.name
                                 fault_data["description"] = fault.description[:39]
                                 fault_data["bit_positions"] = []
+                                fault_data["integrators"] = []
                                 for fs in fault_states:
                                     fault_data["bit_positions"].append(fs.device_state.get_bit_position())
+                                    fault_data["integrators"].append(fs.device_state.get_integrator())
  
                             # Add this fault to the list of faults of the current device
                             device_data["faults"][fault_id] = fault_data
@@ -358,12 +365,12 @@ class MpsAppReader:
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
 
-                self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
-                self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
-                self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
-                self.link_nodes[phys]["dig_app_id"] = app_data["app_id"]
-                self.link_nodes[phys]["physical"] = app_data["physical"]
-                self.link_nodes[phys]["sioc"] = ln_name
+                #self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
+                #self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
+                #self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
+                #self.link_nodes[phys]["dig_app_id"] = app_data["app_id"]
+                #self.link_nodes[phys]["physical"] = app_data["physical"]
+                #self.link_nodes[phys]["sioc"] = ln_name
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:
@@ -418,6 +425,15 @@ class MpsAppReader:
                 # as devices without faults inputs won't be processed.
                 if app_data["devices"]:
                     self.digital_apps.append(app_data)
+        for app_card in app_cards:
+            ln_name = app_card.link_node.get_name()
+            if (app_card.link_node.slot_number != 2 and app_card.name == "Generic ADC"):
+                for ln_names, ln in self.link_nodes.items():
+                  if ln["physical"] != "Not Installed":
+                    if ln["physical"] == self.link_nodes[ln_name]['physical']:
+                        if ln_name != ln_names:
+                            print self.link_nodes[ln_name]['physical']
+                            self.__add_slot_information_by_name(mps_db_session, ln_names, app_card)
 
     def pretty_print(self):
         pp=PrettyPrinter(indent=4)
@@ -565,7 +581,7 @@ class MpsAppReader:
             return "uA"
         elif device_type_name in ["BLM","LBLM","CBLM","PBLM"]:
             # Beam loss monitors set threshold in Volts initially
-            return "V"
+            return "mV"
         elif device_type_name == "BPMS":
             # For BPM, the units depend on the type of fault
             if fault_name in ["X", "Y"]:

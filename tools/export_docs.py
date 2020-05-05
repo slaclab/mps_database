@@ -885,6 +885,7 @@ class Exporter:
         signal_name = c.name
       else:
         device = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==c.id).one()
+        #device = self.session.query(models.AnalogChannel).filter(models.AnalogChannel.id==c.id).one()
         signal_name = c.name + ' thresholds'
 
       rows.append([c.number, device.name, signal_name])

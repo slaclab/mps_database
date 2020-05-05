@@ -12,6 +12,12 @@ import shutil
 import datetime
 import ipaddress
 
+def to_bool(s):
+    if s:
+      return 1
+    else:
+      return 0
+
 def create_dir(path, clean=False, debug=False):
     """
     Create a new directory into a specified path.
@@ -125,19 +131,28 @@ class MpsAppExporter(MpsAppReader):
                     if app["virtual"]:
                         has_virtual = True
                         if (input["bit_position"]>=32):
-                            print("Virtual Input: {}, number={}".format(input["name"], input["bit_position"]))
-                            vmacros = {  "P":device_prefix,
+                            scan = ".2 second"
+                            if (input['name'] == 'WDOG'):
+                                if ("MPSHEARTBEAT" in input["input_pv"]):
+                                    scan = ".1 second"
+                            channel = input["bit_position"] - 32
+                            vmacros = {  "P":input["input_pv"]+'_THR',
                                          "R":input["name"],
                                          "N":self.mps_name.getDeviceInputNameFromId(input["db_id"]),
                                          "INPV":input["input_pv"],
                                          "ALSTATE":str(input["alarm_state"]),
-                                         "NALSTATE":str(not input["alarm_state"]),
+                                         "NALSTATE":str(to_bool(not input["alarm_state"])),
                                          "ZSV":input["zero_severity"],
                                          "OSV":input["one_severity"],
-                                         "BIT":str(input["bit_position"]),
+                                         "BIT":"{:02d}".format(channel).format,
                                          "ZNAM":input["zero_name"],
-                                         "ONAM":input["one_name"] }
-                            self.__write_virtual_db(path=app_path, macros=vmacros)
+                                         "ONAM":input["one_name"], 
+                                         "GID":str(app["app_id"]),
+                                         "SCAN":scan}
+                            if (input['name'] == 'WDOG'):
+                              self.__write_virtual_wdog_db(path=app_path, macros=vmacros)
+                            else:
+                              self.__write_virtual_db(path=app_path, macros=vmacros)
 
 
                     macros = {  "P":device_prefix,
@@ -191,13 +206,6 @@ class MpsAppExporter(MpsAppReader):
                     print("  Device prefix : {}".format(device_prefix))
 
                 if (device["type_name"] not in self.non_link_node_types):
-                    macros = { "P":app_prefix,
-                               "R":'ADC_DATA_{}'.format(device["channel_index"]),
-                               "P_DEV":device_prefix,
-                               "R_DEV":self.get_analog_type_name(device["type_name"])
-                               }
-                    self.__write_analog_db(path=app_path, macros=macros)
-
                     macros = { "P": app_prefix,
                                "CH":str(device["channel_index"]),
                                "CH_NAME":device["device_name"],
@@ -205,11 +213,33 @@ class MpsAppExporter(MpsAppReader):
                                "CH_SPARE":"0"
                                }
                     self.__write_link_node_channel_info_db(path=app_path, macros=macros)
+                    processing = 0
+                    ch = device['channel_index']
+                    if (device["type_name"] == "CBLM"):
+                        processing = 1
+                    if (device["type_name"] == "KICK"):
+                        processing = 1
+                    int0 = device['channel_index']*4
+                    int1 = device['channel_index']*4 + 1
+                    macros = { "CH":format(device['channel_index']),
+                               "PROC":format(processing),
+                               "INT0":format(int0),
+                               "INT1":format(int1)
+                             }
+                    self.__write_ana_config(path=app_path, macros=macros)
                     spare_channels[device["channel_index"]] = -1
-
                     for fault in device["faults"].values():
+                        bsa_slot = fault['integrators'][0]*6 + device["channel_index"]
+                        macros = { "P":app_prefix,
+                                   "R":'ANA_BSA_DATA_{}'.format(bsa_slot),
+                                   "P_DEV":device_prefix,
+                                   "R_DEV":self.get_analog_type_name(device["type_name"]),
+                                   "FAULT":fault['name'],
+                                   "EGU":self.get_app_units(device["type_name"],fault["name"])
+                                  }
+                        self.__write_analog_db(path=app_path, macros=macros)
                         macros = {  "P":device_prefix,
-                                    "BAY":str(device["bay_number"]),
+                                    "BAY":format(device["bay_number"]),
                                     "APP":self.get_app_type_name(device["type_name"]),
                                     "FAULT":fault["name"],
                                     "FAULT_INDEX":self.get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
@@ -217,9 +247,7 @@ class MpsAppExporter(MpsAppReader):
                                     "EGU":self.get_app_units(device["type_name"],fault["name"]),
                                     "SLOPE":unicode(self.get_slope(device["type_name"])),
                                     "OFFSET":unicode(self.get_offset(device["type_name"]))}
-
                         self.__write_thr_base_db(path=app_path, macros=macros)
-
                         # Generate PV for all possible thresholds, even if not defined in database
                         for bit in range(0,8):#fault["bit_positions"]:
                             fault_prefix = "{}_T{}".format(fault["name"], bit)
@@ -244,7 +272,8 @@ class MpsAppExporter(MpsAppReader):
         #
         for app in self.analog_apps + self.digital_apps:
             app_path = '{}app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
-            link_node_info=self.link_nodes[app["physical"]]
+            link_node_info=self.link_nodes[app["link_node_name"]]
+            #print link_node_info
             if not 'exported' in link_node_info:
                 for slot in range(2,8):
                     if slot in link_node_info['slots']:
@@ -399,6 +428,13 @@ class MpsAppExporter(MpsAppReader):
         """
         self.__write_fw_config(path=path, template_name="app_id.template", macros=macros)
 
+    def __write_ana_config(self, path, macros):
+        """
+        Write the analog configuration section to the application configuration file.
+        This configuration will be load by all applications.
+        """
+        self.__write_fw_config(path=path, template_name="analog_settings.template", macros=macros)
+
     def __write_dig_app_id_confg(self, path, macros):
         """
         Write the digital appID configuration section to the application configuration file.
@@ -448,6 +484,13 @@ class MpsAppExporter(MpsAppReader):
         Write records for digital virtual inputs
         """
         self.__write_epics_db(path=path, template_name="virtual.template", macros=macros)
+
+    def __write_virtual_wdog_db(self, path, macros):
+        """
+        Write records for digital virtual watchdog inputs
+        """
+        self.__write_epics_db(path=path, template_name="watchdog.template", macros=macros)
+
 
     def __write_link_node_channel_info_db(self, path, macros):
         self.__write_epics_db(path=path, template_name="link_node_channel_info.template", macros=macros)

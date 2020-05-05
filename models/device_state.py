@@ -50,7 +50,7 @@ class DeviceState(Base):
     bit_found = False
     initial_shift = 1 * 8 * integrator
     shift = initial_shift
-#    print 'Integrator: {0}, shift: {1}, value: {2}'.format(integrator, shift, self.value)
+    #print 'Integrator: {0}, shift: {1}, value: {2}'.format(integrator, shift, self.value)
     while not bit_found:
       b = (self.value >> shift) & 1
       if b == 1:
@@ -58,8 +58,9 @@ class DeviceState(Base):
       else:
         shift = shift + 1 # move to next bit
         bit_position = bit_position + 1
-#      print 'Integrator: {0}, shift: {1}'.format(integrator, shift)
+      #print 'Integrator: {0}, shift: {1}'.format(integrator, shift)
 
       if (shift >= initial_shift + 8):
         raise ValueError('Cannot find the bit position for value={0}'.format(self.value))
+        print 'Cannot find the bit position for value={0}'.format(self.value)
         return 0

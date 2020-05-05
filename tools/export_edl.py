@@ -467,12 +467,12 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
 
   ## Set file name for slot buttons according to the application type
   for i in range(2,8):
-    if i in app_reader.link_nodes[link_node_loca]['slots']:
-      slot_name[i-2] = app_reader.link_nodes[link_node_loca]['slots'][i]['pv_base']
-      slot_pvname[i-2] = app_reader.link_nodes[link_node_loca]['slots'][i]['pv_base']
-      if app_reader.link_nodes[link_node_loca]['slots'][i]['type']=="Analog Card":
+    if i in app_reader.link_nodes[link_node_name]['slots']:
+      slot_name[i-2] = app_reader.link_nodes[link_node_name]['slots'][i]['pv_base']
+      slot_pvname[i-2] = app_reader.link_nodes[link_node_name]['slots'][i]['pv_base']
+      if app_reader.link_nodes[link_node_name]['slots'][i]['type']=="Analog Card":
         slot_file_name[i-2] = 'mps_linknode_bcm_app_hps'
-      if app_reader.link_nodes[link_node_loca]['slots'][i]['type']=="BPM Card":
+      if app_reader.link_nodes[link_node_name]['slots'][i]['type']=="BPM Card":
         slot_file_name[i-2] = 'mps_linknode_bpm_app_hps'
 
   ## Set macros for application cards (slots 2 through 7)
@@ -482,9 +482,10 @@ def generate_link_node_macros(link_node, app_reader, template_dir):
     ln_macros = ln_macros + ",P_SLOT" + str(i) + "=" + slot_pvname[i-2]
 
   ## Set macros for analog channels for slots 2 through 7
+  
   for slot in range(2,8):
-    for bay in range(0,2):
-      for channel in range(0,3):
+      channel = 0
+      for bay in range(0,2):
         ln_macros = ln_macros + ",P_S" + str(slot) + "_B" + str(bay) + "_CH" + str(channel) + "=" + slot_ch_prefix_info[slot-2][bay][channel]
         ln_macros = ln_macros + ",S" + str(slot) + "_B" + str(bay) + "_CH" + str(channel) + "_NAME=" + slot_ch_name_info[slot-2][bay][channel]
 
