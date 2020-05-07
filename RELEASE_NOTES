@@ -8,6 +8,11 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R2-0-4: (7 May 2020) J. Mock
+  * Update tools, import list, and templates to support FW and devices installed
+    for Cu Linac Operation - All devices in database though.
+  * Remove WireScanners from import list until we figure out how to deal with them.
+
 mps_database-R2-0-3: (16 Aug 2019)
   * Error checking when getting list of threshold PVs
   * Addition of LCLS1 remap application IDs to generated config.yaml
