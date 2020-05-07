@@ -432,7 +432,7 @@ class MpsAppReader:
                   if ln["physical"] != "Not Installed":
                     if ln["physical"] == self.link_nodes[ln_name]['physical']:
                         if ln_name != ln_names:
-                            print self.link_nodes[ln_name]['physical']
+                            #print self.link_nodes[ln_name]['physical']
                             self.__add_slot_information_by_name(mps_db_session, ln_names, app_card)
 
     def pretty_print(self):

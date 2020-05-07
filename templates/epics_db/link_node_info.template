@@ -15,7 +15,7 @@ record(mbbi, "$(P):LN_TYPE") {
     field(TWST, "Mixed")
 }
 
-record(longin, "$(P):LN_ID") {
+record(stringin, "$(P):LN_ID") {
   field(DESC, "MPS Link Node ID")
   field(VAL, "$(MPS_LINK_NODE_ID)")
 }

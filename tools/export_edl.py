@@ -133,7 +133,6 @@ def generate_device_inputs_EDL(edl_file, template_file, device_inputs, mps_name)
 
   for deviceInput in device_inputs:
     name = mps_name.getDeviceInputName(deviceInput)
-
     crates.append(deviceInput.channel.card.crate.get_name())#number)
     slot=str(deviceInput.channel.card.slot_number)
     if (deviceInput.channel.card.amc == 0):
@@ -170,6 +169,65 @@ def generate_device_inputs_EDL(edl_file, template_file, device_inputs, mps_name)
              'DI_PV': pvs,
              'DI_PV_LATCHED': latched,
              'DI_PV_UNLATCH': unlatch,
+             }
+
+  t = Template(data, searchList=[macros])
+  edl_file.write("%s" % t)
+#  template_file.close()
+  edl_file.close()
+
+def generate_virtual_inputs_EDL(edl_file, template_file, device_inputs, mps_name):
+  data=template_file.read()
+
+  crates_wdog=[]
+  channels_wdog=[]
+  names_wdog=[]
+  pvs_wdog=[]
+  crates_thr=[]
+  channels_thr=[]
+  names_thr=[]
+  pvs_thr=[]
+  pvs_thr_low=[]
+  pvs_thr_high=[]
+  pvs_thr_sts=[]
+
+  for deviceInput in device_inputs:
+    name = mps_name.getDeviceInputName(deviceInput)
+    if deviceInput.channel.monitored_pvs != "":
+      if deviceInput.channel.name == "WDOG":
+        name = deviceInput.channel.monitored_pvs
+        channels_wdog.append(deviceInput.channel.number)
+        names_wdog.append(name)
+        pvs_wdog.append('{0}_WDOG_RBV'.format(name))
+        crates_wdog.append(deviceInput.channel.card.crate.get_name())#number
+      else:
+        name = deviceInput.channel.monitored_pvs
+        channels_thr.append(deviceInput.channel.number)
+        names_thr.append(name)
+        pvs_thr.append('{0}_THR'.format(name))
+        pvs_thr_low.append('{0}_THR.LOLO'.format(name))
+        pvs_thr_high.append('{0}_THR.HIHI'.format(name))
+        pvs_thr_sts.append('{0}_INPUT_RBV'.format(name))
+        crates_thr.append(deviceInput.channel.card.crate.get_name())#number
+
+
+#    cards.append(deviceInput.channel.card.number)
+
+    
+  macros={'DEVICE_INPUTS': str(len(channels_wdog)+len(channels_thr)),
+             'WDOG_INPUTS': str(len(channels_wdog)),
+             'DI_CRATE': crates_wdog,
+             'DI_CHANNEL': channels_wdog,
+             'DI_NAME': names_wdog,
+             'DI_PV': pvs_wdog,
+             'THR_INPUTS': str(len(channels_thr)),
+             'DI_CRATE_THR': crates_thr,
+             'DI_CHANNEL_THR': channels_thr,
+             'DI_NAME_THR': names_thr,
+             'DI_PV_THR': pvs_thr,
+             'DI_PV_THR_LO': pvs_thr_low,
+             'DI_PV_THR_HI': pvs_thr_high,
+             'DI_PV_THR_STS': pvs_thr_sts
              }
 
   t = Template(data, searchList=[macros])
@@ -559,6 +617,9 @@ parser.add_argument('--link-node', metavar='link_node_name', type=str, nargs='?'
                     help='If provided generate screens only for the specified link node'\
                       'need --link-nodes and related options specified')
 
+parser.add_argument('--virtual-inputs-template',metavar='file',type=argparse.FileType('r'),nargs='?',
+                    help='Cheetah template file name for virtual channels (e.g. virtual_inputs.tmpl)')
+
 parser.add_argument('-v', action='store_true', default=False,
                     dest='verbose', help='Verbose output')
 
@@ -603,6 +664,25 @@ if (args.device_inputs_template):
                                  device_inputs, mps_name)
 
       args.device_inputs_template.seek(0)
+
+if (args.virtual_inputs_template):
+  # Generate one edl file per link node
+  file_name = 'sw_inputs.edl'
+  for ln in link_nodes:
+    dir_name = args.link_nodes + '/areas/' + ln.get_name() + '_'
+
+    device_inputs = []
+    for c in ln.crate.cards:
+      if len(c.digital_channels) > 0:
+        for dc in c.digital_channels:
+          device_inputs.append(dc.device_input)
+
+    if len(device_inputs) > 0:
+      f = open(dir_name + file_name, 'w')
+      generate_virtual_inputs_EDL(f, args.virtual_inputs_template,
+                                 device_inputs, mps_name)
+
+      args.virtual_inputs_template.seek(0)
 
 if (args.analog_devices_template):
   # Generate one edl file per link node

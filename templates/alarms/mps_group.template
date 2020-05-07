@@ -1,3 +1,2 @@
 
 CHANNEL  $(GROUP_NAME)     $(FAULT_PV)		-----
-   $FORCEPV $(FAULT_PV) -DATL 1 0

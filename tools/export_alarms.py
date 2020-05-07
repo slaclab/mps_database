@@ -92,7 +92,7 @@ class MpsAlarmReader:
                       'BC2B', 'L3B', 'EXT', 'DOG', 'BYP',
                       'SLTH', 'SLTS', 'BSYH', 'BSYS', 'LTUH',
                       'LTUS', 'UNDH', 'UNDS', 'DMPH', 'DMPS', 
-                      'FEEH', 'FEES']
+                      'FEEH', 'FEES', 'SPS', 'SPH', 'CLTS']
         self.areas_in_order = self.areas
 
         # Open a session to the MPS database
@@ -209,9 +209,8 @@ class MpsAlarmReader:
     def add_ln_alarms(self, app_card, ln_pvs):
         if not ln_pvs:
             ln_pvs = []
-        ln_pvs.append('{}:{}:MPS_EN'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
-        ln_pvs.append('{}:{}:TIM_LINK_STAT'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
-#        ln_pvs.append('{}:{}:THR_LOADED'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
+        ln_pvs.append('{}:{}:MPS_EN_RBV'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
+        #ln_pvs.append('{}:{}:THR_LOADED'.format(app_card.link_node.get_pv_base(), app_card.get_card_id()))
         return ln_pvs
 
     def check_area(self, area):

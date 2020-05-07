@@ -712,7 +712,6 @@ class DatabaseImporter:
         #if 'enable' in device_info:
         #  if device_info['enable'] == '0':
         #    continue # do not add if device has enable=0
-
         device = models.AnalogDevice(name=device_info['device'],
                                      device_type=device_type,
                                      channel=analog_channel,
@@ -721,7 +720,8 @@ class DatabaseImporter:
                                      z_location=device_info['linac_z'],
                                      description=device_info['device'] + ' ' + device_type.description,
                                      area=device_info['area'],
-                                     evaluation=1) # Fast evaluation
+                                     evaluation=1)# Fast evaluation
+ 
         if (self.verbose):
           print 'Analog Channel: ' + device_info['device']
 
@@ -1298,7 +1298,8 @@ importer.add_beam_destinations('import/BeamDestinations.csv')
 importer.add_beam_classes('import/BeamClasses.csv')
 
 # Wire scanner not yet defined
-importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as analog or digital?
+## Jmock - Need to figure out what to do with wire scanners
+##importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as analog or digital?
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 

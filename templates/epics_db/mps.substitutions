@@ -42,6 +42,8 @@ file "common/RegRO.template" { pattern
 { LAST_MSG_BYTE_3,      "Mps last message byte 3",              LAST_MSG_BYTE_3,        "2"     }
 { LAST_MSG_BYTE_4,      "Mps last message byte 4",              LAST_MSG_BYTE_4,        "2"     }
 { LAST_MSG_BYTE_5,      "Mps last message byte 5",              LAST_MSG_BYTE_5,        "2"     }
+{ DIG_SWBITERR_RBV,         "SW Bit Error",                         SOFT_CH_ERROR_WORD,     "3"     }
+{ DIG_SWBIT_RBV,            "SW Bit",                               SOFT_CH_VALUE_WORD,     "3"     }
 }
 
 file "common/Reg1BitRO.template" { pattern
