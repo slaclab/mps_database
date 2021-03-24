@@ -1332,7 +1332,7 @@ if (True):
   importer.add_digital_device('import/VVFS')
 #  importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
-#  importer.add_digital_device('import/XTES')
+  importer.add_digital_device('import/XTES')
 
 #  importer.add_digital_device('import/WIRE_PARK') DEPRECATED
 #  importer.add_digital_device('import/BEND_DCCT_STATUS') DEPRECATED

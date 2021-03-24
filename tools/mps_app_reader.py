@@ -578,7 +578,7 @@ class MpsAppReader:
 
         if device_type_name in ["SOLN", "BEND","BLEN","KICK"]:
             # Solenoid devices use 'uA'.
-            return "uA"
+            return "GeV/c"
         elif device_type_name in ["BLM","LBLM","CBLM","PBLM"]:
             # Beam loss monitors set threshold in Volts initially
             return "mV"

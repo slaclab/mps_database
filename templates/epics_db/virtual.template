@@ -1,7 +1,6 @@
 #================================================================================#
 # LCLS-II MPS PV template for Software Inputs                                    #
 # Macro description:                                                             #
-#   - P,    : PV with thresholds as HIHI and LOLO                                #
 #   - N     : Records to process MPS                                             #
 #   - INPV  : Input PV to Monitor                                                #
 #   - PORT  : Asyn port name                                                     #
@@ -14,13 +13,32 @@
 #   - BIT  : SW Input number to asyn port driver                                 #
 #================================================================================#
 
-record(ao, "$(P,undefined)") {
+record(ao, "$(N)_RAW") {
     field(DESC, "Input")
     field(PINI, "YES")	
     field(OMSL, "closed_loop")
-    field(SCAN, ".5 second")
+    field(SCAN, ".1 second")
     field(OIF, "Full")
     field(DOL, "$(INPV)")
+    field(FLNK, "$(N)_CALC_RAW")
+}
+
+record(calcout, "$(N)_CALC_RAW") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(FLNK, "$(N)_THR")
+    field(INPA, "$(N)_RAW")
+    field(CALC, "ISNAN(A)?0:A")
+}
+
+record(ao, "$(N)_THR") {
+    field(DESC, "Input")
+    field(PINI, "YES")	
+    field(OMSL, "closed_loop")
+    field(SCAN, "Passive")
+    field(OIF, "Full")
+    field(DOL, "$(N)_CALC_RAW")
     field(FLNK, "$(N)_CALC")
     field(LLSV, "MAJOR")
     field(HHSV, "MAJOR")
@@ -32,8 +50,8 @@ record(calc, "$(N)_CALC") {
     field(PINI, "YES")	
     field(SCAN, "Passive")
     field(FLNK, "$(N)_INPUT")
-    field(INPA, "$(P).SEVR CPP MS")
-    field(INPB, "$(P).STAT CPP MS")
+    field(INPA, "$(N)_THR.SEVR CPP MS")
+    field(INPB, "$(N)_THR.STAT CPP MS")
     field(CALC, "(A+B)>0?$(ALSTATE):$(NALSTATE)")
 }
 

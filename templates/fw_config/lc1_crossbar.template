@@ -1,0 +1,12 @@
+## Load configurations
+- mmio:
+  - AmcCarrierCore:
+    - AxiSy56040:
+        - OutputConfig: !<value>
+            - RTM_TIMING_IN0
+            - RTM_TIMING_IN0
+            - RTM_TIMING_IN0
+            - RTM_TIMING_IN1
+    - AmcCarrierTiming:
+        - TimingFrameRx:
+            - ClkSel: !<value> 0

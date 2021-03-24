@@ -578,7 +578,8 @@ class Exporter:
 
     self.docbook.openSection(device.name, 'device.{0}'.format(device.id))
 
-    if (self.checkout_only):
+    #if (self.checkout_only):
+    if (True):
       cols=[{'name':'c1', 'width':'0.25*'},
             {'name':'c2', 'width':'0.75*'}]
 
@@ -1080,7 +1081,7 @@ class Exporter:
     if (self.checkout_only):
       self.docbook.openSection('Devices Checkout')
     else:
-      self.docbook.openSection('MPS Devices')
+      self.docbook.openSection('{0} - MPS Devices'.format(link_node.get_name().upper()))
 
     devices = self.session.query(models.Device).all()
 
@@ -1198,6 +1199,14 @@ class Exporter:
 
     self.docbook.closeSection()
 
+  def writeFaultByLinkNode(self,link_node):
+    self.docbook.openSection('Faults By Link Node')
+    linkNodes = self.session.query(models.LinkNode).all()
+    for ln in linkNodes:
+      self.writeDevices(ln)
+              
+    self.docbook.closeSection()
+
   def writeCrates(self, link_node):
     self.docbook.openSection('ATCA Crates')
     self.tf.write('# Crates\n')
@@ -1267,19 +1276,20 @@ class Exporter:
 
       self.writeCrates(link_node)
 
-      if (not self.general_only):
-        self.writeAppCards(link_node)
+      #if (not self.general_only):
+      #  self.writeAppCards(link_node)
 
-    if ((not self.cards_only or
-         self.devices_only or
-         self.checkout_only) and
-        not self.ignore_only and
-        not self.general_only):
-      self.writeDevices(link_node)
+    ##if ((not self.cards_only or
+    ##     self.devices_only or
+    ##     self.checkout_only) and
+    ##    not self.ignore_only and
+    ##    not self.general_only):
+    ##  self.writeDevices(link_node)
 
-      if (not link_node or 
-          self.ignore_only): 
-        self.writeIgnoreLogic()
+    ##  if (not link_node or 
+    ##      self.ignore_only): 
+        ##self.writeIgnoreLogic()
+    self.writeFaultByLinkNode(link_node)
 
     self.docbook.writeFooter()
 
