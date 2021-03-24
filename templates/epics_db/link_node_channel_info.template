@@ -1,3 +1,12 @@
+#================================================================================#
+# LCLS-II MPS PV template for link node channel information                      #
+# Macro description:                                                             #
+#   - P       : MPLN prefix                                                      #
+#   - CH      : ADC Channel Number (0-5)                                         #
+#   - CH_NAME : Device MAD Name                                                  #
+#   - CH_SPARE: Boolean to signify if channel is used or not                     #
+#   - TYPE    : Fault type name                                                  #
+#================================================================================#
 record(stringin, "$(P):CH$(CH)_NAME") {
   field(DESC, "Device name attached to channel $(CH)")
   field(VAL, "$(CH_NAME)")
@@ -15,3 +24,7 @@ record(bi, "$(P):CH$(CH)_SPARE") {
   field(ZNAM, "False")
 }
 
+record(stringin, "$(P):CH$(CH)_FAULT_TYPE") {
+  field(DESC, "PV base name for device in channel $(CH)")
+  field(VAL, "$(TYPE)")
+}

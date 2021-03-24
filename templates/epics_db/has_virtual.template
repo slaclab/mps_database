@@ -1,0 +1,13 @@
+#================================================================================#
+# LCLS-II MPS PV template for indicating presence of SW inputs                   #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - ASG     : Access security group                                            #
+#================================================================================#
+record(bo, "$(P):HAS_VIRTUAL") {
+    field(DESC, "Link Node has SW inputs.")
+    field(PINI, "YES")
+    field(VAL,  "$(HAS_VIRTUAL)")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}

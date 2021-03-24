@@ -1,0 +1,90 @@
+#================================================================================#
+# LCLS-II MPS PV template for LC1 Kicker (BYKIK Style) threshold management      #
+# Macro description:                                                             #
+#   - P,    : PV with thresholds as HIHI and LOLO                                #
+#   - N     : Records to process MPS                                             #
+#   - INPV  : Input PV to Monitor                                                #
+#   - PORT  : Asyn port name                                                     #
+#   - ALSTATE  : Fault State                                                     #
+#   - NALSTATE : OK State                                                        #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#   - ZSV  : "0" state severity                                                  #
+#   - OSV  : "1" state severity                                                  #
+#   - BIT  : SW Input number to asyn port driver                                 #
+#================================================================================#
+record(ao, "$(P):LC1_INPV") {
+    field(DESC, "$(DESC) threshold Input")
+    field(PINI, "YES")	
+    field(OMSL, "closed_loop")
+    field(SCAN, "Passive")
+    field(OIF, "Full")
+    field(DOL, "$(INPV) CPP")
+    field(FLNK, "$(P):FANOUT.PROC")
+}
+record(fanout, "$(P):FANOUT") {
+    field(SCAN,  "Passive")
+    field(LNK1,  "$(P):LC1_CALC_HIGH_TEMP.PROC")
+    field(LNK2,  "$(P):LC1_CALC_LOW_TEMP.PROC")
+}
+record(ao, "$(P):LC1_T0_HTOL") {
+    field(DESC, "$(DESC) threshold High %")
+    field(SCAN, "Passive")
+    info(autosaveFields, "VAL")
+}
+record(ao, "$(P):LC1_T0_LTOL") {
+    field(DESC, "$(DESC) threshold Low %")
+    field(SCAN, "Passive")
+    info(autosaveFields, "VAL")
+}
+record(calc, "$(P):LC1_CALC_HIGH_TEMP") {
+    field(DESC, "$(DESC) threshold high calc")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(FLNK, "$(P):LC1_CALC_HIGH.PROC")
+    field(INPA, "$(P):LC1_INPV")
+    field(INPB, "$(P):LC1_T0_HTOL CPP MS")
+    field(CALC, "A*(B/100)")
+}
+record(calcout, "$(P):LC1_CALC_HIGH") {
+    field(DESC, "$(DESC) threshold high calc")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(FLNK, "$(P):I0_T0_LC1_H.PROC")
+    field(INPA, "$(P):LC1_INPV")
+    field(INPB, "$(P):LC1_CALC_HIGH_TEMP")
+    field(INPC, "0.4")
+    field(CALC, "B<C?(A+C):(A+B)")
+    field(OUT,  "$(P):I0_T0_LC1_H")
+} 
+record(calc, "$(P):LC1_CALC_LOW_TEMP") {
+    field(DESC, "$(DESC) threshold high calc")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(FLNK, "$(P):LC1_CALC_LOW.PROC")
+    field(INPA, "$(P):LC1_INPV")
+    field(INPB, "$(P):LC1_T0_LTOL CPP MS")
+    field(CALC, "A*(B/100)")
+}
+record(calcout, "$(P):LC1_CALC_LOW") {
+    field(DESC, "$(DESC) threshold high calc")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(FLNK, "$(P):I0_T0_LC1_L.PROC")
+    field(INPA, "$(P):LC1_INPV")
+    field(INPB, "$(P):LC1_CALC_LOW_TEMP")
+    field(INPC, "0.4")
+    field(CALC, "B<C?(A-C):(A-B)")
+    field(OUT,  "$(P):I0_T0_LC1_L")
+}   
+record(calc, "$(NAME)") {
+    field(DESC, "CALC of max power into und")
+    field(INPA, "$(BPM)")
+    field(INPB, "1.6e-10")
+    field(INPC, "$(INPV)")
+    field(INPD, "1")
+    field(INPE, "$(RATE)")
+    field(CALC, "A*B*C*D*E")
+    field(EGU,  "W")
+    field(SCAN, ".5 second")
+}

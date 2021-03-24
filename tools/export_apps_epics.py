@@ -74,6 +74,7 @@ class MpsAppExporter(MpsAppReader):
         self.dest_path = dest_path
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
         self.manager_info = manager_info
+        self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH"]
 
     def generate_epics_db(self):
         """
@@ -117,7 +118,11 @@ class MpsAppExporter(MpsAppReader):
             if self.link_nodes[app["link_node_name"]]['type'] == 'Digital':
                 self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
                 self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"1"})
-                self.__write_app_id_config(path=app_path, macros={"ID":"0"}) # If there are no analog cards, set ID to invalid
+                self.__write_app_id_config(path=app_path, macros={"ID":"0","PROC":"3"}) # If there are no analog cards, set ID to invalid
+            if app["link_node_area"].upper() in self.lc1_areas:
+                self.__write_lc1_crossbar_yaml(path=app_path, macros={"ID":"0"})
+            else:
+                self.__write_lc2_crossbar_yaml(path=app_path, macros={"ID":"0"})
 
             has_virtual = False
             for device in app["devices"]:
@@ -136,9 +141,15 @@ class MpsAppExporter(MpsAppReader):
                                 if ("MPSHEARTBEAT" in input["input_pv"]):
                                     scan = ".1 second"
                             channel = input["bit_position"] - 32
+                            n = input["input_pv"]
+                            ex = "_IN"
+                            if ("WIGG:" in input["input_pv"]):
+                              if (channel%2 != 0):
+                                ex = "_OUT"
+                              n = "{0}{1}".format(input["input_pv"][:-8], ex)
                             vmacros = {  "P":input["input_pv"]+'_THR',
                                          "R":input["name"],
-                                         "N":self.mps_name.getDeviceInputNameFromId(input["db_id"]),
+                                         "N":n,
                                          "INPV":input["input_pv"],
                                          "ALSTATE":str(input["alarm_state"]),
                                          "NALSTATE":str(to_bool(not input["alarm_state"])),
@@ -153,16 +164,12 @@ class MpsAppExporter(MpsAppReader):
                               self.__write_virtual_wdog_db(path=app_path, macros=vmacros)
                             else:
                               self.__write_virtual_db(path=app_path, macros=vmacros)
-
-
-                    macros = {  "P":device_prefix,
-                                "R":input["name"],
-                                "BIT":input["bit_position"],
-                                "ZNAM":input["zero_name"],
-                                "ONAM":input["one_name"] }
-
                     if (self.verbose):
                         print("    Digital Input : {}".format(input["name"]))
+            if has_virtual:
+                self.__write_mps_virt_db(path=app_path, macros={"P":app_prefix,"HAS_VIRTUAL":"1"})
+            else:
+                self.__write_mps_virt_db(path=app_path, macros={"P":app_prefix,"HAS_VIRTUAL":"0"})
 
         if (self.verbose):
             print("----------------------------")
@@ -183,7 +190,10 @@ class MpsAppExporter(MpsAppReader):
                 print("Application prefix : {}".format(app_prefix))
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
-            self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"])})
+            proc = "3"
+            if (app['link_node_name'] == 'sioc-bsyh-mp03' or app['link_node_name'] == 'sioc-bsys-mp04' or app['link_node_name'] == 'sioc-clts-mp01'):
+              proc = "0"
+            self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"]),"PROC":proc})
             self.__write_thresholds_off_config(path=app_path)
 
             # Add the IOC name environmental variable for the Link Nodes
@@ -210,7 +220,8 @@ class MpsAppExporter(MpsAppReader):
                                "CH":str(device["channel_index"]),
                                "CH_NAME":device["device_name"],
                                "CH_PVNAME":device_prefix,
-                               "CH_SPARE":"0"
+                               "CH_SPARE":"0",
+                               "TYPE":self.get_analog_type_name(device["type_name"])
                                }
                     self.__write_link_node_channel_info_db(path=app_path, macros=macros)
                     processing = 0
@@ -229,13 +240,103 @@ class MpsAppExporter(MpsAppReader):
                     self.__write_ana_config(path=app_path, macros=macros)
                     spare_channels[device["channel_index"]] = -1
                     for fault in device["faults"].values():
+                        lolo = -1
+                        hihi = 1
+                        if (device['type_name'] == 'CBLM'):
+                          if (device['area'] == 'UNDH'):
+                            position = int(device['position'][:-2])
+                            if ((position % 2) == 0):
+                              if (fault['name'] == 'I0'):
+                                lolo = -16
+                                hihi = 5
+                              else:
+                                lolo = -666
+                                hihi = 40
+                            else:
+                              if (fault['name'] == 'I0'):
+                                lolo = -20
+                                hihi = 5
+                              else:
+                                lolo = -800
+                                hihi = 40
+                          if (device['area'] == 'UNDS'):
+                            position = int(device['position'][:-2])
+                            if (position % 2 == 0):
+                              if (fault['name'] == 'I0'):
+                                lolo = -33
+                                hihi = 5
+                              else:
+                                lolo = -1333
+                                hihi = 40
+                            else:
+                              if (fault['name'] == 'I0'):
+                                lolo = -16
+                                hihi = 5
+                              else:
+                                lolo = -666
+                                hihi = 40
+                        if (device['device_name'] in ['BYD','BYDSH']):
+                          lolo = 0
+                          hihi = 17
+                          inpv = "BEND:DMPH:400:BACT"
+                          macros_temp = { "P":device_prefix,
+                                          "DESC":device['device_name'],
+                                          "INPV":inpv} 
+                          self.__write_lc1_dc_db(path=app_path, macros=macros_temp)
+                        if (device['device_name'] in ['BYDB','BY1B','BYDSS','BKRCUS','BLRCUS','BRCUSDC','BRCUS1']):
+                          lolo = 0
+                          hihi = 12
+                          inpv = "BEND:DMPS:400:BACT"
+                          macros_temp = { "P":device_prefix,
+                                          "DESC":device['device_name'],
+                                          "INPV":inpv} 
+                          self.__write_lc1_dc_db(path=app_path, macros=macros_temp)                
+                        macros = {"DEVICE_NAME":device['device_name'],
+                                  "FAULT_NAME":fault['name'],
+                                  "LOLO": "{}".format(lolo),
+                                  "HIHI": "{}".format(hihi)}
+                        self.__write_lc1_thr(path=self.dest_path, macros=macros)
+                        self.__write_ana_list(path=self.dest_path,macros=macros)
                         bsa_slot = fault['integrators'][0]*6 + device["channel_index"]
+                        inpv = "{0}:ANA_BSA_DATA_{1}".format(app_prefix,bsa_slot)
+                        dtyp = "Soft Channel"
+                        if (device["type_name"] == "CBLM" and fault['name'] == 'I0'):
+                          dtyp = "Raw Soft Channel"
+                          if (device["area"] == "UNDS"):
+                            inpv = "{0}:{1}_{2}{3}".format(device_prefix, fault['name'],self.get_analog_type_name(device["type_name"]),'CUSTH')
+                          elif (device["area"] == "UNDH"):
+                            inpv = "{0}:{1}_{2}{3}".format(device_prefix, fault['name'],self.get_analog_type_name(device["type_name"]),'CUHTH')
                         macros = { "P":app_prefix,
                                    "R":'ANA_BSA_DATA_{}'.format(bsa_slot),
                                    "P_DEV":device_prefix,
                                    "R_DEV":self.get_analog_type_name(device["type_name"]),
                                    "FAULT":fault['name'],
-                                   "EGU":self.get_app_units(device["type_name"],fault["name"])
+                                   "EGU":self.get_app_units(device["type_name"],fault["name"]),
+                                   "INPV":inpv,
+                                   "DTYP":dtyp
+                                  }
+                        self.__write_analog_db(path=app_path, macros=macros)
+                        inpv = "{0}:{1}_{2}{3}".format(device_prefix, fault['name'],self.get_analog_type_name(device["type_name"]),'CUHTH')
+                        dtyp = "Raw Soft Channel"
+                        macros = { "P":app_prefix,
+                                   "R":'ANA_BSA_DATA_{}'.format(bsa_slot),
+                                   "P_DEV":device_prefix,
+                                   "R_DEV":'{0}{1}'.format(self.get_analog_type_name(device["type_name"]),'HXR'),
+                                   "FAULT":fault['name'],
+                                   "EGU":self.get_app_units(device["type_name"],fault["name"]),
+                                   "INPV":inpv,
+                                   "DTYP":dtyp
+                                  }
+                        self.__write_analog_db(path=app_path, macros=macros)
+                        inpv = "{0}:{1}_{2}{3}".format(device_prefix, fault['name'],self.get_analog_type_name(device["type_name"]),'CUSTH')
+                        macros = { "P":app_prefix,
+                                   "R":'ANA_BSA_DATA_{}'.format(bsa_slot),
+                                   "P_DEV":device_prefix,
+                                   "R_DEV":'{0}{1}'.format(self.get_analog_type_name(device["type_name"]),'SXR'),
+                                   "FAULT":fault['name'],
+                                   "EGU":self.get_app_units(device["type_name"],fault["name"]),
+                                   "INPV":inpv,
+                                   "DTYP":dtyp
                                   }
                         self.__write_analog_db(path=app_path, macros=macros)
                         macros = {  "P":device_prefix,
@@ -248,8 +349,39 @@ class MpsAppExporter(MpsAppReader):
                                     "SLOPE":unicode(self.get_slope(device["type_name"])),
                                     "OFFSET":unicode(self.get_offset(device["type_name"]))}
                         self.__write_thr_base_db(path=app_path, macros=macros)
+                        chan = device["channel_number"]
+                        if chan > 2:
+                          chan = chan - 3
+                        macros_bsa = { "P":"{0}:{1}_{2}".format(device_prefix,fault["name"],self.get_analog_type_name(device["type_name"])),
+                                       "ATTR":"{0}_{1}".format(fault["name"],self.get_analog_type_name(device["type_name"])),
+                                       "INP":"{0}:LC1_BSA_B{1}_C{2}_{3}".format(app_prefix,device["bay_number"],chan,fault["name"]),
+                                       "EG":"raw",
+                                       "HO":"0",
+                                       "LO":"0",
+                                       "PR":"0",
+                                       "AD":"0"}
+                        self.__write_bsa_db(path=app_path, macros=macros_bsa)
+                        if (device["type_name"] == "KICK"):
+                            if device['device_name'] == 'BYKIK':
+                              inpv = "BEND:DMPH:400:BACT"
+                              macros_temp = { "P":device_prefix,
+                                              "DESC":device['device_name'],
+                                              "INPV":inpv,
+                                              "BPM":"BPMS:LTUH:960:TMITCUH1H",
+                                              "NAME":"DUMP:LTUH:970:MPSPOWER",
+                                              "RATE":"IOC:BSY0:MP01:BYKIK_RATEC"} 
+                              self.__write_lc1_kick_db(path=app_path, macros=macros_temp)
+                            if device['device_name'] == 'BYKIKS':
+                              inpv = "BEND:DMPS:400:BACT"
+                              macros_temp = { "P":device_prefix,
+                                              "DESC":device['device_name'],
+                                              "INPV":inpv,
+                                              "BPM":"BPMS:LTUS:880:TMITCUS1H",
+                                              "NAME":"DUMP:LTUS:972:MPSPOWER",
+                                              "RATE":"IOC:BSY0:MP01:BYKIKS_RATEC"}
+                              self.__write_lc1_kick_db(path=app_path, macros=macros_temp)
                         # Generate PV for all possible thresholds, even if not defined in database
-                        for bit in range(0,8):#fault["bit_positions"]:
+                        for bit in range(0,7):#fault["bit_positions"]:
                             fault_prefix = "{}_T{}".format(fault["name"], bit)
                             macros["BIT_POSITION"] = str(bit)
                             self.__write_thr_db(path=app_path, macros=macros)
@@ -270,16 +402,19 @@ class MpsAppExporter(MpsAppReader):
         #
         # Write db information about slots of each link node
         #
-        for app in self.analog_apps + self.digital_apps:
+        for app in self.digital_apps + self.analog_apps:
             app_path = '{}app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             link_node_info=self.link_nodes[app["link_node_name"]]
-            #print link_node_info
             if not 'exported' in link_node_info:
                 for slot in range(2,8):
                     if slot in link_node_info['slots']:
+                        if link_node_info['slots'][slot]['type'] == 'Generic ADC':
+                            ln_type = 'MPS Analog In'
+                        else:
+                            ln_type = link_node_info['slots'][slot]['type']
                         macros = { "P": app["app_prefix"],
                                    "SLOT": str(slot),
-                                   "SLOT_NAME": link_node_info['slots'][slot]['type'],
+                                   "SLOT_NAME":ln_type,
                                    "SLOT_PVNAME": link_node_info['slots'][slot]['pv_base'],
                                    "SLOT_SPARE": "0"}
                     else:
@@ -288,7 +423,14 @@ class MpsAppExporter(MpsAppReader):
                                    "SLOT_NAME": "Spare",
                                    "SLOT_PVNAME": "Spare",
                                    "SLOT_SPARE": "1"}
-
+                    if link_node_info['type'] == "Digital":
+                      if slot == 2:
+                          ln_type = "MPS Digital"
+                          macros = { "P": app["app_prefix"],
+                                      "SLOT": str(slot),
+                                      "SLOT_NAME":ln_type,
+                                      "SLOT_PVNAME": "MPS Digital",
+                                      "SLOT_SPARE": "0"}
                     self.__write_link_node_slot_info_db(path=app_path, macros=macros)
 
                 # Add CH_* PVs for digital-only link nodes. These are added before 
@@ -339,25 +481,28 @@ class MpsAppExporter(MpsAppReader):
         if "analog_slot" in link_node: 
             slot = link_node["analog_slot"]
         path = '{}app_db/{}/{:04}/{:02}/'.format(self.dest_path, link_node["cpu_name"], link_node["crate_id"], slot)
-
         mask = 0
         remap_dig = 0
+        write =False
         if link_node["type"] == "Digital" or link_node["type"] == "Mixed":
             if "dig_app_id" not in link_node:
               remap_dig = 0
             else:         
               mask = 1
               remap_dig = link_node["dig_app_id"]
+              write = True
 
         bpm_index = 0
         blm_index = 0
         remap_bpm = [0, 0, 0, 0, 0]
         remap_blm = [0, 0, 0, 0, 0]
         for slot_number, slot_info in link_node["slots"].items():
+            if slot_number == 2:
+                write = True
             if slot_info["type"] == "BPM Card":
                 if bpm_index < 5:
                     remap_bpm[bpm_index] = slot_info["app_id"]
-                    mask |= 1 << (bpm_index + 1) # Skip first bit, which is for digital app
+                    #mask |= 1 << (bpm_index + 1) # Skip first bit, which is for digital app
                     bpm_index += 1
                 else:
                     print('ERROR: Cannot remap BPM app id {}, all remap slots are used already'.\
@@ -387,7 +532,8 @@ class MpsAppExporter(MpsAppReader):
                 "REMAP_BLM5":str(remap_blm[4]),
                 "REMAP_MASK":str(mask),
                 }
-        self.__write_fw_config(path=path, template_name="lc1_info.template", macros=macros)
+        if write:
+            self.__write_fw_config(path=path, template_name="lc1_info.template", macros=macros)
 
     def __write_link_node_info_db(self, link_node_name, link_node):
         """
@@ -403,10 +549,13 @@ class MpsAppExporter(MpsAppReader):
         if "analog_slot" in link_node: 
             slot = link_node["analog_slot"]
         path = '{}app_db/{}/{:04}/{:02}/'.format(self.dest_path, link_node["cpu_name"], link_node["crate_id"], slot)
-
+        if slot == 2:
+            LNID = '{0}'.format(link_node['lc1_node_id'])
+        else:
+            LNID = 'AN'
         macros={"P":link_node['app_prefix'],
                 "MPS_LINK_NODE_SIOC":link_node['sioc'],
-                "MPS_LINK_NODE_ID":link_node['lc1_node_id'],
+                "MPS_LINK_NODE_ID":LNID,
                 "MPS_LINK_NODE_TYPE":str(self.__link_node_type_to_number(link_node['type'])),
                 "MPS_CONFIG_VERSION":self.config_version,
                 "MPS_CRATE_LOCATION":link_node['physical'],
@@ -420,6 +569,18 @@ class MpsAppExporter(MpsAppReader):
             return 2
         else:
             return 1
+
+    def __write_lc1_crossbar_yaml(self, path, macros):
+        """
+        Write LCLS1 Crossbar config
+        """
+        self.__write_fw_config(path=path, template_name="lc1_crossbar.template", macros=macros)
+
+    def __write_lc2_crossbar_yaml(self, path, macros):
+        """
+        Write LCLS2 Crossbar config
+        """
+        self.__write_fw_config(path=path, template_name="lc2_crossbar.template", macros=macros)
 
     def __write_app_id_config(self, path, macros):
         """
@@ -456,6 +617,13 @@ class MpsAppExporter(MpsAppReader):
         These records will be loaded once per each device.
         """
         self.__write_epics_db(path=path, template_name="mps.template", macros=macros)
+    
+    def __write_mps_virt_db(self, path, macros):
+        """
+        Write the base mps records to the application EPICS database file.
+        These records will be loaded once per each device.
+        """
+        self.__write_epics_db(path=path, template_name="has_virtual.template", macros=macros)
 
     def __write_thr_base_db(self, path, macros):
         """
@@ -463,6 +631,27 @@ class MpsAppExporter(MpsAppReader):
         These records will be loaded once per each fault.
         """
         self.__write_epics_db(path=path, template_name="thr_base.template", macros=macros)
+
+    def __write_bsa_db(self, path, macros):
+        """
+        Write the base threshold record to the application EPICS database file.
+        These records will be loaded once per each fault.
+        """
+        self.__write_epics_db(path=path, template_name="bsa.template", macros=macros)
+
+    def __write_lc1_kick_db(self, path, macros):
+        """
+        Write lcls1 kicker threshold records to the application EPICS database file.
+        These records will be loaded once per each fault.
+        """
+        self.__write_epics_db(path=path, template_name="lc1_kick.template", macros=macros)
+
+    def __write_lc1_dc_db(self, path, macros):
+        """
+        Write lcls1 kicker threshold records to the application EPICS database file.
+        These records will be loaded once per each fault.
+        """
+        self.__write_epics_db(path=path, template_name="lc1_bend.template", macros=macros)
 
     def __write_thr_db(self, path, macros):
         """
@@ -522,6 +711,25 @@ class MpsAppExporter(MpsAppReader):
         """
         self.__write_epics_env(path=path, template_name="ioc_info.template", macros=macros)
 
+    def __write_lc1_thr(self, path, macros):
+        """
+        Write the LN IOC related environmental variable file.
+
+        This environmental variable will be loaded by all link nodes.
+        """
+        self.__write_thr_script(path=path, template_name="lc1_thr.template", macros=macros)
+
+    def __write_ana_list(self, path, macros):
+        """
+        Write the LN IOC related environmental variable file.
+
+        This environmental variable will be loaded by all link nodes.
+        """
+        template_name="ana_inputs.template"
+        file = "{}analog_input_list.txt".format(path)
+        template = "{}scripts/{}".format(self.template_path, template_name)
+        self.__write_file_from_template(file=file, template=template, macros=macros)
+
     def __write_epics_db(self, path, template_name, macros):
         """
         Write the EPICS DB file into the 'path' directory.
@@ -565,6 +773,21 @@ class MpsAppExporter(MpsAppReader):
         """
         file = "{}config.yaml".format(path)
         template = "{}fw_config/{}".format(self.template_path, template_name)
+        self.__write_file_from_template(file=file, template=template, macros=macros)
+
+    def __write_thr_script(self, path, template_name, macros):
+        """
+        Write the FW configuration file into the 'path' directory.
+
+        The resulting file is named "config.yaml". Calling this function
+        multiple times, will append the results into the same file.
+
+        The file is created from the tamplte file located in the directory
+        "fw_config" inside the global template directory, substituting the
+        macros definitions.
+        """
+        file = "{}thr_script.sh".format(path)
+        template = "{}scripts/{}".format(self.template_path, template_name)
         self.__write_file_from_template(file=file, template=template, macros=macros)
 
     def __write_mps_sf_cmd(self, path, template_name, macros):

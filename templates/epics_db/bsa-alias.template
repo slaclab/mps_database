@@ -1,0 +1,322 @@
+#================================================================================#
+# LCLS-II MPS PV template for BSA Core PVs (LCLS-I BSA)                          #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - ASG     : Access security group                                            #
+#================================================================================#
+record(bsa, "$(P):$(ATTR)1") {
+  alias("$(ALIAS)1")
+}
+record(compress, "$(P):$(ATTR)HST1") {
+  alias("$(ALIAS)HST1")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST1") {
+  alias("$(ALIAS)CNTHST1")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST1") {
+  alias("$(ALIAS)RMSHST1")
+}
+record(bsa, "$(P):$(ATTR)2") {
+  alias("$(ALIAS)2")
+}
+
+record(compress, "$(P):$(ATTR)HST2") {
+  alias("$(ALIAS)HST2")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST2") {
+  alias("$(ALIAS)CNTHST2")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST2") {
+  alias("$(ALIAS)RMSHST2")
+}
+record(bsa, "$(P):$(ATTR)3") {
+  alias("$(ALIAS)3")
+}
+
+record(compress, "$(P):$(ATTR)HST3") {
+  alias("$(ALIAS)HST3")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST3") {
+  alias("$(ALIAS)CNTHST3")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST3") {
+  alias("$(ALIAS)RMSHST3")
+}
+record(bsa, "$(P):$(ATTR)4") {
+  alias("$(ALIAS)4")
+}
+
+record(compress, "$(P):$(ATTR)HST4") {
+  alias("$(ALIAS)HST4")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST4") {
+  alias("$(ALIAS)CNTHST4")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST4") {
+  alias("$(ALIAS)RMSHST4")
+}
+
+record(bsa, "$(P):$(ATTR)5") {
+  alias("$(ALIAS)5")
+}
+
+record(compress, "$(P):$(ATTR)HST5") {
+  alias("$(ALIAS)HST5")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST5") {
+  alias("$(ALIAS)CNTHST5")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST5") {
+  alias("$(ALIAS)RMSHST5")
+}
+
+record(bsa, "$(P):$(ATTR)6") {
+  alias("$(ALIAS)6")
+}
+
+record(compress, "$(P):$(ATTR)HST6") {
+  alias("$(ALIAS)HST6")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST6") {
+  alias("$(ALIAS)CNTHST6")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST6") {
+  alias("$(ALIAS)RMSHST6")
+}
+
+record(bsa, "$(P):$(ATTR)7") {
+  alias("$(ALIAS)7")
+}
+
+record(compress, "$(P):$(ATTR)HST7") {
+  alias("$(ALIAS)HST7")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST7") {
+  alias("$(ALIAS)CNTHST7")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST7") {
+  alias("$(ALIAS)RMSHST7")
+}
+
+record(bsa, "$(P):$(ATTR)8") {
+  alias("$(ALIAS)8")
+}
+
+record(compress, "$(P):$(ATTR)HST8") {
+  alias("$(ALIAS)HST8")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST8") {
+  alias("$(ALIAS)CNTHST8")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST8") {
+  alias("$(ALIAS)RMSHST8")
+}
+
+record(bsa, "$(P):$(ATTR)9") {
+  alias("$(ALIAS)9")
+}
+
+record(compress, "$(P):$(ATTR)HST9") {
+  alias("$(ALIAS)HST9")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST9") {
+  alias("$(ALIAS)CNTHST9")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST9") {
+  alias("$(ALIAS)RMSHST9")
+}
+
+record(bsa, "$(P):$(ATTR)10") {
+  alias("$(ALIAS)10")
+}
+
+record(compress, "$(P):$(ATTR)HST10") {
+  alias("$(ALIAS)HST10")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST10") {
+  alias("$(ALIAS)CNTHST10")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST10") {
+  alias("$(ALIAS)RMSHST10")
+}
+
+record(bsa, "$(P):$(ATTR)11") {
+  alias("$(ALIAS)11")
+}
+
+record(compress, "$(P):$(ATTR)HST11") {
+  alias("$(ALIAS)HST11")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST11") {
+  alias("$(ALIAS)CNTHST11")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST11") {
+  alias("$(ALIAS)RMSHST11")
+}
+
+record(bsa, "$(P):$(ATTR)CUS1H") {
+  alias("$(ALIAS)CUS1H")
+}
+
+record(compress, "$(P):$(ATTR)HSTCUS1H") {
+  alias("$(ALIAS)HSTCUS1H")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUS1H") {
+  alias("$(ALIAS)CNTHSTCUS1H")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUS1H") {
+  alias("$(ALIAS)RMSHSTCUS1H")
+}
+
+record(bsa, "$(P):$(ATTR)CUSTH") {
+  alias("$(ALIAS)CUSTH")
+}
+
+record(compress, "$(P):$(ATTR)HSTCUSTH") {
+  alias("$(ALIAS)HSTCUSTH")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUSTH") {
+  alias("$(ALIAS)CNTHSTCUSTH")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUSTH") {
+  alias("$(ALIAS)RMSHSTCUSTH")
+}
+
+record(bsa, "$(P):$(ATTR)CUSBR") {
+  alias("$(ALIAS)CUSBR")
+}
+
+record(compress, "$(P):$(ATTR)HSTCUSBR") {
+  alias("$(ALIAS)HSTCUSBR")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUSBR") {
+  alias("$(ALIAS)CNTHSTCUSBR")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUSBR") {
+  alias("$(ALIAS)RMSHSTCUSBR")
+}
+
+record(bsa, "$(P):$(ATTR)CUH1H") {
+  alias("$(ALIAS)CUH1H")
+}
+
+record(compress, "$(P):$(ATTR)HSTCUH1H") {
+  alias("$(ALIAS)HSTCUH1H")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUH1H") {
+  alias("$(ALIAS)CNTHSTCUH1H")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUH1H") {
+  alias("$(ALIAS)RMSHSTCUH1H")
+}
+
+record(bsa, "$(P):$(ATTR)CUHTH") {
+  alias("$(ALIAS)CUHTH")
+}
+
+record(compress, "$(P):$(ATTR)HSTCUHTH") {
+  alias("$(ALIAS)HSTCUHTH")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUHTH") {
+  alias("$(ALIAS)CNTHSTCUHTH")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUHTH") {
+  alias("$(ALIAS)RMSHSTCUHTH")
+}
+
+record(bsa, "$(P):$(ATTR)CUHBR") {
+  alias("$(ALIAS)CUHBR")
+}
+
+record(compress, "$(P):$(ATTR)HSTCUHBR") {
+  alias("$(ALIAS)HSTCUHBR")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUHBR") {
+  alias("$(ALIAS)CNTHSTCUHBR")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUHBR") {
+  alias("$(ALIAS)RMSHSTCUHBR")
+}
+
+record(bsa, "$(P):$(ATTR)1H") {
+  alias("$(ALIAS)1H")
+}
+
+record(compress, "$(P):$(ATTR)HST1H") {
+  alias("$(ALIAS)HST1H")
+}
+
+record(compress, "$(P):$(ATTR)CNTHST1H") {
+  alias("$(ALIAS)CNTHST1H")
+}
+
+record(compress, "$(P):$(ATTR)RMSHST1H") {
+  alias("$(ALIAS)RMSHST1H")
+}
+
+record(bsa, "$(P):$(ATTR)TH") {
+  alias("$(ALIAS)TH")
+}
+
+record(compress, "$(P):$(ATTR)HSTTH") {
+  alias("$(ALIAS)HSTTH")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTCUHTH") {
+  alias("$(ALIAS)CNTHSTTH")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTCUHTH") {
+  alias("$(ALIAS)RMSHSTTH")
+}
+
+record(bsa, "$(P):$(ATTR)BR") {
+  alias("$(ALIAS)BR")
+}
+
+
+record(compress, "$(P):$(ATTR)HSTBR") {
+  alias("$(ALIAS)HSTBR")
+}
+
+record(compress, "$(P):$(ATTR)CNTHSTBR") {
+  alias("$(ALIAS)CNTHSTBR")
+}
+
+record(compress, "$(P):$(ATTR)RMSHSTBR") {
+  alias("$(ALIAS)RMSHSTBR")
+}

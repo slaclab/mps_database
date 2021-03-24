@@ -1,0 +1,2 @@
+$PHYSICS_TOP/mps_manager/mps_change_threshold.py --reason "Initial Value" --device-name $(DEVICE_NAME) -t lc1 t0 $(FAULT_NAME) lolo $(LOLO)
+$PHYSICS_TOP/mps_manager/mps_change_threshold.py --reason "Initial Value" --device-name $(DEVICE_NAME) -t lc1 t0 $(FAULT_NAME) hihi $(HIHI)

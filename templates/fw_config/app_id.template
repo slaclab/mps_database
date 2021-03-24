@@ -4,3 +4,10 @@
     - AppMps:
       - AppMpsRegBase:
         - mpsAppId: !<value> $(ID)
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsAnalogCore:
+        - MpsAnalogLcls1Reg:
+          - PrcValueSelect: !<value> $(PROC)
+
