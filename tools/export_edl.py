@@ -176,65 +176,53 @@ def generate_device_inputs_EDL(edl_file, template_file, device_inputs, mps_name)
 #  template_file.close()
   edl_file.close()
 
-def generate_virtual_inputs_EDL(edl_file, template_file, device_inputs, mps_name):
+def generate_digital_inputs_EDL(edl_file, template_file, device_inputs, mps_name, app_prefix, lc1_id):
   data=template_file.read()
 
-  crates_wdog=[]
-  channels_wdog=[]
-  names_wdog=[]
-  pvs_wdog=[]
-  crates_thr=[]
-  channels_thr=[]
-  names_thr=[]
-  pvs_thr=[]
-  pvs_thr_low=[]
-  pvs_thr_high=[]
-  pvs_thr_sts=[]
+  crates=[]
+  channels=[]
+  names=[]
+  offset = []
+  status = []
+  thr = []
+  visible = []
 
   for deviceInput in device_inputs:
     name = mps_name.getDeviceInputName(deviceInput)
+    off = deviceInput.channel.number
+    status_pv = '{0}:RTM_DI'.format(app_prefix)
+    vis = 0
     if deviceInput.channel.monitored_pvs != "":
+      name = deviceInput.channel.monitored_pvs
+      off = 0
       if deviceInput.channel.name == "WDOG":
-        name = deviceInput.channel.monitored_pvs
-        n = name
-        channels_wdog.append(deviceInput.channel.number)
-        names_wdog.append(name)
-        pvs_wdog.append('{0}_WDOG_RBV'.format(name))
-        crates_wdog.append(deviceInput.channel.card.crate.get_name())#number
+       status_pv = '{0}_WDOG_RBV'.format(name)
       else:
-        name = deviceInput.channel.monitored_pvs
-        n = name
+        status_pv = '{0}_INPUT_RBV'.format(name)
+        vis = 1
         ex = "_IN"
         if ("WIGG:" in name):
           if (deviceInput.channel.number%2 != 0):
             ex = "_OUT"
-          n = "{0}{1}".format(name[:-8], ex)
-        channels_thr.append(deviceInput.channel.number)
-        names_thr.append(name)
-        pvs_thr.append('{0}_THR'.format(n))
-        pvs_thr_low.append('{0}_THR.LOLO'.format(n))
-        pvs_thr_high.append('{0}_THR.HIHI'.format(n))
-        pvs_thr_sts.append('{0}_INPUT_RBV'.format(n))
-        crates_thr.append(deviceInput.channel.card.crate.get_name())#number
-
-
-#    cards.append(deviceInput.channel.card.number)
-
-    
-  macros={'DEVICE_INPUTS': str(len(channels_wdog)+len(channels_thr)),
-             'WDOG_INPUTS': str(len(channels_wdog)),
-             'DI_CRATE': crates_wdog,
-             'DI_CHANNEL': channels_wdog,
-             'DI_NAME': names_wdog,
-             'DI_PV': pvs_wdog,
-             'THR_INPUTS': str(len(channels_thr)),
-             'DI_CRATE_THR': crates_thr,
-             'DI_CHANNEL_THR': channels_thr,
-             'DI_NAME_THR': names_thr,
-             'DI_PV_THR': pvs_thr,
-             'DI_PV_THR_LO': pvs_thr_low,
-             'DI_PV_THR_HI': pvs_thr_high,
-             'DI_PV_THR_STS': pvs_thr_sts
+          name = "{0}{1}".format(name[:-8], ex)
+    channels.append(deviceInput.channel.number)
+    offset.append('{0}'.format(off))
+    names.append(name)
+    crates.append(deviceInput.channel.card.crate.get_name())#number
+    status.append(status_pv)
+    thr.append('{0}_THR'.format(name))
+    visible.append(vis)
+  
+  macros={'DEVICE_INPUTS': str(len(channels)),
+             'DI_CRATE': crates,
+             'DI_CHANNEL': channels,
+             'DI_NAME': names,
+             'OFFSET': offset,
+             'STATUS': status,
+             'THRESHOLD': thr,
+             'VISIBLE': visible,
+             'TITLE': 'Link Node {0} Digital Inputs'.format(lc1_id),
+             'ID': '{0}'.format(lc1_id)
              }
 
   t = Template(data, searchList=[macros])
@@ -672,7 +660,7 @@ parser.add_argument('--link-node', metavar='link_node_name', type=str, nargs='?'
                     help='If provided generate screens only for the specified link node'\
                       'need --link-nodes and related options specified')
 
-parser.add_argument('--virtual-inputs-template',metavar='file',type=argparse.FileType('r'),nargs='?',
+parser.add_argument('--digital-inputs-template',metavar='file',type=argparse.FileType('r'),nargs='?',
                     help='Cheetah template file name for virtual channels (e.g. virtual_inputs.tmpl)')
 
 parser.add_argument('-v', action='store_true', default=False,
@@ -720,12 +708,11 @@ if (args.device_inputs_template):
 
       args.device_inputs_template.seek(0)
 
-if (args.virtual_inputs_template):
+if (args.digital_inputs_template):
   # Generate one edl file per link node
-  file_name = 'sw_inputs.edl'
+  file_name = 'digital_inputs.edl'
   for ln in link_nodes:
     dir_name = args.link_nodes + '/areas/' + ln.get_name() + '_'
-
     device_inputs = []
     for c in ln.crate.cards:
       if len(c.digital_channels) > 0:
@@ -734,10 +721,10 @@ if (args.virtual_inputs_template):
 
     if len(device_inputs) > 0:
       f = open(dir_name + file_name, 'w')
-      generate_virtual_inputs_EDL(f, args.virtual_inputs_template,
-                                 device_inputs, mps_name)
+      generate_digital_inputs_EDL(f, args.digital_inputs_template,
+                                 device_inputs, mps_name, ln.get_app_prefix(), ln.lcls1_id)
 
-      args.virtual_inputs_template.seek(0)
+      args.digital_inputs_template.seek(0)
 
 if (args.analog_devices_template):
   # Generate one edl file per link node
