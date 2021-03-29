@@ -198,13 +198,13 @@ def generate_digital_inputs_EDL(edl_file, template_file, device_inputs, mps_name
       if deviceInput.channel.name == "WDOG":
        status_pv = '{0}_WDOG_RBV'.format(name)
       else:
-        status_pv = '{0}_INPUT_RBV'.format(name)
         vis = 1
         ex = "_IN"
         if ("WIGG:" in name):
           if (deviceInput.channel.number%2 != 0):
             ex = "_OUT"
           name = "{0}{1}".format(name[:-8], ex)
+        status_pv = '{0}_INPUT_RBV'.format(name)
     channels.append(deviceInput.channel.number)
     offset.append('{0}'.format(off))
     names.append(name)
