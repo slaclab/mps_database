@@ -1,0 +1,431 @@
+#import math
+#set $WINDOW_HEIGHT = int($DEVICE_INPUTS) * 16 + 150
+#set $BOX_HEIGHT = int($DEVICE_INPUTS) * 16 + 50
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 50
+y 50
+w 560
+h $WINDOW_HEIGHT
+font "helvetica-medium-r-10.0"
+ctlFont "helvetica-medium-r-10.0"
+btnFont "helvetica-medium-r-10.0"
+fgColor index 14
+bgColor index 5
+textColor index 14
+ctlFgColor1 index 25
+ctlFgColor2 index 18
+ctlBgColor1 index 4
+ctlBgColor2 index 4
+topShadowColor index 1
+botShadowColor index 11
+title $TITLE
+showGrid
+snapToGrid
+gridSize 4
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 20
+w 530
+h $BOX_HEIGHT
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 12
+w 160
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Digital Inputs"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y 34
+w 84
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Crate"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 106
+y 34
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Channel"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 166
+y 34
+w 300
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Digital Input"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 483
+y 34
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Thresholds"
+}
+endObjectProperties
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 483
+y 22
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Soft"
+}
+endObjectProperties
+
+#==========================================================================
+# Add a line for each device_input:
+
+#for $i in range (0, int($DEVICE_INPUTS))
+#set $WIDGET_Y = 68 + 16 * ($i - 1)
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 22
+y $WIDGET_Y
+w 84
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_CRATE[$i]"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 106
+y $WIDGET_Y
+w 60
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_CHANNEL[$i]"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 166
+y $WIDGET_Y
+w 300
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+bgColor index 11
+value {
+  "$DI_NAME[$i]"
+}
+endObjectProperties
+
+# (Byte)
+object ByteClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 466
+y $WIDGET_Y
+w 16
+h 15
+controlPv "$STATUS[$i]"
+lineColor index 14
+onColor index 16
+offColor index 4
+numBits 1
+shift "$OFFSET[$i]"
+endObjectProperties
+
+#if $VISIBLE[$i] > 0
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 483
+y $WIDGET_Y
+w 60
+h 16
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-10.0"
+buttonLabel "Change..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "mps_soft_control"
+}
+menuLabel {
+  0 "Chage"
+}
+setPosition {
+  0 "button"
+}
+symbols {
+  0 "PV=$THRESHOLD[$i]"
+}
+endObjectProperties
+#end if
+
+#end for
+
+#==========================================================================
+# Add Key at the bottom
+
+#set $WIDGET_KEY = $WIDGET_Y + 44
+#set $INACTIVE = $WIDGET_KEY + 4
+#set $INACTIVE_TEXT = $WIDGET_KEY + 6
+#set $ACTIVE = $WIDGET_KEY + 24
+#set $ACTIVE_TEXT = $WIDGET_KEY + 26
+
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y $WIDGET_KEY
+w 128
+h 48
+lineColor index 3
+fill
+fillColor index 3
+lineWidth 0
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y $INACTIVE
+w 16
+h 16
+lineColor index 14
+fill
+fillColor index 4
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 40
+y $INACTIVE_TEXT
+w 79
+h 12
+font "helvetica-medium-r-10.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Input Active Low"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y $ACTIVE
+w 16
+h 16
+lineColor index 14
+fill
+fillColor index 16
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 40
+y $ACTIVE_TEXT
+w 81
+h 12
+font "helvetica-medium-r-10.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Input Active High"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 154
+y $WIDGET_KEY
+w 392
+h 49
+lineColor index 3
+fill
+fillColor index 3
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 154
+y $INACTIVE_TEXT
+w 392
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Digital input status at link node $ID. To see status at CN,"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 154
+y $ACTIVE_TEXT
+w 392
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "open CN displays from lclshome->MPS/Global"
+}
+endObjectProperties
