@@ -1,8 +1,9 @@
-from mps_config import MPSConfig
-import models
+from mps_database.mps_config import MPSConfig
+from mps_database import models
 import yaml
 from yaml import MappingNode, ScalarNode
 from sqlalchemy import Column, Integer, Float, String, Boolean
+
 def dump_db_to_yaml(mps_config, filename):
   session = mps_config.session
   f = file(filename, 'w')

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, func
 from sqlalchemy.orm import relationship, backref
-from runtime import RuntimeBase
+from mps_database.runtime import RuntimeBase
 
 class ThresholdAlt6History(RuntimeBase):
   """

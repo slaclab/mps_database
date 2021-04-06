@@ -2,8 +2,8 @@
 
 from Cheetah.Template import Template
 
-from mps_config import MPSConfig, models
-from mps_names import MpsName
+from mps_database.mps_config import MPSConfig, models
+from mps_database.mps_names import MpsName
 from sqlalchemy import func
 from mps_app_reader import MpsAppReader
 import sqlalchemy

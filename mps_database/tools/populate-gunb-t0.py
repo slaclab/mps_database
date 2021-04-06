@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from mps_config import MPSConfig, models
+from mps_database.mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 from runtime_utils import RuntimeChecker
 

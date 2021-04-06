@@ -8,8 +8,8 @@ import os
 import subprocess
 import time
 import argparse
-import ioc_tools
-from mps_config import MPSConfig, models
+import mps_database.ioc_tools
+from mps_database.mps_config import MPSConfig, models
 
 #=== MAIN ==================================================================================
 
@@ -24,7 +24,7 @@ parser.add_argument('yaml', metavar='yaml', type=str, nargs=1,
 args = parser.parse_args()
 
 mps=MPSConfig(args.database[0].name)
-ioc_tools.dump_db_to_yaml(mps, args.yaml[0])
+mps_database.ioc_tools.dump_db_to_yaml(mps, args.yaml[0])
 
 #
 # Write header info to YAML file, so it is possible to identify when it was generated

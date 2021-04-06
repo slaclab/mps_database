@@ -1,6 +1,6 @@
 
-from mps_config import MPSConfig, models, runtime
-from mps_names import MpsName
+from mps_database.mps_config import MPSConfig, models, runtime
+from mps_database.mps_names import MpsName
 from sqlalchemy import func
 import sys
 import argparse

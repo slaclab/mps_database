@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from mps_config import MPSConfig, models
+from mps_database.mps_config import MPSConfig, models
 import os
 import sys
 import argparse
 import subprocess
 import time
-from mps_names import MpsName
+from mps_database.mps_names import MpsName
 from docbook import DocBook
 
 class Exporter:

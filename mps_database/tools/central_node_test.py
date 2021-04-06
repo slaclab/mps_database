@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from mps_config import MPSConfig, models
+from mps_database.mps_config import MPSConfig, models
 import socket
 import sys
 import os

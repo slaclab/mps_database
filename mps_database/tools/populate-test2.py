@@ -1,4 +1,4 @@
-from mps_config import MPSConfig, models
+from mps_database.mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 #The MPSConfig object points to our database file.
 conf = MPSConfig()

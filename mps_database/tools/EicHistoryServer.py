@@ -8,7 +8,7 @@ import argparse
 import time
 import datetime
 
-from mps_config import MPSConfig, models
+from mps_database.mps_config import MPSConfig, models
 
 from ctypes import *
     

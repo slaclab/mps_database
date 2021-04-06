@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from mps_database.mps_config import MPSConfig, models, runtime
-from mps_names import MpsName
+from mps_database.mps_names import MpsName
 from sqlalchemy import func
 import sys
 import argparse
@@ -138,7 +138,7 @@ def checkRuntime(session, rt_session):
   rt_devices = session.query(models.Device).all()
 
   if (len(devices) != len(rt_devices)):
-    print 'ERROR: Number of devices in static database ({0}) different from runtime database ({1})'.\
+    print 'ERROR: Number of devices in static database ({0}) different from mps_database.runtime database ({1})'.\
         format(len(devices),len(rt_devices))
 
   missing={}
