@@ -3,3 +3,4 @@
 venv/
 *~
 *SAVE
+.DS_Store

@@ -1,0 +1,10 @@
+README.md
+setup.py
+mps_database/__init__.py
+mps_database/ioc_tools.py
+mps_database/mps_config.py
+mps_database.egg-info/PKG-INFO
+mps_database.egg-info/SOURCES.txt
+mps_database.egg-info/dependency_links.txt
+mps_database.egg-info/requires.txt
+mps_database.egg-info/top_level.txt

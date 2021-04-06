@@ -1,5 +1,5 @@
-from mps_config import MPSConfig, models
-from mps_names import MpsName
+from mps_database.mps_config import MPSConfig, models
+from mps_database.mps_names import MpsName
 from sqlalchemy import func, exc
 import argparse
 import os
