@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql import func
-from models import Base
+from mps_database.models import Base
 
 class ApplicationType(Base):
   """

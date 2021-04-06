@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import relationship, backref
-from models import Base
+from mps_database.models import Base
 from .fault_input import FaultInput
 from .device import Device
 

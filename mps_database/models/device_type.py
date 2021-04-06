@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from models import Base
+from mps_database.models import Base
 
 class DeviceType(Base):
   """

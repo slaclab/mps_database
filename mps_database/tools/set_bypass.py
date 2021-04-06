@@ -4,7 +4,7 @@
 #
 
 from mps_database.mps_config import MPSConfig, models, runtime
-from mps_database.mps_names import MpsName
+from mps_database.tools.mps_names import MpsName
 from mps_database.runtime import *
 from runtime_utils import RuntimeChecker
 from sqlalchemy import func

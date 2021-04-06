@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship, backref, validates
-from models import Base
+from mps_database.models import Base
 
 class LinkNode(Base):
   """

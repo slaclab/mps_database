@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from mps_database.mps_config import MPSConfig, models, runtime
 from sqlalchemy import MetaData
-from mps_database.mps_names import MpsName
+from mps_database.tools.mps_names import MpsName
 import argparse
 import time
 import yaml

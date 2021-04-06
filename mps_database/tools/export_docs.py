@@ -6,7 +6,7 @@ import sys
 import argparse
 import subprocess
 import time
-from mps_database.mps_names import MpsName
+from mps_database.tools.mps_names import MpsName
 from docbook import DocBook
 
 class Exporter:
