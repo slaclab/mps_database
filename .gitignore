@@ -3,4 +3,9 @@
 venv/
 *~
 *SAVE
+
+# Mac Specific
 .DS_Store
+
+# Pip Packaging
+*.egg-info
