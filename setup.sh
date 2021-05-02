@@ -7,7 +7,7 @@ if [ $# == 1 ]; then
     pip install -r requirements.txt
   elif [ "$1" == "prod" ]; then
     source $TOOLS/script/go_python2.7.13.bash
-    export PYTHONPATH=$PHYSICS_TOP/mps_database:$PYTHONPATH
+    export PYTHONPATH=${PWD}:${PWD}/tools:$PYTHONPATH
   fi
 else
   source ./venv/bin/activate
@@ -15,7 +15,7 @@ else
     echo "ERROR: use '. ./setup.sh install' command first"
     exit -1
   fi
-  export PYTHONPATH=/u/ld/jmock/Cosylab/workspace/mps_database/mps_database-cu-turn-on:$PYTHONPATH
+  export PYTHONPATH=${PWD}:${PWD}/tools:$PYTHONPATH
 fi
 
 export LD_LIBRARY_PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/lib:$LD_LIBRARY_PATH

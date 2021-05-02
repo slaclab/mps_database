@@ -74,7 +74,7 @@ class MpsAppExporter(MpsAppReader):
         self.dest_path = dest_path
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
         self.manager_info = manager_info
-        self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH"]
+        self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH","FEES","FEEH"]
 
     def generate_epics_db(self):
         """
@@ -191,7 +191,7 @@ class MpsAppExporter(MpsAppReader):
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
             proc = "3"
-            if (app['link_node_name'] == 'sioc-bsyh-mp03' or app['link_node_name'] == 'sioc-bsys-mp04' or app['link_node_name'] == 'sioc-clts-mp01'):
+            if (app['link_node_name'] == 'sioc-bsyh-mp03' or app['link_node_name'] == 'sioc-bsys-mp04'):
               proc = "0"
             self.__write_app_id_config(path=app_path, macros={"ID":str(app["app_id"]),"PROC":proc})
             self.__write_thresholds_off_config(path=app_path)
@@ -243,38 +243,12 @@ class MpsAppExporter(MpsAppReader):
                         lolo = -1
                         hihi = 1
                         if (device['type_name'] == 'CBLM'):
-                          if (device['area'] == 'UNDH'):
-                            position = int(device['position'][:-2])
-                            if ((position % 2) == 0):
-                              if (fault['name'] == 'I0'):
-                                lolo = -16
-                                hihi = 5
-                              else:
-                                lolo = -666
-                                hihi = 40
-                            else:
-                              if (fault['name'] == 'I0'):
-                                lolo = -20
-                                hihi = 5
-                              else:
-                                lolo = -800
-                                hihi = 40
-                          if (device['area'] == 'UNDS'):
-                            position = int(device['position'][:-2])
-                            if (position % 2 == 0):
-                              if (fault['name'] == 'I0'):
-                                lolo = -33
-                                hihi = 5
-                              else:
-                                lolo = -1333
-                                hihi = 40
-                            else:
-                              if (fault['name'] == 'I0'):
-                                lolo = -16
-                                hihi = 5
-                              else:
-                                lolo = -666
-                                hihi = 40
+                          if (fault['name'] == 'I0'):
+                            lolo = -50
+                            hihi = 5
+                          else:
+                            lolo = -1500
+                            hihi = 40
                         if (device['device_name'] in ['BYD','BYDSH']):
                           lolo = 0
                           hihi = 17
