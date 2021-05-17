@@ -49,7 +49,7 @@ class HistoryLogger:
       try:
           self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       except socket.error:
-          print 'Failed to create socket'
+          print('Failed to create socket')
           sys.exit()
 
       if (self.fileName != None):
@@ -74,10 +74,10 @@ class HistoryLogger:
 
   def showInfo(self):
       if self.stdout:
-          print '+ Messages to console'
+          print('+ Messages to console')
 
       if self.fileName != None:
-          print '+ Messages to file (basename={0})'.format(self.fileName)
+          print('+ Messages to file (basename={0})'.format(self.fileName))
           if (self.fileSize < 1024):
               sizeStr = str(self.fileSize) + ' bytes'
           elif (self.fileSize < 1024 * 1024):
@@ -86,35 +86,35 @@ class HistoryLogger:
               sizeStr = str(self.fileSize/(1024*1014)) + ' Mbytes'
           else:
               sizeStr = str(self.fileSize/(1024*1014*1024)) + ' Gbytes'
-          print '+ Maximum log file size={0}'.format(sizeStr)
+          print('+ Maximum log file size={0}'.format(sizeStr))
 
   def log(self):
       done = False
-      print "=== History Server ==="
+      print("=== History Server ===")
       self.showInfo()
       while not done:
           self.receiveUpdate()
 
   def openNewLogFile(self):
       if (self.file != None):
-          print '= Closing file {0} (size={1} bytes)'.format(self.currentFileName, self.file.tell())
+          print('= Closing file {0} (size={1} bytes)'.format(self.currentFileName, self.file.tell()))
           self.file.close()
 
       self.currentFileName = '{0}-{1}.hist'.format(fileName, datetime.datetime.now().strftime('%Y.%m.%d-%H:%M:%S'))
       try:
-          print '= Opening new history file {0}'.format(self.currentFileName)
+          print('= Opening new history file {0}'.format(self.currentFileName))
           self.file = open(self.currentFileName, 'w')
       except IOError as e:
           if e.errno == errno.EACCES:
-              print 'ERROR: No permission to write file {0}'.format(self.currentFileName)
+              print('ERROR: No permission to write file {0}'.format(self.currentFileName))
           else:
-              print 'ERROR: errno={0}, cannot write to file {1}'.format(e.errno, self.currentFileName)
+              print('ERROR: errno={0}, cannot write to file {1}'.format(e.errno, self.currentFileName))
           return False
       return True
 
   def logString(self, messageString):
       if stdout:
-          print messageString
+          print(messageString)
 
       if self.fileName != None:
           self.file.write(messageString + '\n')
@@ -165,7 +165,7 @@ class HistoryLogger:
         self.printMessage(messageType, messageString)
 
     except Exception as ex:
-        print ex
+        print(ex)
         self.printGeneric(messageType, message)
 
   def printBypassState(self, message):

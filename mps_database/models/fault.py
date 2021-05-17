@@ -52,7 +52,7 @@ class Fault(Base):
             done=True
             bit_index=-1
         if bit_index==-1:
-          print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
+          print("ERROR: invalid threshold mask (" + hex(state.device_state.mask))
           return None
 
         # Convert bit_index to integrator index

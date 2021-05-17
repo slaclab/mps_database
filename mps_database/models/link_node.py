@@ -46,19 +46,19 @@ class LinkNode(Base):
   cards = relationship("ApplicationCard", backref='link_node')
 
   def show(self):
-    print('> Area: {0}'.format(self.area))
-    print('> Location: {0}'.format(self.location))
-    print('> CPU: {0}'.format(self.cpu))
-    print('> Crate: {0}'.format(self.crate.get_name()))
-    print('> Group: {0}'.format(self.group))
-    print('> GroupLink: {0}'.format(self.group_link))
-    print('> GroupLinkDestination: {0}'.format(self.group_link_destination))
-    print('> GroupDrawing: {0}'.format(self.group_drawing))
-    print('> LinkNodeType: {}'.format(self.get_ln_type()))
-    print('> SlotNumber: {0}'.format(self.slot_number))
+    print(('> Area: {0}'.format(self.area)))
+    print(('> Location: {0}'.format(self.location)))
+    print(('> CPU: {0}'.format(self.cpu)))
+    print(('> Crate: {0}'.format(self.crate.get_name())))
+    print(('> Group: {0}'.format(self.group)))
+    print(('> GroupLink: {0}'.format(self.group_link)))
+    print(('> GroupLinkDestination: {0}'.format(self.group_link_destination)))
+    print(('> GroupDrawing: {0}'.format(self.group_drawing)))
+    print(('> LinkNodeType: {}'.format(self.get_ln_type())))
+    print(('> SlotNumber: {0}'.format(self.slot_number)))
     if (self.ln_type == 1 or self.ln_type == 3):
-      print('> LinkNodeType: {}'.format(self.get_type()))
-      print('> LinkNodeId: {}'.format(self.lcls1_id))
+      print(('> LinkNodeType: {}'.format(self.get_type())))
+      print(('> LinkNodeId: {}'.format(self.lcls1_id)))
 
   def get_ln_type(self):
     if (self.ln_type == 1):
@@ -156,8 +156,8 @@ class LinkNode(Base):
     if len(self.cards) == 1:
       return self.cards[0].slot_number
     else:
-      print("WARN: Link node ({}) has multiple cards, but none in slot 2".\
-              format(self.get_name()))
+      print(("WARN: Link node ({}) has multiple cards, but none in slot 2".\
+              format(self.get_name())))
 #      raise ValueError("Link node ({}) has multiple cards, but none in slot 2".\
 #                         format(self.get_name()))
       return 1

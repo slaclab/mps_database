@@ -37,7 +37,7 @@ class DocBook:
         os.system(cmd)
 
         cmd = 'fop -fo {0}.fo -param setStrictValidation false -pdf {0}.pdf'.format(output_file_name)
-        print 'FOP: {0}'.format(cmd)
+        print('FOP: {0}'.format(cmd))
         os.system(cmd)
 
         cmd = 'rm {0}.fo'.format(output_file_name)

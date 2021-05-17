@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from mps_database.mps_config import MPSConfig, models, runtime
-from runtime_utils import RuntimeChecker
+from .runtime_utils import RuntimeChecker
 from sqlalchemy import func
 import sys
 import argparse

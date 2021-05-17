@@ -3,7 +3,7 @@
 from mps_database.mps_config import MPSConfig, models
 from mps_database.tools.mps_names import MpsName
 from sqlalchemy import func, exc
-from mps_app_reader import MpsAppReader
+from .mps_app_reader import MpsAppReader
 import argparse
 import os
 import errno
@@ -34,7 +34,7 @@ def create_dir(path, clean=False, debug=False):
 
     if clean and dir_exist:
         if debug:
-            print("Directory '{}' exists. Removing it...".format(dir_name))
+            print(("Directory '{}' exists. Removing it...".format(dir_name)))
 
         shutil.rmtree(dir_name, ignore_errors=True)
         dir_exist = False
@@ -42,7 +42,7 @@ def create_dir(path, clean=False, debug=False):
 
     if not dir_exist:
         if debug:
-            print("Directory '{}' does not exist. Creating it...".format(dir_name))
+            print(("Directory '{}' does not exist. Creating it...".format(dir_name)))
 
         try:
             os.makedirs(dir_name)
@@ -102,8 +102,8 @@ class MpsAppExporter(MpsAppReader):
             app_path = '{}app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             app_prefix = 'MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])
             if (self.verbose):
-                print("Application path   : {}".format(app_path))
-                print("Application prefix : {}".format(app_prefix))
+                print(("Application path   : {}".format(app_path)))
+                print(("Application prefix : {}".format(app_prefix)))
             
             self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
 
@@ -114,7 +114,7 @@ class MpsAppExporter(MpsAppReader):
             self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                             "LOCATION":app["link_node_location"].upper(),
                                                             "LOC_IDX":app['link_node_location'].upper().replace('MP', ''),
-                                                            "C_IDX":unicode(app['card_index'])})
+                                                            "C_IDX":str(app['card_index'])})
             if self.link_nodes[app["link_node_name"]]['type'] == 'Digital':
                 self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
                 self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"1"})
@@ -129,7 +129,7 @@ class MpsAppExporter(MpsAppReader):
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
 
                 if (self.verbose):
-                    print("  Device prefix : {}".format(device_prefix))
+                    print(("  Device prefix : {}".format(device_prefix)))
 
                 for input in device["inputs"]:
 
@@ -165,7 +165,7 @@ class MpsAppExporter(MpsAppReader):
                             else:
                               self.__write_virtual_db(path=app_path, macros=vmacros)
                     if (self.verbose):
-                        print("    Digital Input : {}".format(input["name"]))
+                        print(("    Digital Input : {}".format(input["name"])))
             if has_virtual:
                 self.__write_mps_virt_db(path=app_path, macros={"P":app_prefix,"HAS_VIRTUAL":"1"})
             else:
@@ -186,8 +186,8 @@ class MpsAppExporter(MpsAppReader):
             app_path = '{}app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             app_prefix = 'MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])
             if (self.verbose):
-                print("Application path   : {}".format(app_path))
-                print("Application prefix : {}".format(app_prefix))
+                print(("Application path   : {}".format(app_path)))
+                print(("Application prefix : {}".format(app_prefix)))
 
             self.__write_mps_db(path=app_path, macros={"P":app_prefix, "THR_LOADED":"0"})
             proc = "3"
@@ -205,15 +205,15 @@ class MpsAppExporter(MpsAppReader):
                 self.__write_iocinfo_env(path=app_path, macros={"AREA":app["link_node_area"].upper(),
                                                                 "LOCATION":app["link_node_location"].upper(),
                                                                 "LOC_IDX":app['link_node_location'].upper().replace('MP', ''),
-                                                                "C_IDX":unicode(app['card_index'])})
+                                                                "C_IDX":str(app['card_index'])})
             self.__write_prefix_env(path=app_path, macros={"P":app_prefix})
 
-            spare_channels = range(0,6)
+            spare_channels = list(range(0,6))
             for device in app["devices"]:
                 device_prefix = "{}:{}:{}".format(device["type_name"], device["area"], device["position"])
 
                 if (self.verbose):
-                    print("  Device prefix : {}".format(device_prefix))
+                    print(("  Device prefix : {}".format(device_prefix)))
 
                 if (device["type_name"] not in self.non_link_node_types):
                     macros = { "P": app_prefix,
@@ -239,7 +239,7 @@ class MpsAppExporter(MpsAppReader):
                              }
                     self.__write_ana_config(path=app_path, macros=macros)
                     spare_channels[device["channel_index"]] = -1
-                    for fault in device["faults"].values():
+                    for fault in list(device["faults"].values()):
                         lolo = -1
                         hihi = 1
                         if (device['type_name'] == 'CBLM'):
@@ -320,8 +320,8 @@ class MpsAppExporter(MpsAppReader):
                                     "FAULT_INDEX":self.get_fault_index(device["type_name"], fault["name"], device["channel_number"]),
                                     "DESC":fault["description"],
                                     "EGU":self.get_app_units(device["type_name"],fault["name"]),
-                                    "SLOPE":unicode(self.get_slope(device["type_name"])),
-                                    "OFFSET":unicode(self.get_offset(device["type_name"]))}
+                                    "SLOPE":str(self.get_slope(device["type_name"])),
+                                    "OFFSET":str(self.get_offset(device["type_name"]))}
                         self.__write_thr_base_db(path=app_path, macros=macros)
                         chan = device["channel_number"]
                         if chan > 2:
@@ -360,7 +360,7 @@ class MpsAppExporter(MpsAppReader):
                             macros["BIT_POSITION"] = str(bit)
                             self.__write_thr_db(path=app_path, macros=macros)
                             if (self.verbose):
-                                print("    Fault prefix : {}".format(fault_prefix))
+                                print(("    Fault prefix : {}".format(fault_prefix)))
 
 
             for ch in spare_channels:
@@ -430,7 +430,7 @@ class MpsAppExporter(MpsAppReader):
         #    if "dig_app_id" not in ln:
         #        continue
         #    print ln["lc1_node_id"] + ' ' + ln["type"] + ' ' + ln["dig_app_id"]
-        for ln_name,ln in self.link_nodes.items():
+        for ln_name,ln in list(self.link_nodes.items()):
             self.__write_lc1_info_config(ln)
             self.__write_link_node_info_db(ln_name, ln)
 
@@ -444,10 +444,10 @@ class MpsAppExporter(MpsAppReader):
         if "lc1_node_id" not in link_node:
             return
         if link_node["lc1_node_id"] == "0":
-            ip_str = u'0.0.168.192'.format(app["app_id"])
+            ip_str = '0.0.168.192'.format(app["app_id"])
             print('ERROR: Found invalid link node ID (lcls1_id of 0)')
         else:
-            ip_str = u'{}.0.168.192'.format(link_node["lc1_node_id"])
+            ip_str = '{}.0.168.192'.format(link_node["lc1_node_id"])
 
         ip_address = int(ipaddress.ip_address(ip_str))
 
@@ -470,7 +470,7 @@ class MpsAppExporter(MpsAppReader):
         blm_index = 0
         remap_bpm = [0, 0, 0, 0, 0]
         remap_blm = [0, 0, 0, 0, 0]
-        for slot_number, slot_info in link_node["slots"].items():
+        for slot_number, slot_info in list(link_node["slots"].items()):
             if slot_number == 2:
                 write = True
             if slot_info["type"] == "BPM Card":
@@ -479,8 +479,8 @@ class MpsAppExporter(MpsAppReader):
                     #mask |= 1 << (bpm_index + 1) # Skip first bit, which is for digital app
                     bpm_index += 1
                 else:
-                    print('ERROR: Cannot remap BPM app id {}, all remap slots are used already'.\
-                              format(slot_info["app_id"]))
+                    print(('ERROR: Cannot remap BPM app id {}, all remap slots are used already'.\
+                              format(slot_info["app_id"])))
                           
             elif slot_info["type"] == "Generic ADC":
                 if blm_index < 5:
@@ -488,8 +488,8 @@ class MpsAppExporter(MpsAppReader):
                     mask |= 1 << (blm_index + 1 + 5) # Skip first bit and 5 BPM bits
                     blm_index += 1
                 else:
-                    print('ERROR: Cannot remap BLM app id {}, all remap slots are used already'.\
-                              format(slot_info["app_id"]))
+                    print(('ERROR: Cannot remap BLM app id {}, all remap slots are used already'.\
+                              format(slot_info["app_id"])))
 
         macros={"ID":str(link_node["lc1_node_id"]),
                 "IP_ADDR":str(ip_address),
@@ -802,7 +802,7 @@ class MpsAppExporter(MpsAppReader):
         substituted by the respective values.
         """
         #print macros.items()
-        for k, v in macros.items():
+        for k, v in list(macros.items()):
             text = re.sub(r'\$\(({key}|{key},[^)]*)\)'.format(key=k),v, text)
 
         return text
@@ -858,7 +858,7 @@ if __name__ == "__main__":
     app_id = args.app_id
     clean = True
     if app_id != None:
-        print ('Exporting databases for AppId={}'.format(app_id))
+        print(('Exporting databases for AppId={}'.format(app_id)))
         clean = False
 
     # Check formatting of the destination path
@@ -873,7 +873,7 @@ if __name__ == "__main__":
 
         # Check is the template path exist
         if not os.path.exists(template_path):
-            print("EPICS DB template directory '{}' not found.".format(template_path))
+            print(("EPICS DB template directory '{}' not found.".format(template_path)))
             exit(1)
 
     main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id=app_id,

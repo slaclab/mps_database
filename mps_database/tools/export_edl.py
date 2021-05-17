@@ -5,7 +5,7 @@ from Cheetah.Template import Template
 from mps_database.mps_config import MPSConfig, models
 from mps_database.tools.mps_names import MpsName
 from sqlalchemy import func
-from mps_app_reader import MpsAppReader
+from .mps_app_reader import MpsAppReader
 import sqlalchemy
 
 import os
@@ -369,7 +369,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
            'BSYcu','BSYsc']
 
   for area in areas:
-    area_link_nodes = filter (lambda x : x.area == area, link_nodes)
+    area_link_nodes = [x for x in link_nodes if x.area == area]
     if (len(area_link_nodes) > 0 or area == 'L1B' or 'BSY' in area or 'BYP' in area):
       data=template_file.read()
       file_name = areas_dir + 'mps_{}_link_nodes.edl'.format(area.lower())
@@ -382,7 +382,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
       alarm_pvnames=[]
       count = 0
       if (area.upper() == 'BYP'):
-        area_link_nodes = filter (lambda x : 'BPN' in x.area, link_nodes)
+        area_link_nodes = [x for x in link_nodes if 'BPN' in x.area]
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -393,7 +393,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'BSYCU'):
-        area_link_nodes = filter (lambda x : x.area == 'BSYH' or x.area == 'CLTH' or x.area == 'CLTS' or x.area == 'BSYS', link_nodes)
+        area_link_nodes = [x for x in link_nodes if x.area == 'BSYH' or x.area == 'CLTH' or x.area == 'CLTS' or x.area == 'BSYS']
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -404,7 +404,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'BSYSC'):
-        area_link_nodes = filter (lambda x : x.area == 'SLTS' or x.area == 'SLTH' or x.area == 'BSYH' or x.area == 'BSYS', link_nodes)
+        area_link_nodes = [x for x in link_nodes if x.area == 'SLTS' or x.area == 'SLTH' or x.area == 'BSYH' or x.area == 'BSYS']
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -415,7 +415,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'BSYS'):
-        area_link_nodes = filter (lambda x : x.area == 'CLTS', link_nodes)
+        area_link_nodes = [x for x in link_nodes if x.area == 'CLTS']
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -425,7 +425,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_index.append(l.get_crate_index_number())
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
-      area_link_nodes = filter (lambda x : x.area == area, link_nodes)
+      area_link_nodes = [x for x in link_nodes if x.area == area]
       count += len(area_link_nodes)
       for l in area_link_nodes:
         name = l.get_name()
@@ -436,7 +436,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
         link_node_macros.append(ln_macros[name]['ln_macros'])
         alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'L0B'):
-        area_link_nodes = filter (lambda x : (x.area == 'HTR' or x.area == 'COL0'), link_nodes)
+        area_link_nodes = [x for x in link_nodes if (x.area == 'HTR' or x.area == 'COL0')]
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -447,7 +447,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'L1B'):
-        area_link_nodes = filter (lambda x : (x.area == 'BC1B' or x.area == 'COL1'), link_nodes)
+        area_link_nodes = [x for x in link_nodes if (x.area == 'BC1B' or x.area == 'COL1')]
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -458,7 +458,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'L2B'):
-        area_link_nodes = filter (lambda x : (x.area == 'BC2B' or x.area == 'EMIT2'), link_nodes)
+        area_link_nodes = [x for x in link_nodes if (x.area == 'BC2B' or x.area == 'EMIT2')]
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -469,7 +469,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
           link_node_macros.append(ln_macros[name]['ln_macros'])
           alarm_pvnames.append(ln_macros[name]['alarm_pvname'])
       if (area.upper() == 'SPD'):
-        area_link_nodes = filter (lambda x : (x.area == 'SLTD' or x.area == 'BSYDUMP'), link_nodes)
+        area_link_nodes = [x for x in link_nodes if (x.area == 'SLTD' or x.area == 'BSYDUMP')]
         count += len(area_link_nodes)
         for l in area_link_nodes:
           name = l.get_name()
@@ -494,7 +494,7 @@ def generate_link_node_areas_EDL(link_nodes, ln_macros, template_file, areas_dir
       template_file.seek(0)
 
       if (verbose):
-        print('Generating link node panel for {} area ({})'.format(area, file_name))
+        print(('Generating link node panel for {} area ({})'.format(area, file_name)))
 
 def generate_link_node_macros(link_node, app_reader, template_dir):
   alarm_pvname = link_node.get_pv_base() + ":STATSUMY"
@@ -596,7 +596,7 @@ def generate_link_node_EDL(edl_file, template_file, link_node, ln_macros, verbos
   data=template_file.read()
 
   if verbose:
-    print("Generating screens for {} ({})".format(link_node.get_name(), link_node.get_type()))
+    print(("Generating screens for {} ({})".format(link_node.get_name(), link_node.get_type())))
 
   macros={'LN_MACROS':ln_macros['ln_macros'],
           'ALARM_PVNAME':ln_macros['alarm_pvname'],
@@ -609,11 +609,11 @@ def generate_link_node_EDL(edl_file, template_file, link_node, ln_macros, verbos
 
 def create_link_node_directories(link_node_dir, link_nodes, mps_name):
   if not os.path.isdir(link_node_dir):
-    print 'INFO: {0} directory for link node files does not exist, trying to create it'.format(link_node_dir)
+    print('INFO: {0} directory for link node files does not exist, trying to create it'.format(link_node_dir))
     try:
       os.mkdir(link_node_dir)
     except:
-      print 'ERROR: Failed to create {0} directory'.format(link_node_dir)
+      print('ERROR: Failed to create {0} directory'.format(link_node_dir))
       exit(-1)
 
   for ln in link_nodes:
@@ -682,12 +682,12 @@ if (args.link_nodes):
   create_link_node_directories(args.link_nodes, link_nodes, mps_name)
   if (args.link_node):
     link_node = args.link_node
-    if (len(filter (lambda x : x.get_name() == link_node, link_nodes)) != 1):
-      print 'ERROR: Can\'t find sioc named {0}'.format(link_node)
+    if (len([x for x in link_nodes if x.get_name() == link_node]) != 1):
+      print('ERROR: Can\'t find sioc named {0}'.format(link_node))
       exit(0)
     else:
-      link_nodes = filter (lambda x : x.get_name() == link_node, link_nodes)
-      print 'INFO: Producing screens for SIOC {0} only'.format(link_node)
+      link_nodes = [x for x in link_nodes if x.get_name() == link_node]
+      print('INFO: Producing screens for SIOC {0} only'.format(link_node))
 
 if (args.device_inputs_template):
   # Generate one edl file per link node

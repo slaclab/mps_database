@@ -6,7 +6,7 @@
 from mps_database.mps_config import MPSConfig, models, runtime
 from mps_database.tools.mps_names import MpsName
 from mps_database.runtime import *
-from runtime_utils import RuntimeChecker
+from .runtime_utils import RuntimeChecker
 from sqlalchemy import func
 import subprocess
 import argparse
@@ -42,8 +42,8 @@ class BypassManager:
     """
     if (value != None):
       if (value != 0 and value != 1):
-        print('ERROR: Expected value for digital bypass must be 0 or 1, value={} is not supported'.\
-                format(value))
+        print(('ERROR: Expected value for digital bypass must be 0 or 1, value={} is not supported'.\
+                format(value)))
         return False
     
     # This is the current time
@@ -101,7 +101,7 @@ class BypassManager:
 
   def write_pv(self, pv, value):
     if (self.verbose):
-      print('INFO: Writing {}={}'.format(pv.pvname, value))
+      print(('INFO: Writing {}={}'.format(pv.pvname, value)))
 
     try:
       pv.put(value)
@@ -109,7 +109,7 @@ class BypassManager:
       if (self.force_write):
         return True
       else:
-        print('ERROR: Tried to write to a read-only PV ({}={})'.format(pv.pvname, value))
+        print(('ERROR: Tried to write to a read-only PV ({}={})'.format(pv.pvname, value)))
         return False
 
   def read_pv(self, pv):
@@ -118,10 +118,10 @@ class BypassManager:
         sys.stdout.write('INFO: Reading {}'.format(pv.pvname))
         value = pv.get()
       if (self.verbose):
-        print('={}'.format(value))
+        print(('={}'.format(value)))
       return value
     except epics.ca.CASeverityException:
-      print('ERROR: Failed to read PV ({})'.format(pv.pvname))
+      print(('ERROR: Failed to read PV ({})'.format(pv.pvname)))
       return None
 
   def check_digital_bypass_pvs(self, bypass):
@@ -130,15 +130,15 @@ class BypassManager:
     byps_pv = PV(bypass.pv_name + '_BYPS')
     bypv_pv = PV(bypass.pv_name + '_BYPV')
     if (bypd_pv.host == None):
-      print('ERROR: Cannot reach PV {}, bypass not activated'.format(bypd_pv.pvname))
+      print(('ERROR: Cannot reach PV {}, bypass not activated'.format(bypd_pv.pvname)))
       return bad_return
 
     if (byps_pv.host == None):
-      print('ERROR: Cannot reach PV {}, bypass not activated'.format(byps_pv.pvname))
+      print(('ERROR: Cannot reach PV {}, bypass not activated'.format(byps_pv.pvname)))
       return bad_return
 
     if (bypv_pv.host == None):
-      print('ERROR: Cannot reach PV {}, bypass not activated'.format(bypv_pv.pvname))
+      print(('ERROR: Cannot reach PV {}, bypass not activated'.format(bypv_pv.pvname)))
       return bad_return
 
     return [bypd_pv, byps_pv, bypv_pv]
@@ -149,11 +149,11 @@ class BypassManager:
     byps_pv = PV(bypass.pv_name + '_BYPS')
 
     if (bypd_pv.host == None):
-      print('ERROR: Cannot reach PV {}, bypass not activated'.format(bypd_pv.pvname))
+      print(('ERROR: Cannot reach PV {}, bypass not activated'.format(bypd_pv.pvname)))
       return bad_return
 
     if (byps_pv.host == None):
-      print('ERROR: Cannot reach PV {}, bypass not activated'.format(byps_pv.pvname))
+      print(('ERROR: Cannot reach PV {}, bypass not activated'.format(byps_pv.pvname)))
       return bad_return
 
     return [bypd_pv, byps_pv]
@@ -163,15 +163,15 @@ class BypassManager:
       if self.write_pv(bypv_pv, bypass_value):
         v = self.read_pv(bypv_pv)
         if (not self.no_check and v != bypass_value):
-          print('ERROR: Failed to set bypass value to {}={}, bypass not completed'.\
-                  format(bypv_pv.pvname, bypass_value))
+          print(('ERROR: Failed to set bypass value to {}={}, bypass not completed'.\
+                  format(bypv_pv.pvname, bypass_value)))
           return False
 
     if self.write_pv(bypd_pv, duration_value):
       v = self.read_pv(byps_pv)
       if (not self.no_check and v != expected_status_value):
-        print('ERROR: Bypass change for {} requested, however the status PV {}={} does not have the expected value {}.\nOperation failed.'.\
-                format(bypass.pv_name, byps_pv.pvname, v, expected_status_value))
+        print(('ERROR: Bypass change for {} requested, however the status PV {}={} does not have the expected value {}.\nOperation failed.'.\
+                format(bypass.pv_name, byps_pv.pvname, v, expected_status_value)))
         return False
     return True
 
@@ -208,16 +208,16 @@ class BypassManager:
     elif (new_expiration != prev_expiration):
       if (bypass.duration == 0 or 
           (bypass.duration > 0 and prev_expiration < time_now)):
-        print ('INFO: New bypass set to expire at {0}'.\
-                 format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+        print(('INFO: New bypass set to expire at {0}'.\
+                 format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration)))))
       elif (new_expiration < prev_expiration):
-        print ('INFO: Setting bypass to expire earlier (previous date: {0}, new date: {1}'.\
+        print(('INFO: Setting bypass to expire earlier (previous date: {0}, new date: {1}'.\
                  format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
-                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration)))))
       else:
-        print ('INFO: Setting bypass to expire later (previous date: {0}, new date: {1}'.\
+        print(('INFO: Setting bypass to expire later (previous date: {0}, new date: {1}'.\
                  format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prev_expiration)),
-                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration))))
+                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(new_expiration)))))
 
       if (self.write_bypass_pv(bypass, bypd_pv, byps_pv, bypv_pv, duration, 1, bypass_value)):
         bypass.duration = duration
@@ -233,7 +233,7 @@ class BypassManager:
       bypass.duration = duration
       self.rt_session.commit()
     else:
-      print 'WARN: Specified bypass expiration date is the same as before'
+      print('WARN: Specified bypass expiration date is the same as before')
       return False
 
     return True

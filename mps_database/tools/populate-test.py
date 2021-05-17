@@ -275,10 +275,10 @@ session.refresh(pic_device_type)
 
 # Find the thresholds for PIC 1.0 and 2.0 values
 tv1 = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==pic_device_type.threshold_value_map_id).filter(models.ThresholdValue.value == 1.0).one()
-print("Threshold Val: {0} -> {1}; {2}".format(tv1.threshold, tv1.value, tv1.threshold_value_map_id))
+print(("Threshold Val: {0} -> {1}; {2}".format(tv1.threshold, tv1.value, tv1.threshold_value_map_id)))
 
 tv2 = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==pic_device_type.threshold_value_map_id).filter(models.ThresholdValue.value == 2.0).one()
-print("Threshold Val: {0} -> {1}; {2}".format(tv2.threshold, tv2.value, tv2.threshold_value_map_id))
+print(("Threshold Val: {0} -> {1}; {2}".format(tv2.threshold, tv2.value, tv2.threshold_value_map_id)))
 
 #Add some faults for the PIC.  We'll make idential faults for each integration time, but you don't *have* to do that.
 for pic in pic_devices:
@@ -308,7 +308,7 @@ crate.cards.append(bpm_card)
 
 session.flush()
 session.refresh(crate)
-print("crate_id: {}".format(crate.id))
+print(("crate_id: {}".format(crate.id)))
 
 session.add(bpm_card)
 #session.flush()
@@ -342,11 +342,11 @@ session.refresh(bpm_threshold_map)
 
 # Find the closest threshold to 1mm
 tv_1mm = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==bpm_position_type.threshold_value_map_id).filter(models.ThresholdValue.value <= 1.0).order_by(models.ThresholdValue.value.desc()).first()
-print("Threshold Val: {0} -> {1}; {2}".format(tv_1mm.threshold, tv_1mm.value, tv_1mm.threshold_value_map_id))
+print(("Threshold Val: {0} -> {1}; {2}".format(tv_1mm.threshold, tv_1mm.value, tv_1mm.threshold_value_map_id)))
 
 # Find the closest threshold to 150pC
 tv_150pC = session.query(models.ThresholdValue).filter(models.ThresholdValue.threshold_value_map_id==bpm_tmit_type.threshold_value_map_id).filter(models.ThresholdValue.value <= 150.0).order_by(models.ThresholdValue.value.desc()).first()
-print("Threshold Val: {0} -> {1}; {2}".format(tv_150pC.threshold, tv_150pC.value, tv_150pC.threshold_value_map_id))
+print(("Threshold Val: {0} -> {1}; {2}".format(tv_150pC.threshold, tv_150pC.value, tv_150pC.threshold_value_map_id)))
 
 #The BPM card has six analog channels: Two BPMs, each with X,Y,and TMIT channels.
 bpm_devices = []

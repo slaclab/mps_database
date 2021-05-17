@@ -47,7 +47,7 @@ class DatabaseImporter:
 
   def add_crates(self, file_name):
     if self.verbose:
-      print "Adding crates... {0}".format(file_name)
+      print("Adding crates... {0}".format(file_name))
     f = open(file_name)
 
     line = f.readline().strip()
@@ -108,12 +108,12 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
     if self.verbose:
-      print "Done: Adding crates... {0}".format(file_name)
+      print("Done: Adding crates... {0}".format(file_name))
 
 
   def add_app_types(self, file_name):
     if self.verbose:
-      print "Adding Application Types... {0}".format(file_name)
+      print("Adding Application Types... {0}".format(file_name))
     f = open(file_name)
 
     line = f.readline().strip()
@@ -146,7 +146,7 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
     if self.verbose:
-      print "Done: Adding Application Types... {0}".format(file_name)
+      print("Done: Adding Application Types... {0}".format(file_name))
 
   def find_app_link_node(self, crate, slot):
     """
@@ -169,7 +169,7 @@ class DatabaseImporter:
 
   def add_cards(self, file_name):
     if self.verbose:
-      print "Adding Application Cards... {0}".format(file_name)
+      print("Adding Application Cards... {0}".format(file_name))
     f = open(file_name)
 
     line = f.readline().strip()
@@ -196,17 +196,17 @@ class DatabaseImporter:
               filter(models.Crate.id==app_card_info['crate_number']).one()
         except:
           if (self.lcls1_only):
-            print('WARN: Cannot find crate with number {0}, LCLS-I option active.'.format(app_card_info['crate_number']))
+            print(('WARN: Cannot find crate with number {0}, LCLS-I option active.'.format(app_card_info['crate_number'])))
             continue
           else:
-            print('ERROR: Cannot find crate with number {0}, exiting...'.format(app_card_info['crate_number']))
+            print(('ERROR: Cannot find crate with number {0}, exiting...'.format(app_card_info['crate_number'])))
             return
 
 
         link_node = self.find_app_link_node(app_crate, int(app_card_info['slot']))
         if (link_node == None):
-          print('ERROR: Cannot find link_node associated to slot {} in crate {}'.\
-                  format(app_card_info['slot'], app_crate.get_name()))
+          print(('ERROR: Cannot find link_node associated to slot {} in crate {}'.\
+                  format(app_card_info['slot'], app_crate.get_name())))
 
         app_card = models.ApplicationCard(name=app_card_info['name'],
                                           number=int(app_card_info['number']),
@@ -225,7 +225,7 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
     if self.verbose:
-      print "Done: Adding Application Cards... {0}".format(file_name)
+      print("Done: Adding Application Cards... {0}".format(file_name))
 
   def add_device_types(self, file_name):
     f = open(file_name)
@@ -341,7 +341,7 @@ class DatabaseImporter:
           device_type = self.session.query(models.DeviceType).\
               filter(models.DeviceType.name==type_info['name']).one()
         except:
-          print('ERROR: Cannot find device type with name {0}, exiting...'.format(type_info['name']))
+          print(('ERROR: Cannot find device type with name {0}, exiting...'.format(type_info['name'])))
           return None
     f.close()
 
@@ -469,7 +469,7 @@ class DatabaseImporter:
   #    sxu: '-' 
   def read_mitigation(self, file_name):
     if self.verbose:
-      print '  Mitigation actions:'
+      print('  Mitigation actions:')
     f = open(file_name)
     line = f.readline().strip()
     fields = []
@@ -492,9 +492,9 @@ class DatabaseImporter:
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
 
         if self.verbose:
-          print "  + {}: state {}; \"{}\"".format(mitigation_info['device_location'],
+          print("  + {}: state {}; \"{}\"".format(mitigation_info['device_location'],
                                                   mitigation_info['state_name'],
-                                                  mitigation_info['fault_description'])
+                                                  mitigation_info['fault_description']))
 
     f.close()
     
@@ -534,31 +534,31 @@ class DatabaseImporter:
           filter(models.ConditionInput.condition_id==condition.id).all()
 
     except:
-      print('ERROR: no inputs found for condition {0}.'.format(condition.name))
+      print(('ERROR: no inputs found for condition {0}.'.format(condition.name)))
       return
 
     if (len(inputs) > 1):
-      print('ERROR: too many inputs ({0}) found for condition {1}.'.format(len(inputs), condition.name))
+      print(('ERROR: too many inputs ({0}) found for condition {1}.'.format(len(inputs), condition.name)))
 
     # Now find the fault state for the input
     try:
       fault_state = self.session.query(models.FaultState).\
           filter(models.FaultState.id==inputs[0].fault_state.id).one()
     except:
-      print('ERROR: cannot find fault_state for condition {0}.'.format(condition.name))
+      print(('ERROR: cannot find fault_state for condition {0}.'.format(condition.name)))
 
     # Find the fault...
     try:
       fault = self.session.query(models.Fault).\
           filter(models.Fault.id==fault_state.fault_id).one()
     except:
-      print('ERROR: cannot find fault for condition {0}.'.format(condition.name))
+      print(('ERROR: cannot find fault for condition {0}.'.format(condition.name)))
 
     # Find the fault_input... must be a single input
     if (len(fault.inputs) > 1):
-      print('ERROR: too many inputs ({0}) found for fault {1} that causes condition {2}.'.format(len(inputs), fault.name, condition.name))
+      print(('ERROR: too many inputs ({0}) found for fault {1} that causes condition {2}.'.format(len(inputs), fault.name, condition.name)))
     elif (len(fault.inputs) == 0):
-      print('ERROR: no many inputs ({0}) found for fault {1} that causes condition {2}.'.format(len(inputs), fault.name, condition.name))
+      print(('ERROR: no many inputs ({0}) found for fault {1} that causes condition {2}.'.format(len(inputs), fault.name, condition.name)))
 
     # Finally get the device that causes triggers the condition
     device = None
@@ -566,7 +566,7 @@ class DatabaseImporter:
       device = self.session.query(models.Device).\
           filter(models.Device.id==fault.inputs[0].device_id).one()
     except:
-      print('ERROR: cannot find device that causes for condition {0}.'.format(condition.name))
+      print(('ERROR: cannot find device that causes for condition {0}.'.format(condition.name)))
 
     return device
 
@@ -610,7 +610,7 @@ class DatabaseImporter:
               #            print '{0}, {1}:{2}, {3}:{4}'.format(cond.name, cond_device.name, cond_device.z_location, device.name, device.z_location)
               ignore_condition = models.IgnoreCondition(condition=cond, analog_device=device)    
         except:
-          print 'WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location)
+          print('WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location))
 
 
   def add_analog_device(self, directory, card_name, add_ignore=False):
@@ -625,7 +625,7 @@ class DatabaseImporter:
 
     if (self.lcls1_only and (device_type.name == 'PBLM' or
                              device_type.name == 'LBLM')):
-      print('* Skipping {} devices'.format(device_type.name))
+      print(('* Skipping {} devices'.format(device_type.name)))
       return
 
     file_name = directory + '/DeviceStates.csv'
@@ -680,11 +680,11 @@ class DatabaseImporter:
           app_card = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
           if app_card.name != card_name:
-            print('ERROR: analog device ({0}) assigned to unexpected card type ({1}), expected {2} card'.\
-                    format(device_info['device'], app_card.name, card_name))
+            print(('ERROR: analog device ({0}) assigned to unexpected card type ({1}), expected {2} card'.\
+                    format(device_info['device'], app_card.name, card_name)))
             return
         except:
-          print('ERROR: Cannot find application_card with id {0}, exiting...'.format(device_info['application_card_number']))
+          print(('ERROR: Cannot find application_card with id {0}, exiting...'.format(device_info['application_card_number'])))
           return
 
         # If LCLS-I only option is enabled, only add device if it belongs to an LCLS-I
@@ -694,7 +694,7 @@ class DatabaseImporter:
 
         # there must be only one channel
         if len(channel) != 1:
-          print 'ERROR: too many channels defined for AnalogDevice'
+          print('ERROR: too many channels defined for AnalogDevice')
           return
 
         for key in channel:
@@ -723,7 +723,7 @@ class DatabaseImporter:
                                      evaluation=1)# Fast evaluation
  
         if (self.verbose):
-          print 'Analog Channel: ' + device_info['device']
+          print('Analog Channel: ' + device_info['device'])
 
         self.session.add(device)
         self.session.commit()
@@ -740,7 +740,7 @@ class DatabaseImporter:
           device_fault = self.getFault(faults, device_info['fault'])
 
           if (device_fault == None):
-            print('ERROR: Failed to find Fault for analog device "{}"'.format(device_info['device']))
+            print(('ERROR: Failed to find Fault for analog device "{}"'.format(device_info['device'])))
             exit(-1)
 #          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
 #          self.session.add(device_fault)
@@ -790,13 +790,13 @@ class DatabaseImporter:
           for k in mitigation[mit_location]:
             device_fault = self.getFault(faults, k)
             if (device_fault == None):
-              print 'ERROR: Failed to find Fault for device "{}" (mitigation={})'.format(device_info['device'], k)
+              print('ERROR: Failed to find Fault for device "{}" (mitigation={})'.format(device_info['device'], k))
               exit(-1)
 #            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
 #                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
             if (self.verbose):
-              print '  Fault: {0} ({1}, {2})'.format(device_fault.name, mit_location, k)
-              print '         device_state={0} value={1}'.format(device_states[k].name, device_states[k].value)
+              print('  Fault: {0} ({1}, {2})'.format(device_fault.name, mit_location, k))
+              print('         device_state={0} value={1}'.format(device_states[k].name, device_states[k].value))
             self.session.add(device_fault)
             self.session.commit()
             self.session.refresh(device_fault)
@@ -871,7 +871,7 @@ class DatabaseImporter:
   # DigitalChannels.csv
   # Mitigation.csv
   def add_digital_device(self, directory, card_name="Digital Card"):
-    print 'Adding ' + directory
+    print('Adding ' + directory)
 
     # Virtual Card means it is a Digital Card, but signals must be 
     # mapped to inputs 32 to 47 (lower 32 inputs are digital inputs
@@ -905,7 +905,7 @@ class DatabaseImporter:
       try:
         f = open(file_name)
       except:
-        print 'ERROR: No file found ({0})'.format(file_name)
+        print('ERROR: No file found ({0})'.format(file_name))
         return
 
 
@@ -974,14 +974,14 @@ class DatabaseImporter:
           app_card = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
           if app_card.name != card_name:
-            print('ERROR: digital device ({0}) assigned to non-digital card ({1} at {2} slot {3})'.\
-                    format(device_info['device'], app_card.name, app_card.crate.location, app_card.slot_number))
+            print(('ERROR: digital device ({0}) assigned to non-digital card ({1} at {2} slot {3})'.\
+                    format(device_info['device'], app_card.name, app_card.crate.location, app_card.slot_number)))
             return
         except:
           app_card = None
           if (self.lcls1_only):
-            print('WARN: Cannot find app_card with number {0}, LCLS-I option active.'.\
-                    format(device_info['application_card_number']))
+            print(('WARN: Cannot find app_card with number {0}, LCLS-I option active.'.\
+                    format(device_info['application_card_number'])))
             continue
 #          print('ERROR: Cannot find application_card with id {0}, exiting...'.
 #          return
@@ -1023,7 +1023,7 @@ class DatabaseImporter:
                                         evaluation=evaluation)
 
         if (self.verbose):
-          print '  Adding device {0}'.format(device_info['device'])
+          print('  Adding device {0}'.format(device_info['device']))
         self.session.add(device)
         self.session.commit()
         self.session.refresh(device)
@@ -1049,8 +1049,8 @@ class DatabaseImporter:
                 self.session.refresh(digital_channel)
               else:
                 if (channel_number < 32 or channel_number > 47):
-                  print('WARNING: bad channel number {} for device {}'.\
-                          format(channel_number, device_info['device']))
+                  print(('WARNING: bad channel number {} for device {}'.\
+                          format(channel_number, device_info['device'])))
 
                 digital_channel = models.DigitalChannel(number=channel_number, 
                                                         name = channel[key]['name'],
@@ -1087,11 +1087,11 @@ class DatabaseImporter:
           # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
           for k in mitigation:
             if self.verbose:
-              print '  + Mitigation {0}'.format(k)
+              print('  + Mitigation {0}'.format(k))
             if device_info['mitigation'] == k:
               for m in mitigation[device_info['mitigation']]:
                 if self.verbose:
-                  print '   + {0}'.format(m)
+                  print('   + {0}'.format(m))
                 fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
                 self.session.add(fault_state)
                 self.session.commit()
@@ -1133,7 +1133,7 @@ class DatabaseImporter:
     try:
       fault_inputs = self.session.query(models.FaultInput).filter(models.FaultInput.device_id==device.id).all()
     except:
-      print('ERROR: Failed find fault inputs for device id {} in database'.format(device.id))
+      print(('ERROR: Failed find fault inputs for device id {} in database'.format(device.id)))
       return None
 
     # From the fault inputs find which integrators are being used
@@ -1205,7 +1205,7 @@ class DatabaseImporter:
     self.rt_session.add(t)
 
   def create_runtime_database(self):
-    print 'Creating thresholds/bypass database'
+    print('Creating thresholds/bypass database')
     devices = self.session.query(models.Device).all()
     for d in devices:
       rt_d = runtime.Device(mpsdb_id = d.id, mpsdb_name = d.name)
@@ -1235,7 +1235,7 @@ class DatabaseImporter:
         if (c.link_nodes[0].ln_type == 2):
           cards = self.session.query(models.ApplicationCard).\
               filter(models.ApplicationCard.crate_id==c.id).delete()
-          print('INFO: Deleting cards for crate {} (#{})'.format(c.get_name(), c.id))
+          print(('INFO: Deleting cards for crate {} (#{})'.format(c.get_name(), c.id)))
           sys.stdout.write('INFO: `Link Nodes: ')
           for ln in c.link_nodes:
             sys.stdout.write('{} '.format(ln.get_name()))
@@ -1248,7 +1248,7 @@ class DatabaseImporter:
               filter(models.ApplicationCard.crate_id==c.id).all()
           for c in cards:
             if (len(c.devices) == 0):
-              print('Deleting card #{} ({})'.format(c.id, c.name))
+              print(('Deleting card #{} ({})'.format(c.id, c.name)))
               self.session.query(models.ApplicationCard).filter(models.ApplicationCard.id == c.id).delete()
 
       # remove crates that end up with no cards
@@ -1256,7 +1256,7 @@ class DatabaseImporter:
         cards = self.session.query(models.ApplicationCard).\
             filter(models.ApplicationCard.crate_id==c.id).all()
         if (len(cards) == 0):
-          print('Crate #{} has no cards'.format(c.id))
+          print(('Crate #{} has no cards'.format(c.id)))
           for ln in c.link_nodes:
             self.session.query(models.LinkNode).filter(models.LinkNode.id == ln.id).delete()
           self.session.query(models.Crate).filter(models.Crate.id == c.id).delete()
@@ -1344,7 +1344,7 @@ importer.cleanup()
 
 importer.create_runtime_database()
 
-print 'Done.'
+print('Done.')
 
 #link_node_card = models.ApplicationCard(name="EIC Digital Card", number=100, area="GUNB",
 #                                        location="MP10", type=eic_digital_app, slot_number=2, amc=2, #amc=2 -> RTM

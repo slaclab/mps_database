@@ -51,11 +51,11 @@ class ApplicationCard(Base):
   link_node_id = Column(Integer, ForeignKey('link_nodes.id'), nullable=False)
 
   def show(self):
-    print('> Name: {0}'.format(self.name))
-    print('> Number: {0}'.format(self.number))
-    print('> Digital: {0}'.format(len(self.digital_channels)))
-    print('> Analog: {0}'.format(len(self.analog_channels)))
-    print('> Digital Out: {0}'.format(len(self.digital_out_channels)))
+    print(('> Name: {0}'.format(self.name)))
+    print(('> Number: {0}'.format(self.number)))
+    print(('> Digital: {0}'.format(len(self.digital_channels))))
+    print(('> Analog: {0}'.format(len(self.analog_channels))))
+    print(('> Digital Out: {0}'.format(len(self.digital_out_channels))))
 
   def has_virtual_channels(self):
     """

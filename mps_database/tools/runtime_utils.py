@@ -44,7 +44,7 @@ class RuntimeChecker:
       d = self.session.query(models.Device).filter(models.Device.name==name).one()
       return d.id
     except:
-      print 'ERROR: Cannot find device "{0}"'.format(name)
+      print('ERROR: Cannot find device "{0}"'.format(name))
       return None
 
   def get_thresholds(self, device, active_only=True):
@@ -67,7 +67,7 @@ class RuntimeChecker:
       rt_d = self.rt_session.query(runtime.Device).\
           filter(runtime.Device.mpsdb_id==device.id).one()
     except:
-      print('ERROR: Failed to find device id {} in runtime database'.format(device_id))
+      print(('ERROR: Failed to find device id {} in runtime database'.format(device_id)))
       return None
 
     is_bpm = False
@@ -85,8 +85,8 @@ class RuntimeChecker:
                                                   self.threshold_tables_pv[t_index], self.threshold_index[t_index],
                                                   integrator, t_type, is_bpm)
           if (pv_name == None):
-            print('ERROR: Failed to find threshold PV name for device \'{}\' [threshold={}, integrator={}, is_bpm={}]'.\
-                    format(device.name, self.threshold_tables_pv[t_index], integrator, is_bpm))
+            print(('ERROR: Failed to find threshold PV name for device \'{}\' [threshold={}, integrator={}, is_bpm={}]'.\
+                    format(device.name, self.threshold_tables_pv[t_index], integrator, is_bpm)))
             return None
 
           pv_name_enable = pv_name + '_EN'
@@ -172,7 +172,7 @@ class RuntimeChecker:
     try:
       app = self.session.query(models.ApplicationCard).filter(models.ApplicationCard.global_id==app_id).one()
     except:
-      print('ERROR: Cannot find application with global id {}.'.format(app_id))
+      print(('ERROR: Cannot find application with global id {}.'.format(app_id)))
       return False
 
     if (len(app.analog_channels) > 0):
@@ -195,20 +195,20 @@ class RuntimeChecker:
       device = self.session.query(models.Device).\
           filter(models.Device.id==device_id).one()
     except:
-      print('ERROR: Failed to find device id {} in database'.format(device_id))
+      print(('ERROR: Failed to find device id {} in database'.format(device_id)))
       return [None, None]
 
     try:
       rt_device = self.rt_session.query(runtime.Device).\
           filter(runtime.Device.mpsdb_id==device_id).one()
     except:
-      print('ERROR: Failed to find device id {} in runtime database'.format(device_id))
+      print(('ERROR: Failed to find device id {} in runtime database'.format(device_id)))
       return [None, None]
 
     if (rt_device.mpsdb_name != device.name):
       print('ERROR: Device names are different in MPS database and runtime database:')
-      print(' * MPS Database name: {}'.format(device.name))
-      print(' * RT  Database name: {}'.format(rt_device.mpsdb_name))
+      print((' * MPS Database name: {}'.format(device.name)))
+      print((' * RT  Database name: {}'.format(rt_device.mpsdb_name)))
       return [None, None]
 
     return [device, rt_device]
@@ -223,16 +223,16 @@ class RuntimeChecker:
       device_input = self.session.query(models.DeviceInput).\
           filter(models.DeviceInput.id==device_input_id).one()
     except Exception as ex:
-      print ex
-      print('ERROR: Failed to find device_input id {} in database'.format(device_input_id))
+      print(ex)
+      print(('ERROR: Failed to find device_input id {} in database'.format(device_input_id)))
       return [None, None]
 
     try:
       rt_device_input = self.rt_session.query(runtime.DeviceInput).\
           filter(runtime.DeviceInput.mpsdb_id==device_input_id).one()
     except Exception as ex:
-      print ex
-      print('ERROR: Failed to find device_input id {} in runtime database'.format(device_input_id))
+      print(ex)
+      print(('ERROR: Failed to find device_input id {} in runtime database'.format(device_input_id)))
       return [None, None]
 
     return [device_input, rt_device_input]
@@ -250,11 +250,11 @@ class RuntimeChecker:
     if (len(devices) != len(rt_devices)):
       print('')
       print('ERROR: Number of devices in databases must be the same')
-      print('       found {0} devices in config database'.format(len(devices)))
-      print('       found {0} devices in runtime database'.format(len(rt_devices)))
+      print(('       found {0} devices in config database'.format(len(devices))))
+      print(('       found {0} devices in runtime database'.format(len(rt_devices))))
       return False
     if (self.verbose):
-      print(' done. Found {} devices.'.format(len(devices)))
+      print((' done. Found {} devices.'.format(len(devices))))
 
     # Extract device_ids and names and sort
     d = [ [i.id, i.name] for i in devices ]
@@ -270,8 +270,8 @@ class RuntimeChecker:
       if (a[0] != b[0] or a[1] != b[1]):
         print('')
         print('ERROR: Mismatched devices found')
-        print('       {0} [id={1}] in config database'.format(a[0], a[1]))
-        print('       {0} [id={1}] in runtime database'.format(b[0], b[1]))
+        print(('       {0} [id={1}] in config database'.format(a[0], a[1])))
+        print(('       {0} [id={1}] in runtime database'.format(b[0], b[1])))
         return False
     if (self.verbose):
       print(' done.')
@@ -292,9 +292,9 @@ class RuntimeChecker:
       sys.stdout.write('Checking device inputs (digital channels) names and ids in both databases...')
     for a, b in zip(di, rt_di):
       if (a[0] != b[0] or a[1] != b[1]):
-        print 'ERROR: Mismatched devices found'
-        print '       {0} [id={1}] in config database'.format(a[0], a[1])
-        print '       {0} [id={1}] in runtime database'.format(b[0], b[1])
+        print('ERROR: Mismatched devices found')
+        print('       {0} [id={1}] in config database'.format(a[0], a[1]))
+        print('       {0} [id={1}] in runtime database'.format(b[0], b[1]))
         return False
     if (self.verbose):
       print(' done.')
@@ -310,7 +310,7 @@ class RuntimeChecker:
     try:
       fault_inputs = self.session.query(models.FaultInput).filter(models.FaultInput.device_id==device.id).all()
     except:
-      print('ERROR: Failed find fault inputs for device id {} in database'.format(device.id))
+      print(('ERROR: Failed find fault inputs for device id {} in database'.format(device.id)))
       return None
 
     # From the fault inputs find which integrators are being used
@@ -376,7 +376,7 @@ class RuntimeChecker:
     self.rt_session.add(t)
 
   def create_runtime_database(self):
-    print 'Creating thresholds/bypass database'
+    print('Creating thresholds/bypass database')
 
     devices = self.session.query(models.Device).all()
     for d in devices:

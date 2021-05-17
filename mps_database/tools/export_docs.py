@@ -7,7 +7,7 @@ import argparse
 import subprocess
 import time
 from mps_database.tools.mps_names import MpsName
-from docbook import DocBook
+from .docbook import DocBook
 
 class Exporter:
   databaseFileName=""
@@ -281,7 +281,7 @@ class Exporter:
 
   def writeAnalogFault(self, fault, device):
     if (self.verbose):
-      print 'INFO: Analog fault {} for device {}'.format(fault.name, device.name)
+      print('INFO: Analog fault {} for device {}'.format(fault.name, device.name))
 
     num_bits = 0
 
@@ -305,7 +305,7 @@ class Exporter:
     elif ("I3" in fault.name):
       integratorShift = 24
     else:
-      print "ERROR: Can't recognize fault name {0}".format(fault.name)
+      print("ERROR: Can't recognize fault name {0}".format(fault.name))
       exit(-1)
 
     for state in fault.states:
@@ -506,8 +506,8 @@ class Exporter:
     self.docbook.openSection('{0} Fault'.format(fault.name),
                              'fault.{}.{}.{}'.format(fault.id, fault_input.id, device.id))
     if (self.verbose):
-      print 'INFO: {} Fault (id={}, fault_input_id={}, device={}, inputs={})'.\
-          format(fault.name, fault.id, fault_input.id, device.name, len(fault.inputs))
+      print('INFO: {} Fault (id={}, fault_input_id={}, device={}, inputs={})'.\
+          format(fault.name, fault.id, fault_input.id, device.name, len(fault.inputs)))
 
     one_input = True
     for inp in fault.inputs:
@@ -526,8 +526,8 @@ class Exporter:
               analogDevice = self.session.query(models.AnalogDevice).\
                   filter(models.AnalogDevice.id==inp.device_id).one()
             except:
-              print("ERROR: Can't find device for fault[{0}] (fault id={1}, desc[{2}], device id: {3}, fault_input id: {4}".\
-                      format(fault.name, fault.id, fault.description, inp.device_id, inp.id))
+              print(("ERROR: Can't find device for fault[{0}] (fault id={1}, desc[{2}], device id: {3}, fault_input id: {4}".\
+                      format(fault.name, fault.id, fault.description, inp.device_id, inp.id)))
               exit(-1)
             self.writeAnalogFault(fault, analogDevice)
             one_input = False
@@ -537,7 +537,7 @@ class Exporter:
   def writeDeviceFaults(self, device):
     self.docbook.openSection('{0} Faults'.format(device.name))
     if (self.verbose):
-      print 'INFO: {} Faults'.format(device.name)
+      print('INFO: {} Faults'.format(device.name))
 
     cols=[{'name':'c1', 'width':'0.25*'},
           {'name':'c2', 'width':'0.45*'},
@@ -562,7 +562,7 @@ class Exporter:
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     if (self.verbose):
-      print 'INFO: {} device fault outputs found'.format(len(device.fault_outputs))
+      print('INFO: {} device fault outputs found'.format(len(device.fault_outputs)))
 
     fault_ids = []
     for fault_input in device.fault_outputs:
@@ -835,8 +835,8 @@ class Exporter:
       digital = False
     else:
       if (False):
-        print 'WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
-            format(card.name, card.crate.location, card.slot_number, card.amc)
+        print('WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
+            format(card.name, card.crate.location, card.slot_number, card.amc))
 #      print 'ERROR: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}" can\'t proceed.'.\
 #          format(card.name, card.crate.location, card.slot_number, card.amc)
 #      card.show()
@@ -936,10 +936,10 @@ class Exporter:
 
     if (link_node):
 #      cards = filter (lambda x : x.crate.link_node.id == link_node.id, cards)
-      cards = filter (lambda x : x.link_node.id == link_node.id, cards)
+      cards = [x for x in cards if x.link_node.id == link_node.id]
 
     if (self.verbose):
-      print('Link Node: {} has {} cards'.format(link_node.get_name(), len(cards)))
+      print(('Link Node: {} has {} cards'.format(link_node.get_name(), len(cards))))
 
     for card in cards:
       self.writeAppCard(card)
@@ -1086,14 +1086,14 @@ class Exporter:
     devices = self.session.query(models.Device).all()
 
     if (link_node):
-      print('LN: {}, devices={}'.format(link_node.get_name(), len(devices)))
+      print(('LN: {}, devices={}'.format(link_node.get_name(), len(devices))))
 #      devices = filter (lambda x : x.card.crate.link_node.id == link_node.id, devices)
       try:
-        devices = filter (lambda x : x.card != None and x.card.link_node.id == link_node.id, devices)
+        devices = [x for x in devices if x.card != None and x.card.link_node.id == link_node.id]
       except Exception as ex:
-        print ex
-        print('ERROR: Failed to get devices for LN {}'.\
-                format(link_node.get_name()))
+        print(ex)
+        print(('ERROR: Failed to get devices for LN {}'.\
+                format(link_node.get_name())))
         exit(1)
     
     for device in devices:
@@ -1213,7 +1213,7 @@ class Exporter:
     crates = self.session.query(models.Crate).all()
     if (link_node):
 #      crates = filter (lambda x : x.link_node.id == link_node.id, crates)
-      crates = filter (lambda x : x.id == link_node.crate_id, crates)
+      crates = [x for x in crates if x.id == link_node.crate_id]
 
     for crate in crates:
       self.writeCrate(crate)
@@ -1240,11 +1240,11 @@ class Exporter:
     elif (self.ignore_only):
       self.docbook.writeHeader('{0} [Ignore Logic]'.format(databaseName), '', '')
       if (self.verbose):
-        print 'INFO: Generating document with ignore conditions'
+        print('INFO: Generating document with ignore conditions')
     elif (self.general_only):
       self.docbook.writeHeader('{0} [General Information]'.format(databaseName), '', '')
       if (self.verbose):
-        print 'INFO: Generating document with ignore conditions'
+        print('INFO: Generating document with ignore conditions')
     else:
       self.docbook.writeHeader('MPS Database', info[2], info[3])
 
@@ -1253,9 +1253,9 @@ class Exporter:
     link_node = None
     if (linkNode):
       link_nodes = self.session.query(models.LinkNode).all()
-      link_node = filter (lambda x : x.get_name() == linkNode, link_nodes)
+      link_node = [x for x in link_nodes if x.get_name() == linkNode]
       if (not link_node):
-        print 'ERROR: link node "{}" not found'.format(linkNode)
+        print('ERROR: link node "{}" not found'.format(linkNode))
         exit(-1)
       link_node=link_node[0]
     
@@ -1327,7 +1327,7 @@ output_dir = './'
 if args.output:
   output_dir = args.output
   if (not os.path.isdir(output_dir)):
-    print 'ERROR: Invalid output directory {0}'.format(output_dir)
+    print('ERROR: Invalid output directory {0}'.format(output_dir))
     exit(-1)
 
 e = Exporter(args.database[0].name, #args.checkout, cards_only, devices_only, checkout_only,

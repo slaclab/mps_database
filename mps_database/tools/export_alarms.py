@@ -27,7 +27,7 @@ def create_dir(path, clean=False, debug=False):
 
     if clean and dir_exist:
         if debug:
-            print("Directory '{}' exists. Removing it...".format(dir_name))
+            print(("Directory '{}' exists. Removing it...".format(dir_name)))
 
         shutil.rmtree(dir_name, ignore_errors=True)
         dir_exist = False
@@ -35,7 +35,7 @@ def create_dir(path, clean=False, debug=False):
 
     if not dir_exist:
         if debug:
-            print("Directory '{}' does not exist. Creating it...".format(dir_name))
+            print(("Directory '{}' does not exist. Creating it...".format(dir_name)))
 
         try:
             os.makedirs(dir_name)
@@ -291,7 +291,7 @@ class MpsAlarmReader:
 
             # Generate mps_<AREA>_mp<XX>.alhConfig files
             if 'link_nodes' in alarm_info:
-                for link_node, link_node_pvs in alarm_info['link_nodes'].iteritems():
+                for link_node, link_node_pvs in alarm_info['link_nodes'].items():
                     alh_filename = '{}_{}'.format(area.lower(), link_node.lower())
                     include_files.append(link_node.lower())
                     alh_filename = 'mps_' + alh_filename + '.alhConfig'
@@ -445,10 +445,10 @@ class MpsAlarmReader:
         Print the content of the application data obtained by the extract_alarms method.
         """
         print('+- Area --+- # Fault PVs -+- # App PVs -+- # LN PVs -+')
-        for key, value in self.alarm_info.iteritems():
+        for key, value in self.alarm_info.items():
             ln_pvs = 0
             if 'link_nodes' in value:
-                for ln, pvs in value['link_nodes'].iteritems():
+                for ln, pvs in value['link_nodes'].items():
                     ln_pvs += len(pvs)
 
             sys.stdout.write('| {0: >7} |      {1: >3}      |    {2: >3}      |   {2: > 3}      |'.\
@@ -502,7 +502,7 @@ if __name__ == "__main__":
     app_id = args.app_id
     clean = True
     if app_id != None:
-        print ('Exporting databases for AppId={}'.format(app_id))
+        print(('Exporting databases for AppId={}'.format(app_id)))
         clean = False
 
     # Check formatting of the destination path
@@ -517,6 +517,6 @@ if __name__ == "__main__":
 
         # Check is the template path exist
         if not os.path.exists(template_path):
-            print("EPICS DB template directory '{}' not found.".format(template_path))
+            print(("EPICS DB template directory '{}' not found.".format(template_path)))
 
     main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id = app_id, verbose=verbose)

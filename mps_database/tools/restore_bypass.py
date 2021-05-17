@@ -3,7 +3,7 @@
 from mps_database.mps_config import MPSConfig, models, runtime
 from mps_database.tools.mps_names import MpsName
 from mps_database.runtime import *
-from runtime_utils import RuntimeChecker
+from .runtime_utils import RuntimeChecker
 from sqlalchemy import func
 import subprocess
 import argparse
@@ -59,8 +59,8 @@ class BypassRestorer:
 
     bypasses = self.rt_session.query(runtime.Bypass).filter(runtime.Bypass.duration>0).all()
     if (self.verbose):
-      print('INFO: There are {} bypasses with non-zero duration'.\
-              format(len(bypasses)))
+      print(('INFO: There are {} bypasses with non-zero duration'.\
+              format(len(bypasses))))
     
     analog_bypass_list = []
     digital_bypass_list = []
@@ -85,11 +85,11 @@ class BypassRestorer:
 
   def print_bypass_list(self, bypass_list):
     for b in bypass_list:
-      print(' {}: {} (remaining {} seconds)'.format(b['expiration_date'], b['bypd_pv'].pvname, b['duration']))
+      print((' {}: {} (remaining {} seconds)'.format(b['expiration_date'], b['bypd_pv'].pvname, b['duration'])))
 
   def write_pv(self, pv, value):
     if (self.verbose):
-      print(' Restoring {}={}'.format(pv.pvname, value))
+      print((' Restoring {}={}'.format(pv.pvname, value)))
 
     try:
       pv.put(value)
@@ -97,7 +97,7 @@ class BypassRestorer:
       if (self.force_write):
         return True
       else:
-        print('ERROR: Tried to write to a read-only PV ({}={})'.format(pv.pvname, value))
+        print(('ERROR: Tried to write to a read-only PV ({}={})'.format(pv.pvname, value)))
         return False
 
   def read_pv(self, pv):
@@ -106,10 +106,10 @@ class BypassRestorer:
         sys.stdout.write(' Reading {}'.format(pv.pvname))
       value = pv.get()
       if (self.verbose):
-        print('={}'.format(value))
+        print(('={}'.format(value)))
       return value
     except epics.ca.CASeverityException:
-      print('ERROR: Failed to read PV ({})'.format(pv.pvname))
+      print(('ERROR: Failed to read PV ({})'.format(pv.pvname)))
       return None
 
 
@@ -124,7 +124,7 @@ class BypassRestorer:
     of bypasses that failed to be restored
     """
     if (self.verbose):
-      print('Restoring {} bypasses ({}):'.format(bypass_type, len(bypass_list)))
+      print(('Restoring {} bypasses ({}):'.format(bypass_type, len(bypass_list))))
     fail_count = 0
     for b in bypass_list:
       if (bypass_type == 'digital'):
@@ -153,9 +153,9 @@ class BypassRestorer:
     return [ fail_count, bypass_list ]
 
   def report(self, fail_count, bypass_list, bypass_type = 'analog'):
-    print('{} bypass restore status:'.format(bypass_type.title()))
+    print(('{} bypass restore status:'.format(bypass_type.title())))
     if (fail_count > 0):
-      print(' Failed to restore {} bypasses'.format(fail_count))
+      print((' Failed to restore {} bypasses'.format(fail_count)))
 
     for b in bypass_list:
       sys.stdout.write(' {}: {} (remaining {} seconds)'.format(b['expiration_date'], b['bypd_pv'].pvname, b['duration']))
@@ -163,7 +163,7 @@ class BypassRestorer:
       if (bypass_type == 'analog'):
         print(']')
       else:
-        print(', value={}]'.format(b['bypv_status']))
+        print((', value={}]'.format(b['bypv_status'])))
     return True
 
   def restore(self):
@@ -171,10 +171,10 @@ class BypassRestorer:
 
     if (self.verbose):
       if (len(analog_bypass_list) > 0):
-        print('Valid analog bypasses ({}):'.format(len(analog_bypass_list)))
+        print(('Valid analog bypasses ({}):'.format(len(analog_bypass_list))))
         self.print_bypass_list(analog_bypass_list)
       if (len(digital_bypass_list) > 0):
-        print('Valid digital bypasses ({}):'.format(len(digital_bypass_list)))
+        print(('Valid digital bypasses ({}):'.format(len(digital_bypass_list))))
         self.print_bypass_list(digital_bypass_list)
 
     [ fail_count, analog_bypass_list ] = self.restore_bypasses(analog_bypass_list, 'analog')

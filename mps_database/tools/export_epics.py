@@ -23,7 +23,7 @@ verbose=False
 
 def openArchiveFile(archiveLocation, archiveFileName):
   if (archiveLocation==None):
-    print 'None?'
+    print('None?')
     return None
 
   af=open('{0}/{1}'.format(archiveLocation,archiveFileName), 'w')
@@ -479,7 +479,7 @@ def getIntegratorIndex(fault):
           done=True
           bitIndex=-1
       if bitIndex==-1:
-        print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
+        print("ERROR: invalid threshold mask (" + hex(state.device_state.mask))
         exit(-1)
 
       # Convert bitIndex to integrator index
@@ -512,7 +512,7 @@ def printAnalogRecords(session, file, name, af, sf, fi, fa, analogDevice, fault_
           done=True
           bitIndex=-1
     if bitIndex==-1:
-      print "ERROR: invalid threshold mask (" + hex(state.device_state.mask)
+      print("ERROR: invalid threshold mask (" + hex(state.device_state.mask))
       exit(-1)
 
     # Convert bitIndex to integrator index
@@ -576,7 +576,7 @@ def printAnalogRecords(session, file, name, af, sf, fi, fa, analogDevice, fault_
 
 def printAnalogBypass(file, af, sf, analogDevice, fault_list, percentage, restoreBypassFile, ignored_pv_added):
   intIndex = 0
-  for k, v in fault_list.items():
+  for k, v in list(fault_list.items()):
     fa = v['fault']
     name = v['name']
     intIndex = getIntegratorIndex(fa)
@@ -959,8 +959,8 @@ def exportVirtualCard(link_node, directory, session):
 
   # Exit if found multiple cards, or do nothing if there are no cards
   if cards > 1:
-    print 'ERROR: Found multiple virtual cards assigned to link node {0}'.\
-        format(link_node.get_name())
+    print('ERROR: Found multiple virtual cards assigned to link node {0}'.\
+        format(link_node.get_name()))
     exit(-1)
   elif cards == 0:
     return
@@ -971,35 +971,35 @@ def exportVirtualCard(link_node, directory, session):
     try:
       os.makedirs(ln_dir)
     except:
-      print 'ERROR: Failed to create directory {0}'.format(ln_dir)
+      print('ERROR: Failed to create directory {0}'.format(ln_dir))
       exit(-1)
       
   file_name = ln_dir + '/virtual_inputs.db'
   f = open(file_name, 'w')
 
   if (verbose):
-    print ' + {0} ({1})'.format(link_node.get_name(), link_node.crate.location)
+    print(' + {0} ({1})'.format(link_node.get_name(), link_node.crate.location))
   hasVirtual = True
 
   for d in virtual_card.devices:
     if len(d.inputs) > 1 or len(d.inputs) < 1:
-      print 'ERROR: virtual card device must have only one input, found {0} input(s)'.\
-          format(len(d.inputs))
+      print('ERROR: virtual card device must have only one input, found {0} input(s)'.\
+          format(len(d.inputs)))
 
     input = d.inputs[0]
     error=False
     if input.channel.num_inputs > 0:
       if (input.channel.num_inputs != len(input.channel.monitored_pvs.split(';'))):
-        print 'ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
-            format(input.channel.number, input.channel.card_id, input.channel.num_inputs, len(input.channel.monitored_pvs.split(';')))
-        print '       PVs should be separated by semi-colons. This are the PVs found:'
+        print('ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
+            format(input.channel.number, input.channel.card_id, input.channel.num_inputs, len(input.channel.monitored_pvs.split(';'))))
+        print('       PVs should be separated by semi-colons. This are the PVs found:')
         for s in input.channel.monitored_pvs.split(';'):
-          print '       - \'{0}\''.format(s.strip())
+          print('       - \'{0}\''.format(s.strip()))
         error=True
         softError=True
     if error:
-      print 'ERROR: Mismatch between num_inputs ({0}) and monitered_pvs ({1})'.\
-          format(input.channel.num_inputs, input.channel.monitered_pvs)
+      print('ERROR: Mismatch between num_inputs ({0}) and monitered_pvs ({1})'.\
+          format(input.channel.num_inputs, input.channel.monitered_pvs))
       exit(-1)
 
     if input.channel.num_inputs == 1:
@@ -1008,16 +1008,16 @@ def exportVirtualCard(link_node, directory, session):
   f.close()
   if not hasVirtual:
     if verbose:
-      print ' + no Virtual Cards found.'
+      print(' + no Virtual Cards found.')
 
 def exportLinkNodeDatabases(directory, session):
   if not os.path.isdir(directory):
-    print 'ERROR: {0} directory for link node files does not exist'.format(directory)
+    print('ERROR: {0} directory for link node files does not exist'.format(directory))
     exit(-1)
 
   link_nodes = session.query(models.LinkNode).all()
   if (verbose):
-    print 'Virtual Cards:'
+    print('Virtual Cards:')
   for ln in link_nodes:
     exportVirtualCard(ln, directory, session)
 

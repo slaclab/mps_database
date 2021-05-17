@@ -7,7 +7,7 @@ import os
 import argparse
 import time
 import subprocess
-from docbook import DocBook
+from .docbook import DocBook
 
 class App:
   '''
@@ -79,20 +79,20 @@ class App:
       self.was_high_bits = bytearray(192*[0])
 
   def dump_bits(self):
-    print "Was Low Bits:"
+    print("Was Low Bits:")
     for i in range(0, len(self.was_low_bits)):
       sys.stdout.write('{0}'.format(self.was_low_bits[i]))
       if (i + 1) % 8 == 0:
         sys.stdout.write(' ')
       if (i + 1) % (8*8) == 0:
-        print ""
-    print "Was High Bits:"
+        print("")
+    print("Was High Bits:")
     for i in range(0, len(self.was_low_bits)):
       sys.stdout.write('{0}'.format(self.was_high_bits[i]))
       if (i + 1) % 8 == 0:
         sys.stdout.write(' ')
       if (i + 1) % (8*8) == 0:
-        print ""
+        print("")
 
   def get_id(self):
       if self.app != None:
@@ -263,12 +263,12 @@ class Simulator:
     device = self.session.query(models.Device).\
         filter(models.Device.id == device_id).one()
     if device.discriminator == 'mitigation_device':
-      print 'ERROR: cannot test mitigation device'
-      print 'Device {0} ({1}) is a mitigation device'.format(device.id, device.name)
+      print('ERROR: cannot test mitigation device')
+      print('Device {0} ({1}) is a mitigation device'.format(device.id, device.name))
       exit(1)
 
     if device.card_id == None:
-      print 'Cannot test device {0} (id={1}), it is not associated with any physical card'.format(device.name, device_id)
+      print('Cannot test device {0} (id={1}), it is not associated with any physical card'.format(device.name, device_id))
       exit(1)
 
     if device_type == 'digital':
@@ -277,7 +277,7 @@ class Simulator:
             self.digital_device = self.session.query(models.DigitalDevice).\
                 filter(models.DigitalDevice.id==device_id).one()
         except:
-            print 'ERROR: Failed to find digital device with id={0}'.format(device_id)
+            print('ERROR: Failed to find digital device with id={0}'.format(device_id))
             exit(1) 
         self.test_value = 0
     else:
@@ -288,7 +288,7 @@ class Simulator:
             device_type = self.session.query(models.DeviceType).\
                 filter(models.DeviceType.id==self.analog_device.device_type_id).one()
         except:
-            print 'ERROR: Failed to find analog device with id={0}'.format(device_id)
+            print('ERROR: Failed to find analog device with id={0}'.format(device_id))
             exit(1) 
 
         self.analog_test_value = []
@@ -301,7 +301,7 @@ class Simulator:
                     device_state = self.session.query(models.DeviceState).\
                         filter(models.DeviceState.id==s.device_state_id).one()
                 except:
-                    print 'ERROR: Failed to find device_state'
+                    print('ERROR: Failed to find device_state')
                     exit(1)
 
 #                print ">>>> DeviceState: " + device_state.name
@@ -331,7 +331,7 @@ class Simulator:
 
     if self.debug >= 1:
         sys.stdout.write('+'+60*'-'+'+\n')
-        print 'Device {0}'.format(name)
+        print('Device {0}'.format(name))
 
     if device_type == 'digital':
         self.device_inputs=[]
@@ -610,7 +610,7 @@ class Simulator:
       if (ln.get_name() == link_node_name):
         link_node = ln
     if (link_node == None):
-      print 'ERROR: Link node "{}" not found'.format(link_node_name)
+      print('ERROR: Link node "{}" not found'.format(link_node_name))
 
     return link_node
 
@@ -672,7 +672,7 @@ class Tester:
     try:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     except socket.error:
-        print 'Failed to create socket'
+        print('Failed to create socket')
         sys.exit()
 
     if self.docbook != None:
@@ -688,9 +688,9 @@ class Tester:
       try:
           self.sock.sendto(request, (self.host, self.port))
 
-      except socket.error, msg:
-        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-        print 'Failed to send database info request message'
+      except socket.error as msg:
+        print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+        print('Failed to send database info request message')
         sys.exit()
 
       try:
@@ -700,22 +700,22 @@ class Tester:
         user = str(database_info[192:255])
         md5sum = str(database_info[256:288])
                            
-        print 'Central Node Database Info:'
-        print 'Source: {0}'.format(source)
-        print 'Date: {0}'.format(date)
-        print 'User: {0}'.format(user)
-        print 'md5sum: {0}'.format(md5sum)
+        print('Central Node Database Info:')
+        print('Source: {0}'.format(source))
+        print('Date: {0}'.format(date))
+        print('User: {0}'.format(user))
+        print('md5sum: {0}'.format(md5sum))
 
         db_md5sum = self.simulator.get_md5sum()
         if (db_md5sum != md5sum):
-            print 'ERROR: Mismatched database md5sum:'
-            print 'CN Server Database  : {0}'.format(md5sum)
-            print 'Test Database: {0}'.format(db_md5sum)
+            print('ERROR: Mismatched database md5sum:')
+            print('CN Server Database  : {0}'.format(md5sum))
+            print('Test Database: {0}'.format(db_md5sum))
             sys.exit()
 
-      except socket.error, msg:
-        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-        print 'Failed to receive database info message'
+      except socket.error as msg:
+        print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+        print('Failed to receive database info message')
         sys.exit()
 
       if self.docbook != None:
@@ -754,7 +754,7 @@ class Tester:
         if (device.card_id != None and device.evaluation != 3):
           self.test(device.id)
         else:
-          print 'Skipping device {0}, it is not associated with any physical card'.format(device.name)
+          print('Skipping device {0}, it is not associated with any physical card'.format(device.name))
 
       devices = self.simulator.get_all_analog_devices()
       self.digital_device = None
@@ -787,14 +787,14 @@ class Tester:
           self.resultRows.append(['<link linkend=\'{0}\'>{0}</link>'.format(device_name), 'PASSED', 'green'])
           if self.docbook != None:
               self.docbook.table('Result', self.cols, None, self.rows, None, 'green')
-          print '{0} PASSED'.format(device_name)
+          print('{0} PASSED'.format(device_name))
       else:
           self.rows=[]
           self.rows.append(['Result','FAILED'])
           self.resultRows.append(['<link linkend=\'{0}\'>{0}</link>'.format(device_name), 'FAILED', 'red'])
           if self.docbook != None:
               self.docbook.table('Result', self.cols, None, self.rows, None, 'red')
-          print '{0} FAILED'.format(device_name)
+          print('{0} FAILED'.format(device_name))
 
   def sendUpdate(self):
     appdata = self.simulator.get_update_buffer()
@@ -802,8 +802,8 @@ class Tester:
     try:
         self.sock.sendto(appdata, (self.host, self.port))
 
-    except socket.error, msg:
-        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    except socket.error as msg:
+        print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
         sys.exit()
       
   def receiveMitigation(self, device_type):
@@ -812,8 +812,8 @@ class Tester:
     try:
         data, addr = self.sock.recvfrom(8)
 
-    except socket.error, msg:
-        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+    except socket.error as msg:
+        print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
         sys.exit()
 
     a = bytearray(data)

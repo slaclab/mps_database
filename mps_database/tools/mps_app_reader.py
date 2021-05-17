@@ -60,8 +60,8 @@ class MpsAppReader:
 
     def __add_slot_information_by_name(self, mps_db_session, ln_name, app_card):
         if app_card.slot_number in self.link_nodes[ln_name]['slots']:
-            print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number))
+            print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
+                      format(ln_name, app_card.slot_number)))
             exit(1)
         
         slot_info = {}
@@ -79,8 +79,8 @@ class MpsAppReader:
 
     def __add_slot_information_by_crate(self, mps_db_session, ln_name, crat, app_card):
         if app_card.slot_number in self.link_nodes[ln_name]['slots']:
-            print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number))
+            print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
+                      format(ln_name, app_card.slot_number)))
             exit(1)
         
         slot_info = {}
@@ -297,7 +297,7 @@ class MpsAppReader:
                         for fault_input in fault_inputs:
                             faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
                             if (len(faults) != 1):
-                                print 'ERROR: Fault not defined'
+                                print('ERROR: Fault not defined')
                                 exit(-1)
                             fault_states = mps_db_session.query(models.FaultState).\
                                 filter(models.FaultState.fault_id==faults[0].id).all()
@@ -428,7 +428,7 @@ class MpsAppReader:
         for app_card in app_cards:
             ln_name = app_card.link_node.get_name()
             if (app_card.link_node.slot_number != 2 and app_card.name == "Generic ADC"):
-                for ln_names, ln in self.link_nodes.items():
+                for ln_names, ln in list(self.link_nodes.items()):
                   if ln["physical"] != "Not Installed":
                     if ln["physical"] == self.link_nodes[ln_name]['physical']:
                         if ln_name != ln_names:
@@ -457,39 +457,39 @@ class MpsAppReader:
         print("--------------------------")
         print("--  Analog applications --")
         print("--------------------------")
-        print("Number of analog application processed: {}".format(len(self.analog_apps)))
+        print(("Number of analog application processed: {}".format(len(self.analog_apps))))
         if (self.verbose):
             for app in self.analog_apps:
                 print("  Application data:")
                 print("  - - - - - - - - - - - - -")
-                print('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"]))
-                print("  - App ID             : {}".format(app["app_id"]))
-                print("  - Cpu name           : {}".format(app["cpu_name"]))
-                print("  - Crate ID           : {}".format(app["crate_id"]))
-                print("  - Slot number        : {}".format(app["slot_number"]))
-                print("  - Link node name     : {}".format(app["link_node_name"]))
-                print("  - Link node area     : {}".format(app["link_node_area"]))
-                print("  - Link node location : {}".format(app["link_node_location"]))
-                print("  - Card index         : {}".format(app["card_index"]))
-                print("  - Number of devices  : {}".format(len(app["devices"])))
+                print(('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])))
+                print(("  - App ID             : {}".format(app["app_id"])))
+                print(("  - Cpu name           : {}".format(app["cpu_name"])))
+                print(("  - Crate ID           : {}".format(app["crate_id"])))
+                print(("  - Slot number        : {}".format(app["slot_number"])))
+                print(("  - Link node name     : {}".format(app["link_node_name"])))
+                print(("  - Link node area     : {}".format(app["link_node_area"])))
+                print(("  - Link node location : {}".format(app["link_node_location"])))
+                print(("  - Card index         : {}".format(app["card_index"])))
+                print(("  - Number of devices  : {}".format(len(app["devices"]))))
                 for device in app["devices"]:
                     print("    Device data:")
                     print("    .....................")
-                    print("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"]))
-                    print("      - Type name        : {}".format(device["type_name"]))
-                    print("      - Bay number       : {}".format(device["bay_number"]))
-                    print("      - Channel number   : {}".format(device["channel_number"]))
-                    print("      - Area             : {}".format(device["area"]))
-                    print("      - Position         : {}".format(device["position"]))
-                    print("      - Number of faults : {}".format(len(device["faults"])))
-                    for fault_id,fault_data in device["faults"].items():
+                    print(("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"])))
+                    print(("      - Type name        : {}".format(device["type_name"])))
+                    print(("      - Bay number       : {}".format(device["bay_number"])))
+                    print(("      - Channel number   : {}".format(device["channel_number"])))
+                    print(("      - Area             : {}".format(device["area"])))
+                    print(("      - Position         : {}".format(device["position"])))
+                    print(("      - Number of faults : {}".format(len(device["faults"]))))
+                    for fault_id,fault_data in list(device["faults"].items()):
                         print("      Fault data:")
                         print("      . . . . . . . . . . . . ")
-                        print("        - EPICS PREFIX: {}_T{}".format(fault_data["name"], fault_data["bit_positions"][0]))
-                        print("        - ID            : {}".format(fault_id))
-                        print("        - Name          : {}".format(fault_data["name"]))
-                        print("        - Description   : {}".format(fault_data["description"]))
-                        print("        - Bit positions : {}".format(fault_data["bit_positions"]))
+                        print(("        - EPICS PREFIX: {}_T{}".format(fault_data["name"], fault_data["bit_positions"][0])))
+                        print(("        - ID            : {}".format(fault_id)))
+                        print(("        - Name          : {}".format(fault_data["name"])))
+                        print(("        - Description   : {}".format(fault_data["description"])))
+                        print(("        - Bit positions : {}".format(fault_data["bit_positions"])))
                         print("      . . . . . . . . . . . . ")
                     print("    .....................")
                 print("  - - - - - - - - - - - - -")
@@ -500,39 +500,39 @@ class MpsAppReader:
         print("----------------------------")
         print("--  Digital applications  --")
         print("----------------------------")
-        print("Number of digital application processed: {}".format(len(self.digital_apps)))
+        print(("Number of digital application processed: {}".format(len(self.digital_apps))))
         if (self.verbose):
             for app in self.digital_apps:
                 print("  Application data:")
                 print("  - - - - - - - - - - - - -")
-                print('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"]))
-                print("  - App ID             : {}".format(app["app_id"]))
-                print("  - Cpu name           : {}".format(app["cpu_name"]))
-                print("  - Crate ID           : {}".format(app["crate_id"]))
-                print("  - Slot number        : {}".format(app["slot_number"]))
-                print("  - Link node name     : {}".format(app["link_node_name"]))
-                print("  - Link node area     : {}".format(app["link_node_area"]))
-                print("  - Link node location : {}".format(app["link_node_location"]))
-                print("  - Card index         : {}".format(app["card_index"]))
-                print("  - Number of devices  : {}".format(len(app["devices"])))
+                print(('  - EPICS PREFIX: MPLN:{}:{}:{}'.format(app["link_node_area"].upper(), app["link_node_location"].upper(), app["card_index"])))
+                print(("  - App ID             : {}".format(app["app_id"])))
+                print(("  - Cpu name           : {}".format(app["cpu_name"])))
+                print(("  - Crate ID           : {}".format(app["crate_id"])))
+                print(("  - Slot number        : {}".format(app["slot_number"])))
+                print(("  - Link node name     : {}".format(app["link_node_name"])))
+                print(("  - Link node area     : {}".format(app["link_node_area"])))
+                print(("  - Link node location : {}".format(app["link_node_location"])))
+                print(("  - Card index         : {}".format(app["card_index"])))
+                print(("  - Number of devices  : {}".format(len(app["devices"]))))
                 for device in app["devices"]:
                     print("    Device data:")
                     print("    .....................")
-                    print("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"]))
-                    print("      - Type name        : {}".format(device["type_name"]))
-                    print("      - Area             : {}".format(device["area"]))
-                    print("      - Position         : {}".format(device["position"]))
-                    print("      - Number of inputs : {}".format(len(device["inputs"])))
+                    print(("      - EPICS PREFIX: {}:{}:{}".format(device["type_name"], device["area"], device["position"])))
+                    print(("      - Type name        : {}".format(device["type_name"])))
+                    print(("      - Area             : {}".format(device["area"])))
+                    print(("      - Position         : {}".format(device["position"])))
+                    print(("      - Number of inputs : {}".format(len(device["inputs"]))))
                     for input in device["inputs"]:
                         print("      Input data:")
                         print("      . . . . . . . . . . . . ")
-                        print("        - EPICS PREFIX: {}".format(input["name"]))
-                        print("        - Name         : {}".format(input["name"]))
-                        print("        - Bit position : {}".format(input["bit_position"]))
-                        print("        - Zero name    : {}".format(input["zero_name"]))
-                        print("        - One name     : {}".format(input["one_name"]))
-                        print("        - Alarm state  : {}".format(input["alarm_state"]))
-                        print("        - Debounce     : {}".format(input["debounce"]))
+                        print(("        - EPICS PREFIX: {}".format(input["name"])))
+                        print(("        - Name         : {}".format(input["name"])))
+                        print(("        - Bit position : {}".format(input["bit_position"])))
+                        print(("        - Zero name    : {}".format(input["zero_name"])))
+                        print(("        - One name     : {}".format(input["one_name"])))
+                        print(("        - Alarm state  : {}".format(input["alarm_state"])))
+                        print(("        - Debounce     : {}".format(input["debounce"])))
                         print("      . . . . . . . . . . . . ")
                     print("    .....................")
                 print("  - - - - - - - - - - - - -")
@@ -542,9 +542,9 @@ class MpsAppReader:
 
         print("===================================")
 
-        print('Found {} link nodes:'.format(len(self.link_nodes)))
-        for k,v in self.link_nodes.items():
-            print('{}: {}'.format(k, v['type']))
+        print(('Found {} link nodes:'.format(len(self.link_nodes))))
+        for k,v in list(self.link_nodes.items()):
+            print(('{}: {}'.format(k, v['type'])))
 
     def __get_scale_units(self, device_type_name, channel_number):
         """
@@ -649,7 +649,7 @@ class MpsAppReader:
             # where x is the integration channel
             integration_channel = int(fault_name[-1])
 
-            if integration_channel not in range(4):
+            if integration_channel not in list(range(4)):
                 raise ValueError("Function \"__get_fault_index(device_type_name={}, fault_name={}, channel_number={})\".\
                                 Integration channel = {} out of range [0:3]".format(device_type_name, fault_name,
                                     channel_number, integration_channel))
