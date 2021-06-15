@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, Float, String, Boolean
 
 def dump_db_to_yaml(mps_config, filename):
   session = mps_config.session
-  f = file(filename, 'w')
+  f = open(filename, 'w')
   yaml.add_multi_representer(models.Base, model_representer)
   model_classes = [models.Crate,
                    models.LinkNode,

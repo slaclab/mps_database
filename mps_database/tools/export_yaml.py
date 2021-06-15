@@ -15,7 +15,7 @@ from mps_database.mps_config import MPSConfig, models
 
 parser = argparse.ArgumentParser(description='Export MPS sqlite database to YAML')
 
-parser.add_argument('database', metavar='database', type=file, nargs=1, 
+parser.add_argument('database', metavar='database', type=argparse.FileType('r'), nargs=1, 
                     help='MPS database file name (e.g. mps_gun.db)')
 
 parser.add_argument('yaml', metavar='yaml', type=str, nargs=1, 

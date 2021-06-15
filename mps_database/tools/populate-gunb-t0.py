@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from mps_database.mps_config import MPSConfig, models
 from sqlalchemy import MetaData
-from .runtime_utils import RuntimeChecker
+from runtime_utils import RuntimeChecker
 
 #
 # Generate EIC database with only one threshold for the analog inputs

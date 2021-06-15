@@ -13,5 +13,4 @@ setup(
     license='MIT',
     description='Various tools and scripts for the mps database.',
     long_description=open('README.md').read(),
-    install_requires=requirements,
 )

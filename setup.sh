@@ -1,12 +1,12 @@
 
 if [ $# == 1 ]; then
   if [ "$1" == "install" ]; then
-    pip install virtualenv
+    pip3 install virtualenv
     virtualenv venv
     source ./venv/bin/activate
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
   elif [ "$1" == "prod" ]; then
-    source $TOOLS/script/go_python2.7.13.bash
+    source $TOOLS/script/use_python3.bash
     export PYTHONPATH=${PWD}:${PWD}/tools:$PYTHONPATH
   fi
 else
@@ -18,5 +18,5 @@ else
   export PYTHONPATH=${PWD}:${PWD}/tools:$PYTHONPATH
 fi
 
-export LD_LIBRARY_PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/lib:$LD_LIBRARY_PATH
-export PATH=$PACKAGE_TOP/python/python2.7.9/linux-x86_64/bin:$PATH
+export LD_LIBRARY_PATH=$PACKAGE_TOP/python/python3.7.2/linux-x86_64/lib:$LD_LIBRARY_PATH
+export PATH=$PACKAGE_TOP/python/python3.7.2/linux-x86_64/bin:$PATH

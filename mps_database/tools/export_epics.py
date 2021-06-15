@@ -1025,7 +1025,7 @@ def exportLinkNodeDatabases(directory, session):
 
 parser = argparse.ArgumentParser(description='Export EPICS template database')
 
-parser.add_argument('database', metavar='db', type=file, nargs=1, 
+parser.add_argument('database', metavar='db', type=argparse.FileType('r'), nargs=1, 
                     help='database file name (e.g. mps_gun.db)')
 parser.add_argument('--link-nodes', metavar='link_node_dir', type=str, nargs='?',
                     help='generate templates for link nodes SIOCs')
