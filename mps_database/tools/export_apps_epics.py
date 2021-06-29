@@ -444,7 +444,9 @@ class MpsAppExporter(MpsAppReader):
         if "lc1_node_id" not in link_node:
             return
         if link_node["lc1_node_id"] == "0":
-            ip_str = '0.0.168.192'.format(app["app_id"])
+            #TODO: format does nothing here
+            ip_str = '0.0.168.192'
+            #ip_str = '0.0.168.192'.format(app["app_id"])
             print('ERROR: Found invalid link node ID (lcls1_id of 0)')
         else:
             ip_str = '{}.0.168.192'.format(link_node["lc1_node_id"])
