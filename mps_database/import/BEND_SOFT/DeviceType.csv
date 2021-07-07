@@ -1,2 +1,2 @@
-Name,Number,Description,Num_Integrators,Evaluation,Measured_Device_Type_ID,
-BEND_SOFT,23,Dipole Current (Soft),0,Fast,17
+Name,Number,Description,Num_Integrators,Evaluation,Measured_Device_Type_Id
+BDSW,22,Dipole Current (Soft),0,Slow,22

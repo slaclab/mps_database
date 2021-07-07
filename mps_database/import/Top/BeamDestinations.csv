@@ -1,0 +1,5 @@
+Name,Number,Description,Destination_Mask
+Linac,1,Linac Destination,1
+SXU,2,Soft X-Ray Undulator,2
+HXU,3,Hard X-Ray Undulator,4
+DIAG0,4,Diagnostics Line,8

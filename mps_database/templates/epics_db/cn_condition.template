@@ -1,0 +1,17 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node Ignore Conditions                        #
+# Macro description:                                                             #
+#   - NAME       : Condition Name                                                #
+#   - DESC       : Condition Description                                         #
+#   - ID         : Condition ASYN ID                                             #
+#================================================================================#
+record(bi, "$(BASE):$(NAME)") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "False")
+  field(ONAM, "True")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_CONDITION")
+}

@@ -41,10 +41,17 @@ class MpsAppReader:
 
         self.app_id = app_id 
         self.verbose = verbose
+        self.cn0 = [8,9,10,11]
+        self.cn1 = [12,13,14,15,16,17,18,19,20,21,22,23]
+        self.cn2 = [0,1,2,3,4,5,6,7]
+
 
         # This is the list of all applications
         self.analog_apps = []
         self.digital_apps= []
+        self.beam_classes = []
+        self.beam_destinations = []
+        self.conditions = []
         
         # List of Link Nodes by cpu_name + slot - track if it has only digital, analog or both apps
         self.link_nodes = {}
@@ -55,14 +62,19 @@ class MpsAppReader:
         with MpsDbReader(db_file) as mps_db_session:
 
             # Extract the application information
-            self.__extract_apps(mps_db_session)
             self.mps_name = MpsName(mps_db_session)
+            self.__extract_apps(mps_db_session)
+            self.__extract_destinations(mps_db_session)
+            self.__extract_conditions(mps_db_session)
 
     def __add_slot_information_by_name(self, mps_db_session, ln_name, app_card):
-        if app_card.slot_number in self.link_nodes[ln_name]['slots']:
-            print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number)))
-            exit(1)
+        slot_number = app_card.slot_number
+        if self.link_nodes[ln_name]['type'] == 'Digital' and slot_number == 2:
+          slot_number = 1
+        
+        slot_info = {}
+        slot_info['pv_base'] = app_card.get_pv_name()
+        slot_info['app_id'] = app_card.global_id
         
         slot_info = {}
         slot_info['pv_base'] = app_card.get_pv_name()
@@ -71,11 +83,19 @@ class MpsAppReader:
         try:
             app_type = mps_db_session.query(models.ApplicationType).\
                 filter(models.ApplicationType.id == app_card.type_id).one()
+            app_description = app_card.get_app_description()
         except exc.SQLAlchemyError as e:
             raise
 
         slot_info['type'] = app_type.name
-        self.link_nodes[ln_name]['slots'][app_card.slot_number] = slot_info
+        slot_info['description'] = app_description
+        if slot_info['type'] == "Digital Card":
+          slot_number = 1
+        if slot_number in self.link_nodes[ln_name]['slots']:
+          print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
+                      format(ln_name, app_card.slot_number))
+          exit(1)
+        self.link_nodes[ln_name]['slots'][slot_number] = slot_info
 
     def __add_slot_information_by_crate(self, mps_db_session, ln_name, crat, app_card):
         if app_card.slot_number in self.link_nodes[ln_name]['slots']:
@@ -83,9 +103,15 @@ class MpsAppReader:
                       format(ln_name, app_card.slot_number)))
             exit(1)
         
-        slot_info = {}
-        slot_info['pv_base'] = app_card.get_pv_name()
-        slot_info['app_id'] = app_card.global_id
+        slot_info['type'] = app_type.name
+        slot_info['description'] = app_description
+        if slot_info['type'] == "Digital Card":
+          slot_number = 1
+        if slot_number in self.link_nodes[ln_name]['slots']:
+          print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
+                      format(ln_name, app_card.slot_number))
+          exit(1)
+        self.link_nodes[ln_name]['slots'][slot_number] = slot_info
 
         try:
             app_type = mps_db_session.query(models.ApplicationType).\
@@ -95,6 +121,46 @@ class MpsAppReader:
 
         slot_info['type'] = app_type.name
         self.link_nodes[ln_name]['slots'][app_card.slot_number] = slot_info
+
+    def __extract_destinations(self, mps_db_session):
+        try:
+            # Get all the apps defined in the database
+            destinations = mps_db_session.query(models.BeamDestination).all()
+            beamClasses = mps_db_session.query(models.BeamClass).all()
+        except exc.SQLAlchemyError as e:
+            raise
+
+        for beamClass in beamClasses:
+          beam_data = {}
+          beam_data["id"] = beamClass.id
+          beam_data["number"] = beamClass.number
+          beam_data["name"] = beamClass.name
+          beam_data["description"] = beamClass.description
+          beam_data["integration_window"] = beamClass.integration_window
+          beam_data["min_period"] = beamClass.min_period
+          beam_data["total_charge"] = beamClass.total_charge
+          self.beam_classes.append(beam_data)
+        for dest in destinations:
+          dest_data = {}
+          dest_data["id"] = dest.id
+          dest_data["name"] = dest.name
+          dest_data["description"] = dest.description
+          dest_data["destination_mask"] = dest.destination_mask
+          self.beam_destinations.append(dest_data)
+
+    def __extract_conditions(self, mps_db_session):
+        try:
+            # Get all the apps defined in the database
+            conditions = mps_db_session.query(models.Condition).all()
+        except exc.SQLAlchemyError as e:
+            raise      
+        for cond in conditions:
+          cond_data = {}
+          cond_data["name"] = cond.name.upper()
+          cond_data["description"] = cond.description
+          cond_data["db_id"] = cond.id
+          self.conditions.append(cond_data)
+        
 
     def __extract_apps(self, mps_db_session):
         """
@@ -115,6 +181,7 @@ class MpsAppReader:
         - link_node_location (str)
         - card_index (number)
         - devices (list)
+        - central_node (number) (0 = B005 slot 2, 1 = B005 slot 3, 2 = B005 slot 2 and LI00)
 
         Each device in the application devices list will be a dictionary with
         the following structure:
@@ -122,13 +189,19 @@ class MpsAppReader:
         - bay_number (number)
         - area (str)
         - position (str)
+        - cable (str)
+        - slope (float) analog calibration slope to mV
+        - offset (float) analog calibration offset to mV
         - faults (dict)
+        - db_id (number) the analog device ID
 
         The device faults dictionary will be have keys equal to the fault ID, and the
         values will be dictionary with the following structure:
         - name (str)
         - description (str)
         - bit_positions (list)
+        - mask (list)
+        - integrator (list)
 
         The bit_position list will holds all the bit_position used by the same fault ID.
 
@@ -142,6 +215,7 @@ class MpsAppReader:
         - link_node_area (str)
         - link_node_location (str)
         - card_index (number)
+        - central_node (number) (0 = B005 slot 2, 1 = B005 slot 3, 2 = B005 slot 2 and LI00)
         - devices (list)
 
         Each device in the application devices list will be a dictionary with
@@ -150,6 +224,7 @@ class MpsAppReader:
         - area (str)
         - position (str)
         - inputs (list)
+        - faults (dict)
 
         Each input in the device inputs list will be a dictionary with
         the following structure:
@@ -159,6 +234,14 @@ class MpsAppReader:
         - one_name (str)
         - alarm_state (number)
         - debounce (number)
+
+        The device faults dictionary will be have keys equal to the fault ID, and the
+        values will be dictionary with the following structure:
+        - name (str)
+        - description (str)
+        - bit_positions (list)
+        - mask (list)
+        - integrator (list)
         """
 
         try:
@@ -175,14 +258,22 @@ class MpsAppReader:
         if (len(link_nodes) > 0):
             for ln in link_nodes:
                 name = ln.get_name()
-                cr = ln.crate.location
+                cr = ln.crate.id
                 ln_type = ln.get_type()
                 ln_app_prefix = ln.get_app_prefix()
+                ln_group = ln.get_ln_group()
                 self.link_nodes[name] = {}
                 self.link_nodes[name]['type'] = ln_type # 'Analog', 'Digital' or 'Mixed'
                 self.link_nodes[name]['slots'] = {}
                 self.link_nodes[name]['app_prefix'] = ln_app_prefix
                 self.link_nodes[name]['physical'] = "Not Installed"
+                self.link_nodes[name]['group'] = ln_group
+                self.link_nodes[name]['shm_name'] = ln.get_shelf_manager()
+                self.link_nodes[name]['cn_prefix'] = self.get_cn_prefix(ln_group)
+                self.link_nodes[name]['analog_slot'] = 2
+                self.link_nodes[name]['group_link'] = ln.group_link
+                self.link_nodes[name]['group_link_destination'] = ln.group_link_destination
+                self.link_nodes[name]['crate_index'] = cr
 
                 #self.link_nodes[cr] = {}
                 #self.link_nodes[cr]['type'] = ln_type # 'Analog', 'Digital' or 'Mixed'
@@ -209,7 +300,6 @@ class MpsAppReader:
 
                 if type(device) is models.device.DigitalDevice:
                     digital_devices.append(device)
-
             # Process the analog devices
             if len(analog_devices):
 
@@ -220,6 +310,7 @@ class MpsAppReader:
                 # Get this application data
                 app_data = {}
                 app_data["app_id"] = app_card.global_id
+                app_data["db_id"] = app_card.id
                 app_data["cpu_name"] = app_card.link_node.cpu
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["crate_key"] = app_card.link_node.crate_id
@@ -232,6 +323,8 @@ class MpsAppReader:
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["app_prefix"] = app_card.get_pv_name()
                 app_data['link_node_name_prev'] = app_card.link_node.get_name()
+                app_data["name"] = app_card.name
+                app_data['central_node'] = self.get_cn_index(app_card.link_node.group)
 
 
                 self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
@@ -291,7 +384,12 @@ class MpsAppReader:
                         device_data["position"] = device.position
                         device_data["faults"] = {}
                         device_data["device_name"] = device.name
-                        device_data["prefix"] = '{}:{}:{}'.format(device_data["type_name"], device.area, device.position)
+                        device_data["cable"] = device.cable_number
+                        device_data["offset"] = device.offset
+                        device_data["slope"] = device.slope
+                        device_data["prefix"] = '{0}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id))
+                        device_data["db_id"] = device.id
+                        device_data["channel"] = device.channel.number
 
                         # Iterate over all the faults in this device
                         for fault_input in fault_inputs:
@@ -309,22 +407,30 @@ class MpsAppReader:
                             if (not fault_id in device_data["faults"]):
                                 # Get the fault corresponding to this fault input.
                                 fault = self.__get_fault(mps_db_session, fault_id)
-
                                 fault_data = {}
                                 fault_data["id"] = fault_id
                                 fault_data["name"] = fault.name
                                 fault_data["description"] = fault.description[:39]
                                 fault_data["bit_positions"] = []
                                 fault_data["integrators"] = []
+                                fault_data["mask"] = []
+                                fault_data["states"] = []
+                                fault_data["fs_id"] = []
+                                fault_data["fs_desc"] = []
                                 for fs in fault_states:
                                     fault_data["bit_positions"].append(fs.device_state.get_bit_position())
                                     fault_data["integrators"].append(fs.device_state.get_integrator())
+                                    fault_data["mask"].append(fs.device_state.mask)
+                                    fault_data["states"].append(fs.device_state.name)
+                                    fault_data["fs_id"].append(fs.id)
+                                    fault_data["fs_desc"].append(fs.device_state.description)
  
-                            # Add this fault to the list of faults of the current device
-                            device_data["faults"][fault_id] = fault_data
+                                # Add this fault to the list of faults of the current device
+                                device_data["faults"][fault_id] = fault_data
 
                         # Add this device to the list of devices of the current application
                         app_data["devices"].append(device_data)
+
 
 
                 # Add this application to the list of applications, if its list of devices is not empty
@@ -342,6 +448,7 @@ class MpsAppReader:
                 # Get this application data
                 app_data = {}
                 app_data["app_id"] = app_card.global_id
+                app_data["db_id"] = app_card.id
                 app_data["cpu_name"] = app_card.link_node.cpu
                 app_data["crate_id"] = app_card.crate.crate_id
                 app_data["crate_key"] = app_card.crate.id
@@ -354,6 +461,8 @@ class MpsAppReader:
                 app_data["virtual"] = False
                 app_data["lc1_node_id"] = str(app_card.link_node.lcls1_id)
                 app_data["app_prefix"] = app_card.get_pv_name()
+                app_data['central_node'] = self.get_cn_index(app_card.link_node.group)
+                app_data["name"] = app_card.name
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
@@ -364,7 +473,9 @@ class MpsAppReader:
                 self.link_nodes[ln_name]["dig_app_id"] = app_data["app_id"]
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
-
+                if self.link_nodes[ln_name]['type'] == 'Digital':
+                  self.link_nodes[ln_name]['analog_slot'] = 2
+                self.__add_slot_information_by_name(mps_db_session, ln_name, app_card)
                 #self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
                 #self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
                 #self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
@@ -377,6 +488,7 @@ class MpsAppReader:
 
                     # Look for all the inputs in this device
                     inputs = device.inputs
+                    fault_inputs = device.fault_outputs
 
                     # Check if this device has inputs. Only devices with inputs defined will be included
                     if len(inputs):
@@ -388,7 +500,8 @@ class MpsAppReader:
                         device_data["position"] = device.position
                         device_data["inputs"] = []
                         device_data["device_name"] = device.name
-                        device_data["prefix"] = '{}:{}:{}'.format(device_data["type_name"], device.area, device.position)
+                        device_data["faults"] = []
+                        device_data["prefix"] = '{}:{}:{}'.format(self.get_prefix(device_data["type_name"]), device.area, device.position)
 
                         for input in inputs:
                             # Get the digital channel
@@ -405,16 +518,52 @@ class MpsAppReader:
                             input_data["db_id"] = digital_channel.id
                             if (digital_channel.num_inputs == 1):
                                 input_data["input_pv"] = digital_channel.monitored_pvs
-                                input_data["alarm_state"] = digital_channel.alarm_state
-                                if (digital_channel.alarm_state == 0):
-                                    input_data["zero_severity"] = "MAJOR"
-                                    input_data["one_severity"] = "NO_ALARM"
+                            else:
+                                if device.measured_device_type_id is not None:
+                                  pv_device_type = self.__get_device_type_name(mps_db_session, device.measured_device_type_id)
                                 else:
-                                    input_data["zero_severity"] = "NO_ALARM"
-                                    input_data["one_severity"] = "MAJOR"
+                                  pv_device_type = self.__get_device_type_name(mps_db_session, device.device_type_id)
+                                input_data["input_pv"] = '{0}:{1}:{2}:{3}'.format(pv_device_type,device.area, device.position, digital_channel.name)
+                            if (digital_channel.alarm_state == 0):
+                                input_data["zero_severity"] = "MAJOR"
+                                input_data["one_severity"] = "NO_ALARM"
+                            else:
+                                input_data["zero_severity"] = "NO_ALARM"
+                                input_data["one_severity"] = "MAJOR"
 
                             # Add this input to the list of inputs of the current device
                             device_data["inputs"].append(input_data)
+                        
+                        if len(fault_inputs):
+                          for fault_input in fault_inputs:
+                            faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
+                            if (len(faults) != 1):
+                                print 'ERROR: Fault not defined'
+                                exit(-1)
+                            fault_states = mps_db_session.query(models.FaultState).\
+                                filter(models.FaultState.fault_id==faults[0].id).all()
+                           # Get the fault ID
+                            fault_id = fault_input.fault_id
+
+                            # Get this fault data
+                            if (not fault_id in device_data["faults"]):
+                                # Get the fault corresponding to this fault input.
+                                fault = self.__get_fault(mps_db_session, fault_id)
+                                fault_data = {}
+                                fault_data["id"] = fault_id
+                                fault_data["name"] = fault.name
+                                fault_data["description"] = fault.description[:39]
+                                fault_data["states"] = []
+                                fault_data["fs_id"] = []
+                                fault_data["fs_desc"] = []
+                                for fs in fault_states:
+                                    fault_data["states"].append(fs.device_state.name)
+                                    fault_data["fs_id"].append(fs.id)
+                                    fault_data["fs_desc"].append(fs.device_state.description)
+ 
+                                # Add this fault to the list of faults of the current device
+                                device_data["faults"].append(fault_data) 
+                          
 
                         # Add this device to the list of devices of the current application
                         app_data["devices"].append(device_data)
@@ -443,6 +592,36 @@ class MpsAppReader:
         pp.pprint(self.analog_apps)
         print('=== Link Nodes ===')
         pp.pprint(self.link_nodes)
+
+    def get_cn_index(self, index):
+        if index in self.cn0:
+          return 0
+        elif index in self.cn1:
+          return 1
+        elif index in self.cn2:
+          return 2
+        else:
+          return -1
+
+    def get_cn_prefix(self, index):
+        if index in self.cn0:
+          return 'SIOC:SYS0:MP01'
+        elif index in self.cn1:
+          return 'SIOC:SYS0:MP02'
+        elif index in self.cn2:
+          return 'SIOC:SYS0:MP01'
+        else:
+          return None      
+
+    def get_prefix(self,typ):
+      if typ in ['BDSW','BDST']:
+        return 'BEND'
+      elif typ in ['KCST','KICK']:
+        return 'KICK'
+      elif typ in ['QDSW']:
+        return 'QUAD'
+      else:
+        return typ
 
 
     def print_app_data(self):
@@ -557,13 +736,22 @@ class MpsAppReader:
             elif channel_number == 1:
                 fault_name = "Y"
             elif channel_number == 2:
-                fault_name = "TMIT"
+                fault_name = "CHRG"
             else:
                 raise ValueError("Function \"get_app_name(device_type_name={}, channel_number={})\". Invalid channel number for BPMS device type"
                                  .format(device_type_name, channel_number))
             return self.__get_app_units(device_type_name, fault_name)
         else:
             return self.__get_app_units(device_type_name, "")
+
+    def get_fault_base(self, fault):
+        out = fault.split('_')
+        val = fault
+        if out[len(out)-1] in ['T0', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']:
+          val = '{0}'.format(out[0])
+          for index in range(1,len(out)-1):
+            val = '{0}_{1}'.format(val,out[index])
+        return val     
 
     def get_app_units(self, device_type_name, fault_name):
         """
@@ -572,7 +760,7 @@ class MpsAppReader:
           * SOLN, BEND, PBLM, LBLM, BLM, BLEN => uA
           * BPMS
             - X, Y     => mm
-            - TMIT     => Nel
+            - CHRG     => pC
           * TORO, FARC => Nel
         """
 
@@ -587,9 +775,9 @@ class MpsAppReader:
             if fault_name in ["X", "Y"]:
                 # Fault X, Y use 'mm'
                 return "mm"
-            elif fault_name == "TMIT":
+            elif fault_name == "CHRG":
                 # TIMIT uses 'Nel'
-                return "Nel"
+                return "pC"
             else:
                 raise ValueError("Function \"__get_app_units(device_type_name={}, fault_name={})\". Invalid fault name"
                     .format(device_type_name, fault_name))
@@ -640,14 +828,18 @@ class MpsAppReader:
         Get the 'fault_index' used in the EPICS DB.
         The fault index is appication specific as follows:
           * SOLN, BEND, PBLM, LBLM, BLM => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)
-          * BPM     => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)
+          * BPM     => (X),    X=Channel (0:X, 1:Y, 2, CHRG)
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK"]:
-            # For SOLN devices type, the fault name is "Ix",
+        if device_type_name in ["SOLN", "BEND", "BLEN", "KICK"]:
+            integration_channel = 0
+            return "{}{}".format(channel_number,integration_channel)
+        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM"]:
+            # For BLM devices type, the fault name is "Ix",
             # where x is the integration channel
-            integration_channel = int(fault_name[-1])
+            integration_channel = 0
+            integration_channel = int(fault_name.split('_')[0][-1])
 
             if integration_channel not in list(range(4)):
                 raise ValueError("Function \"__get_fault_index(device_type_name={}, fault_name={}, channel_number={})\".\
@@ -657,7 +849,7 @@ class MpsAppReader:
             return "{}{}".format(channel_number, integration_channel)
         else:
             # For other application, the get index from the following 2-D dict
-            bpm_fault_index = { "X":"0", "Y":"1", "TMIT":"2" }
+            bpm_fault_index = { "X":"0", "Y":"1", "CHRG":"2" }
             bcm_fault_index = { "CHARGE":"0", "DIFF": "1" }
             fault_indexes = {   "BPMS":bpm_fault_index,
                                 "FARC":bcm_fault_index,
@@ -673,11 +865,15 @@ class MpsAppReader:
           * TORO, FARC => CHARGE
         """
         if device_type_name in ["SOLN", "BEND", "KICK"]:
-            return "CURRENT"
+            return "BACT"
         elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM"]:
             return "LOSS"
         elif device_type_name in ["TORO", "FARC"]:
             return "CHARGE"
+        elif device_type_name in ['BPMS']:
+            return ""
+        elif device_type_name in ['BLEN']:
+            return ""
         else:
             raise ValueError("Function \"get_analog_type_name(device_type_name={})\". Invalid device type name"
                              .format(device_type_name))

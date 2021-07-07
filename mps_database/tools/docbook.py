@@ -32,7 +32,7 @@ class DocBook:
         output_file_name = '{0}{1}{2}'.format(location, base_name.split('.')[0], suffix)
 
 #        print '>>>>> ' + self.file_name + " -> " + self.file_name.split(".")[0]
-        cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook.xsl {0} > {1}.fo'.\
+        cmd = 'xsltproc $PACKAGE_TOP/docbook-xsl/1.79.1/fo/docbook-mps.xsl {0} > {1}.fo'.\
             format(self.file_name, output_file_name)
         os.system(cmd)
 
@@ -41,7 +41,7 @@ class DocBook:
         os.system(cmd)
 
         cmd = 'rm {0}.fo'.format(output_file_name)
-#        os.system(cmd)
+        os.system(cmd)
 
         cmd = 'rm {0}.xml'.format(output_file_name)
         os.system(cmd)
@@ -70,12 +70,12 @@ class DocBook:
         name = ""
         first_name = "unknown"
         last_name = "unknown"
-        proc = subprocess.Popen(['person', '-tag', '-search', 'email', user], stdout=subprocess.PIPE)
+        proc = subprocess.Popen(['person', '-tag', '-match', 'email', user], stdout=subprocess.PIPE)
         while True:
           line = proc.stdout.readline()
           if line != '':
             if line.startswith("email") and email == "":
-              email = line.split(':')[1].rstrip() + "@slac.stanford.edu"
+              email = line.split(':')[1].rstrip().lower()
             elif line.startswith("name") and name == "":
               name = line.split(':')[1].rstrip()
               first_name = name.split(', ')[1]
@@ -89,8 +89,10 @@ class DocBook:
         info = self.getAuthor()
         self.writeHeader(title, info[2], info[3])
 
-    def writeHeader(self, title, first_name, last_name):
+    def startDocument(self):
         self.f.write('<article xmlns="http://docbook.org/ns/docbook" version="5.0">\n')
+
+    def writeHeader(self, title, first_name, last_name):
         self.f.write('\n')
         self.f.write('<info>\n')
         self.f.write('   <title>{0}</title>\n'.format(title))
@@ -118,16 +120,17 @@ class DocBook:
 
     def table(self, title, cols, header, rows, table_id, color='gray'):
         if table_id != None:
-            self.f.write('<table id="{0}" xreflabel="{1}">\n'.format(table_id, title))
+            self.f.write('<table frame=\'all\' pgwide=\'1\' id="{0}" xreflabel="{1}">\n'.format(table_id, title))
         else:
             if title != None:
-                self.f.write('<table xreflabel="{0}">\n'.format(title))
+                self.f.write('<table frame=\'all\' pgwide=\'1\' xreflabel="{0}">\n'.format(title))
             else:
-                self.f.write('<table>\n')
+                self.f.write('<table frame=\'all\' pgwide=\'1\'>\n')
             
         if title != None:
             self.f.write('<title>{0}</title>\n'.format(title))
-        self.f.write('<tgroup cols=\'{0}\' align=\'left\' colsep=\'2\' rowsep=\'2\'>\n'.format(len(cols)))
+        self.f.write('<?dbfo keep-together=\'auto\' ?>')
+        self.f.write('<tgroup cols=\'{0}\' align=\'center\' colsep=\'1\' rowsep=\'1\'>\n'.format(len(cols)))
 
         for i in range(0, len(cols)):
             self.f.write('<colspec colname=\'{0}\' colwidth="{1}"/>\n'.\

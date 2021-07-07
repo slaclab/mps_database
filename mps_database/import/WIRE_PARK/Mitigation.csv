@@ -1,5 +1,0 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU
-Linac,NOT_PARKED,2,Linac Parked Wire Fault,1,-,-,-
-Diag0,NOT_PARKED,2,Diag0 Parked Wire Fault,-,1,-,-
-SXU,NOT_PARKED,2,SXU Parked Wire Fault,-,-,1,-
-HXU,NOT_PARKED,2,HXU Parked Wire Fault,-,-,-,1

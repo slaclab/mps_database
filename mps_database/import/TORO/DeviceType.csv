@@ -1,2 +1,2 @@
-Name,Number,Description,Num_Integrators,Evaluation,
-TORO,13,Toroid,2,Fast,
+Name,Number,Description,Num_Integrators,Evaluation
+TORO,13,Toroid,2,Fast

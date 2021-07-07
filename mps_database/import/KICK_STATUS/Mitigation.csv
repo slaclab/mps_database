@@ -1,11 +1,11 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU
-Linac,Broken,1,On/Off Fault (both signals low),1,-,-,-
-Linac,Off,2,Kicker OFF,1,-,-,-
-Linac,Fault,4,On/Off Fault (both signals high),1,-,-,-
-SXU,Broken,1,On/Off Fault (both signals low),-,-,1,-
-SXU,Off,2,Kicker OFF,-,-,1,-
-SXU,Fault,4,On/Off Fault (both signals high),-,-,1,-
-HXU,Broken,1,On/Off Fault (both signals low),-,-,-,1
-HXU,Off,2,Kicker OFF,-,-,-,1
-HXU,Fault,4,On/Off Fault (both signals high),-,-,-,1
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,BROKEN,1,On/Off Fault (both low),1,-,-,-
+Linac,OFF,2,Kicker Off,1,-,-,-
+Linac,BROKEN,4,ON/Off Fault (both high),1,-,-,-
+SXU,BROKEN,1,On/Off Fault (both low),-,-,1,-
+SXU,OFF,2,Kicker Off,-,-,1,-
+SXU,BROKEN,4,ON/Off Fault (both high),-,-,1,-
+HXU,BROKEN,1,On/Off Fault (both low),-,-,-,1
+HXU,OFF,2,Kicker Off,-,-,-,1
+HXU,BROKEN,4,ON/Off Fault (both high),-,-,-,1
 CLTS,Info,0,Info,-,-,-,-

@@ -139,3 +139,5 @@ class ApplicationCard(Base):
 
   def get_pv_name(self):
     return 'MPLN:{}:{}:{}'.format(self.link_node.area, self.link_node.location, self.get_card_id())
+  def get_app_description(self):
+    return self.description

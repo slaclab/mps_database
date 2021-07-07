@@ -5,7 +5,7 @@ PROF,3,Profile Monitor,0
 TEMP,4,Temperature Status,0
 FLOW,5,Waterflow Status,0
 GUN,6,Gun Device,0
-CAV,7,Buncher Cavity Device,0
+ACCL,7,Buncher Cavity Device,0
 VVPG,8,Vacuum Valve Pneumatic Status,0
 VVMG,9,Manual Vacuum Valve Status,0
 SHUT,10,Laser Shutter Status,0
@@ -14,23 +14,25 @@ FARC,12,Faraday Cup,1
 TORO,13,Toroid,2
 BPMS,14,Beam Position Monitor,3
 BLEN,15,Bunch Length Monitor,1
-CBLM,16,Beam Loss Monitor,2
+CBLM,16,Beam Loss Monitor,1
 BEND,17,Dipole Current (DCCT),1
 STOP,18,Stopper,0
 WIRE,19,Fast Wire Scanner,0
 COLL,20,Collimator,0
-WIRE_PARK,21,Fast Wire Parked Switch,0
-VVFS,22,Vacuum Fast Valve,0
-BEND_SOFT,23,Dipole Current (Soft),0
-QUAD,24,Quad Current (Soft),0
-BEND_STATE,25,Dipole On/Off State,0
-PBLM,26,Point BLM,1
-LLRF,27,Low Level RF,0
-BEND_DCCT_STATUS,28,Dipole DCCT Status,0
-KICK_STATUS,29,Kicker Status,0
-XTES,30,XTES Beam Class,0
-LBLM,31,BCS Fiber BLM,1
-WAVEGUIDE,32,Waveguide,0
-KICK,33,Kicker Waveform,1
-HVPS,34,Beam Loss Monitor HV (soft),0
-WDOG,35,Watchdog (soft),0
+VVFS,21,Vacuum Fast Valve,0
+BDSW,22,Dipole Current (Soft),0
+QDSW,23,Quad Current (Soft),0
+BDST,24,Dipole On/Off State,0
+PBLM,25,Point BLM,1
+LLRF,26,Low Level RF,0
+KCST,27,Kicker Status,0
+PMPS,28,XTES Beam Class,0
+LBLM,29,BCS Fiber BLM,1
+WVGD,30,Waveguide ,0
+KICK,31,Kicker Waveform,1
+HVPS,32,Beam Loss Monitor HV (soft),0
+WDOG,33,Watchdog (soft),0
+YAGS,34,Profile Monitor (YAG),0
+OTRS,35,Profile Monitor (OTR),0
+SLIT,36,SXRSS Slit,0
+MIRR,37,Mirror,0

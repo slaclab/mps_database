@@ -126,3 +126,6 @@ class AnalogDevice(Device):
   auto_reset = Column(Boolean, default=False)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
   ignore_conditions = relationship("IgnoreCondition", backref='analog_device')
+  cable_number = Column(String, nullable=False, default='0')
+  offset = Column(Float, nullable=False, default=0)
+  slope = Column(Float, nullable=False, default=1)

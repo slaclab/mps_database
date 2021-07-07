@@ -1,5 +1,5 @@
 #================================================================================#
-# LCLS-II MPS PV template for link node channel information                      #
+# LCLS-II MPS PV template for Generic ADC channel information                    #
 # Macro description:                                                             #
 #   - P       : MPLN prefix                                                      #
 #   - CH      : ADC Channel Number (0-5)                                         #

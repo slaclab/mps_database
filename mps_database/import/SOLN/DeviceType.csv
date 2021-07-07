@@ -1,2 +1,2 @@
-Name,Number,Description,Num_Integrators,Evaluation,
-SOLN,11,Solenoid,1,Fast,
+Name,Number,Description,Num_Integrators,Evaluation
+SOLN,11,Solenoid,1,Fast

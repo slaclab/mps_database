@@ -1,0 +1,39 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node Analog Faults - 1 per fault              #
+# Macro description:                                                             #
+#   - P          : Device Input PV Prefix                                        #
+#   - CR         : Crate Number                                                  #
+#   - CA         : Card Number                                                   #
+#   - CH         : Channel Number                                                #
+#   - ID         : Device ID                                                     #
+#   - MASK       : Device State Mask                                             #
+#================================================================================#
+
+record(bi, "$(P)_MPSC") {
+  field(DESC, "Crate[$(CR)], Card[$(CA)], Channel[$(CH)]")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "IS_OK")
+  field(ONAM, "IS_EXCEEDED")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) $(MASK) 0)MPS_ANALOG_DEVICE")
+}
+
+record(bi, "$(P)_MPS") {
+  field(DESC, "CR[$(CR)], CA[$(CA)], CH[$(CH)] Latched Value")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "IS_OK")
+  field(ONAM, "IS_EXCEEDED")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) $(MASK) 0)MPS_ANALOG_DEVICE_LATCHED")
+}
+
+record(bo, "$(P)_UNLH") {
+  field(DESC, "CR[$(CR)], CA[$(CA)], CH[$(CH)] Unlatch")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(CENTRAL_NODE $(ID) $(MASK) 0)MPS_ANALOG_DEVICE_UNLATCH")
+}
+
