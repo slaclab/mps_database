@@ -1,0 +1,11 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node number of beam classes                   #
+# Macro description:                                                             #
+#   - NUM          : number of power classes                                     #
+#================================================================================#
+record(longout, "$(BASE):NUM_PC") {
+  field(DESC, "Total number of beam power classes")
+  field(PINI, "YES")
+  field(VAL, "$(NUM)")
+}
+

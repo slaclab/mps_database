@@ -1,0 +1,35 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node beam class definition                    #
+# Macro description:                                                             #
+#   - NUM          : Beam Class Number                                           #
+#   - DESC         : Beam Class Description                                      #
+#   - CHRG         : Beam Class integrated charge                                #
+#   - SPACE        : Beam Class min spacing                                      #
+#   - TIME         : Beam Class integration time                                 #
+#   - NAME         : Beam Class Name                                             #
+#================================================================================#
+record(longout, "$(BASE):$(NAME)_DESC") {
+  field(DESC, "$(DESC)")
+  field(PINI, "YES")
+  field(VAL, "$(NUM)")
+}
+record(longout, "$(BASE):$(NAME)_INT_CHARGE") {
+  field(DESC, "$(CHRG)")
+  field(PINI, "YES")
+  field(VAL, "$(NUM)")
+}
+record(longout, "$(BASE):$(NAME)_INT_TIME") {
+  field(DESC, "$(TIME)")
+  field(PINI, "YES")
+  field(VAL, "$(NUM)")
+}
+record(longout, "$(BASE):$(NAME)_MIN_SPACE") {
+  field(DESC, "$(SPACE)")
+  field(PINI, "YES")
+  field(VAL, "$(NUM)")
+}
+record(longout, "$(BASE):$(NAME)_NUMBER") {
+  field(DESC, "$(NAME) Index Number")
+  field(PINI, "YES")
+  field(VAL, "$(NUM)")
+}
