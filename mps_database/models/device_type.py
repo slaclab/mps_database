@@ -12,7 +12,7 @@ class DeviceType(Base):
     name: base name for the PVs associated to this device
     description: 
     num_integrators: number of integrators for the device. This is applicable
-                     to analog devices only, e.g. BPMs have 3 (X, Y and TMIT),
+                     to analog devices only, e.g. BPMs have 3 (X, Y and CHRG),
                      while other types may have from 1 up to 4.
 
   Relationships:

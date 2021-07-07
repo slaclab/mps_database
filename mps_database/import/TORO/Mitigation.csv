@@ -1,5 +1,5 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU,
-Linac,CHARGE,1,Linac Toroid current fault,1,-,-,-,
-Diag0,CHARGE,1,Diag0 Toroid current fault,-,1,-,-,
-SXU,CHARGE,1,SXU Toroid current fault,-,-,1,-,
-HXU,CHARGE,1,HXU Toroid current fault,-,-,-,1,
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,I0_CHRG_T0,1,Linac Toroid current fault,1,-,-,-
+DIAG0,I0_CHRG_T0,1,Diag0 Toroid current fault,-,1,-,-
+SXU,I0_CHRG_T0,1,SXU Toroid current fault,-,-,1,-
+HXU,I0_CHRG_T0,1,HXU Toroid current fault,-,-,-,1

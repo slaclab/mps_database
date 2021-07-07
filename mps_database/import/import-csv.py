@@ -351,13 +351,13 @@ class DatabaseImporter:
       return [device_type,type_info['evaluation'],None]
 
   def getFault(self, faults, device_state):
-#    print(' Looking for device_state "{}"'.format(device_state))
+    #print(' Looking for device_state "{}"'.format(device_state))
     # Find the proper fault for the mitigation 
     device_fault=None
     found=False
 
     for x in faults:
-#      print ' Fault: {0}; States: {1}'.format(x, faults[x]['states'])
+      #print ' Fault: {0}; States: {1}'.format(x, faults[x]['states'])
       found=True
       try: 
         faults[x]['states'].index(device_state)
@@ -394,14 +394,14 @@ class DatabaseImporter:
         for property in line.split(','):
           state_info[fields[field_index]]=property
           field_index = field_index + 1
-          
         device_state = models.DeviceState(name=state_info['name'],
                                           device_type=device_type,
                                           description=state_info['description'],
                                           value=int(state_info['value']),
                                           mask=int(state_info['mask']))
         device_states[state_info['name']]=device_state#state_info
-
+        #print state_info
+        #print ''
         if (add_faults):
           if (state_info['fault'] != '-'):
             fault_name = state_info['fault']
@@ -409,9 +409,9 @@ class DatabaseImporter:
 #            print('Fault: {}: {}'.format(fault_name,fault_desc))
             if (not fault_name in faults):
               fault = models.Fault(name=fault_name, description=fault_desc)
-              self.session.add(fault)
-              self.session.commit()
-              self.session.refresh(fault)
+              #self.session.add(fault)
+              #self.session.commit()
+              #self.session.refresh(fault)
               faults[fault_name]={}
               faults[fault_name]['name']=fault_name
               faults[fault_name]['desc']=fault_desc
@@ -629,8 +629,8 @@ class DatabaseImporter:
       return
 
     file_name = directory + '/DeviceStates.csv'
-    [faults, device_states] = self.add_device_states(file_name, device_type)
-#    print faults
+    [faults, device_states] = self.add_device_states(file_name, device_type,True)
+    #print faults
     # Read AnalogChannels, each device has one channel
     file_name = directory + '/AnalogChannels.csv'
     f = open(file_name)
@@ -712,6 +712,15 @@ class DatabaseImporter:
         #if 'enable' in device_info:
         #  if device_info['enable'] == '0':
         #    continue # do not add if device has enable=0
+        cab_num = "N/A"
+        off = 0
+        slo = 1
+        if device_info.has_key('cable_#'):
+          cab_num = device_info['cable_#']
+        if device_info.has_key('offset'):
+          off = device_info['offset']
+        if device_info.has_key('slope'):
+          slo = device_info['slope']
         device = models.AnalogDevice(name=device_info['device'],
                                      device_type=device_type,
                                      channel=analog_channel,
@@ -720,7 +729,10 @@ class DatabaseImporter:
                                      z_location=device_info['linac_z'],
                                      description=device_info['device'] + ' ' + device_type.description,
                                      area=device_info['area'],
-                                     evaluation=1)# Fast evaluation
+                                     evaluation=1, # Fast evaluation
+                                     cable_number=cab_num,
+                                     slope=slo,
+                                     offset=off)
  
         if (self.verbose):
           print 'Analog Channel: ' + device_info['device']
@@ -735,15 +747,15 @@ class DatabaseImporter:
 
         # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
         if device_info['fault'] != 'all':
-#          print(device_info)
-#          print(faults)
           device_fault = self.getFault(faults, device_info['fault'])
 
           if (device_fault == None):
             print('ERROR: Failed to find Fault for analog device "{}"'.format(device_info['device']))
             exit(-1)
-#          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
-#          self.session.add(device_fault)
+          #device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
+          self.session.add(device_fault)
+          self.session.commit()
+          self.session.refresh(device_fault_input)
 
           device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
           self.session.add(device_fault_input)
@@ -785,18 +797,10 @@ class DatabaseImporter:
 
         else: # if fault=='all'
           mit_location = device_info['mitigation']
-#          print(faults)
-#          print(mitigation)
-          for k in mitigation[mit_location]:
-            device_fault = self.getFault(faults, k)
-            if (device_fault == None):
-              print 'ERROR: Failed to find Fault for device "{}" (mitigation={})'.format(device_info['device'], k)
-              exit(-1)
-#            device_fault = models.Fault(name=mitigation[mit_location][k]['state_name'], description=device_info['device'] +
-#                                        ' ' + mitigation[mit_location][k]['state_name'] + ' Fault')
-            if (self.verbose):
-              print '  Fault: {0} ({1}, {2})'.format(device_fault.name, mit_location, k)
-              print '         device_state={0} value={1}'.format(device_states[k].name, device_states[k].value)
+          for fault in faults:
+            fault_name = faults[fault]['name']
+            fault_desc = '{0} {1} {2}'.format(device_info['device'],mit_location,faults[fault]['desc'])
+            device_fault = models.Fault(name=fault_name,description=fault_desc)
             self.session.add(device_fault)
             self.session.commit()
             self.session.refresh(device_fault)
@@ -805,37 +809,21 @@ class DatabaseImporter:
             self.session.add(device_fault_input)
             self.session.commit()
             self.session.refresh(device_fault_input)
-
-            for key in mitigation:
-              if device_info['mitigation'] == key:
-                for m in mitigation[device_info['mitigation']]:
-                  if m == mitigation[mit_location][k]['state_name']:
-                    # Only add FaultStates if there haven't been added before
-                    existing_fault_states = self.session.query(models.FaultState).\
-                        filter(models.FaultState.fault_id==device_fault.id).all()
-
-                    add_fault_state = True
-                    for fs in existing_fault_states:
-                      if fs.device_state_id == device_states[m].id:
-                        add_fault_state = False
-
-                    if (add_fault_state):
-                      fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
-                      self.session.add(fault_state)
-                      self.session.commit()
-                      self.session.refresh(fault_state)
-#                      print 'Adding fault states for {0}'.format(device_fault.name)
-                      
-                      # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
-                      for d in self.beam_destinations:
-                        power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
-                        if (power_class_str != '-'):
-                          beam_class = self.session.query(models.BeamClass).\
-                              filter(models.BeamClass.id==int(power_class_str)).one()
-
-                          beam_destination = self.session.query(models.BeamDestination).\
-                              filter(models.BeamDestination.name==d).one()
-                          fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+            for fs in faults[fault]['states']:
+              fault_state = models.FaultState(device_state=device_states[fs], fault=device_fault)
+              self.session.add(fault_state)
+              self.session.commit()
+              self.session.refresh(fault_state)
+              #print mitigation[mit_location][fs]
+              #print ''
+              for d in self.beam_destinations:
+                power_class_str = mitigation[mit_location][fs][d.lower()]
+                if (power_class_str != '-'):
+                  beam_class = self.session.query(models.BeamClass).\
+                                filter(models.BeamClass.id==int(power_class_str)).one()
+                  beam_destination = self.session.query(models.BeamDestination).\
+                      filter(models.BeamDestination.name==d).one()
+                  fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
 
     self.session.commit()
 
@@ -890,7 +878,6 @@ class DatabaseImporter:
     # Add DeviceStates
     file_name = directory + '/DeviceStates.csv'
     [faults, device_states] = self.add_device_states(file_name, device_type, False)
-
     # Add DigitalChannels, first read the channels for one device
 
     file_name = directory + '/DigitalChannels.csv'
@@ -1290,12 +1277,12 @@ if args.verbose:
 
 importer = DatabaseImporter("mps_config_imported.db", "mps_config_imported_runtime.db", verbose, lcls1)
 
-importer.add_crates('import/Crates.csv')
-importer.add_app_types('import/AppTypes.csv')
-importer.add_cards('import/AppCards.csv')
-importer.add_device_types('import/DeviceTypes.csv')
-importer.add_beam_destinations('import/BeamDestinations.csv')
-importer.add_beam_classes('import/BeamClasses.csv')
+importer.add_crates('import/Top/Crates.csv')
+importer.add_app_types('import/Top/AppTypes.csv')
+importer.add_cards('import/Top/AppCards.csv')
+importer.add_device_types('import/Top/DeviceTypes.csv')
+importer.add_beam_destinations('import/Top/BeamDestinations.csv')
+importer.add_beam_classes('import/Top/BeamClasses.csv')
 
 # Wire scanner not yet defined
 ## Jmock - Need to figure out what to do with wire scanners
@@ -1313,32 +1300,29 @@ importer.add_digital_device('import/STOP')
 
 #if (False):
 if (True):
-#  importer.add_analog_device('import/TEST', card_name="Generic ADC")
-#  importer.add_analog_device('import/TEST2', card_name="Generic ADC")
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_analog_device('import/LBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
-  importer.add_analog_device('import/BEND', card_name="Generic ADC") 
-  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
+#  importer.add_analog_device('import/BEND', card_name="Generic ADC") 
+#  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
-  ##importer.add_digital_device('import/KICK_STATUS')
+  #importer.add_digital_device('import/KICK_STATUS')
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
-#  importer.add_digital_device('import/COLL')
+  #importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/XTES')
 
-#  importer.add_digital_device('import/WIRE_PARK') DEPRECATED
-#  importer.add_digital_device('import/BEND_DCCT_STATUS') DEPRECATED
 
   importer.add_digital_device('import/BLMHV', card_name="Virtual Card")
   importer.add_digital_device('import/WDOG', card_name="Virtual Card")
+  importer.add_digital_device('import/WDOG_IOC', card_name="Virtual Card")
 
 importer.cleanup()
 

@@ -56,7 +56,7 @@ class Fault(Base):
           return None
 
         # Convert bit_index to integrator index
-        # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> TMIT
+        # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> CHRG
         # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
         int_index=0
         if (bit_index >= 8 and bit_index <= 15):

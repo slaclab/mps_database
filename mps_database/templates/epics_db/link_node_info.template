@@ -1,3 +1,17 @@
+#================================================================================#
+# LCLS-II MPS PV template for MPS Link Node (slot 2) information                 #
+# Macro description:                                                             #
+#   - P                       : MPLN prefix                                      #
+#   - MPS_CONFIG_VERSION      : MPS Config Version                               #
+#   - MPS_LINK_NODE_TYPE      : Analog, Digital, or Mixed                        #
+#   - MPS_LINK_NODE_ID        : Link Node ID                                     #
+#   - MPS_LINK_NODE_SIOC      : IOC Name                                         #
+#   - MPS_CRATE_LOCATION      : Crate location                                   #
+#   - MPS_CPU_NAME            : Cpu Name                                         #
+#   - MPS_SHM_NAME            : Shelf Manager Name                               #
+#   - IS_LN                   : Boolean: True=LN, False=AN or DN                 #
+#================================================================================#
+
 record(stringin, "$(P):CONFIG_VERSION") {
   field(DESC, "MPS Configuration Database Version")
   field(VAL, "$(MPS_CONFIG_VERSION)")
@@ -31,4 +45,14 @@ record(stringin, "$(P):LN_LOCATION") {
 record(stringin, "$(P):LN_CPU_NAME") {
   field(DESC, "MPS CPU Name")
   field(VAL, "$(MPS_CPU_NAME)")
+}
+record(stringin, "$(P):LN_SHM_NAME") {
+  field(DESC, "MPS SHM Name")
+  field(VAL, "$(MPS_SHM_NAME)")
+}
+record(bi, "$(P):IS_LN") {
+  field(DESC, "True=LN, False=AN/DN")
+  field(VAL, "$(IS_LN)")
+  field(ONAM, "True")
+  field(ZNAM, "False")
 }

@@ -1,2 +1,2 @@
-Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,
-KICK_WAVEFORM,Kicker Analog Waveform,Threshold,1,
+Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#
+BACT,DCCT,Threshold,1

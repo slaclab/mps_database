@@ -1,3 +1,11 @@
-Name,Number,Description,Value,Mask,Fault,Fault_Description,
-I0_T0,1,Beam Loss,1,1,I0,Beam Loss Fault (per bunch),
-I1_T0,2,Beam Loss (1 sec),256,256,I1,Beam Loss Fault (1 second),
+Name,Number,Description,Value,Mask,Fault,Fault_Description
+I0_LOSS_T0,1,Undulator Beam Loss,1,1,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T1,2,Undulator Beam Loss,2,2,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T2,3,Undulator Beam Loss,4,4,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T3,4,Undulator Beam Loss,8,8,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T4,5,Undulator Beam Loss,16,16,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T5,6,Undulator Beam Loss,32,32,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T6,7,Undulator Beam Loss,64,64,I0_LOSS,Undulator Beam Loss Fault
+I0_LOSS_T7,8,Undulator Beam Loss,128,128,I0_LOSS,Undulator Beam Loss Fault
+I1_LOSS_T0,9,Undulator Beam Loss,256,256,I1_LOSS,Undulator Beam Loss Fault
+I1_LOSS_T1,10,Undulator Beam Loss,512,512,I1_LOSS,Undulator Beam Loss Fault

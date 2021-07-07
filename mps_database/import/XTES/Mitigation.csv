@@ -1,33 +1,33 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU
-SXU_PC0,IS_FAULTED,2,XTES Beam Class 0 Fault,-,-,1,-
-SXU_PC1,IS_FAULTED,2,XTES Beam Class 1 Fault,-,-,3,-
-SXU_PC2,IS_FAULTED,2,XTES Beam Class 2 Fault,-,-,3,-
-SXU_PC3,IS_FAULTED,2,XTES Beam Class 3 Fault,-,-,3,-
-SXU_PC4,IS_FAULTED,2,XTES Beam Class 4 Fault,-,-,3,-
-SXU_PC5,IS_FAULTED,2,XTES Beam Class 5 Fault,-,-,3,-
-SXU_PC6,IS_FAULTED,2,XTES Beam Class 6 Fault,-,-,3,-
-SXU_PC7,IS_FAULTED,2,XTES Beam Class 7 Fault,-,-,3,-
-SXU_PC8,IS_FAULTED,2,XTES Beam Class 8 Fault,-,-,3,-
-SXU_PC9,IS_FAULTED,2,XTES Beam Class 9 Fault,-,-,3,-
-SXU_PC10,IS_FAULTED,2,XTES Beam Class 10 Fault,-,-,3,-
-SXU_PC11,IS_FAULTED,2,XTES Beam Class 11 Fault,-,-,3,-
-SXU_PC12,IS_FAULTED,2,XTES Beam Class 12 Fault,-,-,3,-
-SXU_PC13,IS_FAULTED,2,XTES Beam Class 13 Fault,-,-,3,-
-SXU_PC14,IS_FAULTED,2,XTES Beam Class 14 Fault,-,-,3,-
-SXU_PC15,IS_FAULTED,2,XTES Beam Class 15 Fault,-,-,3,-
-HXU_PC0,IS_FAULTED,2,XTES Beam Class 0 Fault,-,-,-,1
-HXU_PC1,IS_FAULTED,2,XTES Beam Class 1 Fault,-,-,-,3
-HXU_PC2,IS_FAULTED,2,XTES Beam Class 2 Fault,-,-,-,3
-HXU_PC3,IS_FAULTED,2,XTES Beam Class 3 Fault,-,-,-,3
-HXU_PC4,IS_FAULTED,2,XTES Beam Class 4 Fault,-,-,-,3
-HXU_PC5,IS_FAULTED,2,XTES Beam Class 5 Fault,-,-,-,3
-HXU_PC6,IS_FAULTED,2,XTES Beam Class 6 Fault,-,-,-,3
-HXU_PC7,IS_FAULTED,2,XTES Beam Class 7 Fault,-,-,-,3
-HXU_PC8,IS_FAULTED,2,XTES Beam Class 8 Fault,-,-,-,3
-HXU_PC9,IS_FAULTED,2,XTES Beam Class 9 Fault,-,-,-,3
-HXU_PC10,IS_FAULTED,2,XTES Beam Class 10 Fault,-,-,-,3
-HXU_PC11,IS_FAULTED,2,XTES Beam Class 11 Fault,-,-,-,3
-HXU_PC12,IS_FAULTED,2,XTES Beam Class 12 Fault,-,-,-,3
-HXU_PC13,IS_FAULTED,2,XTES Beam Class 13 Fault,-,-,-,3
-HXU_PC14,IS_FAULTED,2,XTES Beam Class 14 Fault,-,-,-,3
-HXU_PC15,IS_FAULTED,2,XTES Beam Class 15 Fault,-,-,-,3
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+SXU_PC0,IS_FAULTED,2,XTES Beam Class 0 Fault ,-,-,1,-
+SXU_PC1,IS_FAULTED,2,XTES Beam Class 1 Fault ,-,-,3,-
+SXU_PC2,IS_FAULTED,2,XTES Beam Class 2 Fault ,-,-,3,-
+SXU_PC3,IS_FAULTED,2,XTES Beam Class 3 Fault ,-,-,3,-
+SXU_PC4,IS_FAULTED,2,XTES Beam Class 4 Fault ,-,-,3,-
+SXU_PC5,IS_FAULTED,2,XTES Beam Class 5 Fault ,-,-,3,-
+SXU_PC6,IS_FAULTED,2,XTES Beam Class 6 Fault ,-,-,3,-
+SXU_PC7,IS_FAULTED,2,XTES Beam Class 7 Fault ,-,-,3,-
+SXU_PC8,IS_FAULTED,2,XTES Beam Class 8 Fault ,-,-,3,-
+SXU_PC9,IS_FAULTED,2,XTES Beam Class 9 Fault ,-,-,3,-
+SXU_PC10,IS_FAULTED,2,XTES Beam Class 10 Fault ,-,-,3,-
+SXU_PC11,IS_FAULTED,2,XTES Beam Class 11 Fault ,-,-,3,-
+SXU_PC12,IS_FAULTED,2,XTES Beam Class 12 Fault ,-,-,3,-
+SXU_PC13,IS_FAULTED,2,XTES Beam Class 13 Fault ,-,-,3,-
+SXU_PC14,IS_FAULTED,2,XTES Beam Class 14 Fault ,-,-,3,-
+SXU_PC15,IS_FAULTED,2,XTES Beam Class 15 Fault ,-,-,3,-
+HXU_PC0,IS_FAULTED,2,XTES Beam Class 0 Fault ,-,-,-,1
+HXU_PC1,IS_FAULTED,2,XTES Beam Class 1 Fault ,-,-,-,3
+HXU_PC2,IS_FAULTED,2,XTES Beam Class 2 Fault ,-,-,-,3
+HXU_PC3,IS_FAULTED,2,XTES Beam Class 3 Fault ,-,-,-,3
+HXU_PC4,IS_FAULTED,2,XTES Beam Class 4 Fault ,-,-,-,3
+HXU_PC5,IS_FAULTED,2,XTES Beam Class 5 Fault ,-,-,-,3
+HXU_PC6,IS_FAULTED,2,XTES Beam Class 6 Fault ,-,-,-,3
+HXU_PC7,IS_FAULTED,2,XTES Beam Class 7 Fault ,-,-,-,3
+HXU_PC8,IS_FAULTED,2,XTES Beam Class 8 Fault ,-,-,-,3
+HXU_PC9,IS_FAULTED,2,XTES Beam Class 9 Fault ,-,-,-,3
+HXU_PC10,IS_FAULTED,2,XTES Beam Class 10 Fault ,-,-,-,3
+HXU_PC11,IS_FAULTED,2,XTES Beam Class 11 Fault ,-,-,-,3
+HXU_PC12,IS_FAULTED,2,XTES Beam Class 12 Fault ,-,-,-,3
+HXU_PC13,IS_FAULTED,2,XTES Beam Class 13 Fault ,-,-,-,3
+HXU_PC14,IS_FAULTED,2,XTES Beam Class 14 Fault ,-,-,-,3
+HXU_PC15,IS_FAULTED,2,XTES Beam Class 15 Fault ,-,-,-,3

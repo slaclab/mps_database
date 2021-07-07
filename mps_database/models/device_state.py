@@ -54,6 +54,7 @@ class DeviceState(Base):
     while not bit_found:
       b = (self.value >> shift) & 1
       if b == 1:
+        #print 'Integrator: {0}, shift: {1}, bit_position: {2}'.format(integrator, shift, bit_position)
         return bit_position
       else:
         shift = shift + 1 # move to next bit

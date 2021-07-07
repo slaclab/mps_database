@@ -1,3 +1,0 @@
-Name,Number,Description,Value,Mask,Fault,Fault_Description
-PARKED,1,FastWire out,1,4294967295,-,-
-NOT_PARKED,2,FastWire not out,0,4294967295,PARKED,Fast Wire Parked

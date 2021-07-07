@@ -174,3 +174,16 @@ class LinkNode(Base):
   def get_cpu_pv_base(self):
     cpu_base = self.cpu
     return cpu_base.replace('-',':').upper()
+  def get_ln_group(self):
+    return self.group
+
+  def get_shelf_manager(self):
+    shelf_base = self.cpu.replace('cpu','shm')
+    if self.crate.crate_id == 1:
+      extra = 1
+    elif self.crate.crate_id == 101:
+      extra = 2
+    else:
+      extra = 3
+    value = '{0}-{1}'.format(shelf_base,extra)
+    return value

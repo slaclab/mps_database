@@ -6,7 +6,7 @@ class AnalogDeviceType(Base):
   """
   AnalogDeviceType class (analog_device_types table)
 
-  Describe a class of analog devices, e.g. BPM Position or BPM TMIT.
+  Describe a class of analog devices, e.g. BPM Position or BPM CHRG.
 
   Properties:
     name: meaningful and descriptive device type name

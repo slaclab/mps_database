@@ -21,10 +21,13 @@ parser.add_argument('database', metavar='database', type=file, nargs=1,
 parser.add_argument('yaml', metavar='yaml', type=str, nargs=1, 
                     help='exported YAML database file name (e.g. mps_gun.yaml)')
 
+parser.add_argument('cn', metavar='central_node', type=int, nargs=1, 
+                    help='1=B005 S2; 2=B005 S3; 3=LI00 S2')
+
 args = parser.parse_args()
 
 mps=MPSConfig(args.database[0].name)
-ioc_tools.dump_db_to_yaml(mps, args.yaml[0])
+ioc_tools.dump_db_to_yaml(mps, args.yaml[0],args.cn[0])
 
 #
 # Write header info to YAML file, so it is possible to identify when it was generated
