@@ -77,6 +77,9 @@ class Crate(Base):
     Make sure the number of slots is enough to hold all the cards
     (ApplicationCard class) that are in the crate.
     """
+    #Cast new_num_slots as an integer
+    new_num_slots = int(new_num_slots)
+
     #Ensure there are enough slots to fit all the installed cards.
     if new_num_slots < len(self.cards):
       raise ValueError("num_slots ({num_slots}) must be >= than the number of cards in this crate ({num_cards}).".format(num_slots=new_num_slots, num_cards=len(self.cards)))
