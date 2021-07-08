@@ -70,6 +70,9 @@ class ApplicationType(Base):
   
   @validates('digital_out_channel_count')
   def validate_digital_out_channel_count(self, key, new_count):
+    #Cast new_count as an int
+    new_count = int(new_count)
+
     self.validate_positive_channel_count('digital_out', new_count)
     
     #This is slow and bad.
@@ -81,6 +84,9 @@ class ApplicationType(Base):
   
   @validates('analog_channel_count')
   def validate_analog_channel_count(self, key, new_count):
+    #Cast new_count as an int
+    new_count = int(new_count)
+
     self.validate_positive_channel_count('analog', new_count)
     
     #This is slow and bad.
@@ -92,12 +98,16 @@ class ApplicationType(Base):
   
   
   def validate_positive_channel_count(self, chan_type, new_count):
+    #Cast new_count as an int
+    new_count = int(new_count)
     if new_count < 0:
       raise ValueError("Type must have a {type} channel count >= 0.".format(type=chan_type))    
     return new_count
   
   @validates('channel_size')
   def validate_channel_size(self, key, new_size):
+    #Cast new_size as an int
+    new_size = int(new_size)
     if new_size < 0:
       raise ValueError("Channel size must be >= 0.")
     return new_size
