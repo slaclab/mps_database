@@ -56,6 +56,9 @@ class ApplicationType(Base):
   
   @validates('digital_channel_count')
   def validate_digital_channel_count(self, key, new_count):
+    #Cast new_count as an int
+    new_count = int(new_count)
+
     self.validate_positive_channel_count('digital', new_count)
     
     #This is slow and bad.
