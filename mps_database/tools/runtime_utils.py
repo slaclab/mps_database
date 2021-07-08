@@ -44,7 +44,7 @@ class RuntimeChecker:
       d = self.session.query(models.Device).filter(models.Device.name==name).one()
       return d.id
     except:
-      print('ERROR: Cannot find device "{0}"'.format(name))
+      print(('ERROR: Cannot find device "{0}"'.format(name)))
       return None
 
   def get_thresholds(self, device, active_only=True):
@@ -293,8 +293,8 @@ class RuntimeChecker:
     for a, b in zip(di, rt_di):
       if (a[0] != b[0] or a[1] != b[1]):
         print('ERROR: Mismatched devices found')
-        print('       {0} [id={1}] in config database'.format(a[0], a[1]))
-        print('       {0} [id={1}] in runtime database'.format(b[0], b[1]))
+        print(('       {0} [id={1}] in config database'.format(a[0], a[1])))
+        print(('       {0} [id={1}] in runtime database'.format(b[0], b[1])))
         return False
     if (self.verbose):
       print(' done.')

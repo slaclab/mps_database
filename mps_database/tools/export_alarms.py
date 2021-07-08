@@ -291,7 +291,7 @@ class MpsAlarmReader:
 
             # Generate mps_<AREA>_mp<XX>.alhConfig files
             if 'link_nodes' in alarm_info:
-                for link_node, link_node_pvs in alarm_info['link_nodes'].items():
+                for link_node, link_node_pvs in list(alarm_info['link_nodes'].items()):
                     alh_filename = '{}_{}'.format(area.lower(), link_node.lower())
                     include_files.append(link_node.lower())
                     alh_filename = 'mps_' + alh_filename + '.alhConfig'
@@ -445,10 +445,10 @@ class MpsAlarmReader:
         Print the content of the application data obtained by the extract_alarms method.
         """
         print('+- Area --+- # Fault PVs -+- # App PVs -+- # LN PVs -+')
-        for key, value in self.alarm_info.items():
+        for key, value in list(self.alarm_info.items()):
             ln_pvs = 0
             if 'link_nodes' in value:
-                for ln, pvs in value['link_nodes'].items():
+                for ln, pvs in list(value['link_nodes'].items()):
                     ln_pvs += len(pvs)
 
             sys.stdout.write('| {0: >7} |      {1: >3}      |    {2: >3}      |   {2: > 3}      |'.\

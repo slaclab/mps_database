@@ -182,13 +182,13 @@ session = mps.session
 try:
   appCard = session.query(models.ApplicationCard).filter(models.ApplicationCard.id==id).one()
 except exc.SQLAlchemyError:
-  print("ERROR: no application card with id " + str(id) + " found. Exiting...")
+  print(("ERROR: no application card with id " + str(id) + " found. Exiting..."))
   session.close()
   exit(-1)
 
 if len(appCard.analog_channels) == 0:
-  print("ERROR: no analog channels defined for application card " + str(id) + " (name=" + \
-      appCard.name + ", description=" + appCard.description + "). Exiting...")
+  print(("ERROR: no analog channels defined for application card " + str(id) + " (name=" + \
+      appCard.name + ", description=" + appCard.description + "). Exiting..."))
   session.close()
   exit(-1)
 

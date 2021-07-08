@@ -193,7 +193,7 @@ def export(session, file, node):
         if (d.card_id in card_ids):
           file.write('"{0}"->'.format(d.name))
       except:
-        print('ERROR: Failed to find card for device {0} {1}'.format(d.name,d.card_id))
+        print(('ERROR: Failed to find card for device {0} {1}'.format(d.name,d.card_id)))
   file.write('END}\n')
 
   # write device information
@@ -224,8 +224,8 @@ def export(session, file, node):
               if len(d.inputs) > 1:
                 channel = channel + ","
             except:
-              print('ERROR: Failed to find analog channel for device (name={0}, channel_id={1}'.\
-                  format(d.name, d.channel_id))
+              print(('ERROR: Failed to find analog channel for device (name={0}, channel_id={1}'.\
+                  format(d.name, d.channel_id)))
           if len(d.inputs) > 1:
             channel = channel[:-1]
 
@@ -233,8 +233,8 @@ def export(session, file, node):
           try:
             ch = session.query(models.AnalogChannel).filter(models.AnalogChannel.id==d.channel_id).one()
           except:
-            print('ERROR: Failed to find analog channel for device (name={0}, channel_id={1}'.\
-                format(d.name, d.channel_id))
+            print(('ERROR: Failed to find analog channel for device (name={0}, channel_id={1}'.\
+                format(d.name, d.channel_id)))
           else:
             channel = ch.number
         else:
@@ -294,7 +294,7 @@ output_dir = './'
 if (args.output):
   output_dir = args.output
   if (not os.path.isdir(output_dir)):
-    print('ERROR: Invalid output directory {0}'.format(output_dir))
+    print(('ERROR: Invalid output directory {0}'.format(output_dir)))
     exit(-1)
 
 if (args.full):
@@ -316,7 +316,7 @@ if (args.ln):
       found = True
 
   if (not found):
-    print('ERROR: Failed to find link node named \"{0}\"'.format(args.ln))
+    print(('ERROR: Failed to find link node named \"{0}\"'.format(args.ln)))
     exit(-1)
 
   dot_file = open('{0}/{1}.dot'.format(output_dir, args.ln), "w")
@@ -327,11 +327,11 @@ if (args.ln):
 #  os.system(cmd)
 else:
   if (verbose):
-    print('INFO: Generating maps for {0} link nodes'.format(len(link_nodes)))
+    print(('INFO: Generating maps for {0} link nodes'.format(len(link_nodes))))
   for ln in link_nodes:
     ln_name = ln.get_name()
     if (verbose):
-      print(' * {0}'.format(ln_name))
+      print((' * {0}'.format(ln_name)))
     dot_file = open('{0}/{1}.dot'.format(output_dir,ln_name), "w")
     export(session, dot_file, ln_name)
     exportPDF('{0}/{1}'.format(output_dir,ln_name))

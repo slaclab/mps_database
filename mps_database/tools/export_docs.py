@@ -281,7 +281,7 @@ class Exporter:
 
   def writeAnalogFault(self, fault, device):
     if (self.verbose):
-      print('INFO: Analog fault {} for device {}'.format(fault.name, device.name))
+      print(('INFO: Analog fault {} for device {}'.format(fault.name, device.name)))
 
     num_bits = 0
 
@@ -305,7 +305,7 @@ class Exporter:
     elif ("I3" in fault.name):
       integratorShift = 24
     else:
-      print("ERROR: Can't recognize fault name {0}".format(fault.name))
+      print(("ERROR: Can't recognize fault name {0}".format(fault.name)))
       exit(-1)
 
     for state in fault.states:
@@ -506,8 +506,8 @@ class Exporter:
     self.docbook.openSection('{0} Fault'.format(fault.name),
                              'fault.{}.{}.{}'.format(fault.id, fault_input.id, device.id))
     if (self.verbose):
-      print('INFO: {} Fault (id={}, fault_input_id={}, device={}, inputs={})'.\
-          format(fault.name, fault.id, fault_input.id, device.name, len(fault.inputs)))
+      print(('INFO: {} Fault (id={}, fault_input_id={}, device={}, inputs={})'.\
+          format(fault.name, fault.id, fault_input.id, device.name, len(fault.inputs))))
 
     one_input = True
     for inp in fault.inputs:
@@ -537,7 +537,7 @@ class Exporter:
   def writeDeviceFaults(self, device):
     self.docbook.openSection('{0} Faults'.format(device.name))
     if (self.verbose):
-      print('INFO: {} Faults'.format(device.name))
+      print(('INFO: {} Faults'.format(device.name)))
 
     cols=[{'name':'c1', 'width':'0.25*'},
           {'name':'c2', 'width':'0.45*'},
@@ -562,7 +562,7 @@ class Exporter:
     self.docbook.table(table_name, cols, header, rows, table_id)
 
     if (self.verbose):
-      print('INFO: {} device fault outputs found'.format(len(device.fault_outputs)))
+      print(('INFO: {} device fault outputs found'.format(len(device.fault_outputs))))
 
     fault_ids = []
     for fault_input in device.fault_outputs:
@@ -835,8 +835,8 @@ class Exporter:
       digital = False
     else:
       if (False):
-        print('WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
-            format(card.name, card.crate.location, card.slot_number, card.amc))
+        print(('WARN: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}"'.\
+            format(card.name, card.crate.location, card.slot_number, card.amc)))
 #      print 'ERROR: no digital or analog channels found for card "name={0}", "location={1}", "slot={2}", "amc={3}" can\'t proceed.'.\
 #          format(card.name, card.crate.location, card.slot_number, card.amc)
 #      card.show()
@@ -1255,7 +1255,7 @@ class Exporter:
       link_nodes = self.session.query(models.LinkNode).all()
       link_node = [x for x in link_nodes if x.get_name() == linkNode]
       if (not link_node):
-        print('ERROR: link node "{}" not found'.format(linkNode))
+        print(('ERROR: link node "{}" not found'.format(linkNode)))
         exit(-1)
       link_node=link_node[0]
     
@@ -1327,7 +1327,7 @@ output_dir = './'
 if args.output:
   output_dir = args.output
   if (not os.path.isdir(output_dir)):
-    print('ERROR: Invalid output directory {0}'.format(output_dir))
+    print(('ERROR: Invalid output directory {0}'.format(output_dir)))
     exit(-1)
 
 e = Exporter(args.database[0].name, #args.checkout, cards_only, devices_only, checkout_only,

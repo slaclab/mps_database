@@ -47,7 +47,7 @@ class DatabaseImporter:
 
   def add_crates(self, file_name):
     if self.verbose:
-      print("Adding crates... {0}".format(file_name))
+      print(("Adding crates... {0}".format(file_name)))
     f = open(file_name)
 
     line = f.readline().strip()
@@ -108,12 +108,12 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
     if self.verbose:
-      print("Done: Adding crates... {0}".format(file_name))
+      print(("Done: Adding crates... {0}".format(file_name)))
 
 
   def add_app_types(self, file_name):
     if self.verbose:
-      print("Adding Application Types... {0}".format(file_name))
+      print(("Adding Application Types... {0}".format(file_name)))
     f = open(file_name)
 
     line = f.readline().strip()
@@ -146,7 +146,7 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
     if self.verbose:
-      print("Done: Adding Application Types... {0}".format(file_name))
+      print(("Done: Adding Application Types... {0}".format(file_name)))
 
   def find_app_link_node(self, crate, slot):
     """
@@ -169,7 +169,7 @@ class DatabaseImporter:
 
   def add_cards(self, file_name):
     if self.verbose:
-      print("Adding Application Cards... {0}".format(file_name))
+      print(("Adding Application Cards... {0}".format(file_name)))
     f = open(file_name)
 
     line = f.readline().strip()
@@ -225,7 +225,7 @@ class DatabaseImporter:
     self.session.commit()
     f.close()
     if self.verbose:
-      print("Done: Adding Application Cards... {0}".format(file_name))
+      print(("Done: Adding Application Cards... {0}".format(file_name)))
 
   def add_device_types(self, file_name):
     f = open(file_name)
@@ -492,9 +492,9 @@ class DatabaseImporter:
         mitigation[mitigation_info['device_location']][mitigation_info['state_name']]=mitigation_info
 
         if self.verbose:
-          print("  + {}: state {}; \"{}\"".format(mitigation_info['device_location'],
+          print(("  + {}: state {}; \"{}\"".format(mitigation_info['device_location'],
                                                   mitigation_info['state_name'],
-                                                  mitigation_info['fault_description']))
+                                                  mitigation_info['fault_description'])))
 
     f.close()
     
@@ -610,7 +610,7 @@ class DatabaseImporter:
               #            print '{0}, {1}:{2}, {3}:{4}'.format(cond.name, cond_device.name, cond_device.z_location, device.name, device.z_location)
               ignore_condition = models.IgnoreCondition(condition=cond, analog_device=device)    
         except:
-          print('WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location))
+          print(('WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location)))
 
 
   def add_analog_device(self, directory, card_name, add_ignore=False):
@@ -715,11 +715,11 @@ class DatabaseImporter:
         cab_num = "N/A"
         off = 0
         slo = 1
-        if device_info.has_key('cable_#'):
+        if 'cable_#' in device_info:
           cab_num = device_info['cable_#']
-        if device_info.has_key('offset'):
+        if 'offset' in device_info:
           off = device_info['offset']
-        if device_info.has_key('slope'):
+        if 'slope' in device_info:
           slo = device_info['slope']
         device = models.AnalogDevice(name=device_info['device'],
                                      device_type=device_type,
@@ -735,7 +735,7 @@ class DatabaseImporter:
                                      offset=off)
  
         if (self.verbose):
-          print('Analog Channel: ' + device_info['device'])
+          print(('Analog Channel: ' + device_info['device']))
 
         self.session.add(device)
         self.session.commit()
@@ -859,7 +859,7 @@ class DatabaseImporter:
   # DigitalChannels.csv
   # Mitigation.csv
   def add_digital_device(self, directory, card_name="Digital Card"):
-    print('Adding ' + directory)
+    print(('Adding ' + directory))
 
     # Virtual Card means it is a Digital Card, but signals must be 
     # mapped to inputs 32 to 47 (lower 32 inputs are digital inputs
@@ -892,7 +892,7 @@ class DatabaseImporter:
       try:
         f = open(file_name)
       except:
-        print('ERROR: No file found ({0})'.format(file_name))
+        print(('ERROR: No file found ({0})'.format(file_name)))
         return
 
 
@@ -1010,7 +1010,7 @@ class DatabaseImporter:
                                         evaluation=evaluation)
 
         if (self.verbose):
-          print('  Adding device {0}'.format(device_info['device']))
+          print(('  Adding device {0}'.format(device_info['device'])))
         self.session.add(device)
         self.session.commit()
         self.session.refresh(device)
@@ -1074,11 +1074,11 @@ class DatabaseImporter:
           # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
           for k in mitigation:
             if self.verbose:
-              print('  + Mitigation {0}'.format(k))
+              print(('  + Mitigation {0}'.format(k)))
             if device_info['mitigation'] == k:
               for m in mitigation[device_info['mitigation']]:
                 if self.verbose:
-                  print('   + {0}'.format(m))
+                  print(('   + {0}'.format(m)))
                 fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
                 self.session.add(fault_state)
                 self.session.commit()

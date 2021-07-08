@@ -104,7 +104,7 @@ class ThresholdManager:
     else:
       digital_devices = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==dev_id).all()
       if (len(digital_devices)==0):
-        print('ERROR: Device not found (invalid device id {0})'.format(dev_id))
+        print(('ERROR: Device not found (invalid device id {0})'.format(dev_id)))
       return False
 
   def check_device(self, dev_id, dev_name):
@@ -113,7 +113,7 @@ class ThresholdManager:
         d = self.session.query(models.Device).filter(models.Device.name==dev_name).one()
         dev_id = d.id
       except:
-        print('ERROR: Cannot find device "{0}"'.format(dev_name))
+        print(('ERROR: Cannot find device "{0}"'.format(dev_name)))
         return False
 
     if (self.is_analog(dev_id)):
@@ -121,12 +121,12 @@ class ThresholdManager:
         rt_d = self.rt_session.query(runtime.Device).filter(runtime.Device.id==dev_id).one()
         d = self.session.query(models.Device).filter(models.Device.id==dev_id).one()
       except:
-        print('ERROR: Cannot find device "{0}"'.format(dev_id))
+        print(('ERROR: Cannot find device "{0}"'.format(dev_id)))
         return False
 
       if (rt_d.mpsdb_name != d.name):
-        print('ERROR: Device names do not match in config ({0}) and runtime databases ({1})'.\
-            format(d.name, rt_d.mpsdb_name))
+        print(('ERROR: Device names do not match in config ({0}) and runtime databases ({1})'.\
+            format(d.name, rt_d.mpsdb_name)))
         return False
 
       self.is_bpm = False

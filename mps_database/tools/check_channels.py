@@ -23,7 +23,7 @@ def countDeviceTypes(t, session):
 
 def count(session):
   devices=session.query(models.Device).all()
-  print('Total devices: {0}'.format(len(devices)))
+  print(('Total devices: {0}'.format(len(devices))))
   types=session.query(models.DeviceType).all()
   typeWithoutDevices = False
   for t in types:
@@ -44,11 +44,11 @@ def checkAnalogChannels(session):
 
     # Check if channel number is valid (i.e. does not exceed number of supported channels)
     if c.number > analogDevice.card.type.analog_channel_count-1:
-      print('ERROR: invalid channel number assigned to device {0} in card id {1}, channel {2}'.\
-          format(analogDevice.name, analogDevice.card_id, c.number))
-      print('       [crate {0}, slot {1}, num channels {2}]'.\
+      print(('ERROR: invalid channel number assigned to device {0} in card id {1}, channel {2}'.\
+          format(analogDevice.name, analogDevice.card_id, c.number)))
+      print(('       [crate {0}, slot {1}, num channels {2}]'.\
           format(analogDevice.card.crate.get_name(), analogDevice.card.slot_number,
-                 analogDevice.card.type.analog_channel_count))
+                 analogDevice.card.type.analog_channel_count)))
 
     if not c.card_id in list(card.keys()):
       card[c.card_id]={}
@@ -57,10 +57,10 @@ def checkAnalogChannels(session):
       if c.number in list(card[c.card_id].keys()):
         otherChannel=session.query(models.AnalogChannel).filter(models.AnalogChannel.id==card[c.card_id][c.number]).one()
         otherAnalogDevice=session.query(models.AnalogDevice).filter(models.AnalogDevice.channel_id==card[c.card_id][c.number]).one()
-        print('ERROR: channel {0} of card id {1} (crate {2}, slot {3}) assigned to both channels {4} ({5}) and {6} ({7})'.\
+        print(('ERROR: channel {0} of card id {1} (crate {2}, slot {3}) assigned to both channels {4} ({5}) and {6} ({7})'.\
             format(c.number, c.card_id, c.card.crate.get_name(), c.card.slot_number,
                    otherChannel.name, otherAnalogDevice.name,
-                   c.name, analogDevice.name))
+                   c.name, analogDevice.name)))
         error=True
       else:
         card[c.card_id][c.number]=c.id
@@ -81,11 +81,11 @@ def checkDigitalChannels(session):
 
     # Check if channel number is valid (i.e. does not exceed number of supported channels)
     if c.number > deviceInput.channel.card.type.digital_channel_count-1:
-      print('ERROR: invalid channel number assigned to device {0} in card id {1}, channel {2}'.\
-          format(deviceInput.channel.name, deviceInput.channel.card_id, c.number))
-      print('       [crate {0}, slot {1}, num channels {2}]'.\
+      print(('ERROR: invalid channel number assigned to device {0} in card id {1}, channel {2}'.\
+          format(deviceInput.channel.name, deviceInput.channel.card_id, c.number)))
+      print(('       [crate {0}, slot {1}, num channels {2}]'.\
           format(deviceInput.channel.card.crate.get_name(), deviceInput.channel.card.slot_number,
-                 deviceInput.channel.card.type.digital_channel_count))
+                 deviceInput.channel.card.type.digital_channel_count)))
 
     if not c.card_id in list(card.keys()):
       card[c.card_id]={}
@@ -96,10 +96,10 @@ def checkDigitalChannels(session):
             filter(models.DigitalChannel.id==card[c.card_id][c.number]).one()
         otherDeviceInput=session.query(models.DeviceInput).\
             filter(models.DeviceInput.channel_id==card[c.card_id][c.number]).one()
-        print('ERROR: channel {0} of card id {1} (crate {2}, slot {3}) assigned to both channels {4} ({5}) and {6} ({7})'.\
+        print(('ERROR: channel {0} of card id {1} (crate {2}, slot {3}) assigned to both channels {4} ({5}) and {6} ({7})'.\
             format(c.number, c.card_id, c.card.crate.get_name(), c.card.slot_number,
                    otherChannel.name, otherDeviceInput.digital_device.name,
-                   c.name, deviceInput.digital_device.name))
+                   c.name, deviceInput.digital_device.name)))
         error=True
       else:
         card[c.card_id][c.number]=c.id
@@ -108,11 +108,11 @@ def checkDigitalChannels(session):
     # num_inputs/monitored_pvs is correct
     if c.num_inputs > 0:
       if (c.num_inputs != len(c.monitored_pvs.split(';'))):
-        print('ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
-            format(c.number, c.card_id, c.num_inputs, len(c.monitored_pvs.split(';'))))
+        print(('ERROR: channel {0} of card id {1} number of PV inputs ({2}) does not match with the number of PVs listed ({3}).'.\
+            format(c.number, c.card_id, c.num_inputs, len(c.monitored_pvs.split(';')))))
         print('       PVs should be separated by semi-colons. This are the PVs found:')
         for s in c.monitored_pvs.split(';'):
-          print('       - \'{0}\''.format(s.strip()))
+          print(('       - \'{0}\''.format(s.strip())))
         error=True
         softError=True
 
@@ -130,16 +130,16 @@ def checkLinkNodes(session):
     for ln2 in link_nodes:
       if (ln.get_name() == ln2.get_name() and
           ln.id != ln2.id):
-        print('ERROR: duplicate LinkNode name: {0}, found for LN ID {1} and {2}'.\
-            format(ln.get_name(), ln.id, ln2.id))
+        print(('ERROR: duplicate LinkNode name: {0}, found for LN ID {1} and {2}'.\
+            format(ln.get_name(), ln.id, ln2.id)))
 
 def checkRuntime(session, rt_session):
   devices = session.query(models.Device).all()
   rt_devices = session.query(models.Device).all()
 
   if (len(devices) != len(rt_devices)):
-    print('ERROR: Number of devices in static database ({0}) different from runtime database ({1})'.\
-        format(len(devices),len(rt_devices)))
+    print(('ERROR: Number of devices in static database ({0}) different from runtime database ({1})'.\
+        format(len(devices),len(rt_devices))))
 
   missing={}
   for d in devices:
@@ -147,7 +147,7 @@ def checkRuntime(session, rt_session):
       rt_d = rt_session.query(runtime.Device).filter(runtime.Device.mpsdb_id==d.id).one()
       if (rt_d.mpsdb_name != d.name):
         print('ERROR: Found device with same id, but different names in static/runtime databases')
-        print('       id={0}, static name={1}, runtime name={2}'.format(d.id, d.name, rt_d.mpsdb_name))
+        print(('       id={0}, static name={1}, runtime name={2}'.format(d.id, d.name, rt_d.mpsdb_name)))
 
       # check if there are threshold table entries
       # *not implemented*

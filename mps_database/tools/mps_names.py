@@ -136,7 +136,7 @@ class MpsName:
         is_digital = False
 
         if len(fault.inputs) <= 0:
-            print('ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id))
+            print(('ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id)))
             return None
 
 #        print 'len: {0}'.format(len(fault.inputs))
@@ -158,7 +158,7 @@ class MpsName:
                     try:
                         device = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==fault_input.device_id).one()
                     except:
-                        print("Bonkers, device " + str(fault_input.device_id) + " is not digital nor analog - what?!?")
+                        print(("Bonkers, device " + str(fault_input.device_id) + " is not digital nor analog - what?!?"))
                         #print "Bonkers, device " + str(fault_input.name) + " is not digital nor analog - what?!?"
                         
         if is_digital:

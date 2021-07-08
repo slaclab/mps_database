@@ -26,7 +26,7 @@ def dumpDeviceInputPVs(mpsName, pvFile):
   deviceInputs = session.query(models.DeviceInput).all()
   pvFile.write("# Channel Name | Crate Number | Card Number | Channel Number | PV\n")
   for device in deviceInputs:
-    print(mpsName.getDeviceInputName(device))
+    print((mpsName.getDeviceInputName(device)))
     pvFile.write(device.channel.name + "|" +
                  str(device.channel.card.crate.number) + "|" +
                  str(device.channel.card.number) + "|" +
@@ -36,7 +36,7 @@ def dumpDeviceInputPVs(mpsName, pvFile):
 def dumpAnalogDeviceBasePVs(mpsName, pvFile):
   analogDevices = session.query(models.AnalogDevice).all()
   for device in analogDevices:
-    print(mpsName.getAnalogDeviceName(device))
+    print((mpsName.getAnalogDeviceName(device)))
     pvFile.write(mpsName.getAnalogDeviceName(device) + "\n")
 
 def dumpAnalogDevicePVs(mpsName, pvFile):
@@ -48,7 +48,7 @@ def dumpAnalogDevicePVs(mpsName, pvFile):
       for fa in faults:
         faultStates = session.query(models.FaultState).filter(models.FaultState.fault_id==fa.id).all()
         for state in faultStates:
-          print(mpsName.getAnalogDeviceName(device) + "_" + state.device_state.name)
+          print((mpsName.getAnalogDeviceName(device) + "_" + state.device_state.name))
           pvFile.write(device.name + " " + state.device_state.name + "|" +
                        str(device.channel.card.crate.number) + "|" +
                        str(device.channel.card.number) + "|" +

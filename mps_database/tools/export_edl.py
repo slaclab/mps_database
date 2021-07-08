@@ -609,11 +609,11 @@ def generate_link_node_EDL(edl_file, template_file, link_node, ln_macros, verbos
 
 def create_link_node_directories(link_node_dir, link_nodes, mps_name):
   if not os.path.isdir(link_node_dir):
-    print('INFO: {0} directory for link node files does not exist, trying to create it'.format(link_node_dir))
+    print(('INFO: {0} directory for link node files does not exist, trying to create it'.format(link_node_dir)))
     try:
       os.mkdir(link_node_dir)
     except:
-      print('ERROR: Failed to create {0} directory'.format(link_node_dir))
+      print(('ERROR: Failed to create {0} directory'.format(link_node_dir)))
       exit(-1)
 
   for ln in link_nodes:
@@ -683,11 +683,11 @@ if (args.link_nodes):
   if (args.link_node):
     link_node = args.link_node
     if (len([x for x in link_nodes if x.get_name() == link_node]) != 1):
-      print('ERROR: Can\'t find sioc named {0}'.format(link_node))
+      print(('ERROR: Can\'t find sioc named {0}'.format(link_node)))
       exit(0)
     else:
       link_nodes = [x for x in link_nodes if x.get_name() == link_node]
-      print('INFO: Producing screens for SIOC {0} only'.format(link_node))
+      print(('INFO: Producing screens for SIOC {0} only'.format(link_node)))
 
 if (args.device_inputs_template):
   # Generate one edl file per link node

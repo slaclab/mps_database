@@ -3,8 +3,8 @@
 from mps_database.mps_config import MPSConfig, models
 from mps_database.tools.mps_names import MpsName
 from sqlalchemy import func, exc
-from mps_app_reader import MpsAppReader
-from docbook import DocBook
+from .mps_app_reader import MpsAppReader
+from .docbook import DocBook
 from collections import OrderedDict
 import os
 import sys
@@ -79,7 +79,7 @@ class Exporter(MpsAppReader):
       slot_app_id = 'N/A'
       slot_description = "Not Installed"
       slot = slot+1
-      installed =  ln['slots'].keys()
+      installed =  list(ln['slots'].keys())
       if slot in installed:
         slot_type = '{0}'.format(ln['slots'][slot]['type'])
         slot_app_id = '{0}'.format(ln['slots'][slot]['app_id'])
@@ -124,8 +124,8 @@ class Exporter(MpsAppReader):
     self.docbook.closeSection()
 
   def writeLinkNodeGroup(self, ln_group):
-    filtered_link_nodes = {key: val for (key,val) in self.link_nodes.items() if val['group'] == ln_group and val['analog_slot'] == 2}
-    sorted_filtered_link_nodes = OrderedDict(sorted(filtered_link_nodes.items(),key=lambda node: node[1]['lc1_node_id']))
+    filtered_link_nodes = {key: val for (key,val) in list(self.link_nodes.items()) if val['group'] == ln_group and val['analog_slot'] == 2}
+    sorted_filtered_link_nodes = OrderedDict(sorted(list(filtered_link_nodes.items()),key=lambda node: node[1]['lc1_node_id']))
     header = 'Link Node Group {0}'.format(ln_group)
     self.docbook.openSection(header)
     for ln in sorted_filtered_link_nodes:
@@ -134,7 +134,7 @@ class Exporter(MpsAppReader):
 
   def writeLinkNodeGroups(self):
     groups = 0
-    for (key,val) in self.link_nodes.items():
+    for (key,val) in list(self.link_nodes.items()):
       if val['group'] > groups:
         groups = val['group']
     for ln_group in range(groups):
@@ -155,7 +155,7 @@ class Exporter(MpsAppReader):
             {'name':'Cable', 'namest':None, 'nameend':None}]
     table_name = 'LN {0} Cable Report: {0}'.format(ln['lc1_node_id'],ln['physical'])
     table_id = '{0}_cables'.format(ln['physical'])
-    installed = ln['slots'].keys()
+    installed = list(ln['slots'].keys())
     for slot in range(7):
       channel_lists = []
       if slot in installed:
@@ -193,7 +193,7 @@ class Exporter(MpsAppReader):
             {'name':'CN', 'namest':None, 'nameend':None}]
     table_name = 'LN {0} Analog Inputs: {1}'.format(ln['lc1_node_id'],ln['physical'])
     table_id = 'analog_inputs_{0}'.format(ln['physical'])
-    installed =  ln['slots'].keys()
+    installed =  list(ln['slots'].keys())
     for slot in range(7):
       channel_lists = []
       if slot in installed:
@@ -230,7 +230,7 @@ class Exporter(MpsAppReader):
             {'name':'CN', 'namest':None, 'nameend':None}]
     table_name = 'LN {0} Digital Inputs: {1}'.format(ln['lc1_node_id'],ln['physical'])
     table_id = 'digital_inputs_{0}'.format(ln['physical'])
-    installed =  ln['slots'].keys()
+    installed =  list(ln['slots'].keys())
     for slot in range(7):
       channel_lists = []
       if slot in installed:
@@ -290,7 +290,7 @@ output_dir = '.'
 if args.output:
   output_dir = args.output
   if (not os.path.isdir(output_dir)):
-    print 'ERROR: Invalid output directory {0}'.format(output_dir)
+    print('ERROR: Invalid output directory {0}'.format(output_dir))
     exit(-1)
 
 doc_name = args.database[0].name.split('/')[len(args.database[0].name.split('/'))-1].split('.')[0]

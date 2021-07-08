@@ -5,9 +5,14 @@ venv/
 *SAVE
 mps_database/temporary_testing*
 output/*
+
+
 # Mac Specific
 .DS_Store
 
 
 # Pip Packaging
 *.egg-info
+
+# Backups
+*.bak

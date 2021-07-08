@@ -3,7 +3,7 @@
 from mps_database.mps_config import MPSConfig, models
 from mps_database.tools.mps_names import MpsName
 from sqlalchemy import func, exc
-from mps_app_reader import MpsAppReader
+from .mps_app_reader import MpsAppReader
 import argparse
 import os
 import errno
@@ -35,7 +35,7 @@ def create_dir(path, clean=False, debug=False):
 
     if clean and dir_exist:
         if debug:
-            print("Directory '{}' exists. Removing it...".format(dir_name))
+            print(("Directory '{}' exists. Removing it...".format(dir_name)))
 
         shutil.rmtree(dir_name, ignore_errors=True)
         dir_exist = False
@@ -43,7 +43,7 @@ def create_dir(path, clean=False, debug=False):
 
     if not dir_exist:
         if debug:
-            print("Directory '{}' does not exist. Creating it...".format(dir_name))
+            print(("Directory '{}' does not exist. Creating it...".format(dir_name)))
 
         try:
             os.makedirs(dir_name)
@@ -194,7 +194,7 @@ class MpsAppExporter(MpsAppReader):
         elif app['central_node'] in [1]:
           self.__write_app_db(path=self.cn1_path, macros=macros)
         for device in app['devices']:
-          for key, fault in device['faults'].items():    
+          for key, fault in list(device['faults'].items()):    
             macros = { 'P':"{0}:{1}".format(device['prefix'],fault['name']),
                        'ID':'{0}'.format(device['db_id']),
                        'INT':'{0}'.format(fault['integrators'][0]) }
@@ -361,7 +361,7 @@ class MpsAppExporter(MpsAppReader):
         substituted by the respective values.
         """
         #print macros.items()
-        for k, v in macros.items():
+        for k, v in list(macros.items()):
             text = re.sub(r'\$\(({key}|{key},[^)]*)\)'.format(key=k),v, text)
 
         return text
@@ -417,7 +417,7 @@ if __name__ == "__main__":
     app_id = args.app_id
     clean = True
     if app_id != None:
-        print ('Exporting databases for AppId={}'.format(app_id))
+        print(('Exporting databases for AppId={}'.format(app_id)))
         clean = False
 
     # Check formatting of the destination path
@@ -432,7 +432,7 @@ if __name__ == "__main__":
 
         # Check is the template path exist
         if not os.path.exists(template_path):
-            print("EPICS DB template directory '{}' not found.".format(template_path))
+            print(("EPICS DB template directory '{}' not found.".format(template_path)))
             exit(1)
 
     main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id=app_id,

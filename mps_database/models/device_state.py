@@ -63,5 +63,5 @@ class DeviceState(Base):
 
       if (shift >= initial_shift + 8):
         raise ValueError('Cannot find the bit position for value={0}'.format(self.value))
-        print('Cannot find the bit position for value={0}'.format(self.value))
+        print(('Cannot find the bit position for value={0}'.format(self.value)))
         return 0

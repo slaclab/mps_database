@@ -92,8 +92,8 @@ class MpsAppReader:
         if slot_info['type'] == "Digital Card":
           slot_number = 1
         if slot_number in self.link_nodes[ln_name]['slots']:
-          print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number))
+          print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
+                      format(ln_name, app_card.slot_number)))
           exit(1)
         self.link_nodes[ln_name]['slots'][slot_number] = slot_info
 
@@ -108,8 +108,8 @@ class MpsAppReader:
         if slot_info['type'] == "Digital Card":
           slot_number = 1
         if slot_number in self.link_nodes[ln_name]['slots']:
-          print('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number))
+          print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
+                      format(ln_name, app_card.slot_number)))
           exit(1)
         self.link_nodes[ln_name]['slots'][slot_number] = slot_info
 
@@ -538,7 +538,7 @@ class MpsAppReader:
                           for fault_input in fault_inputs:
                             faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
                             if (len(faults) != 1):
-                                print 'ERROR: Fault not defined'
+                                print('ERROR: Fault not defined')
                                 exit(-1)
                             fault_states = mps_db_session.query(models.FaultState).\
                                 filter(models.FaultState.fault_id==faults[0].id).all()
