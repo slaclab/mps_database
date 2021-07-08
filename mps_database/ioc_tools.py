@@ -5,7 +5,7 @@ from yaml import MappingNode, ScalarNode
 from sqlalchemy import Column, Integer, Float, String, Boolean
 
 def dump_db_to_yaml(mps_config, filename, cn=1):
-  f = file(filename,"w")
+  f = open(filename,"w")
   dump_general_to_yaml(mps_config,f)
   if cn in [1]:
     groups = [0,1,2,3,4,5,6,7,8,9,10,11]
