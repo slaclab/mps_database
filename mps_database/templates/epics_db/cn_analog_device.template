@@ -5,7 +5,7 @@
 #   - ID         : Device ID                                                     #
 #   - INT        : Integrator number                                             #
 #================================================================================#
-record(bi, "$(P)_BYPS") {
+record(bi, "$(P)_SCBYPS") {
   field(DESC, "Bypass Status")
   field(SCAN, "1 second")
   field(DTYP, "asynInt32")
@@ -16,7 +16,7 @@ record(bi, "$(P)_BYPS") {
   field(INP, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_ANALOG_DEVICE_BYPS")
 }
 
-record(longout, "$(P)_BYPD") {
+record(longout, "$(P)_SCBYPD") {
   field(DESC, "Bypass duration in seconds")
   field(DTYP, "asynInt32")
   field(VAL, "0")
@@ -24,7 +24,7 @@ record(longout, "$(P)_BYPD") {
   field(OUT, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_ANALOG_DEVICE_BYPEXPDATE")
 }
 
-record(longin, "$(P)_BYPT") {
+record(longin, "$(P)_SCBYPT") {
   field(DESC, "Remaining bypass duration is seconds")
   field(DTYP, "asynInt32")
   field(EGU, "Seconds")
@@ -34,7 +34,7 @@ record(longin, "$(P)_BYPT") {
   field(INP, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_ANALOG_DEVICE_REMAINING_BYPTIME")
 }
 
-record(stringin, "$(P)_BYP_END") {
+record(stringin, "$(P)_SCBYP_END") {
   field(DESC, "Bypass Expiration Date/Time String")
   field(DTYP, "asynOctetRead")
   field(SCAN, "1 second")
@@ -43,7 +43,7 @@ record(stringin, "$(P)_BYP_END") {
   field(INP, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_ANALOG_DEVICE_BYPEXPDATE_STRING")
 }
 
-record(bi, "$(P)_BYPV") {
+record(bi, "$(P)_SCBYPV") {
   field(DESC, "Bypass Value")
   field(SCAN, "1 second")
   field(ZNAM, "OK")

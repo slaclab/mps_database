@@ -6,7 +6,7 @@
 #   - DESC       : Fault Description                                             #
 #================================================================================#
 
-record(bi, "$(P)_FLT_MPSC") {
+record(bi, "$(P)_FLT_SCMPSC") {
   field(DESC, "$(DESC)")
   field(DTYP, "asynUInt32Digital")
   field(SCAN, "1 second")
@@ -17,7 +17,7 @@ record(bi, "$(P)_FLT_MPSC") {
   field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT")
 }
 
-record(bi, "$(P)_FLT_MPS") {
+record(bi, "$(P)_FLT_SCMPS") {
   field(DESC, "$(DESC)")
   field(DTYP, "asynUInt32Digital")
   field(SCAN, "1 second")
@@ -28,7 +28,7 @@ record(bi, "$(P)_FLT_MPS") {
   field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_LATCHED")
 }
 
-record(bo, "$(P)_FLT_UNLH") {
+record(bo, "$(P)_FLT_SCUNLH") {
   field(DESC, "$(DESC)")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_UNLATCH")
