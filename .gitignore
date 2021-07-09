@@ -4,7 +4,9 @@ venv/
 *~
 *SAVE
 mps_database/temporary_testing*
+mps_database/temp
 output/*
+
 
 
 # Mac Specific
