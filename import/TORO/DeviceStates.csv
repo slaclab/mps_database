@@ -1,2 +1,0 @@
-Name,Number,Description,Value,Mask,Fault,Fault_Description,
-CHARGE,1,Current,1,1,CHARGE,Integrator #0 Fault,

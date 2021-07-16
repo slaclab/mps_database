@@ -1,0 +1,2 @@
+Name,Number,Description,Value,Mask,Fault,Fault_Description
+I0_BACT_T0,1,Magnetic Field,1,1,I0_BACT,Integrator #0 Fault

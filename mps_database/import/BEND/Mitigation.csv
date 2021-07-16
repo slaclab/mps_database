@@ -1,0 +1,5 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,I0_BACT_T0,1,Linac Dipole Current Fault,1,-,-,-
+SXU,I0_BACT_T0,1,SXU Dipole Current Fault,-,-,1,-
+HXU,I0_BACT_T0,1,HXU Dipole Current Fault,-,-,-,1
+CLTS,I0_BACT_T0,1,CLTS Dipole Current Fault,-,-,-,-

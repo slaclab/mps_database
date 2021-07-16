@@ -1,0 +1,35 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node Faults                                   #
+# Macro description:                                                             #
+#   - P          : Device Input PV Prefix                                        #
+#   - ID         : Fault  ID                                                     #
+#   - DESC       : Fault Description                                             #
+#================================================================================#
+
+record(bi, "$(P)_FLT_SCMPSC") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "OK")
+  field(ONAM, "FAULTED")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT")
+}
+
+record(bi, "$(P)_FLT_SCMPS") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "OK")
+  field(ONAM, "FAULTED")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_LATCHED")
+}
+
+record(bo, "$(P)_FLT_SCUNLH") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_UNLATCH")
+}

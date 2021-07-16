@@ -1,0 +1,2 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,IS_FAULTED,2,Cavity Fault,1,-,-,-

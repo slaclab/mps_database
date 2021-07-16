@@ -1,4 +1,0 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,FAULT,2,Waterflow Faulted,1,-,-,-
-SXU,FAULT,2,Waterflow Faulted,-,-,1,-
-HXU,FAULT,2,Waterflow Faulted,-,-,-,1

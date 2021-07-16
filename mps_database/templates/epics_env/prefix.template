@@ -1,0 +1,6 @@
+#
+# Link Node $(MPS_LINK_NODE_LOCATION)
+# File generated automatically on $(DATE) from
+# MPS Database version: $(MPS_DB_VERSION)
+#
+epicsEnvSet("L2MPS_PREFIX", "$(P)")

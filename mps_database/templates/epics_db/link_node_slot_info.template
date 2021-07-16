@@ -1,0 +1,32 @@
+#================================================================================#
+# LCLS-II MPS PV template for MPS Slot information                               #
+# Macro description:                                                             #
+#   - P                       : MPLN prefix                                      #
+#   - SLOT                    : slot number                                      #
+#   - SLOT_NAME               : Type of application card                         #
+#   - SLOT_SPARE              : Boolean: True=Spare, False=Used                  #
+#   - SLOT_PREFIX             : MPLN Prefix for payload                          #
+#   - SLOT_DESC               : Description of what is in slot                   #
+#================================================================================#
+record(stringin, "$(P):SLOT$(SLOT)_NAME") {
+  field(DESC, "Application card in slot $(SLOT)")
+  field(VAL, "$(SLOT_NAME)")
+}
+
+record(stringin, "$(P):SLOT$(SLOT)_PVNAME") {
+  field(DESC, "PV base name for app in slot $(SLOT)")
+  field(VAL, "$(SLOT_PREFIX)")
+}
+
+record(stringin, "$(P):SLOT$(SLOT)_DESC") {
+  field(DESC, "Description of MPS in slot $(SLOT)")
+  field(VAL, "$(SLOT_DESC)")
+}
+
+record(bi, "$(P):SLOT$(SLOT)_SPARE") {
+  field(DESC, "Boolean: True=Spare,False=Used")
+  field(VAL, "$(SLOT_SPARE)")
+  field(ONAM, "True")
+  field(ZNAM, "False")
+}
+

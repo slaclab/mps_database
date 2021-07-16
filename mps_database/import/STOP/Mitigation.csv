@@ -1,0 +1,10 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,IN,2,Linac Stopper Fault,1,-,-,-
+Linac,MOVING,3,Linac Stopper Fault,1,-,-,-
+Linac,BROKEN,4,Linac Stopper Fault,1,-,-,-
+SXU,IN,2,SXU Stopper Fault,-,-,1,-
+SXU,MOVING,3,SXU Stopper Fault,-,-,1,-
+SXU,BROKEN,4,SXU Stopper Fault,-,-,1,-
+HXU,IN,2,HXU Stopper Fault,-,-,-,1
+HXU,MOVING,3,HXU Stopper Fault,-,-,-,1
+HXU,BROKEN,4,HXU Stopper Fault,-,-,-,1

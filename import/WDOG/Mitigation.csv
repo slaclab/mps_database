@@ -1,5 +1,0 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU,
-Linac,IS_FAULTED,2,Linac Magnet Fault,1,-,-,-,
-Diag0,IS_FAULTED,2,Linac Magnet Fault,-,1,-,-,
-SXU,IS_FAULTED,2,Linac Magnet Fault,-,-,1,-,
-HXU,IS_FAULTED,2,Linac Magnet Fault,-,-,-,1,

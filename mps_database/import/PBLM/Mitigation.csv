@@ -1,0 +1,25 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,I0_LOSS_T0,1,Linac PBLM Fault,1,-,-,-
+Linac,I0_LOSS_T1,2,Linac PBLM Fault,3,-,-,-
+Linac,I0_LOSS_T2,3,Linac PBLM Fault,4,-,-,-
+Linac,I0_LOSS_T3,4,Linac PBLM Fault,5,-,-,-
+Linac,I0_LOSS_T4,5,Linac PBLM Fault,6,-,-,-
+Linac,I0_LOSS_T5,6,Linac PBLM Fault,7,-,-,-
+Linac,I0_LOSS_T6,7,Linac PBLM Fault,8,-,-,-
+Linac,I0_LOSS_T7,8,Linac PBLM Fault,9,-,-,-
+SXU,I0_LOSS_T0,1,SXU PBLM Fault,-,-,1,-
+SXU,I0_LOSS_T1,2,SXU PBLM Fault,-,-,3,-
+SXU,I0_LOSS_T2,3,SXU PBLM Fault,-,-,4,-
+SXU,I0_LOSS_T3,4,SXU PBLM Fault,-,-,5,-
+SXU,I0_LOSS_T4,5,SXU PBLM Fault,-,-,6,-
+SXU,I0_LOSS_T5,6,SXU PBLM Fault,-,-,7,-
+SXU,I0_LOSS_T6,7,SXU PBLM Fault,-,-,8,-
+SXU,I0_LOSS_T7,8,SXU PBLM Fault,-,-,9,-
+HXU,I0_LOSS_T0,1,HXU PBLM Fault,-,-,-,1
+HXU,I0_LOSS_T1,2,HXU PBLM Fault,-,-,-,3
+HXU,I0_LOSS_T2,3,HXU PBLM Fault,-,-,-,4
+HXU,I0_LOSS_T3,4,HXU PBLM Fault,-,-,-,5
+HXU,I0_LOSS_T4,5,HXU PBLM Fault,-,-,-,6
+HXU,I0_LOSS_T5,6,HXU PBLM Fault,-,-,-,7
+HXU,I0_LOSS_T6,7,HXU PBLM Fault,-,-,-,8
+HXU,I0_LOSS_T7,8,HXU PBLM Fault,-,-,-,9

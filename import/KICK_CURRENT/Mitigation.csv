@@ -1,7 +1,0 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,Diag0,SXU,HXU,
-Linac,I0_T0,1,Linac Kicker Current Fault,1,-,-,-
-CLTS,I0_T0,1,CLTS Kicker Current Fault,-,-,-,-
-HXU,I0_T0,1,HXU Kicker Current Fault,-,-,-,1
-SXU,I0_T0,1,SXU Kicker Current Fault,-,-,1,-
-
-

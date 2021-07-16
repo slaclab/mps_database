@@ -1,0 +1,1495 @@
+---
+Crate:
+- id: 1
+  crate_id: 1
+  shelf_number: 1
+  num_slots: 8
+  location: "L2KA00"
+  sector: "LI00"
+  rack: "05"
+  elevation: 17
+---
+LinkNode:
+- id: 1
+  area: "gunb"
+  location: "mp01"
+  cpu: "cpu-gunb0-mp01"
+  group: !!int 'None'
+  group_link: !!int 'None'
+  group_link_destination: !!int 'None'
+  group_drawing: "None"
+  ln_type: 2
+  lcls1_id: 0
+  slot_number: 2
+  crate_id: 1
+---
+ApplicationType:
+- id: 1
+  number: 0
+  name: "Digital Card"
+  analog_channel_count: 0
+  analog_channel_size: 1
+  digital_channel_count: 32
+  digital_channel_size: 1
+  digital_out_channel_count: 2
+  digital_out_channel_size: 1
+- id: 2
+  number: 2
+  name: "AMC Analog Card"
+  analog_channel_count: 3
+  analog_channel_size: 1
+  digital_channel_count: 0
+  digital_channel_size: 1
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+- id: 3
+  number: 1
+  name: "BPM Card"
+  analog_channel_count: 2
+  analog_channel_size: 1
+  digital_channel_count: 0
+  digital_channel_size: 1
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+- id: 4
+  number: 3
+  name: "BCM Analog Card"
+  analog_channel_count: 2
+  analog_channel_size: 1
+  digital_channel_count: 0
+  digital_channel_size: 1
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+---
+ApplicationCard:
+- id: 1
+  number: 100
+  area: "GUNB"
+  slot_number: 2
+  amc: 2
+  crate_id: 1
+  type_id: 1
+  global_id: 2
+  name: "EIC Digital Card"
+  description: "EIC Digital Input/Output"
+  link_node_id: 1
+- id: 2
+  number: 104
+  area: "GUNB"
+  slot_number: 2
+  amc: 1
+  crate_id: 1
+  type_id: 2
+  global_id: 1
+  name: "EIC Analog Inputs"
+  description: "EIC Analog Inputs"
+  link_node_id: 1
+- id: 3
+  number: 101
+  area: "GUNB"
+  slot_number: 3
+  amc: 0
+  crate_id: 1
+  type_id: 3
+  global_id: 3
+  name: "EIC BPM1B/BPM2B"
+  description: "EIC BPM Status"
+  link_node_id: 1
+- id: 4
+  number: 102
+  area: "GUNB"
+  slot_number: 7
+  amc: 0
+  crate_id: 1
+  type_id: 4
+  global_id: 6
+  name: "EIC IM01B"
+  description: "EIC IM Status"
+  link_node_id: 1
+- id: 5
+  number: 103
+  area: "GUNB"
+  slot_number: 6
+  amc: 0
+  crate_id: 1
+  type_id: 4
+  global_id: 5
+  name: "EIC FC01"
+  description: "EIC Faraday Cup Status"
+  link_node_id: 1
+---
+DigitalChannel:
+- id: 1
+  number: 0
+  name: "IN_LMTSW"
+  z_name: "NOT_IN"
+  o_name: "IS_IN"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 2
+  number: 1
+  name: "OUT_LMTSW"
+  z_name: "NOT_OUT"
+  o_name: "IS_OUT"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 3
+  number: 2
+  name: "TEMP_SUM"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 4
+  number: 3
+  name: "TEMP_SUM"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 5
+  number: 4
+  name: "FLOW_SW"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 6
+  number: 5
+  name: "TEMP_SUM"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 7
+  number: 6
+  name: "FLOW_SW"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 8
+  number: 7
+  name: "STATUS"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 9
+  number: 8
+  name: "STATUS"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 10
+  number: 9
+  name: "OPEN_STATUS"
+  z_name: "NOT_OPEN"
+  o_name: "OPEN"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 11
+  number: 10
+  name: "CLOSED_STATUS"
+  z_name: "NOT_CLOSED"
+  o_name: "CLOSED"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 12
+  number: 23
+  name: "TEMPBD_SUM"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 13
+  number: 24
+  name: "FLOW_SW"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 14
+  number: 21
+  name: "STATUS"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 15
+  number: 25
+  name: "TEMP_SUM"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 16
+  number: 26
+  name: "TEMPWG_SUM"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+- id: 17
+  number: 27
+  name: "FLOW_SW"
+  z_name: "IS_FAULTED"
+  o_name: "IS_OK"
+  num_inputs: 0
+  monitored_pvs: ""
+  alarm_state: 0
+  debounce: 10
+  card_id: 1
+---
+AnalogChannel:
+- id: 1
+  number: 0
+  name: "SOL1B Current"
+  card_id: 2
+- id: 2
+  number: 1
+  name: "SOL2B Current"
+  card_id: 2
+- id: 3
+  number: 0
+  name: "IM01B Charge"
+  card_id: 4
+- id: 4
+  number: 0
+  name: "Faraday Cup Current"
+  card_id: 5
+- id: 5
+  number: 0
+  name: "BPM1B"
+  card_id: 3
+- id: 6
+  number: 1
+  name: "BPM2B"
+  card_id: 3
+---
+DeviceType:
+- id: 1
+  name: "SHUT"
+  description: "Mechanical Laser Shutter"
+  num_integrators: 0
+- id: 2
+  name: "AOM"
+  description: "AOM Laser Shutter"
+  num_integrators: 0
+- id: 3
+  name: "PROF"
+  description: "Profile Monitor"
+  num_integrators: 0
+- id: 4
+  name: "TEMP"
+  description: "Temperature Status"
+  num_integrators: 0
+- id: 5
+  name: "FLOW"
+  description: "Waterflow Status"
+  num_integrators: 0
+- id: 6
+  name: "VVPG"
+  description: "Vacuum Valve Pneumatic Status"
+  num_integrators: 0
+- id: 7
+  name: "ACCL"
+  description: "Buncher"
+  num_integrators: 0
+- id: 8
+  name: "GUN"
+  description: "Gun Device"
+  num_integrators: 0
+- id: 9
+  name: "SHUT"
+  description: "Laser Shutter Status"
+  num_integrators: 0
+- id: 10
+  name: "SOLN"
+  description: "Solenoid"
+  num_integrators: 1
+- id: 11
+  name: "FARC"
+  description: "Faraday Cup"
+  num_integrators: 1
+- id: 12
+  name: "TORO"
+  description: "Toroid"
+  num_integrators: 2
+- id: 13
+  name: "BPMS"
+  description: "Beam Position Monitor"
+  num_integrators: 3
+- id: 14
+  name: "VVMG"
+  description: "Manual Vacuum Valve Status"
+  num_integrators: 0
+---
+DeviceState:
+- id: 1
+  name: "OUT"
+  description: "Screen Out"
+  value: 1
+  mask: 4294967295
+  device_type_id: 3
+- id: 2
+  name: "IN"
+  description: "Screen In"
+  value: 2
+  mask: 4294967295
+  device_type_id: 3
+- id: 3
+  name: "MOVING"
+  description: "Screen Moving"
+  value: 0
+  mask: 4294967295
+  device_type_id: 3
+- id: 4
+  name: "BROKEN"
+  description: "Screen Broken"
+  value: 3
+  mask: 4294967295
+  device_type_id: 3
+- id: 5
+  name: "FAULT"
+  description: "Temperature Fault"
+  value: 0
+  mask: 4294967295
+  device_type_id: 4
+- id: 6
+  name: "OK"
+  description: "Temperature Ok"
+  value: 1
+  mask: 4294967295
+  device_type_id: 4
+- id: 7
+  name: "FAULT"
+  description: "Flow Fault"
+  value: 0
+  mask: 4294967295
+  device_type_id: 5
+- id: 8
+  name: "OK"
+  description: "Flow Ok"
+  value: 1
+  mask: 4294967295
+  device_type_id: 5
+- id: 9
+  name: "CLOSED"
+  description: "Vacuum Fault"
+  value: 0
+  mask: 4294967295
+  device_type_id: 6
+- id: 10
+  name: "OPENED"
+  description: "Vacuum Ok"
+  value: 1
+  mask: 4294967295
+  device_type_id: 6
+- id: 11
+  name: "CLOSED"
+  description: "Manual Vacuum Fault"
+  value: 0
+  mask: 4294967295
+  device_type_id: 14
+- id: 12
+  name: "OPENED"
+  description: "Manual Vacuum Ok"
+  value: 1
+  mask: 4294967295
+  device_type_id: 14
+- id: 13
+  name: "MOVING"
+  description: "Shutter Moving"
+  value: 0
+  mask: 4294967295
+  device_type_id: 9
+- id: 14
+  name: "OPENED"
+  description: "Shutter Opened"
+  value: 1
+  mask: 4294967295
+  device_type_id: 9
+- id: 15
+  name: "CLOSED"
+  description: "Shutter Closed"
+  value: 2
+  mask: 4294967295
+  device_type_id: 9
+- id: 16
+  name: "BROKEN"
+  description: "Shutter Broken"
+  value: 3
+  mask: 4294967295
+  device_type_id: 9
+- id: 17
+  name: "TMIT_T0"
+  description: "TMIT Threshold0"
+  value: 1
+  mask: 1
+  device_type_id: 13
+- id: 18
+  name: "X_T0"
+  description: "X Threshold0"
+  value: 256
+  mask: 256
+  device_type_id: 13
+- id: 19
+  name: "Y_T0"
+  description: "Y Threshold0"
+  value: 65536
+  mask: 65536
+  device_type_id: 13
+- id: 20
+  name: "CHARGE"
+  description: "Toroid Charge"
+  value: 1
+  mask: 1
+  device_type_id: 12
+- id: 21
+  name: "CHARGE"
+  description: "FC Integrator 1"
+  value: 1
+  mask: 1
+  device_type_id: 11
+- id: 22
+  name: "I0_T0"
+  description: "SOL1B Integrator 1"
+  value: 1
+  mask: 1
+  device_type_id: 10
+- id: 23
+  name: "I0_T0"
+  description: "SOL2B Integrator 1"
+  value: 1
+  mask: 1
+  device_type_id: 10
+- id: 24
+  name: "DIFF"
+  description: "Toroid Charge Difference"
+  value: 256
+  mask: 256
+  device_type_id: 12
+---
+DigitalDevice:
+- id: 3
+  id: 3
+  name: "YAG01B"
+  description: "YAG01B Screen"
+  position: "753"
+  z_location: -28.0
+  area: "GUNB"
+  evaluation: 0
+  card_id: 1
+  device_type_id: 3
+  measured_device_type_id: !!int 'None'
+- id: 4
+  id: 4
+  name: "Faraday Cup Temperature"
+  description: "Faraday Cup Temperature Summary Input"
+  position: "999"
+  z_location: -20.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 4
+  measured_device_type_id: 11
+- id: 5
+  id: 5
+  name: "SOL1B Temp"
+  description: "SOL1B Temperature"
+  position: "212"
+  z_location: -32.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 4
+  measured_device_type_id: 10
+- id: 6
+  id: 6
+  name: "SOL2B Temp"
+  description: "SOL2B Temperature"
+  position: "823"
+  z_location: -27.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 4
+  measured_device_type_id: 10
+- id: 7
+  id: 7
+  name: "SOL1B/SOL2B Flow"
+  description: "SOL1B and SOL2B Waterflow Status"
+  position: "212"
+  z_location: -32.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 5
+  measured_device_type_id: 10
+- id: 8
+  id: 8
+  name: "Buncher Temp"
+  description: "Buncher Temperature"
+  position: "455"
+  z_location: -35.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 4
+  measured_device_type_id: 7
+- id: 9
+  id: 9
+  name: "Buncher Flow"
+  description: "Buncher Flow"
+  position: "455"
+  z_location: -35.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 5
+  measured_device_type_id: 7
+- id: 10
+  id: 10
+  name: "VVR01"
+  description: "Vacuum Gate Valve VVR01"
+  position: "100"
+  z_location: -35.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 6
+  measured_device_type_id: !!int 'None'
+- id: 11
+  id: 11
+  name: "VVR02"
+  description: "Vacuum Gate Valve VVR02"
+  position: "941"
+  z_location: -35.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 6
+  measured_device_type_id: !!int 'None'
+- id: 12
+  id: 12
+  name: "Mech. Shutter"
+  description: "Mechanical Shutter Status"
+  position: "100"
+  z_location: -35.0
+  area: "GUNB"
+  evaluation: 0
+  card_id: 1
+  device_type_id: 9
+  measured_device_type_id: !!int 'None'
+- id: 13
+  id: 13
+  name: "Gun Temp"
+  description: "Gun Temperature"
+  position: "100"
+  z_location: -36.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 4
+  measured_device_type_id: 8
+- id: 14
+  id: 14
+  name: "Gun Flow"
+  description: "Gun Flow"
+  position: "100"
+  z_location: -36.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 5
+  measured_device_type_id: 8
+- id: 15
+  id: 15
+  name: "VVMG02"
+  description: "Manual Vacuum Gate Valve VVMG02"
+  position: "500"
+  z_location: -35.0
+  area: "LLOK"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 14
+  measured_device_type_id: !!int 'None'
+- id: 16
+  id: 16
+  name: "Gun Waveguide Temp"
+  description: "Gun Waveguide Temperature"
+  position: "100"
+  z_location: -36.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 4
+  measured_device_type_id: 8
+- id: 17
+  id: 17
+  name: "Faraday Cup Flow"
+  description: "Faraday Cup Flow"
+  position: "999"
+  z_location: -20.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 1
+  device_type_id: 5
+  measured_device_type_id: 11
+---
+DeviceInput:
+- id: 1
+  digital_device_id: 3
+  bit_position: 1
+  auto_reset: False
+  fault_value: 1
+  channel_id: 1
+- id: 2
+  digital_device_id: 3
+  bit_position: 0
+  auto_reset: False
+  fault_value: 1
+  channel_id: 2
+- id: 3
+  digital_device_id: 5
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 3
+- id: 4
+  digital_device_id: 6
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 4
+- id: 5
+  digital_device_id: 7
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 5
+- id: 6
+  digital_device_id: 8
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 6
+- id: 7
+  digital_device_id: 9
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 7
+- id: 8
+  digital_device_id: 10
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 8
+- id: 9
+  digital_device_id: 11
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 9
+- id: 10
+  digital_device_id: 12
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 10
+- id: 11
+  digital_device_id: 12
+  bit_position: 1
+  auto_reset: False
+  fault_value: 1
+  channel_id: 11
+- id: 12
+  digital_device_id: 13
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 12
+- id: 13
+  digital_device_id: 14
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 13
+- id: 14
+  digital_device_id: 15
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 14
+- id: 15
+  digital_device_id: 4
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 15
+- id: 16
+  digital_device_id: 16
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 16
+- id: 17
+  digital_device_id: 17
+  bit_position: 0
+  auto_reset: False
+  fault_value: 0
+  channel_id: 17
+---
+Fault:
+- id: 1
+  name: "TGT"
+  description: "YAG01B Profile Monitor Screen Fault"
+- id: 2
+  name: "TEMP_SUM"
+  description: "SOL1B Temperature Fault"
+- id: 3
+  name: "TEMP_SUM"
+  description: "SOL2B Temperature Fault"
+- id: 4
+  name: "TEMP_SUM"
+  description: "Faraday Cup Temperature Fault"
+- id: 5
+  name: "VVR01"
+  description: "VVR01 Vacuum Valve Fault"
+- id: 6
+  name: "VVR02"
+  description: "VVR02 Vacuum Valve Fault"
+- id: 7
+  name: "VVMG2"
+  description: "VVMG:LLOK:500:2 Man. Vac. Valve Fault"
+- id: 8
+  name: "FLOW_SW"
+  description: "SOL1B/SOL2B Waterflow Fault"
+- id: 9
+  name: "FLOW_SW"
+  description: "Faraday Cup Waterflow Fault"
+- id: 10
+  name: "TEMP_SUM"
+  description: "Buncher Temperature Fault"
+- id: 11
+  name: "FLOW_SW"
+  description: "Buncher Waterflow Fault"
+- id: 12
+  name: "TEMPBD_SUM"
+  description: "Gun Temperature Fault"
+- id: 13
+  name: "FLOW_SW"
+  description: "Gun Waterflow Fault"
+- id: 14
+  name: "TEMPWG_SUM"
+  description: "Gun Waveguide Temperature Fault"
+- id: 15
+  name: "SHUT"
+  description: "Mechanical Shutter Status Fault"
+- id: 16
+  name: "I0"
+  description: "SOL1B Integrator #0 Fault"
+- id: 17
+  name: "I0"
+  description: "SOL2B Integrator #0 Fault"
+- id: 18
+  name: "X"
+  description: "BPM1B X Threshold Fault"
+- id: 19
+  name: "Y"
+  description: "BPM1B Y Threshold Fault"
+- id: 20
+  name: "TMIT"
+  description: "BPM1B TMIT Threshold Fault"
+- id: 21
+  name: "X"
+  description: "BPM2B X Threshold Fault"
+- id: 22
+  name: "Y"
+  description: "BPM2B Y Threshold Fault"
+- id: 23
+  name: "TMIT"
+  description: "BPM2B TMIT Threshold Fault"
+- id: 24
+  name: "CHARGE"
+  description: "IM01B Charge Fault"
+- id: 25
+  name: "DIFF"
+  description: "IM01B/BPM1B Difference Fault"
+- id: 26
+  name: "CHARGE"
+  description: "FC01 Integrator #0 Fault"
+---
+FaultInput:
+- id: 1
+  fault_id: 1
+  bit_position: 0
+  device_id: 3
+- id: 2
+  fault_id: 4
+  bit_position: 0
+  device_id: 4
+- id: 3
+  fault_id: 2
+  bit_position: 0
+  device_id: 5
+- id: 4
+  fault_id: 3
+  bit_position: 0
+  device_id: 6
+- id: 5
+  fault_id: 8
+  bit_position: 0
+  device_id: 7
+- id: 6
+  fault_id: 10
+  bit_position: 0
+  device_id: 8
+- id: 7
+  fault_id: 11
+  bit_position: 0
+  device_id: 9
+- id: 8
+  fault_id: 5
+  bit_position: 0
+  device_id: 10
+- id: 9
+  fault_id: 6
+  bit_position: 0
+  device_id: 11
+- id: 10
+  fault_id: 12
+  bit_position: 0
+  device_id: 13
+- id: 11
+  fault_id: 13
+  bit_position: 0
+  device_id: 14
+- id: 12
+  fault_id: 14
+  bit_position: 0
+  device_id: 16
+- id: 13
+  fault_id: 9
+  bit_position: 0
+  device_id: 17
+- id: 14
+  fault_id: 15
+  bit_position: 0
+  device_id: 12
+- id: 15
+  fault_id: 7
+  bit_position: 0
+  device_id: 15
+- id: 16
+  fault_id: 16
+  bit_position: 0
+  device_id: 18
+- id: 17
+  fault_id: 17
+  bit_position: 0
+  device_id: 19
+- id: 18
+  fault_id: 18
+  bit_position: 0
+  device_id: 20
+- id: 19
+  fault_id: 19
+  bit_position: 0
+  device_id: 20
+- id: 20
+  fault_id: 20
+  bit_position: 0
+  device_id: 20
+- id: 21
+  fault_id: 21
+  bit_position: 0
+  device_id: 21
+- id: 22
+  fault_id: 22
+  bit_position: 0
+  device_id: 21
+- id: 23
+  fault_id: 23
+  bit_position: 0
+  device_id: 21
+- id: 24
+  fault_id: 24
+  bit_position: 0
+  device_id: 22
+- id: 25
+  fault_id: 25
+  bit_position: 0
+  device_id: 22
+- id: 26
+  fault_id: 26
+  bit_position: 0
+  device_id: 23
+---
+FaultState:
+- id: 1
+  default: False
+  fault_id: 1
+  device_state_id: 2
+- id: 2
+  default: False
+  fault_id: 1
+  device_state_id: 3
+- id: 3
+  default: False
+  fault_id: 1
+  device_state_id: 4
+- id: 4
+  default: False
+  fault_id: 4
+  device_state_id: 5
+- id: 5
+  default: False
+  fault_id: 2
+  device_state_id: 5
+- id: 6
+  default: False
+  fault_id: 3
+  device_state_id: 5
+- id: 7
+  default: False
+  fault_id: 8
+  device_state_id: 7
+- id: 8
+  default: False
+  fault_id: 10
+  device_state_id: 5
+- id: 9
+  default: False
+  fault_id: 11
+  device_state_id: 7
+- id: 10
+  default: False
+  fault_id: 5
+  device_state_id: 9
+- id: 11
+  default: False
+  fault_id: 6
+  device_state_id: 9
+- id: 12
+  default: False
+  fault_id: 12
+  device_state_id: 5
+- id: 13
+  default: False
+  fault_id: 13
+  device_state_id: 7
+- id: 14
+  default: False
+  fault_id: 14
+  device_state_id: 5
+- id: 15
+  default: False
+  fault_id: 9
+  device_state_id: 7
+- id: 16
+  default: False
+  fault_id: 15
+  device_state_id: 16
+- id: 17
+  default: False
+  fault_id: 7
+  device_state_id: 11
+- id: 18
+  default: False
+  fault_id: 16
+  device_state_id: 22
+- id: 19
+  default: False
+  fault_id: 17
+  device_state_id: 23
+- id: 20
+  default: False
+  fault_id: 18
+  device_state_id: 18
+- id: 21
+  default: False
+  fault_id: 19
+  device_state_id: 19
+- id: 22
+  default: False
+  fault_id: 20
+  device_state_id: 17
+- id: 23
+  default: False
+  fault_id: 21
+  device_state_id: 18
+- id: 24
+  default: False
+  fault_id: 22
+  device_state_id: 19
+- id: 25
+  default: False
+  fault_id: 23
+  device_state_id: 17
+- id: 26
+  default: False
+  fault_id: 24
+  device_state_id: 20
+- id: 27
+  default: False
+  fault_id: 25
+  device_state_id: 24
+- id: 28
+  default: False
+  fault_id: 26
+  device_state_id: 21
+---
+AnalogDevice:
+- id: 18
+  auto_reset: False
+  channel_id: 1
+  id: 18
+  name: "SOL1B"
+  description: "SOL1B Current"
+  position: "212"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 2
+  device_type_id: 10
+  measured_device_type_id: !!int 'None'
+- id: 19
+  auto_reset: False
+  channel_id: 2
+  id: 19
+  name: "SOL2B"
+  description: "SOL2B Current"
+  position: "823"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 2
+  device_type_id: 10
+  measured_device_type_id: !!int 'None'
+- id: 20
+  auto_reset: False
+  channel_id: 5
+  id: 20
+  name: "BPM1B"
+  description: "BPM1B"
+  position: "314"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 3
+  device_type_id: 13
+  measured_device_type_id: !!int 'None'
+- id: 21
+  auto_reset: False
+  channel_id: 6
+  id: 21
+  name: "BPM2B"
+  description: "BPM2B"
+  position: "925"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 3
+  device_type_id: 13
+  measured_device_type_id: !!int 'None'
+- id: 22
+  auto_reset: False
+  channel_id: 3
+  id: 22
+  name: "IM01B"
+  description: "Toroid, ICT Charge"
+  position: "360"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 4
+  device_type_id: 12
+  measured_device_type_id: !!int 'None'
+- id: 23
+  auto_reset: False
+  channel_id: 4
+  id: 23
+  name: "FCDG0DU"
+  description: "Faraday Cup Current"
+  position: "999"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 1
+  card_id: 5
+  device_type_id: 11
+  measured_device_type_id: !!int 'None'
+---
+MitigationDevice:
+- id: 1
+  beam_destination_id: 1
+  digital_out_channel_id: 1
+  id: 1
+  name: "MS"
+  description: "Mechanical Shutter"
+  position: "100"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 0
+  card_id: 1
+  device_type_id: 1
+  measured_device_type_id: !!int 'None'
+- id: 2
+  beam_destination_id: 2
+  digital_out_channel_id: 2
+  id: 2
+  name: "AOM"
+  description: "AOM"
+  position: "100"
+  z_location: 0.0
+  area: "GUNB"
+  evaluation: 0
+  card_id: 1
+  device_type_id: 2
+  measured_device_type_id: !!int 'None'
+---
+BeamDestination:
+- id: 1
+  name: "Linac"
+  description: "Linac destination"
+  destination_mask: 1
+- id: 2
+  name: "AOM"
+  description: "AOM"
+  destination_mask: 2
+---
+BeamClass:
+- id: 1
+  number: 0
+  name: "PC0"
+  description: "No Beam"
+  integration_window: 10
+  min_period: 0
+  total_charge: 0
+- id: 2
+  number: 1
+  name: "PC1"
+  description: "YAG Max Power"
+  integration_window: 91000
+  min_period: 91000
+  total_charge: 300
+- id: 3
+  number: 2
+  name: "PC2"
+  description: "Full Power"
+  integration_window: 910000
+  min_period: 0
+  total_charge: 300000
+---
+AllowedClass:
+- id: 1
+  fault_state_id: 1
+  beam_destination_id: 1
+  beam_class_id: 2
+- id: 2
+  fault_state_id: 2
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 3
+  fault_state_id: 3
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 4
+  fault_state_id: 4
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 5
+  fault_state_id: 5
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 6
+  fault_state_id: 6
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 7
+  fault_state_id: 7
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 8
+  fault_state_id: 8
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 9
+  fault_state_id: 9
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 10
+  fault_state_id: 10
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 11
+  fault_state_id: 11
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 12
+  fault_state_id: 16
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 13
+  fault_state_id: 12
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 14
+  fault_state_id: 13
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 15
+  fault_state_id: 17
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 16
+  fault_state_id: 14
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 17
+  fault_state_id: 15
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 18
+  fault_state_id: 1
+  beam_destination_id: 2
+  beam_class_id: 2
+- id: 19
+  fault_state_id: 2
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 20
+  fault_state_id: 3
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 21
+  fault_state_id: 4
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 22
+  fault_state_id: 5
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 23
+  fault_state_id: 6
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 24
+  fault_state_id: 7
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 25
+  fault_state_id: 8
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 26
+  fault_state_id: 9
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 27
+  fault_state_id: 10
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 28
+  fault_state_id: 11
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 29
+  fault_state_id: 16
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 30
+  fault_state_id: 12
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 31
+  fault_state_id: 13
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 32
+  fault_state_id: 17
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 33
+  fault_state_id: 14
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 34
+  fault_state_id: 15
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 35
+  fault_state_id: 18
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 36
+  fault_state_id: 18
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 37
+  fault_state_id: 19
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 38
+  fault_state_id: 19
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 39
+  fault_state_id: 20
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 40
+  fault_state_id: 20
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 41
+  fault_state_id: 21
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 42
+  fault_state_id: 21
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 43
+  fault_state_id: 22
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 44
+  fault_state_id: 22
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 45
+  fault_state_id: 23
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 46
+  fault_state_id: 23
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 47
+  fault_state_id: 24
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 48
+  fault_state_id: 24
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 49
+  fault_state_id: 25
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 50
+  fault_state_id: 25
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 51
+  fault_state_id: 26
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 52
+  fault_state_id: 26
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 53
+  fault_state_id: 27
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 54
+  fault_state_id: 27
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 55
+  fault_state_id: 28
+  beam_destination_id: 1
+  beam_class_id: 1
+- id: 56
+  fault_state_id: 28
+  beam_destination_id: 2
+  beam_class_id: 1
+---
+Condition:
+- id: 1
+  name: "YAG01B_IN"
+  description: "YAG01B target screen IN"
+  value: 1
+---
+IgnoreCondition:
+- id: 1
+  condition_id: 1
+  fault_state_id: !!int 'None'
+  analog_device_id: 19
+- id: 2
+  condition_id: 1
+  fault_state_id: !!int 'None'
+  analog_device_id: 23
+- id: 3
+  condition_id: 1
+  fault_state_id: !!int 'None'
+  analog_device_id: 21
+- id: 4
+  condition_id: 1
+  fault_state_id: 27
+  analog_device_id: 22
+---
+ConditionInput:
+- id: 1
+  bit_position: 0
+  fault_state_id: 1
+  condition_id: 1
+---
+DatabaseInfo:
+- source: mps_gun_config.db
+  date: Tue Jun 15 11:56:29 2021
+  user: b'lking'
+  md5sum: b'5cdf70c171b699a1a1ed81678529ffcc'

@@ -1,0 +1,5 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Linac,IS_FAULTED,2,Linac Manual Valve Fault,1,-,-,-
+DIAG0,IS_FAULTED,2,Diag0 Manual Valve Fault,-,1,-,-
+SXU,IS_FAULTED,2,SXU Manual Fault,-,-,1,-
+HXU,IS_FAULTED,2,HXU Manual Fault,-,-,-,1

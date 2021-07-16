@@ -1,4 +1,0 @@
-Device,Mitigation,Fault,Area,Linac_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#
-BZ0H04,Linac,all,HTR,48.535761,349,-,9,L2KA00-0615,0,N/A
-BZ11B,Linac,all,COL1,425.483005,106,-,44,L2KG02-2215,0,N/A
-BZ21B,Linac,all,EMIT2,1173.727034,121,-,71,L2KG04-2615,0,N/A

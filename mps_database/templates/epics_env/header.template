@@ -1,0 +1,1 @@
+epicsEnvSet("MPS_LINK_NODE", "$(MPS_LINK_NODE)")

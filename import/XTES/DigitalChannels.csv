@@ -1,2 +1,0 @@
-Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Debounce
-Beam Class Fault,FEE XTES,0/24V,1,IS_FAULTED,IS_OK,0,0,10

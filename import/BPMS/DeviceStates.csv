@@ -1,7 +1,0 @@
-Name,Number,Description,Value,Mask,Fault,Fault_Description,
-X_T0,1,X T0,1,1,X,X Fault,
-X_T1,2,X T1,2,2,X,X Fault,
-Y_T0,3,Y T0,256,256,Y,Y Fault,
-Y_T1,4,Y T1,512,512,Y,Y Fault,
-TMIT_T0,5,TMIT T0,65536,65536,TMIT,TMIT Fault,
-TMIT_T1,6,TMIT T1,131072,131072,TMIT,TMIT Fault,

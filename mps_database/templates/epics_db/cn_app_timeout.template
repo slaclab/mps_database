@@ -1,0 +1,19 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node Analog Devices - 1 per fault type        #
+# Macro description:                                                             #
+#   - APP_ID     : MPS APP ID                                                    #
+#   - TYPE       : App card type                                                 #
+#   - LOCA       : link node crate location                                      #
+#   - SLOT       : crate slot number                                             #
+#   - ID         : ASYN driver (database) ID                                     #
+#================================================================================#
+record(bi, "$(BASE):APP$(APP_ID)_STATUS") {
+  field(DESC, "$(TYPE) [$(LOCA) S$(SLOT) ID$(APP_ID)]")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "OFFLINE")
+  field(ONAM, "ONLINE")
+  field(ZSV, "MAJOR")
+  field(OSV, "NO_ALARM")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_STATUS")
+}

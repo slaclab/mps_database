@@ -1,3 +1,0 @@
-Name,Number,Description,Value,Mask,Fault,Fault_Description
-IS_OK,1,Magnet Current OK,1,4294967295,-,-
-IS_FAULTED,2,Magnet Current FAULT,0,4294967295,CURRENT,Magnet Current Faulted
