@@ -54,8 +54,8 @@ Note: these steps only need to be completed once. After being initialized for th
 
 Should you need to install any further packages to this environment, you can do so by running `conda install packagename` with the optional source location parameter. Sample package installations include:
 ```
-conda install packagename
-conda install -c conda-forge packagename
+(mps-environment) $ conda install packagename
+(mps-environment) $ conda install -c conda-forge packagename
 ```
 ### Deleting the Environment
 
@@ -77,7 +77,7 @@ To activate the created environment, run:
 
 To turn off this environment and return to your standard environment and paths, run:
 
-`$ conda deactivate`
+`(mps-environment) $ conda deactivate`
 ## Scripts
 
 All the following scripts are invoked by the `$PHYSICS_TOP/mps_configuration/tool/mps_config.py` script when creating new databases. For EIC the `mps_gun_config.db` has been copied to a version controlled subdirectory (e.g. `2018-02-09-a`) in the `mps_configuration` area.
