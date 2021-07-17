@@ -2,26 +2,82 @@
 
 This package contains `SQLAlchemy` python classes that provide access to the MPS `sqlite3` database. The classes are listed under the models subdirectory
 
-## Instructions
+## Initialization
 
-On `lcls-dev3`, after cloning the repo (`$ git clone git@github.com:slaclab/mps_database.git`) please source the following script to create the proper python virtual environment:
+In order to use mps_database, you must first have access to conda, the virtual environment and package manager. 
 
+If you are already able to sucessfully run conda via the command line, then you can skip the "Initializing Conda" steps. This can be tested by running `conda` and comparing the following output:
 ```
-[lpiccoli@lcls-dev3 mps_database]$ . setup.sh install
-(venv)[lpiccoli@lcls-dev3 mps_database]$
-```
+$ conda
+usage: conda [-h] [-V] command ...
 
-This has to be done only one time. However whenever opening a new session/shell please
-run:
-
-```
-[lpiccoli@lcls-dev3 mps_database]$ . setup.sh
-(venv)[lpiccoli@lcls-dev3 mps_database]$
+conda is a tool for managing and deploying applications, environments and packages.
+...
 ```
 
-to activate the virtual environment.
+### Initializing Conda
+
+Refer to documentation about using conda at SLAC.
+
+### Creating the Conda Environment
+
+On `lcls-dev3`, after cloning the repo (`$ git clone git@github.com:slaclab/mps_database.git`) please navigate to the top of the mps_database directory, where environment.yml is located.
 
 
+Then, run the following commands to create the proper python-based virtual environment:
+
+```
+$ conda env create -f environment.yml
+
+$ conda activate mps-environment
+```
+This creates a conda environment based off of the template file environment.yml. This .yml file includes a list of all packages and modules with their associated versions that will be installed within your conda environment. 
+
+You should now be within the created conda environment with a prompt such as:
+
+`(mps-environment) jsmith@lcls-dev3 mps_database]$`
+
+### Initializing the Project
+Now, we must initialize the mps_database module itself. In the top directory where the `setup.py` file is located, run:
+```
+$ pip install -e .
+```
+and look for the output:
+```
+Installing collected packages: mps-database
+  Running setup.py develop for mps-database
+Successfully installed mps-database
+```
+Note: these steps only need to be completed once. After being initialized for the first time, refer to "Standard Operation" to utilize the environment.
+
+### Installing Packages
+
+Should you need to install any further packages to this environment, you can do so by running `conda install packagename` with the optional source location parameter. Sample package installations include:
+```
+(mps-environment) $ conda install packagename
+(mps-environment) $ conda install -c conda-forge packagename
+```
+### Deleting the Environment
+
+If you ever need to delete the virtual environment, you can do so by running:
+
+`conda env remove --name mps-environment`
+
+However, you will have to create a new copy of the environment from the environment.yml file all over again. You should never need to delete this environment. 
+
+## Operation
+### Environment Setup
+
+In order to use this module, you must be within the conda virtual environment. 
+
+
+To activate the created environment, run:
+
+`$ conda activate mps-environment`
+
+To turn off this environment and return to your standard environment and paths, run:
+
+`(mps-environment) $ conda deactivate`
 ## Scripts
 
 All the following scripts are invoked by the `$PHYSICS_TOP/mps_configuration/tool/mps_config.py` script when creating new databases. For EIC the `mps_gun_config.db` has been copied to a version controlled subdirectory (e.g. `2018-02-09-a`) in the `mps_configuration` area.

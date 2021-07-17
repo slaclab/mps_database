@@ -11,7 +11,7 @@ output/*
 
 # Mac Specific
 .DS_Store
-
+*.icloud
 
 # Pip Packaging
 *.egg-info
