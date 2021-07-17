@@ -4,7 +4,7 @@ from mps_database.mps_config import MPSConfig, models
 from mps_database.tools.mps_names import MpsName
 from mps_database import ioc_tools
 from sqlalchemy import func, exc
-from mps_app_reader import MpsAppReader
+from .mps_app_reader import MpsAppReader
 import argparse
 import time
 import os
