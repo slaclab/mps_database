@@ -4,22 +4,54 @@ This package contains `SQLAlchemy` python classes that provide access to the MPS
 
 ## Instructions
 
-On `lcls-dev3`, after cloning the repo (`$ git clone git@github.com:slaclab/mps_database.git`) please source the following script to create the proper python virtual environment:
+In order to use mps_database, you must first have access to conda, the virtual environment and package manager. 
 
+If you are already able to sucessfully run conda via the command line, then you can skip the "Initializing Conda" steps. This can be tested by running `conda` and comparing the following output:
 ```
-[lpiccoli@lcls-dev3 mps_database]$ . setup.sh install
-(venv)[lpiccoli@lcls-dev3 mps_database]$
-```
+$ conda
+usage: conda [-h] [-V] command ...
 
-This has to be done only one time. However whenever opening a new session/shell please
-run:
-
-```
-[lpiccoli@lcls-dev3 mps_database]$ . setup.sh
-(venv)[lpiccoli@lcls-dev3 mps_database]$
+conda is a tool for managing and deploying applications, environments and packages.
+...
 ```
 
-to activate the virtual environment.
+### Initializing Conda
+
+Refer to documentation about using conda at SLAC.
+
+### Setting Up The Environment and Module
+
+On `lcls-dev3`, after cloning the repo (`$ git clone git@github.com:slaclab/mps_database.git`) please run the following commands to create the proper python-based virtual environment:
+
+```
+$ conda env create -f environment.yml
+
+$ conda activate mps-environment
+```
+This creates a conda environment based off of the template file environment.yml. You should now be within the created conda environment with a prompt such as:
+
+`(mps-environment) jsmith@lcls-dev3 mps_database]$`
+
+Now, we must initialize the mps_database module itself. In the top directory where the `setup.py` file is located, run:
+```
+$ pip install -e .
+```
+
+Note: these steps only need to be completed once. After being initialized for the first time, refer to "Standard Operation" to utilize the environment.
+
+
+### Standard Operation
+
+In order to use this module, you must be within the conda virtual environment. 
+
+
+To activate the created environment, run:
+
+`$ conda activate mps-environment`
+
+To turn off this environment and return to your standard environment and paths, run:
+
+`$ conda deactivate`
 
 
 ## Scripts
