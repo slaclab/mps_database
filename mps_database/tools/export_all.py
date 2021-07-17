@@ -82,6 +82,7 @@ class MpsExporter(MpsAppReader):
         self.cn1_path = '{}central_node_db/cn2/'.format(self.dest_path)
         self.cn2_path = '{}central_node_db/cn3/'.format(self.dest_path)
         self.display_path = '{}display/'.format(self.dest_path)
+        self.checkout_path = '{}checkout/'.format(self.dest_path)
         self.database = db_file
 
     def generate_ln_epics_db(self):
@@ -233,6 +234,7 @@ class MpsExporter(MpsAppReader):
             app_path = '{}link_node_db/app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
             app_prefix = app['app_prefix']
             proc = 3
+            json_macros = []
             if app['link_node_name'] in ['sioc-bsyh-mp03','sioc-bsys-mp04']:
               proc = 0
             self.__write_app_id_config(path=app_path, macros = {"ID":str(app['app_id']),"PROC":str(proc)})
@@ -240,6 +242,10 @@ class MpsExporter(MpsAppReader):
             spare_channels = list(range(0,6))
             for device in app['devices']:
               device_prefix = device['prefix']
+              for fault in device['faults'].values():
+                temp_macros = {}
+                temp_macros['fault'] = '{0}:{1}'.format(device['prefix'],fault['name'])
+                json_macros.append(temp_macros)
               if device['type_name'] not in self.non_link_node_types:
                 macros = { "P": app_prefix,
                            "CH":str(device["channel_index"]),
@@ -345,6 +351,8 @@ class MpsExporter(MpsAppReader):
                                "TYPE":"Spare"
                                }
                     self.__write_link_node_channel_info_db(path=app_path, macros=macros)
+            filename = '{0}/App{1}_checkout.json'.format(self.checkout_path,app['app_id'])
+            self.__write_json_file(filename, json_macros)
     def __link_node_type_to_number(self, ln_type):
         if ln_type == 'Digital':
             return 0
@@ -522,7 +530,7 @@ class MpsExporter(MpsAppReader):
             elif app['central_node'] in [1]:
               self.__write_digital_db(path=self.cn1_path, macros=macros)
           for fault in device["faults"]:
-            macros = { 'P':'{0}'.format(input['input_pv']),
+            macros = { 'P':'{0}:{1}'.format(device['prefix'],fault['name']),
                        'DESC':'{0}'.format(fault['description']),
                        'ID':'{0}'.format(fault['id']) }
             if app['central_node'] in [0,2]:
@@ -532,7 +540,7 @@ class MpsExporter(MpsAppReader):
             elif app['central_node'] in [1]:
               self.__write_fault_db(path=self.cn1_path, macros=macros)
             for idx in range(len(fault['states'])):
-              macros = { 'P':'{0}_{1}'.format(input['input_pv'],fault['states'][idx]),
+              macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],fault['states'][idx]),
                          'ID':'{0}'.format(fault["fs_id"][idx]),
                          'DESC':'{0}'.format(fault["fs_desc"][idx]) }
               if app['central_node'] in [0,2]:
@@ -632,7 +640,7 @@ class MpsExporter(MpsAppReader):
         macros = { 'P':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix']),
                    'CN':'{0}'.format(last_ln[last_ln_key[0]]['cn_prefix']),
                    'AID':'{0}'.format(last_ln[last_ln_key[0]]['dig_app_id']),
-                   'SLOT_FILE':'LinkNode{0}_slot.json'.format(last_ln[last_ln_key[0]]['lc1_node_id']),
+                   'SLOT_FILE':'LinkNode{0}_slot.ui'.format(last_ln[last_ln_key[0]]['lc1_node_id']),
                    'P_IN':'{0}'.format(last_ln[last_ln_key[0]]['cn_prefix']),
                    'X':'{0}'.format(last_x),
                    'Y':'{0}'.format(last_y),
@@ -648,7 +656,7 @@ class MpsExporter(MpsAppReader):
           macros = { 'P':'{0}'.format(test_ln['app_prefix']),
                      'CN':'{0}'.format(test_ln['cn_prefix']),
                      'AID':'{0}'.format(test_ln['dig_app_id']),
-                     'SLOT_FILE':'LinkNode{0}_slot.json'.format(test_ln['lc1_node_id']),
+                     'SLOT_FILE':'LinkNode{0}_slot.ui'.format(test_ln['lc1_node_id']),
                      'P_IN':'{0}'.format(p_in),
                      'X':'{0}'.format(x),
                      'Y':'{0}'.format(y),
@@ -669,7 +677,7 @@ class MpsExporter(MpsAppReader):
             macros = { 'P':'{0}'.format(test_ln['app_prefix']),
                        'CN':'{0}'.format(test_ln['cn_prefix']),
                        'AID':'{0}'.format(test_ln['dig_app_id']),
-                       'SLOT_FILE':'LinkNode{0}_slot.json'.format(test_ln['lc1_node_id']),
+                       'SLOT_FILE':'LinkNode{0}_slot.ui'.format(test_ln['lc1_node_id']),
                        'P_IN':'{0}'.format(p_in),
                        'X':'{0}'.format(x),
                        'Y':'{0}'.format(y),
@@ -685,27 +693,63 @@ class MpsExporter(MpsAppReader):
     def __generate_crate_display(self):
         """
         function to create .json files that feed into pydm template repeater to generate crate profiles
-        Macros: SLOT, CN, AID, MPS_PREFIX, SLO2_PREFIX
+        Macros: SLOT, CN, AID, MPS_PREFIX
         """
-        for ln_name, ln in list(self.link_nodes.items()):
-          installed = list(ln['slots'].keys())
+        width = 480
+        header_height = 40
+        header_width = 238
+        header_middle = width/2
+        widget_height = 20
+        height = header_height + widget_height * 8 + 2
+        for ln_name, ln in self.link_nodes.items():
+          installed = ln['slots'].keys()
           if ln['analog_slot'] == 2:
-            ln_macros = []
-            slot2_prefix = ln['app_prefix']
-            for slot in range(2,8):
+            macros = {'HEADER_HEIGHT':'{0}'.format(header_height),
+                      'HEADER_WIDTH':'{0}'.format(header_width),
+                      'HEADER_MIDDLE':'{0}'.format(header_middle),
+                      'WIDTH':'{0}'.format(width),
+                      'HEIGHT':'{0}'.format(height),
+                      'P':'{0}'.format(ln['app_prefix'])}
+            filename = '{0}slots/LinkNode{1}_slot.ui'.format(self.display_path,ln['lc1_node_id'])
+            self.__write_crate_header(path=filename,macros=macros)
+            for slot in range(1,8):
               macros = {}
+              y = header_height + slot * widget_height
+              x = 5
               if slot in installed:
-                macros['SLOT2_PREFIX'] = '{0}'.format(slot2_prefix)
-                macros['SLOT'] = '{0}'.format(slot)
-                macros['CN'] = '{0}'.format(ln['cn_prefix'])
-                macros['AID'] = '{0}'.format(ln['slots'][slot]['app_id'])
-                macros['MPS_PREFIX'] = '{0}'.format(ln['slots'][slot]['pv_base'])
+                type = 'MPS'
+                if ln['slots'][slot]['type'] == 'BPM Card':
+                  type = 'BPM'
+                if ln['slots'][slot]['type'] == 'Analog Card':
+                  type = 'BCM/BLEN'  
+                if ln['slots'][slot]['type'] == 'Generic ADC':
+                  type = 'MPS_AI'
+                if ln['slots'][slot]['type'] == 'Digital Card':
+                  type = 'MPS_DI'
+                if ln['slots'][slot]['type'] == 'LLRF':
+                  type = 'LLRF'
+                slot_publish = slot
+                postfix = 'APP_ID'
+                if slot is 1:
+                  slot_publish = 'RTM'
+                  postfix = 'DIG_APPID_RBV'      
+                macros = {'SLOT':'{0}'.format(slot_publish),
+                          'CN':'{0}'.format(ln['cn_prefix']),
+                          'AID':'{0}'.format(ln['slots'][slot]['app_id']),
+                          'MPS_PREFIX':'{0}'.format(ln['slots'][slot]['pv_base']),
+                          'TYPE':type,
+                          'DESC':'{0}'.format(ln['slots'][slot]['description']),
+                          'X':'{0}'.format(x),
+                          'Y':'{0}'.format(y),
+                          'POSTFIX':postfix}
+                self.__write_crate_embed(path=filename,macros=macros)
               else:
-                macros['SLOT'] = '{0}'.format(slot)
-                macros['SLOT2_PREFIX'] = '{0}'.format(slot2_prefix)
-              ln_macros.append(macros)
-            filename = '{0}slots/LinkNode{1}_slot.json'.format(self.display_path,ln['lc1_node_id'])
-            self.__write_json_file(filename, ln_macros)
+                macros = {'SLOT':'{0}'.format(slot),
+                          'X':'{0}'.format(x),
+                          'Y':'{0}'.format(y)}
+                self.__write_empty_slot(path=filename,macros=macros)
+            self.__write_crate_footer(path=filename,macros=macros)
+
 
     def __generate_input_display(self):
       header_height = 50
@@ -1018,6 +1062,18 @@ class MpsExporter(MpsAppReader):
 
     def __write_cn_input_embed(self, path,macros):
         self.__write_ui_file(path=path, template_name="cn_input_embed.tmpl", macros=macros)
+
+    def __write_crate_header(self, path,macros):
+        self.__write_ui_file(path=path, template_name="ln_crate_header.tmpl", macros=macros)
+
+    def __write_crate_footer(self, path,macros):
+        self.__write_ui_file(path=path, template_name="ln_crate_footer.tmpl", macros=macros)
+
+    def __write_crate_embed(self,path,macros):
+        self.__write_ui_file(path=path, template_name="ln_crate_embed.tmpl", macros=macros)
+
+    def __write_empty_slot(self,path,macros):
+        self.__write_ui_file(path=path, template_name="ln_crate_empty.tmpl", macros=macros)
 
     def __write_ui_file(self, path, template_name, macros):
         template = '{}display/{}'.format(self.template_path, template_name)
