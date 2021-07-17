@@ -21,7 +21,10 @@ Refer to documentation about using conda at SLAC.
 
 ### Setting Up The Environment and Module
 
-On `lcls-dev3`, after cloning the repo (`$ git clone git@github.com:slaclab/mps_database.git`) please run the following commands to create the proper python-based virtual environment:
+On `lcls-dev3`, after cloning the repo (`$ git clone git@github.com:slaclab/mps_database.git`) please navigate to the top of the mps_database directory, where environment.yml is located.
+
+
+Then, run the following commands to create the proper python-based virtual environment:
 
 ```
 $ conda env create -f environment.yml
@@ -36,7 +39,12 @@ Now, we must initialize the mps_database module itself. In the top directory whe
 ```
 $ pip install -e .
 ```
-
+and look for the output:
+```
+Installing collected packages: mps-database
+  Running setup.py develop for mps-database
+Successfully installed mps-database
+```
 Note: these steps only need to be completed once. After being initialized for the first time, refer to "Standard Operation" to utilize the environment.
 
 
