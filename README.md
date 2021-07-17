@@ -80,123 +80,31 @@ To turn off this environment and return to your standard environment and paths, 
 `(mps-environment) $ conda deactivate`
 ## Scripts
 
-All the following scripts are invoked by the `$PHYSICS_TOP/mps_configuration/tool/mps_config.py` script when creating new databases. For EIC the `mps_gun_config.db` has been copied to a version controlled subdirectory (e.g. `2018-02-09-a`) in the `mps_configuration` area.
+All the following operations are invoked by the `mps_database/tools/export_all.py` script when creating new databases. 
 
-### Generate GUNB database
+### Generate Configuration database
 
-This script creates the file sqlite file `mps_gun_config.db`, the configuration database, that is used by other scripts to generate EPICS database and panels. It also creates the file `mps_gun_runtime.db`, the runtime database, used by the [MPS manager](https://github.com/slaclab/mps_manager).
-
-```
-$ ./tools/populate-gunb-t0.py
-```
-
-### Generate YAML file
-
-This export the sqlite configuration database `mps_gun_config.db` to the YAML file `mps_gun_config.yaml`, used by the [Cental Node engine](https://github.com/slaclab/central_node_engine), part of the [Central Node IOC](https://github.com/slaclab/central_node_ioc):
+This script creates the file sqlite file `mps_config_imported.db`, the configuration database, that is used by other scripts to generate EPICS database and panels. It also creates the file `mps_config_imported_runtime.db`, the runtime database, used by the [MPS manager](https://github.com/slaclab/mps_manager).
 
 ```
-$ ./tools/export_yaml.py mps_gun_config.db mps_gun_config.yaml
+$ ./import/import-csv.py
 ```
 
-### Generate database documentation (Inputs/Faults):
+### Generate All files
+
+This export the sqlite configuration database to all other files needed to run the system.  It generates central node configuration YAML files, pydm display files, epics DB files for link nodes and central nodes.  In the near future, it will also generate documentation and alarms.  Necessary arguments:
+
+--db <database_file>
+--template <path to templates>
+--destination <path to output>
 
 ```
-$ ./tools/export_docs.py mps_gun_config.db
-... (you may see many warnings) ...
+$ ./tools/export_all.py --db <sqlite db file> --dest <destination path> --template <path to templates, located in mps_database>
 ```
-
-The script generates documentation in `pdf`, `txt` and `html` formats:
-```
-$ ls -1 mps_gun_config.{txt,pdf,html}
-mps_gun_config.html
-mps_gun_config.pdf
-mps_gun_config.txt
-```
-
-### Export EPICS databases for central node IOC and link node virtual channels:
+The link node databases will be generated in <destination path> with the following structure:
 
 ```
-$ ./tools/export_epics.py mps_gun_config.db \
-      --device-inputs device_inputs.db \
-      --analog-devices analog_devices.db \
-      --beam-destinations destinations.db \
-      --faults faults.db \
-      --apps apps.db \
-      --conditions conditions.db \
-      --link-nodes link_node_db
-```
-The command above generates:
-- `device_inputs.db`: for the digital inputs
-- `analog_devices.db`: for the analog inputs
-- `destinations.db`: for the beam destinations (mitigation devices)
-- `faults.db`: for the list of faults
-- `apps.db`: for the applications
-- `conditions.db`: for the ignore conditions
-- `virtual_inputs.db`: for all link nodes that have virtual cards defined in the database (a subdirectory with the link node name is created under the link_node_db area)
-
-The source for the EPICS databases is the `mps_gun_config.db` file (sqlite format).
-
-### Export EDM panels:
-
-```
-$ ./tools/export_edl.py mps_gun_config.db \
-      --device-inputs-template templates/display/device_inputs.tmpl \
-      --analog-devices-template templates/display/analog_devices.tmpl  \
-      --faults-template templates/display/faults.tmpl  \
-      --bypass-digital-template templates/display/bypass.tmpl \
-      --bypass-analog-template templates/display/bypass.tmpl \
-      --link-node-template templates/display/link_node.tmpl \
-      --link-node-area-template templates/display/link_node_area.tmpl \
-      --link-nodes <OUTPUT_DIR>
-```
-
-### Export EPICS databases for link node IOCs:
-
-```
-$ ./tools/export_thresholds.py --app-id 2 --threshold-file threshold.template mps_gun_config.db
-
-[mps_database/tools]$ head -18 threshold.template
-record(ao, "BPMS:GUNB:201:X_T0_HIHI") {
- field(DESC, "High analog threshold for X_T0")
- field(DTYP, "asynFloat64")
- field(OUT, "@asynMask(LINK_NODE 0 1 1)ANALOG_THRESHOLD")
-}
-
-record(ao, "BPMS:GUNB:201:X_T0_LOLO") {
- field(DESC, "Low analog threshold for X_T0")
- field(DTYP, "asynFloat64")
- field(OUT, "@asynMask(LINK_NODE 0 1 0)ANALOG_THRESHOLD")
-}
-
-record(ao, "BPMS:GUNB:201:X_T1_HIHI") {
- field(DESC, "High analog threshold for X_T1")
- field(DTYP, "asynFloat64")
- field(OUT, "@asynMask(LINK_NODE 0 2 1)ANALOG_THRESHOLD")
-}
-```
-
-This creates the `LOLO`/`HIHI` analog output records for setting thresholds at the link node IOC. The thresholds are created per application card (`--app-id` parameter). The script also crates thresholds for the alternative, LCLS-I and idle modes. (LCLS-I and IDLE have a single `HIHI`/`LOLO`).
-
-### Export EPICS databases and configuration files for all applications:
-
-```
-$ ./tools/export_apps_epics.py --help
-usage: export_apps_epics.py [-h] --db database --dest destination
-                            [--template TEMPLATE]
-
-Export Link Node EPICS databases
-
-optional arguments:
-  -h, --help           show this help message and exit
-  --db database        MPS SQLite database file
-  --dest destination   Destination location of the resulting EPICS database
-  --template TEMPLATE  Path to EPICS DB template files
-```
-
-This will generate a directory structure:
-
-```
-app_db/<CPU_NAME>/<CRATE_ID>/<SLOT_NUMBER>
+<destination_path>/link_node_db/app_db/<CPU_NAME>/<CRATE_ID>/<SLOT_NUMBER>
 ```
 
 Each directory will contain the following EPICS database and configuration files for each application:
@@ -229,36 +137,27 @@ Example of the result obtained for the EIC configuration:
                 └── mps.env
 ```
 
-## Virtual Channels
+The central node is a collection of 3 central nodes:
+cn1 = slot2 of B005-510 and handles LN groups 0-11
+cn2 = slot3 of B005-510 and handles LN groups 12-23
+cn3 = slot2 of L2KA00-XX and handles LN groups 0-8
 
-Virtual channels translate MPS inputs from EPICS PVs into status bits within the MPS update network. A link node may have a virtual card, which is basically a set of 32 digital inputs driven by software. Each virtual input has one analog input PV (the PV name is defined in the database). If the value of the input PV generates a `HIHI`/`LOLO` or gets disconnected (e.g. PV cannot be reached), then the link node will write a fault to the status bit for the given input.
+The script generates files like:
 
-The EPICS database containing the support records for monitoring the external input PVs are generated from the MPS database. The PV whose `HIHI`/`LOLO` fields generate the fault is named using the same rules applied for regular digital channels. For example the dipole current for the `BCXH1-4` magnets is `BEND:HTR:100:CURRENT`. Auxiliary PVs with similar names (with suffixes) are defined to drive the link node asyn code that communicates with the link node firmware.
+<destination path>/central_node_db/cn#/<database_file>
 
-## EIC History Server
+The central node IOC will load the correct databases based on it's configuration
 
-```
-[mps_database/tools]$ ./historyServer.py -h
-usage: historyServer.py [-h] [--host hostname] [--port [port]] [--file [file]]
-                        [--file-size [file_size]] [-c]
-                        db
+There are three central node configuration yaml files also created, one for each CN.  They are output to 
+<destination path>/<db_name>-cn#-<db_version>.yaml.  They must be loaded into the proper CN via caput:
+caput SIOC:SYS0:MP0#:CONFIG_LOAD "<proper_yaml_file>
+In the future, this will be automated, but for now is by hand.
 
-Receive MPS status messages
+## Import CSV data
 
-positional arguments:
-  db                    database file name (e.g. mps_gun_config.db)
+The script [import/import-csv.py](import/import-csv.py) generates a database using csv exported files from the `MPSInputList.xlsx` file (available from sharepoint). The generated database name is `mps_config_imported.db`.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --host hostname       Central node hostname
-  --port [port]         server port (default=3356)
-  --file [file]         History log file base, e.g. /data/history/mpshist -
-                        file will be /data/history/mpshist-<DATE>.txt
-  --file-size [file_size]
-                        Maximum history log file size (default=10 MB)
-  -c                    Print messages to stdout
-```
-
+###### currently depricated ######
 ## Tests
 
 The [central_node_test.py](tools/central_node_test.py) script can be used to simulate firmware input data to the central node software. It sends update messages to the central node for each device state (e.g. valve on/valve off) and gets back a mitigation message, which is compared to the expected mitigation as described in the database.
@@ -330,7 +229,3 @@ Recvd Mitigation: MS=0 AOM=0
 +------------------------------------------------------------+
 YAG01B PASSED
 ```
-
-## Import CSV data
-
-The script [import/import-csv.py](import/import-csv.py) generates a database using csv exported files from the `MPSInputList.xlsx` file (available from sharepoint). Currently it only populates some database tables, the devices/faults are not yet created. The generated database name is `mps_config_imported.db`.

@@ -1,20 +1,47 @@
+export_app.py
+-Script to load the sqlite db into python structure, then export all things for:
+  Link Node EPICS
+  Central Node EPICS
+  PYDM Displays
+  CN YAML
+  Alarms (to be developed)
+  Documentation (to be developed)
+
+mps_app_reader.py
+- Class that imports all sqlite data into python lists which are then used to export all other information
+
+runtime_utils.py
+- Utilities to help with the runtime database
+
+set_bypass.py
+- Set device bypass for analog devices/device inputs, by first
+recording information to database and then changing the bypass PVs
+
+restore_bypass.py
+- Restore active bypasses, reading the values from the runtime database
+and setting the PVs
+
+* Not is use:
+export_pydm.py
+export_thresholds.py
+populate-gunb-t0-test-fast-digital.py
+populate-gunb-t1.py
+populate-gunb.py
+populate-huge.py
+populate-sxrss.py
+populate-test.py
+populate-test2.py
 EicHistoryServer.py
 - MPS history server for EIC - writes received messages to txt files
-
 central_node_test.py
 - Used to test CN running in SW only mode (no FW)
-
 change_threshold.py
 - Script to change thresholds of an analog device - thresholds are 
 recorded in runtime database and also written to the appropriate PVs
-
 check_channels.py
 - Check for duplicate channels in the MPS database
-
-check_runtime.py
 - Check runtime database: verifies that devices are the same in both
 databases. The databases must be consistent.
-
 docbook.py
 - Helper python class to write out documentation in docbook format
 
@@ -44,25 +71,3 @@ populate-gunb-t0.py
 
 restore_threshold.py
 - Restore threshold values from the runtime database
-
-runtime_utils.py
-- Utilities to help with the runtime database
-
-set_bypass.py
-- Set device bypass for analog devices/device inputs, by first
-recording information to database and then changing the bypass PVs
-
-restore_bypass.py
-- Restore active bypasses, reading the values from the runtime database
-and setting the PVs
-
-* Not is use:
-export_pydm.py
-export_thresholds.py
-populate-gunb-t0-test-fast-digital.py
-populate-gunb-t1.py
-populate-gunb.py
-populate-huge.py
-populate-sxrss.py
-populate-test.py
-populate-test2.py
