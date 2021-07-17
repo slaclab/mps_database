@@ -1284,10 +1284,6 @@ importer.add_device_types('import/Top/DeviceTypes.csv')
 importer.add_beam_destinations('import/Top/BeamDestinations.csv')
 importer.add_beam_classes('import/Top/BeamClasses.csv')
 
-# Wire scanner not yet defined
-## Jmock - Need to figure out what to do with wire scanners
-##importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as analog or digital?
-
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
 importer.add_analog_device('import/BLM', card_name="Generic ADC")
@@ -1304,8 +1300,8 @@ if (True):
   importer.add_analog_device('import/LBLM', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
-#  importer.add_analog_device('import/BEND', card_name="Generic ADC") 
-#  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
+  importer.add_analog_device('import/BEND', card_name="Generic ADC") 
+  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
@@ -1318,6 +1314,7 @@ if (True):
   #importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/XTES')
+  importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as digital?
 
 
   importer.add_digital_device('import/BLMHV', card_name="Virtual Card")

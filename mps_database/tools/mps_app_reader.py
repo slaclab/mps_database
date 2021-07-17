@@ -75,10 +75,6 @@ class MpsAppReader:
         slot_info = {}
         slot_info['pv_base'] = app_card.get_pv_name()
         slot_info['app_id'] = app_card.global_id
-        
-        slot_info = {}
-        slot_info['pv_base'] = app_card.get_pv_name()
-        slot_info['app_id'] = app_card.global_id
 
         try:
             app_type = mps_db_session.query(models.ApplicationType).\
@@ -275,11 +271,6 @@ class MpsAppReader:
                 self.link_nodes[name]['group_link_destination'] = ln.group_link_destination
                 self.link_nodes[name]['crate_index'] = cr
 
-                #self.link_nodes[cr] = {}
-                #self.link_nodes[cr]['type'] = ln_type # 'Analog', 'Digital' or 'Mixed'
-                #self.link_nodes[cr]['slots'] = {}
-                #self.link_nodes[cr]['app_prefix'] = ln_app_prefix
-
         # Check if there were applications defined in the database
         if len(app_cards) == 0:
             return
@@ -333,14 +324,7 @@ class MpsAppReader:
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
 
-                #self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
-                #self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
-                #self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
-                #self.link_nodes[phys]["physical"] = app_data["physical"]
-                #self.link_nodes[phys]["sioc"] = ln_name
-
                 self.__add_slot_information_by_name(mps_db_session, ln_name, app_card)
-                #self.__add_slot_information_by_crate(mps_db_session, phys, app_card)
 
                 # Defines whether the IOC_NAME env var should be added no the mps.env
                 # file. In order to add only once we need to figure out if there are
@@ -352,10 +336,8 @@ class MpsAppReader:
                 if (app_card.link_node.slot_number != 2 and app_card.name == "Generic ADC"):
                     app_data["analog_link_node"] = True # Non-slot 2 link node
                     self.link_nodes[ln_name]['analog_slot'] = app_card.link_node.slot_number
-                    #self.link_nodes[phys]['analog_slot'] = app_card.link_node.slot_number
                 elif (app_card.link_node.slot_number == 2):
                     self.link_nodes[ln_name]['analog_slot'] = 2
-                    #self.link_nodes[phys]['analog_slot'] = 2
                     has_digital = False
                     for c in app_card.link_node.cards:
                         if (c.name == "Digital Card" or c.name == "Generic ADC" and c.id != app_card.id):
@@ -476,12 +458,6 @@ class MpsAppReader:
                 if self.link_nodes[ln_name]['type'] == 'Digital':
                   self.link_nodes[ln_name]['analog_slot'] = 2
                 self.__add_slot_information_by_name(mps_db_session, ln_name, app_card)
-                #self.link_nodes[phys]["lc1_node_id"] = app_data["lc1_node_id"]
-                #self.link_nodes[phys]["crate_id"] = app_data["crate_id"]
-                #self.link_nodes[phys]["cpu_name"] = app_data["cpu_name"]
-                #self.link_nodes[phys]["dig_app_id"] = app_data["app_id"]
-                #self.link_nodes[phys]["physical"] = app_data["physical"]
-                #self.link_nodes[phys]["sioc"] = ln_name
 
                 # Iterate over all the analog devices in this application
                 for device in digital_devices:
@@ -502,6 +478,11 @@ class MpsAppReader:
                         device_data["device_name"] = device.name
                         device_data["faults"] = []
                         device_data["prefix"] = '{}:{}:{}'.format(self.get_prefix(device_data["type_name"]), device.area, device.position)
+                        if device.measured_device_type_id is not None:
+                          pv_device_type = self.__get_device_type_name(mps_db_session, device.measured_device_type_id)
+                        else:
+                          pv_device_type = self.__get_device_type_name(mps_db_session, device.device_type_id)
+                        device_data["prefix"] = '{}:{}:{}'.format(pv_device_type, device.area, device.position)
 
                         for input in inputs:
                             # Get the digital channel
