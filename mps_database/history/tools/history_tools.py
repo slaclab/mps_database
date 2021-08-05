@@ -1,6 +1,6 @@
 from mps_database.mps_config import MPSConfig, models
 from mps_database.history.models import fault_history, input_history
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
 from sqlalchemy.orm import relationship, backref
 
@@ -13,12 +13,16 @@ class HistorySession():
 #use for testing
 def main():
     history_class = connect_hist_db()
-    print("\n", history_class.session)
 
     fault_id = 1
     add_fault(history_class, fault_id)
     faults = [22, 23, 24]
     add_faults(history_class, faults)
+
+    print(get_entry_by_id(history_class, 1))
+    print(get_entry_by_id(history_class, 22))
+    print(get_entry_by_id(history_class, 24))
+
     return
 
 
@@ -41,22 +45,28 @@ def query_beamclass():
     return
 
 def add_fault(history_conn, fault_id):
+    print("Adding fault ", fault_id)
     fault_insert = fault_history.FaultHistory.__table__.insert().values(id=fault_id, timestamp='time')
-    history_conn.last_engine.execute(fault_insert)
-    print("\n", history_conn.session)
+    history_conn.session.execute(fault_insert)
     history_conn.session.commit()
     return
 
 def add_faults(history_conn, fault_ids):
+    print("Adding faults ", fault_ids)
     faults_info = []
     for fid in fault_ids:
-        faults_info += ({'id': fid, 'timestamp':'time'})
+        faults_info.append({'id': fid, 'timestamp':'time'})
+    #TODO needs engine to run multi insert?
     history_conn.last_engine.execute(fault_history.FaultHistory.__table__.insert(), faults_info)
     history_conn.session.commit()
     return
     
-def get_entry():
-    return
+def get_entry_by_id(history_conn, fid):
+    print("Selecting entries ", fid)
+    stmt = select(fault_history.FaultHistory).where(fault_history.FaultHistory.id == fid)
+    result = history_conn.session.execute(stmt)
+    #TODO, this could be multiple, idk. maybe not because fids are unique
+    return result.fetchone()
 
 if __name__ == "__main__":
     main()
