@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship, backref
 
 
 def main():
-    delete_history_db()
+    #delete_history_db()
     create_history_db()
     return
 

@@ -14,9 +14,9 @@ class InputHistory(Base):
   References:
     beam_class: The relevant beam class value - is this possible?
   """
-  __tablename__ = 'fault_history'
+  __tablename__ = 'input_history'
   id = Column(Integer, primary_key=True)
   timestamp = Column(String, nullable=False)
   new_state = Column(Integer, nullable=False)
   previous_state = Column(Integer, nullable=False)
-  beam_class = Column(Integer, ForeignKey('beam_class.id'), nullable=False, unique=True)
+  #beam_class = Column(Integer, ForeignKey('beam_class.id'), nullable=False, unique=True)

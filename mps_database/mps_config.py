@@ -16,6 +16,8 @@ class MPSConfig:
   """
   def __init__(self, config_file_name='mps_gun_config.db', runtime_file_name='mps_gun_runtime.db', history_file_name='mps_gun_history.db', db_name=None, db_file=None, debug=False):
     self.db_name = db_name
+    self.last_engine = None
+    
     current_dbs = ["config", "runtime", "history"]
     
     # One specific connection is requested
@@ -24,7 +26,7 @@ class MPSConfig:
         # If no filename provided, use default config
         if not db_file:
             db_file = config_file_name
-        self.session = self.create_db_session(db_file, debug)
+        self.create_db_session(db_file, debug)
         return
     # Create all sessions
     self.session = self.create_db_session(config_file_name, debug)
@@ -47,12 +49,15 @@ class MPSConfig:
     """
 
   def create_db_session(self, filename, debug):
-    # Make a path to the directory MPSConfig is in
+    # Make a path to the directory MPSConfig is in, assume db is in there as well
     db_path = os.path.join(os.path.dirname(__file__), filename)
 
     engine = create_engine("sqlite:///{path_to_filename}".format(path_to_filename=db_path), echo=debug)
-    new_sessionmaker = sessionmaker(bind=engine)
-    return new_sessionmaker
+    self.last_engine = engine
+    
+    Session = sessionmaker(bind=engine)
+    self.session = Session()
+    return
 
   def clear_all(self):
     print("Clearing database...")

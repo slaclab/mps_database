@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+import datetime
+
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import relationship, backref
 from mps_database.models import Base
 
@@ -16,7 +18,5 @@ class FaultHistory(Base):
   """
   __tablename__ = 'fault_history'
   id = Column(Integer, primary_key=True)
-  timestamp = Column(String, nullable=False)
-  new_state = Column(Integer, nullable=False)
-  previous_state = Column(Integer, nullable=False)
-  beam_class = Column(Integer, ForeignKey('beam_class.id'), nullable=False, unique=True)
+  fault_id = Column(Integer, nullable=False)
+  timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
