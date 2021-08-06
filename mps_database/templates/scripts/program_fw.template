@@ -1,0 +1,1 @@
+$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c $(CPU) -s $(SHELF) -m $1
