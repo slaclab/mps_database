@@ -377,18 +377,16 @@ class DatabaseImporter:
     and a 'device_states' dictionary which the possible states for the 
     device
     '''
+    faults={}
+    device_states={}
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
     for field in line.split(','):
       fields.append(str(field).lower())
-
-    faults={}
-    device_states={}
     while line:
       state_info={}
       line = f.readline().strip()
-
       if line:
         field_index = 0
         for property in line.split(','):
@@ -400,13 +398,11 @@ class DatabaseImporter:
                                           value=int(state_info['value']),
                                           mask=int(state_info['mask']))
         device_states[state_info['name']]=device_state#state_info
-        #print state_info
-        #print ''
         if (add_faults):
           if (state_info['fault'] != '-'):
             fault_name = state_info['fault']
             fault_desc = state_info['fault_description']
-#            print('Fault: {}: {}'.format(fault_name,fault_desc))
+#             print('Fault: {}: {}'.format(fault_name,fault_desc))
             if (not fault_name in faults):
               fault = models.Fault(name=fault_name, description=fault_desc)
               #self.session.add(fault)
@@ -420,16 +416,13 @@ class DatabaseImporter:
               faults[fault_name]['fault']=fault
             else:
               faults[fault_name]['states'].append(state_info['name'])
-
         self.session.add(device_state)
         self.session.commit()
         self.session.refresh(device_state)
 
-#        print(faults)
-#        print(device_states)
-
+#      print(faults)
+#      print(device_states)
     f.close()
-
     return faults, device_states
 
   #
@@ -1315,11 +1308,8 @@ if (True):
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/XTES')
   importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as digital?
-
-
   importer.add_digital_device('import/BLMHV', card_name="Virtual Card")
   importer.add_digital_device('import/WDOG', card_name="Virtual Card")
-  importer.add_digital_device('import/WDOG_IOC', card_name="Virtual Card")
 
 importer.cleanup()
 

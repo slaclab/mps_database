@@ -65,14 +65,14 @@ class DocBook:
         
     def getAuthor(self):
         proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
-        user = proc.stdout.readline().rstrip()
+        user = proc.stdout.readline().rstrip().decode('UTF-8')
         email = ""
         name = ""
         first_name = "unknown"
         last_name = "unknown"
         proc = subprocess.Popen(['person', '-tag', '-match', 'email', user], stdout=subprocess.PIPE)
         while True:
-          line = proc.stdout.readline()
+          line = proc.stdout.readline().decode('UTF-8')
           if line != '':
             if line.startswith("email") and email == "":
               email = line.split(':')[1].rstrip().lower()
@@ -82,7 +82,6 @@ class DocBook:
               last_name = name.split(', ')[0]
           else:
             break
-
         return [user, email, first_name, last_name]
 
     def writeHeaderAuthor(self, title):

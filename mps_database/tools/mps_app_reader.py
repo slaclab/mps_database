@@ -63,9 +63,9 @@ class MpsAppReader:
 
             # Extract the application information
             self.mps_name = MpsName(mps_db_session)
-            self.__extract_apps(mps_db_session)
             self.__extract_destinations(mps_db_session)
             self.__extract_conditions(mps_db_session)
+            self.__extract_apps(mps_db_session)
 
     def __add_slot_information_by_name(self, mps_db_session, ln_name, app_card):
         slot_number = app_card.slot_number
@@ -270,6 +270,9 @@ class MpsAppReader:
                 self.link_nodes[name]['group_link'] = ln.group_link
                 self.link_nodes[name]['group_link_destination'] = ln.group_link_destination
                 self.link_nodes[name]['crate_index'] = cr
+                self.link_nodes[name]["lc1_node_id"] = ln.lcls1_id
+                self.link_nodes[name]["cpu_name"] = ln.cpu
+                self.link_nodes[name]["crate_id"] = ln.crate.crate_id
 
         # Check if there were applications defined in the database
         if len(app_cards) == 0:
@@ -317,10 +320,6 @@ class MpsAppReader:
                 app_data["name"] = app_card.name
                 app_data['central_node'] = self.get_cn_index(app_card.link_node.group)
 
-
-                self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
-                self.link_nodes[ln_name]["crate_id"] = app_data["crate_id"]
-                self.link_nodes[ln_name]["cpu_name"] = app_data["cpu_name"]
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
 
@@ -373,6 +372,7 @@ class MpsAppReader:
                         device_data["db_id"] = device.id
                         device_data["channel"] = device.channel.number
 
+
                         # Iterate over all the faults in this device
                         for fault_input in fault_inputs:
                             faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
@@ -381,10 +381,8 @@ class MpsAppReader:
                                 exit(-1)
                             fault_states = mps_db_session.query(models.FaultState).\
                                 filter(models.FaultState.fault_id==faults[0].id).all()
-
                             # Get the fault ID
                             fault_id = fault_input.fault_id
-
                             # Get this fault data
                             if (not fault_id in device_data["faults"]):
                                 # Get the fault corresponding to this fault input.
@@ -399,22 +397,45 @@ class MpsAppReader:
                                 fault_data["states"] = []
                                 fault_data["fs_id"] = []
                                 fault_data["fs_desc"] = []
+                                fault_data["destination"] = []
+                                fault_data["mitigation"] = []
+                                fault_data["logic"] = []
                                 for fs in fault_states:
+                                    state_data = {}
                                     fault_data["bit_positions"].append(fs.device_state.get_bit_position())
                                     fault_data["integrators"].append(fs.device_state.get_integrator())
                                     fault_data["mask"].append(fs.device_state.mask)
                                     fault_data["states"].append(fs.device_state.name)
                                     fault_data["fs_id"].append(fs.id)
                                     fault_data["fs_desc"].append(fs.device_state.description)
- 
+                                    allowed_classes = mps_db_session.query(models.AllowedClass).\
+                                                    filter(models.AllowedClass.fault_state_id == fs.id).all()
+                                    for ac in allowed_classes:
+                                      fault_data["destination"].append(self.__get_beam_destination_name(mps_db_session,ac.beam_destination_id))
+                                      fault_data["mitigation"].append(self.__get_beam_class_name(mps_db_session,ac.beam_class_id))
+                                    cur_dest = self.__get_beam_destination_name(mps_db_session,ac.beam_destination_id)
+                                    cur_mit = self.__get_beam_class_name(mps_db_session,ac.beam_class_id)
+                                    state_data['state_name'] = fs.device_state.name
+                                    state_data['state_number'] = fs.device_state.value
+                                    state_data['description'] = fs.device_state.description
+                                    for dest in self.beam_destinations:
+                                      state_data[dest['name']] = {}
+                                      state_data[dest['name']]['mitigation'] = '-'
+                                      state_data[dest['name']]['severity'] = 'NO_ALARM'
+                                      if cur_dest == dest['name']:
+                                        state_data[dest['name']]['mitigation'] = cur_mit
+                                        if cur_mit in ['BC0','BC1']:
+                                          state_data[dest['name']]['severity'] = 'MAJOR'
+                                        else:
+                                          state_data[dest['name']]['severity'] = 'MINOR'
+                                    fault_data["logic"].append(state_data)                                   
+
                                 # Add this fault to the list of faults of the current device
                                 device_data["faults"][fault_id] = fault_data
 
                         # Add this device to the list of devices of the current application
                         app_data["devices"].append(device_data)
-
-
-
+                        
                 # Add this application to the list of applications, if its list of devices is not empty
                 # The list of devices will be empty if not device in this app have defined fault inputs,
                 # as devices without faults inputs won't be processed.
@@ -449,9 +470,6 @@ class MpsAppReader:
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
 
-                self.link_nodes[ln_name]["lc1_node_id"] = app_data["lc1_node_id"]
-                self.link_nodes[ln_name]["crate_id"] = app_data["crate_id"]
-                self.link_nodes[ln_name]["cpu_name"] = app_data["cpu_name"]
                 self.link_nodes[ln_name]["dig_app_id"] = app_data["app_id"]
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
@@ -465,6 +483,7 @@ class MpsAppReader:
                     # Look for all the inputs in this device
                     inputs = device.inputs
                     fault_inputs = device.fault_outputs
+                    device_states = mps_db_session.query(models.DeviceState).filter(models.DeviceState.device_type_id==device.device_type_id).all()
 
                     # Check if this device has inputs. Only devices with inputs defined will be included
                     if len(inputs):
@@ -477,8 +496,12 @@ class MpsAppReader:
                         device_data["inputs"] = []
                         device_data["device_name"] = device.name
                         device_data["faults"] = []
+                        device_data["logic"] = []
                         device_data["prefix"] = '{}:{}:{}'.format(self.get_prefix(device_data["type_name"]), device.area, device.position)
-                        if device.measured_device_type_id is not None:
+                        ty = device.measured_device_type_id
+                        if ty is '':
+                          ty=None
+                        if ty is not None:
                           pv_device_type = self.__get_device_type_name(mps_db_session, device.measured_device_type_id)
                         else:
                           pv_device_type = self.__get_device_type_name(mps_db_session, device.device_type_id)
@@ -514,7 +537,6 @@ class MpsAppReader:
 
                             # Add this input to the list of inputs of the current device
                             device_data["inputs"].append(input_data)
-                        
                         if len(fault_inputs):
                           for fault_input in fault_inputs:
                             faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
@@ -525,7 +547,6 @@ class MpsAppReader:
                                 filter(models.FaultState.fault_id==faults[0].id).all()
                            # Get the fault ID
                             fault_id = fault_input.fault_id
-
                             # Get this fault data
                             if (not fault_id in device_data["faults"]):
                                 # Get the fault corresponding to this fault input.
@@ -537,15 +558,40 @@ class MpsAppReader:
                                 fault_data["states"] = []
                                 fault_data["fs_id"] = []
                                 fault_data["fs_desc"] = []
+                                fault_data["destination"] = []
+                                fault_data["mitigation"] = []
                                 for fs in fault_states:
                                     fault_data["states"].append(fs.device_state.name)
                                     fault_data["fs_id"].append(fs.id)
                                     fault_data["fs_desc"].append(fs.device_state.description)
+                                    allowed_classes = mps_db_session.query(models.AllowedClass).\
+                                                    filter(models.AllowedClass.fault_state_id == fs.id).all()
+                                    for ac in allowed_classes:
+                                      fault_data["destination"].append(self.__get_beam_destination_name(mps_db_session,ac.beam_destination_id))
+                                      fault_data["mitigation"].append(self.__get_beam_class_name(mps_db_session,ac.beam_class_id))
  
                                 # Add this fault to the list of faults of the current device
-                                device_data["faults"].append(fault_data) 
-                          
-
+                                device_data["faults"].append(fault_data)
+                        for ds in device_states:
+                          state_data = {}
+                          state_data['state_name'] = ds.name
+                          state_data['state_number'] = ds.value
+                          state_data['fault_bool'] = False
+                          for dest in self.beam_destinations:
+                            state_data[dest['name']] = {}
+                            state_data[dest['name']]['mitigation'] = '-'
+                            state_data[dest['name']]['severity'] = 'NO_ALARM'
+                            for i in range(len(fault_data['states'])):
+                              if len(fault_data['destination']) > 0:
+                                if fault_data['states'][i] == state_data['state_name']:
+                                  state_data['fault_bool'] = True
+                                  if fault_data['destination'][i] == dest['name']:
+                                    state_data[dest['name']]['mitigation'] = fault_data['mitigation'][i]
+                                    if fault_data['mitigation'][i] in ['BC0','BC1']:
+                                      state_data[dest['name']]['severity'] = 'MAJOR'
+                                    else:
+                                      state_data[dest['name']]['severity'] = 'MINOR'
+                          device_data["logic"].append(state_data)
                         # Add this device to the list of devices of the current application
                         app_data["devices"].append(device_data)
 
@@ -931,6 +977,34 @@ class MpsAppReader:
         else:
             raise ValueError("Function \"__get_fault(fault_id={}). More than one fault matches\""
                 .format(fault_id))
+
+    def __get_beam_destination_name(self, mps_db_session, destination_id):
+        """
+        Return the device type name corresponding to the passed device_type_id.
+        """
+        beam_destination = mps_db_session.query(models.BeamDestination).filter(models.BeamDestination.id == destination_id).all()
+        if len(beam_destination) == 1:
+            return beam_destination[0].name
+        elif len(beam_destination) == 0:
+            raise ValueError("Function \"__get_beam_destination_name(destination_id={}). Not fault was found.\""
+                .format(destination_id))
+        else:
+            raise ValueError("Function \"__get_beam_destination_name(destination_id={}). More than one device matches.\""
+                .format(destination_id))
+
+    def __get_beam_class_name(self, mps_db_session, beam_class_id):
+        """
+        Return the device type name corresponding to the passed device_type_id.
+        """
+        beam_class = mps_db_session.query(models.BeamClass).filter(models.BeamClass.id == beam_class_id).all()
+        if len(beam_class) == 1:
+            return beam_class[0].name
+        elif len(beam_class) == 0:
+            raise ValueError("Function \"__get_beam_class_name(beam_class_id={}). Not fault was found.\""
+                .format(destination_id))
+        else:
+            raise ValueError("Function \"__get_beam_class_name(beam_class_id={}). More than one device matches.\""
+                .format(destination_id))
 
     def __get_device_type_name(self, mps_db_session, device_type_id):
         """

@@ -1,4 +1,4 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
 SXU_PC0,IS_FAULTED,2,XTES Beam Class 0 Fault ,-,-,1,-
 SXU_PC1,IS_FAULTED,2,XTES Beam Class 1 Fault ,-,-,3,-
 SXU_PC2,IS_FAULTED,2,XTES Beam Class 2 Fault ,-,-,3,-

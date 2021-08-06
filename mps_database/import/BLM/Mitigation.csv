@@ -1,4 +1,4 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
 SXU,I0_LOSS_T0,1,Undulator Beam Loss Fault,-,-,1,-
 SXU,I0_LOSS_T1,2,Undulator Beam Loss Fault,-,-,2,-
 SXU,I0_LOSS_T2,3,Undulator Beam Loss Fault,-,-,3,-

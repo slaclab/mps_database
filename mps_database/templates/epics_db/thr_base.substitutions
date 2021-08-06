@@ -24,6 +24,17 @@ file "common/RegRO.template" { pattern
 { $(FAULT)_THR_BYTEMAP, "Threshold byte map",   $(APP)_BYTEMAP_$(FAULT_INDEX),  "$(BAY)"    }
 }
 
+### Tables enable PVs ###
+file "common/Reg1BitRW.template" { pattern
+{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM,      ZSV,        RBV_ZSV,    ASG  , DISV, SDIS}
+{ $(FAULT)_IDL_EN,  "IDLE table enabled",       $(APP)_IDLEEN_$(FAULT_INDEX),   "$(BAY)",   "Disabled", "Enabled", "NO_ALARM", "NO_ALARM", "MCC", 1   , ""}
+}
+
+file "common/Reg1BitRO.template" { pattern
+{ R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM,      ASG   }
+{ $(FAULT)_ALT_EN,  "ALT table enabled",        $(APP)_ALTEN_$(FAULT_INDEX),    "$(BAY)",   "Disabled", "Enabled", "MCC" }
+{ $(FAULT)_LC1_EN,  "LCLS1 table enabled",      $(APP)_LCLS1EN_$(FAULT_INDEX),  "$(BAY)",   "Disabled", "Enabled", "MCC" }
+}
 
 file "common/Reg1BitRO.template" { pattern
 { R,                DESC,                       PARAM,                          ADDR,       ZNAM,       ONAM        }
@@ -34,6 +45,8 @@ file "common/Reg1BitRO.template" { pattern
 file "common/thr.template" { pattern
 { R,                APP,        EGU,        PREC,   CH,                 TABLE,  THR,    }
 { $(FAULT)_T0_LC1,  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "0",   "0",    }
+{ $(FAULT)_T0_IDL,  "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",    "1",   "0", "MCC"   }
+
 }
 
 ### Scale PVs ###
