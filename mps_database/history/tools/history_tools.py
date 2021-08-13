@@ -2,7 +2,7 @@ import random
 
 from sqlalchemy.sql.functions import mode
 from mps_database.mps_config import MPSConfig, models
-from mps_database.history.models import fault_history, input_history
+from mps_database.history.models import fault_state, device_input
 from sqlalchemy import insert, select
 
 from sqlalchemy.orm import relationship
@@ -17,51 +17,82 @@ class HistorySession():
         self.connect_hist_db()
         return
 
-    def add_fault(self, fault_id):
-        print("Adding fault ", fault_id)
-        fault_insert = fault_history.FaultHistory.__table__.insert().values(fault_id=fault_id)
+    def add_fault(self, message):
+        """
+        Adds a single fault to the fault_state table in the history database
+
+        Message format is [type, id, oldvalue, newvalue, aux(devicestate)]
+        """
+        print("Adding fault ", message[1])
+        if message[-1] > 0:
+            fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=message[1], device_state=message[-1])
+        else:
+            fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=message[1])
         self.history_conn.session.execute(fault_insert)
         self.history_conn.session.commit()
         return
 
     def add_faults(self, fault_ids):
+        """
+        Adds a list of faults to the fault_state table in the history database
+        """
         print("Adding faults ", fault_ids)
         faults_info = []
         for fid in fault_ids:
             faults_info.append({'fault_id': fid})
         #TODO needs engine to run multi insert?
-        self.history_conn.last_engine.execute(fault_history.FaultHistory.__table__.insert(), faults_info)
+        self.history_conn.last_engine.execute(fault_state.FaultState.__table__.insert(), faults_info)
         self.history_conn.session.commit()
         return      
-
-    #TODO: is imported the default name now? Or is that just for testing?
 
     def query_beamclass(self):
         print(self.conf_conn.query(models.BeamClass.name).all())
         return
 
     def get_last_faults(self, num_faults=10):
-        stmt = select(fault_history.FaultHistory.id, fault_history.FaultHistory.fault_id).order_by(fault_history.FaultHistory.timestamp.desc()).limit(num_faults)
+        """
+        Gets the ten most recent fault entries from the history database
+        """
+        stmt = select(fault_state.FaultState.id, fault_state.FaultState.fault_id).order_by(fault_state.FaultState.timestamp.desc()).limit(num_faults)
         results = self.history_conn.session.execute(stmt)
         return results
 
-    def get_entry_by_id(self, fid):
+    def get_all_faults_by_id(self, fid):
+        """
+        Gets all fault entries in the history database based from their fid
+        """
         print("Selecting entries ", fid)
-        stmt = select(fault_history.FaultHistory.timestamp).where(fault_history.FaultHistory.fault_id == fid)
+        stmt = select(fault_state.FaultState.timestamp).where(fault_state.FaultState.fault_id == fid)
         result = self.history_conn.session.execute(stmt)
-        #TODO, this could be multiple, idk. maybe not because fids are unique
+        return result.fetchall()
+
+    def get_entry_by_id(self, fid):
+        """
+        Gets a single fault entry from history database based on its unique id
+        """
+        stmt = select(fault_state.FaultState.timestamp).where(fault_state.FaultState.id == fid)
+        result = self.history_conn.session.execute(stmt)
         return result.fetchone()
 
     def get_config_fault_info(self, fault_id):
+        """
+        Gets some descriptive information of one fault from the configuration database based on fault id
+        """
         stmt = select(models.Fault.id, models.Fault.name, models.Fault.description).where(models.Fault.id == fault_id)
         result = self.conf_conn.session.execute(stmt)
         return result
      
     def connect_hist_db(self):
+        """
+        Creates a interactable connection to the history database
+        """
         self.history_conn = MPSConfig(db_name="history", db_file='mps_gun_history.db')
         return
 
     def connect_conf_db(self):
+        """
+        Creates a interactable connection to the configuration database
+        """
         # gun, runtime dbs hardcoded for now
         #TODO: add cli args later
         self.conf_conn = MPSConfig(db_name="config", db_file='mps_config_imported.db')
@@ -82,9 +113,11 @@ def main():
     history.add_faults(faults)
 
     # Ensure entries added to db
-    print(history.get_entry_by_id(test2))
-    print(history.get_entry_by_id(test3))
-    print(history.get_entry_by_id(test4))
+    print("Selecting multiple faults for ", test2)
+    print(history.get_all_faults_by_id(test2))
+    print("Get single entry of unique id ", 4)
+    print(history.get_entry_by_id(4))
+    #print(history.get_entry_by_id(test4))
 
     # Get fault information from config based on history entries 
     results = history.get_config_fault_info(test1)

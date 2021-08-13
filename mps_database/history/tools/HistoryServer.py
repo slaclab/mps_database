@@ -6,6 +6,11 @@ from mps_database.history import history_tools
 
 
 class Message(Structure):
+    """
+    Class responsible for defining messages coming from the Central Node IOC
+
+    Fault ID is connected to only one device ID, can move backwords
+    """
     _fields_ = [
         ("type", c_uint),
         ("id", c_uint),
@@ -32,6 +37,9 @@ class HistoryServer:
             sys.exit()
 
     def receiveUpdate(self):
+        """
+        Receives data from the socket, puts it into a message object, and sends it to the decoder
+        """
         message=Message(0, 0, 0, 0, 0)
         data, ipAddr = self.sock.recvfrom(sizeof(Message))
         if data:
@@ -46,6 +54,9 @@ class HistoryServer:
 
     #TODO: do I need any of these? ask jeremy
     def decodeMessage(self, message):
+        """
+        Determines the type of the message, and sends it to the proper function for processing/including to the db
+        """
         if (message.type == 1): # FaultStateType
             
             self.history_db.addFault(message)
@@ -118,9 +129,34 @@ class HistoryServer:
         except:
             self.printGeneric(messageType, message)
 
+    def printBypassState(self, message):
+        messageType = "BYPAS"
+        try:
+            if (message.aux > 31) :
+                deviceInput = self.session.query(models.DeviceInput).filter(models.DeviceInput.id==message.id).first()
+                channel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).first()
+            else:
+                analogDevice = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==message.id).first()
+                channel = self.session.query(models.AnalogChannel).filter(models.AnalogChannel.id==analogDevice.channel_id).first()
 
+            if (message.oldValue == 0):
+                oldName = "Valid"
+            else:
+                oldName = "Expired"
+
+            if (message.newValue == 0):
+                newName = "Valid"
+            else:
+                newName = "Expired"
+
+            if (message.aux > 31) :
+                messageString = '{0}: {1} -> {2}'.format(channel.name, oldName, newName)
+            else:
+                messageString = '{0}: {1} -> {2} (integrator {3})'.format(channel.name, oldName, newName, message.aux)
+
+            self.printMessage(messageType, messageString)
+        except:
+            self.printGeneric(messageType, message)
 # <-------------------------------------------   Old funcs for reference
-
-
 
 
