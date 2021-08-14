@@ -36,7 +36,7 @@ class HistoryServer:
             print('Failed to create socket')
             sys.exit()
 
-    def receiveUpdate(self):
+    def receive_update(self):
         """
         Receives data from the socket, puts it into a message object, and sends it to the decoder
         """
@@ -44,22 +44,22 @@ class HistoryServer:
         data, ipAddr = self.sock.recvfrom(sizeof(Message))
         if data:
             message = Message.from_buffer_copy(data)
-            self.decodeMessage(message)
+            self.decode_message(message)
 
     #TODO: Ideally it would be nice to log errors. For now, print
     def log_error(self, fault):
-        print("ERROR: Unable to log fault/input in database")
+        print("ERROR: Unable to log entry in database")
         print("\t ", fault)
         return
 
     #TODO: do I need any of these? ask jeremy
-    def decodeMessage(self, message):
+    def decode_message(self, message):
         """
         Determines the type of the message, and sends it to the proper function for processing/including to the db
         """
         if (message.type == 1): # FaultStateType
             
-            self.history_db.addFault(message)
+            self.history_db.add_fault(message)
             #self.printFault(message)
         elif (message.type == 2): # BypassStateType
             #self.printBypassState(message)
@@ -74,8 +74,7 @@ class HistoryServer:
             #self.printAnalogDevice(message)
             pass
         else:
-            #self.printGeneric("?????", message)
-            pass
+            self.log_error(message)
 
 # <-------------------------------------------   Old funcs for reference
 

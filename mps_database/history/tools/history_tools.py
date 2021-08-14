@@ -25,9 +25,10 @@ class HistorySession():
         """
         print("Adding fault ", message[1])
         if message[-1] > 0:
-            fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=message[1], device_state=message[-1])
+            device_state = message[-1]
         else:
-            fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=message[1])
+            device_state = None
+        fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=message[1], old_state=message[2], new_state=message[3], device_state=device_state)
         self.history_conn.session.execute(fault_insert)
         self.history_conn.session.commit()
         return
