@@ -1,7 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, String, DateTime
 from mps_database.models import Base
 
 class BypassState(Base):
@@ -17,8 +16,8 @@ class BypassState(Base):
   """
   __tablename__ = 'bypass_state'
   id = Column(Integer, primary_key=True)
-  bypass_id = Column(Integer, nullable=False)
   timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+  bypass_id = Column(Integer, nullable=False)
   new_state = Column(Integer, nullable=False)
   old_state = Column(Integer, nullable=False)
   integrator = Column(Integer, nullable=True)

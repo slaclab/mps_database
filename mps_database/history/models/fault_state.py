@@ -1,7 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, String, DateTime
 from mps_database.models import Base
 
 class FaultState(Base):
@@ -16,8 +15,10 @@ class FaultState(Base):
   """
   __tablename__ = 'fault_state'
   id = Column(Integer, primary_key=True)
-  fault_id = Column(Integer, nullable=False)
   timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-  new_state = Column(Integer, nullable=False)
-  old_state = Column(Integer, nullable=False)
+  fault_id = Column(Integer, nullable=False)
+  # new/old states should be active/inactive
+  new_state = Column(String, nullable=False)
+  old_state = Column(String, nullable=False)
+  # Device state is the optional auxillary data
   device_state = Column(Integer, nullable=True)

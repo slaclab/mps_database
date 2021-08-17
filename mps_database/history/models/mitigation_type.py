@@ -1,7 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, String, DateTime
 from mps_database.models import Base
 
 class MitigationType(Base):
@@ -16,7 +15,9 @@ class MitigationType(Base):
   """
   __tablename__ = 'mitigation_type'
   id = Column(Integer, primary_key=True)
-  fault_id = Column(Integer, nullable=False)
   timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-  new_state = Column(Integer, nullable=False)
-  old_state = Column(Integer, nullable=False)
+  # Device corresponds to BeamDestination
+  device = Column(String, nullable=False)
+  # Both correspond to BeamClass values, they just iterate
+  new_state = Column(String, nullable=False)
+  old_state = Column(String, nullable=False)

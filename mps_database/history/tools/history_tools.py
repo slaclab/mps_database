@@ -1,11 +1,8 @@
 import random
 
-from sqlalchemy.sql.functions import mode
 from mps_database.mps_config import MPSConfig, models
-from mps_database.history.models import fault_state, device_input
+from mps_database.history.models import fault_state, mitigation_type, analog_device
 from sqlalchemy import insert, select
-
-from sqlalchemy.orm import relationship
 
 
 class HistorySession():
@@ -17,20 +14,65 @@ class HistorySession():
         self.connect_hist_db()
         return
 
+    def execute_commit(self, to_execute):
+        self.history_conn.session.execute(to_execute)
+        self.history_conn.session.commit()
+        return
+    
     def add_fault(self, message):
         """
         Adds a single fault to the fault_state table in the history database
 
         Message format is [type, id, oldvalue, newvalue, aux(devicestate)]
         """
-        print("Adding fault ", message[1])
-        if message[-1] > 0:
-            device_state = message[-1]
+        print("Adding fault ", message)
+        # Set the optional auxillary data and get the official fault id
+        if message.aux > 0:
+            device_state = self.conf_conn.query(models.DeviceState).filter(models.DeviceState.id==message.aux).first()
         else:
             device_state = None
-        fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=message[1], old_state=message[2], new_state=message[3], device_state=device_state)
-        self.history_conn.session.execute(fault_insert)
-        self.history_conn.session.commit()
+        fault = self.conf_conn.query(models.Fault).filter(models.Fault.id==message.id).first()
+
+        # Set the new state transition
+        if message.new_value == 1:
+            new_state, old_state = "inactive", "active"
+        else:
+            new_state, old_state = "active", "inactive"
+
+        fault_insert = fault_state.FaultState.__table__.insert().values(fault_id=fault, old_state=old_state, new_state=new_state, device_state=device_state)
+        self.execute_commit(fault_insert)
+        return
+
+    def add_analog(self, message):
+        try:
+            device = self.conf_conn.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==message.id).first()
+            channel = self.conf_conn.session.query(models.AnalogChannel).filter(models.AnalogChannel.id==device.channel_id).first()
+
+            # This will fail if the values are strings, not ints. TODO: see how it sends info
+            old_value, new_value = hex(message.old_value), hex(message.newV_vlue)
+        except:
+            print("Something went wrong with analog", message)
+            return
+        analog_insert = analog_device.AnalogDevice.__table__.insert().values(channel=channel, old_state=old_value, new_state=new_value)
+        self.execute_commit(analog_insert)
+        return
+
+    def add_bypass():
+        return
+    
+    def add_input():
+        return
+
+    def add_mitigation(self, message):
+        try:
+            device = self.conf_conn.query(models.BeamDestination).filter(models.BeamDestination.id==message.id).first()
+            bc1 = self.conf_conn.query(models.BeamClass).filter(models.BeamClass.id==message.old_value).first()
+            bc2 = self.conf_conn.query(models.BeamClass).filter(models.BeamClass.id==message.new_value).first()
+        except:
+            print("Something went wrong with mitigation", message)
+            return
+        mitigation_insert = mitigation_type.MitigationType.__table__.insert().values(device=device, new_state=bc2, old_state=bc1)
+        self.execute_commit(mitigation_insert)
         return
 
     def add_faults(self, fault_ids):
@@ -109,18 +151,19 @@ def main():
 
     #tests - fault ids range from 1-2144
     test1, test2, test3, test4 = random.randint(1, 2144), random.randint(1, 2144), random.randint(1, 2144), random.randint(1, 2144)
-    history.add_fault(test1)
+    #history.add_fault(test1)
     faults = [test2, test3, test4]
-    history.add_faults(faults)
+    #history.add_faults(faults)
 
     # Ensure entries added to db
     print("Selecting multiple faults for ", test2)
-    print(history.get_all_faults_by_id(test2))
+    #print(history.get_all_faults_by_id(test2))
     print("Get single entry of unique id ", 4)
-    print(history.get_entry_by_id(4))
+    #print(history.get_entry_by_id(4))
     #print(history.get_entry_by_id(test4))
 
     # Get fault information from config based on history entries 
+    '''
     results = history.get_config_fault_info(test1)
     print(results.mappings().all())
 
@@ -129,6 +172,7 @@ def main():
 
     results = history.get_last_faults()
     print(results.mappings().all())
+    '''
     return
 
 

@@ -15,5 +15,9 @@ class DeviceInput(Base):
   __tablename__ = 'device_input'
   id = Column(Integer, primary_key=True)
   timestamp = Column(String, nullable=False)
-  new_state = Column(Integer, nullable=False)
-  previous_state = Column(Integer, nullable=False)
+  #Old and new satates are based off of named values
+  new_state = Column(String, nullable=False)
+  old_state = Column(String, nullable=False)
+  channel = Column(String, nullable=False) #DigitalChannel
+  device = Column(String, nullable=False) #DigitalDevice 
+

@@ -14,8 +14,8 @@ class Message(Structure):
     _fields_ = [
         ("type", c_uint),
         ("id", c_uint),
-        ("oldValue", c_uint),
-        ("newValue", c_uint),
+        ("old_value", c_uint),
+        ("new_value", c_uint),
         ("aux", c_uint),
         ]
 
@@ -57,22 +57,16 @@ class HistoryServer:
         """
         Determines the type of the message, and sends it to the proper function for processing/including to the db
         """
-        if (message.type == 1): # FaultStateType
-            
+        if (message.type == 1): # FaultStateType 
             self.history_db.add_fault(message)
-            #self.printFault(message)
         elif (message.type == 2): # BypassStateType
-            #self.printBypassState(message)
-            pass
+            self.history_db.add_bypass(message)
         elif (message.type == 4): # MitigationType
-            #self.printMitigation(message)
-            pass
+            self.history_db.add_mitigation(message)
         elif (message.type == 5): # DeviceInput (DigitalChannel)
-            #self.printDeviceInput(message)
-            pass
+            self.history_db.add_device(message)
         elif (message.type == 6): # AnalogDevice
-            #self.printAnalogDevice(message)
-            pass
+            self.history_db.add_analog(message)
         else:
             self.log_error(message)
 
@@ -115,8 +109,10 @@ class HistoryServer:
             channel = self.history.conf_conn.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).first()
             device = self.history.conf_conn.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).first()
 
+            #set both to baseline value (zero name)
             oldName = channel.z_name
             newName = channel.z_name
+            #if one is altered, set it to the value of the "named state when the value is 1" (one name)
             if (message.oldValue > 0):
                 oldName = channel.o_name
             if (message.newValue > 0):
@@ -149,8 +145,10 @@ class HistoryServer:
                 newName = "Expired"
 
             if (message.aux > 31) :
+                #Act like bypass is a device input/channel name
                 messageString = '{0}: {1} -> {2}'.format(channel.name, oldName, newName)
             else:
+                #Act like bypass is an analog device.. They have different channel names.
                 messageString = '{0}: {1} -> {2} (integrator {3})'.format(channel.name, oldName, newName, message.aux)
 
             self.printMessage(messageType, messageString)
