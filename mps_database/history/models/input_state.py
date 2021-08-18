@@ -2,9 +2,9 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 from mps_database.models import Base
 
-class DeviceInput(Base):
+class InputState(Base):
   """
-  DeviceInput class (device_input table)
+  InputState class (input_state table)
 
   Properties:
    timestamp: the timestamp of the fault event. Format is as follows
@@ -12,7 +12,7 @@ class DeviceInput(Base):
    new_state: the state that was transitioned to in this fault event
                  
   """
-  __tablename__ = 'device_input'
+  __tablename__ = 'input_state'
   id = Column(Integer, primary_key=True)
   timestamp = Column(String, nullable=False)
   #Old and new satates are based off of named values

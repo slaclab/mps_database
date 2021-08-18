@@ -1,7 +1,7 @@
 import random
 
 from mps_database.mps_config import MPSConfig, models
-from mps_database.history.models import fault_state, mitigation_type, analog_device
+from mps_database.history.models import fault_state, mitigation_type, analog_device, bypass_state, input_state
 from sqlalchemy import insert, select
 
 
@@ -57,10 +57,37 @@ class HistorySession():
         self.execute_commit(analog_insert)
         return
 
-    def add_bypass():
+    def add_bypass(self, message):
+        #Determine valid/expiration status
+        old_name, new_name = "Valid", "Valid"
+        if message.old_value == 0: old_name = "Expired"
+        if message.new_value == 0: new_name = "Expired"
+
+        if message.aux > 31:
+            device_input = self.session.query(models.DeviceInput).filter(models.DeviceInput.id==message.id).first()
+            channel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==device_input.channel_id).first()
+            bypass_insert = bypass_state.BypassState.__table__.insert().values(bypass_id=channel.name, new_state=new_name, old_state=old_name)
+        else:
+            analog_device = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==message.id).first()
+            channel = self.session.query(models.AnalogChannel).filter(models.AnalogChannel.id==analog_device.channel_id).first()
+            bypass_insert = bypass_state.BypassState.__table__.insert().values(bypass_id=channel.name, new_state=new_name, old_state=old_name, integrator=message.aux)
+        self.execute_commit(bypass_insert)
         return
     
-    def add_input():
+    def add_input(self, message):
+        device_input = self.conf_conn.session.query(models.DeviceInput).filter(models.DeviceInput.id==message.id).first()
+        channel = self.conf_conn.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==device_input.channel_id).first()
+        device = self.conf_conn.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==device_input.digital_device_id).first()
+
+        old_name = channel.z_name
+        new_name = channel.z_name
+        if (message.old_value > 0):
+            old_name = channel.o_name
+        if (message.new_value > 0):
+            new_name = channel.o_name
+
+        input_insert = input_state.InputState.__table__.insert().values(new_state=new_name, old_state=old_name, channel=channel, device=device)
+        self.execute_commit(input_insert)
         return
 
     def add_mitigation(self, message):
