@@ -51,11 +51,11 @@ class HistorySession():
             channel = self.conf_conn.session.query(models.AnalogChannel).filter(models.AnalogChannel.id==device.channel_id).first()
 
             # This will fail if the values are strings, not ints. TODO: see how it sends info
-            old_value, new_value = hex(message.old_value), hex(message.newV_vlue)
+            old_value, new_value = hex(message.old_value), hex(message.new_value)
         except:
             print("Something went wrong with analog", message)
             return
-        analog_insert = analog_history.AnalogHistory.__table__.insert().values(channel=channel, old_state=old_value, new_state=new_value)
+        analog_insert = analog_history.AnalogHistory.__table__.insert().values(channel=channel.name, old_state=old_value, new_state=new_value)
         self.execute_commit(analog_insert)
         return
 
@@ -94,13 +94,13 @@ class HistorySession():
 
     def add_mitigation(self, message):
         try:
-            device = self.conf_conn.query(models.BeamDestination).filter(models.BeamDestination.id==message.id).first()
-            bc1 = self.conf_conn.query(models.BeamClass).filter(models.BeamClass.id==message.old_value).first()
-            bc2 = self.conf_conn.query(models.BeamClass).filter(models.BeamClass.id==message.new_value).first()
+            device = self.conf_conn.session.query(models.BeamDestination).filter(models.BeamDestination.id==message.id).first()
+            bc1 = self.conf_conn.session.query(models.BeamClass).filter(models.BeamClass.id==message.old_value).first()
+            bc2 = self.conf_conn.session.query(models.BeamClass).filter(models.BeamClass.id==message.new_value).first()
         except:
-            print("Something went wrong with mitigation", message)
+            print("Something went wrong with mitigation", message.id)
             return
-        mitigation_insert = mitigation_history.MitigationHistory.__table__.insert().values(device=device, new_state=bc2, old_state=bc1)
+        mitigation_insert = mitigation_history.MitigationHistory.__table__.insert().values(device=device.name, new_state=bc2.name, old_state=bc1.name)
         self.execute_commit(mitigation_insert)
         return
 

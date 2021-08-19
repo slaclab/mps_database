@@ -58,14 +58,14 @@ class HistoryServer:
         if data:
             print("Received\n", data)
             message = Message.from_buffer_copy(data)
-            print("Message\n", message.type, message.id, message.new_value, message.old_value, message.aux)
+            print("Message\n", message.type, message.id, message.old_value, message.new_value, message.aux)
             self.decode_message(message)
     
 
     #TODO: Ideally "it would be nice to log errors. For now, print
     def log_error(self, fault):
         print("ERROR: Unable to log entry in database")
-        print("\t ", fault)
+        print("\t ", fault.type, fault.id)
         return
 
     def decode_message(self, message):
