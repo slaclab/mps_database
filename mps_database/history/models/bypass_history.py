@@ -3,9 +3,9 @@ import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from mps_database.models import Base
 
-class BypassState(Base):
+class BypassHistory(Base):
   """
-  Bypass State class (bypass_state table)
+  BypassHistory class (bypass_history table)
 
   Properties:
    timestamp: the timestamp of the fault event. Format is as follows
@@ -14,7 +14,7 @@ class BypassState(Base):
    integrator: auxillary data found in previous EicHistory server
                  
   """
-  __tablename__ = 'bypass_state'
+  __tablename__ = 'bypass_history'
   id = Column(Integer, primary_key=True)
   timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
   bypass_id = Column(Integer, nullable=False)

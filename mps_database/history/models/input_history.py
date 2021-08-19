@@ -1,11 +1,11 @@
-import datetime
-
 from sqlalchemy import Column, Integer, String, DateTime
 from mps_database.models import Base
 
-class MitigationType(Base):
+import datetime
+
+class InputHistory(Base):
   """
-  MitigationType class (mitigation_type table)
+  InputHistory class (input_history table)
 
   Properties:
    timestamp: the timestamp of the fault event. Format is as follows
@@ -13,11 +13,12 @@ class MitigationType(Base):
    new_state: the state that was transitioned to in this fault event
                  
   """
-  __tablename__ = 'mitigation_type'
+  __tablename__ = 'input_history'
   id = Column(Integer, primary_key=True)
   timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-  # Device corresponds to BeamDestination
-  device = Column(String, nullable=False)
-  # Both correspond to BeamClass values, they just iterate
+  #Old and new satates are based off of named values
   new_state = Column(String, nullable=False)
   old_state = Column(String, nullable=False)
+  channel = Column(String, nullable=False) #DigitalChannel
+  device = Column(String, nullable=False) #DigitalDevice 
+

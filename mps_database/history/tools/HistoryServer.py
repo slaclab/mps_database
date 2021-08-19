@@ -58,6 +58,7 @@ class HistoryServer:
         if data:
             print("Received\n", data)
             message = Message.from_buffer_copy(data)
+            print("Message\n", message.type, message.id, message.new_value, message.old_value, message.aux)
             self.decode_message(message)
     
 
@@ -78,7 +79,7 @@ class HistoryServer:
         elif (message.type == 4): # MitigationType
             self.history_db.add_mitigation(message)
         elif (message.type == 5): # DeviceInput (DigitalChannel)
-            self.history_db.add_device(message)
+            self.history_db.add_input(message)
         elif (message.type == 6): # AnalogDevice
             self.history_db.add_analog(message)
         else:
