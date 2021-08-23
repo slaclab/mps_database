@@ -1,0 +1,700 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002 (1.67)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>fmtcount.sty v1.3: Displaying the Values of LaTeX Counters</TITLE>
+<META NAME="description" CONTENT="fmtcount.sty v1.3: Displaying the Values of LaTeX Counters">
+<META NAME="keywords" CONTENT="manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+
+</HEAD>
+
+<BODY >
+
+<P>
+
+ <H1 ALIGN="CENTER">fmtcount.sty v1.3: Displaying the Values of 
+LaTeX Counters</H1>
+<P ALIGN="CENTER"><STRONG>Nicola L.C. Talbot
+<BR>
+<BR>
+School of Computing Sciences
+<BR>
+University of East Anglia
+<BR>
+Norwich.  NR4 7TJ.
+<BR>
+United Kingdom.
+<BR> <TT><A NAME="tex2html1"
+  HREF="http://theoval.cmp.uea.ac.uk/~nlct/">http://theoval.cmp.uea.ac.uk/~nlct/</A></TT></STRONG></P>
+<P ALIGN="CENTER"><STRONG>20 Aug 2007</STRONG></P>
+ <BR>
+
+<H2><A NAME="SECTION00010000000000000000">
+Contents</A>
+</H2>
+<!--Table of Contents-->
+
+<UL>
+<LI><A NAME="tex2html16"
+  HREF="manual.html#SECTION00020000000000000000">Introduction</A>
+<LI><A NAME="tex2html17"
+  HREF="manual.html#SECTION00030000000000000000">Installation</A>
+<LI><A NAME="tex2html18"
+  HREF="manual.html#SECTION00040000000000000000">Available Commands</A>
+<LI><A NAME="tex2html19"
+  HREF="manual.html#SECTION00050000000000000000">Package Options</A>
+<LI><A NAME="tex2html20"
+  HREF="manual.html#SECTION00060000000000000000">Multilingual Support</A>
+<LI><A NAME="tex2html21"
+  HREF="manual.html#SECTION00070000000000000000">Configuration File fmtcount.cfg</A>
+<LI><A NAME="tex2html22"
+  HREF="manual.html#SECTION00080000000000000000">LaTeX2HTML style</A>
+<LI><A NAME="tex2html23"
+  HREF="manual.html#SECTION00090000000000000000">Acknowledgements</A>
+<LI><A NAME="tex2html24"
+  HREF="manual.html#SECTION000100000000000000000">Troubleshooting</A>
+</UL>
+<!--End of Table of Contents--> 
+<H1><A NAME="SECTION00020000000000000000">
+Introduction</A>
+</H1>
+The <TT>fmtcount</TT> package provides commands to display
+the values of LaTeX counters in a variety of formats. It also
+provides equivalent commands for actual numbers rather than 
+counter names. Limited multilingual support is available. 
+Currently, there is only support for English, French (including
+Belgian and Swiss variations), Spanish, Portuguese and German.
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+Installation</A>
+</H1>
+
+<P>
+This package is distributed with the files <TT>fmtcount.dtx</TT>
+and <TT>fmtcount.ins</TT>.  To extract the code do:
+<PRE>
+latex fmtcount.ins
+</PRE>
+This will create the files <TT>fmtcount.sty</TT> and 
+<TT>fmtcount.perl</TT>, along with several <TT>.def</TT> files.
+Place <TT>fmtcount.sty</TT> and the <TT>.def</TT> files somewhere
+where LaTeX will find them (e.g. 
+<TT>texmf/tex/latex/fmtcount/</TT>) and place <TT>fmtcount.perl</TT> 
+somewhere where LaTeX2HTML
+will find it (e.g. <TT>latex2html/styles</TT>). Remember to refresh
+the TeX database (using <TT>texhash</TT> or <TT>mktexlsr</TT> 
+under Linux, for
+other operating systems check the manual.)
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+Available Commands</A>
+</H1>
+
+<P>
+The commands can be divided into two categories: those that
+take the name of a counter as the argument, and those
+that take a number as the argument.
+
+<P>
+
+<P>
+<TT>&#092;ordinal{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This will print the value of a LaTeX counter <I>counter</I> as an 
+ordinal, where the macro
+
+<P>
+<TT>&#092;fmtord{</TT><EM>text</EM><TT>}</TT>
+<P>
+is used to format the st, nd, rd, th bit.  By default the ordinal is
+formatted as a superscript, if the package option <TT>level</TT> is
+used, it is level with the text.  For example, if the current section
+is 3, then <code>\ordinal{section}</code> will produce the output:
+3<SUP>rd</SUP>. Note that the optional argument <I>gender</I> 
+occurs <I>at the end</I>. This argument may only take one of
+the following values: <TT>m</TT> (masculine), <TT>f</TT>
+(feminine) or <TT>n</TT> (neuter.) If <I>gender</I> is omitted, 
+or if the given gender has no meaning in the current language, 
+<TT>m</TT> is assumed.
+
+<P>
+<B>Notes:</B> 
+
+<OL>
+<LI>the <TT>memoir</TT> class also defines a command called
+<TT>&#092;ordinal</TT> which takes a number as an argument instead of a
+counter. In order to overcome this incompatiblity, if you want
+to use the <TT>fmtcount</TT> package with the <TT>memoir</TT> class 
+you should use <TT>&#092;FCordinal</TT> to access 
+<TT>fmtcount</TT>'s version of <TT>&#092;ordinal</TT>, and use 
+<TT>&#092;ordinal</TT> to use <TT>memoir</TT>'s version of that command.
+
+<P>
+</LI>
+<LI>As with all commands which have an optional argument as the
+last argument, if the optional argument is omitted, any spaces
+following the final argument will be ignored. Whereas, if the
+optional argument is present, any spaces following the optional
+argument won't be ignored. so <code>\ordinal{section} !</code>
+will produce: 3<SUP>rd</SUP>! whereas
+ <code>\ordinal{section}[m] !</code> will produce:
+3<SUP>rd</SUP> !
+</LI>
+</OL>
+
+<P>
+
+<P>
+<TT>&#092;ordinalnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This is like <TT>&#092;ordinal</TT> but takes an actual number rather than a 
+counter as the argument. For example: <code>\ordinalnum{3}</code> will
+produce: 3<SUP>rd</SUP>.
+
+<P>
+
+<P>
+<TT>&#092;numberstring{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This will print the value of <I>counter</I> as text.  E.g. <code>\numberstring{section}</code> will produce: three. The optional
+argument is the same as that for <TT>&#092;ordinal</TT>.
+
+<P>
+
+<P>
+<TT>&#092;Numberstring{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This does the same as <TT>&#092;numberstring</TT>, but with initial letters in
+uppercase.  For example, <code>\Numberstring{section}</code> will produce:
+Three.
+
+<P>
+
+<P>
+<TT>&#092;NUMBERstring{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This does the same as <TT>&#092;numberstring</TT>, but converts the string to
+upper case. Note that
+<code>\MakeUppercase{\NUMBERstring{</code><I>counter</I><code>}}</code> doesn't
+work, due to the way that <TT>&#092;MakeUppercase</TT> expands its
+argument<A NAME="tex2html2"
+  HREF="#foot515"><SUP>1</SUP></A>.
+
+<P>
+
+<P>
+<TT>&#092;numberstringnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;Numberstringnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;NUMBERstringnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+Theses macros  work like 
+<TT>&#092;numberstring</TT>, <TT>&#092;Numberstring</TT> and <TT>&#092;NUMBERstring</TT>, 
+respectively, but take an actual number
+rather than a counter as the argument. For example:
+<code>\Numberstringnum{105}</code> will produce: One Hundred and Five.
+
+<P>
+
+<P>
+<TT>&#092;ordinalstring{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This will print the value of <I>counter</I> as a textual ordinal.
+E.g. <code>\ordinalstring{section}</code> will produce: third. The
+optional argument is the same as that for <TT>&#092;ordinal</TT>.
+
+<P>
+
+<P>
+<TT>&#092;Ordinalstring{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This does the same as <TT>&#092;ordinalstring</TT>, but with initial letters in
+uppercase.  For example, <code>\Ordinalstring{section}</code> will produce:
+Third.
+
+<P>
+
+<P>
+<TT>&#092;ORDINALstring{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+This does the same as <TT>&#092;ordinalstring</TT>, but with all words in upper
+case (see previous note about <TT>&#092;MakeUppercase</TT>).
+
+<P>
+
+<P>
+<TT>&#092;ordinalstringnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;Ordinalstringnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;ORDINALstringnum{</TT><EM>n</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+These macros work like <TT>&#092;ordinalstring</TT>, <TT>&#092;Ordinalstring</TT> and
+<TT>&#092;ORDINALstring</TT>, respectively, but take an actual number rather
+than a counter as the argument. For example,
+<code>\ordinalstringnum{3}</code> will produce: third.
+
+<P>
+As from version 1.09, textual representations can be stored for
+later use. This overcomes the problems encountered when you
+attempt to use one of the above commands in <TT>&#092;edef</TT>.
+
+<P>
+Each of the following commands takes a label as the first argument,
+the other arguments are as the analogous commands above. These
+commands do not display anything, but store the textual 
+representation. This can later be retrieved using
+
+<P>
+<TT>&#092;FMCuse{</TT><EM>label</EM><TT>}</TT>
+<P>
+Note: with <TT>&#092;storeordinal</TT> and <TT>&#092;storeordinalnum</TT>, the 
+only bit that doesn't get expanded is <TT>&#092;fmtord</TT>. So, for 
+example, <code>\storeordinalnum{mylabel}{3}</code> will be stored as
+<code>3\relax \fmtord{rd}</code>.
+
+<P>
+
+<P>
+<TT>&#092;storeordinal{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeordinalstring{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeOrdinalstring{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+
+<P>
+<TT>&#092;storeORDINALstring{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storenumberstring{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeNumberstring{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeNUMBERstring{</TT><EM>label</EM><TT>}{</TT><EM>counter</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeordinalnum{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeordinalstring{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeOrdinalstringnum{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeORDINALstringnum{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storenumberstring{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeNumberstring{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+<TT>&#092;storeNUMBERstring{</TT><EM>label</EM><TT>}{</TT><EM>number</EM><TT>}[</TT><EM>gender</EM><TT>]</TT>
+<P>
+
+<P>
+
+<P>
+<TT>&#092;binary{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This will print the 
+value of <I>counter</I> as a binary number.  
+E.g. <code>\binary{section}</code> will produce: 11.  The declaration
+
+<P>
+<TT>&#092;padzeroes[</TT><EM>n</EM><TT>]</TT>
+<P>
+will ensure numbers are written to <I>n</I> digits, padding with 
+zeroes if necessary.  E.g. <code>\padzeroes[8]\binary{section}</code> 
+will produce: 00000011.  The default value for <I>n</I> is 17.
+
+<P>
+
+<P>
+<TT>&#092;binary{</TT><EM>n</EM><TT>}</TT>
+<P>
+This is like <TT>&#092;binary</TT> but takes an actual number rather than a
+counter as the argument. For example: <code>\binarynum{5}</code> will
+produce: 101.
+
+<P>
+
+<P>
+<TT>&#092;octal{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This will print the value of <I>counter</I> as an octal number.  For
+example, if you have a counter called, say <TT>mycounter</TT>, and
+you set the value to 125, then <code>\octal{mycounter}</code> will produce:
+177.  Again, the number will be padded with zeroes if necessary,
+depending on whether <TT>&#092;padzeroes</TT> has been used.
+
+<P>
+
+<P>
+<TT>&#092;octalnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+This is like <TT>&#092;octal</TT> but takes an actual number rather than a
+counter as the argument. For example: <code>\octalnum{125}</code> will
+produce: 177.
+
+<P>
+
+<P>
+<TT>&#092;hexadecimal{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This will print the value of <I>counter</I> as a hexadecimal number.
+Going back to the counter used in the previous example,
+<code>\hexadecimal{mycounter}</code> will produce: 7d. Again, the number
+will be padded with zeroes if necessary, depending on whether
+<TT>&#092;padzeroes</TT> has been used.
+
+<P>
+
+<P>
+<TT>&#092;Hexadecimal{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This does the same thing, but uses uppercase characters, e.g. <code>\Hexadecimal{mycounter}</code> will produce: 7D.
+
+<P>
+
+<P>
+<TT>&#092;hexadecimalnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+
+<P>
+<TT>&#092;Hexadecimalnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+These are like <TT>&#092;hexadecimal</TT> and <TT>&#092;Hexadecimal</TT>
+but take an actual number rather than a counter as the
+argument. For example: <code>\hexadecimalnum{125}</code> will
+produce: 7d, and <code>\Hexadecimalnum{125}</code> will 
+produce: 7D.
+
+<P>
+
+<P>
+<TT>&#092;decimal{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This is similar to <TT>&#092;arabic</TT> but the number can be padded with
+zeroes depending on whether <TT>&#092;padzeroes</TT> has been used.  For
+example: <code>\padzeroes[8]\decimal{section}</code> will produce:
+00000005.
+
+<P>
+
+<P>
+<TT>&#092;decimalnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+This is like <TT>&#092;decimal</TT> but takes an actual number rather than a
+counter as the argument. For example:
+<code>\padzeroes[8]\decimalnum{5}</code> will produce: 00000005.
+
+<P>
+
+<P>
+<TT>&#092;aaalph{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This will print the value of <I>counter</I> as: a b ... z aa bb
+... zz etc.  For example, <code>\aaalpha{mycounter}</code> will
+produce: uuuuu if <TT>mycounter</TT> is set to 125.
+
+<P>
+
+<P>
+<TT>&#092;AAAlph{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This does the same thing, but uses uppercase characters, e.g. <code>\AAAlph{mycounter}</code> will produce: UUUUU.
+
+<P>
+
+<P>
+<TT>&#092;aaalphnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+
+<P>
+<TT>&#092;AAAlphnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+These macros are like <TT>&#092;aaalph</TT> and <TT>&#092;AAAlph</TT>
+but take an actual number rather than a counter as the
+argument. For example: <code>\aaalphnum{125}</code> will
+produce: uuuuu, and <code>\AAAlphnum{125}</code> will 
+produce: UUUUU.
+
+<P>
+
+<P>
+<TT>&#092;abalph{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This will print the value of <I>counter</I> as: a b ... z aa ab
+... az etc.  For example, <code>\abalpha{mycounter}</code> will
+produce: du if <TT>mycounter</TT> is set to 125.
+
+<P>
+
+<P>
+<TT>&#092;ABAlph{</TT><EM>counter</EM><TT>}</TT>
+<P>
+This does the same thing, but uses uppercase characters, e.g. <code>\ABAlph{mycounter}</code> will produce: DU.
+
+<P>
+
+<P>
+<TT>&#092;abalphnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+
+<P>
+<TT>&#092;ABAlphnum{</TT><EM>n</EM><TT>}</TT>
+<P>
+These macros are like <TT>&#092;abalph</TT> and <TT>&#092;ABAlph</TT>
+but take an actual number rather than a counter as the
+argument. For example: <code>\abalphnum{125}</code> will
+produce: du, and <code>\ABAlphnum{125}</code> will 
+produce: DU.
+
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+Package Options</A>
+</H1>
+
+<P>
+The following options can be passed to this package:
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT">raise</TD>
+<TD ALIGN="LEFT">make ordinal st,nd,rd,th appear as superscript</TD>
+</TR>
+<TR><TD ALIGN="LEFT">level</TD>
+<TD ALIGN="LEFT">make ordinal st,nd,rd,th appear level with rest of 
+text</TD>
+</TR>
+</TABLE>
+
+<P>
+These can also be set using the command:
+
+<P>
+
+<P>
+<TT>&#092;fmtcountsetoptions</TT><code>{fmtord=</code><I>type</I><code>}</code>
+<P>
+where <I>type</I> is either <TT>level</TT> or 
+<TT>raise</TT>.
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+Multilingual Support</A>
+</H1>
+
+<P>
+Version 1.02 of the <TT>fmtcount</TT> package now has
+limited multilingual support.  The following languages are
+implemented: English, Spanish, Portuguese, French, French (Swiss)
+and French (Belgian). German support was added in version 
+1.1<A NAME="tex2html3"
+  HREF="#foot461"><SUP>2</SUP></A>.
+
+<P>
+The package checks to see if the command <TT>&#092;l@</TT><I>language</I> is
+defined<A NAME="tex2html4"
+  HREF="#foot516"><SUP>3</SUP></A>,
+and will load the code for those languages.  The commands
+<TT>&#092;ordinal</TT>, <TT>&#092;ordinalstring</TT> and <TT>&#092;numberstring</TT> (and their
+variants) will then be formatted in the currently selected language.
+
+<P>
+If the French language is selected, the French (France) version
+will be used by default (e.g. soxiante-dix for 70).  To
+select the Swiss or Belgian variants (e.g. septente for 70) use:
+<code>\fmtcountsetoptions{french=</code><I>dialect</I><code>}</code>
+where <I>dialect</I> is either <TT>swiss</TT> or <TT>belgian</TT>.
+You can also use this command to change the action of 
+<TT>&#092;ordinal</TT>.
+<code>\fmtcountsetoptions{abbrv=true}</code> to produce ordinals
+of the form 2<SUP>e</SUP> or
+<code>\fmtcountsetoptions{abbrv=false}</code> to produce ordinals
+of the form 2<SUP>eme</SUP> (default).
+
+<P>
+The <TT>french</TT> and <TT>abbrv</TT> settings only have an
+effect if the French language has been defined.
+
+<P>
+The male gender for all languages is used by default, however the
+feminine or neuter forms can be obtained by passing <TT>f</TT> or
+<TT>n</TT> as an optional argument to <TT>&#092;ordinal</TT>,
+<TT>&#092;ordinalnum</TT> etc.  For example:
+<code>\numberstring{section}[f]</code>. Note that the optional argument
+comes <I>after</I> the compulsory argument.  If a gender is
+not defined in a given language, the masculine version will
+be used instead.
+
+<P>
+Let me know if you find any spelling mistakes (has been known
+to happen in English, let alone other languages with which I'm not so
+familiar.) If you want to add support for another language,
+you will need to let me know how to form the numbers and ordinals 
+from&nbsp;0 to&nbsp;99999 in that language for each gender.
+
+<P>
+
+<H1><A NAME="SECTION00070000000000000000">
+Configuration File <TT>fmtcount.cfg</TT></A>
+</H1>
+
+<P>
+You can save your preferred default settings to a file called
+<TT>fmtcount.cfg</TT>, and place it on the TeX path.  These
+settings will then be loaded by the <TT>fmtcount</TT>
+package.
+
+<P>
+Note that if you are using the <TT>datetime</TT> package,
+the <TT>datetime.cfg</TT> configuration file will override
+the <TT>fmtcount.cfg</TT> configuration file.
+For example, if <TT>datetime.cfg</TT> has the line:
+<PRE>
+\renewcommand{\fmtord}[1]{\textsuperscript{\underline{#1}}}
+</PRE>
+and if <TT>fmtcount.cfg</TT> has the line:
+<PRE>
+\fmtcountsetoptions{fmtord=level}
+</PRE>
+then the former definition of <TT>&#092;fmtord</TT> will take
+precedence.
+
+<P>
+
+<H1><A NAME="SECTION00080000000000000000">
+LaTeX2HTML style</A>
+</H1>
+
+<P>
+The LaTeX2HTML style file <TT>fmtcount.perl</TT> is provided.
+The following limitations apply:
+
+<P>
+
+<UL>
+<LI><TT>&#092;padzeroes</TT> only has an effect in the preamble.
+
+<P>
+</LI>
+<LI>The configuration file 
+<TT>fmtcount.cfg</TT> is currently ignored. (This is because
+I can't work out the correct code to do this.  If you
+know how to do this, please let me know.)  You can however
+do:
+<PRE>
+\usepackage{fmtcount}
+\html{\input{fmtcount.cfg}}
+</PRE>
+This, I agree, is an unpleasant cludge.
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<H1><A NAME="SECTION00090000000000000000">
+Acknowledgements</A>
+</H1>
+
+<P>
+I would like to thank my mother for the French and Portuguese
+support and my Spanish dictionary for the Spanish support.
+Thank you to K. H. Fricke for providing me with the German
+translations.
+
+<P>
+
+<H1><A NAME="SECTION000100000000000000000">
+Troubleshooting</A>
+</H1>
+
+<P>
+There is a FAQ available at: 
+<TT><A NAME="tex2html5"
+  HREF="http://theoval.cmp.uea.ac.uk/~nlct/latex/packages/faq/">http://theoval.cmp.uea.ac.uk/~nlct/latex/packages/faq/</A></TT>.
+
+<P>
+<BR><HR><H4>Footnotes</H4>
+<DL>
+<DT><A NAME="foot515">...
+argument</A><A
+ HREF="manual.html#tex2html2"><SUP>1</SUP></A></DT>
+<DD>See all the various postings to
+<TT>comp.text.tex</TT> about <TT>&#092;MakeUppercase</TT>
+
+</DD>
+<DT><A NAME="foot461">...
+1.1</A><A
+ HREF="manual.html#tex2html3"><SUP>2</SUP></A></DT>
+<DD>Thanks to K. H. Fricke for supplying the information
+
+</DD>
+<DT><A NAME="foot516">...
+defined</A><A
+ HREF="manual.html#tex2html4"><SUP>3</SUP></A></DT>
+<DD>this will be true if you have loaded <TT>babel</TT>
+
+</DD>
+</DL>
+<BR><HR>
+<ADDRESS>
+<A href=http://theoval.cmp.uea.ac.uk/~nlct/>Nicola L. C. Talbot</A>. 
+<A HREF=http://www.cmp.uea.ac.uk/>School of Computing Sciences</A>. 
+<A HREF=http://www.uea.ac.uk/>University of East Anglia.</A> 
+Last Modified: 2007-08-20
+</ADDRESS>
+</BODY>
+</HTML>

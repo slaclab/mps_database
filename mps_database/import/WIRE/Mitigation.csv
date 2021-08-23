@@ -1,5 +1,5 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,Speed not OK,2,Linac Wire Speed Fault,1,-,-,-
-DIAG0,Speed not OK,2,Diag0 Wire Speed Fault,-,1,-,-
-SXU,Speed not OK,2,SXU Wire Speed Fault,-,-,1,-
-HXU,Speed not OK,2,HXU Wire Speed Fault,-,-,-,1
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,IS_NOT_OK,2,LINAC Wire Speed Fault,1,-,-,-
+DIAG0,IS_NOT_OK,2,Diag0 Wire Speed Fault,-,1,-,-
+SXU,IS_NOT_OK,2,SXU Wire Speed Fault,-,-,1,-
+HXU,IS_NOT_OK,2,HXU Wire Speed Fault,-,-,-,1

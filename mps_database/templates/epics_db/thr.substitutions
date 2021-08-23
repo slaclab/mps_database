@@ -19,5 +19,6 @@
 
 file "common/thr.template" { pattern
 { R,                                APP,        EGU,        PREC,   CH,                 TABLE,  THR,               }
-{ $(FAULT)_T$(BIT_POSITION),        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "2",    "$(BIT_POSITION)"   }
+{ $(FAULT)_T$(BIT_POSITION),        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",       "2",    "$(BIT_POSITION)"   }
+{ $(FAULT)_T$(BIT_POSITION)_ALT,        "$(APP)",   "$(EGU)",   "2",    "$(FAULT_INDEX)",   "3",    "$(BIT_POSITION)"   }
 }

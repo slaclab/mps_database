@@ -189,7 +189,6 @@ class DatabaseImporter:
 
         app_card_type = self.session.query(models.ApplicationType).\
             filter(models.ApplicationType.number==app_card_info['type_number']).one()
-
         add_card = True
         try:
           app_crate = self.session.query(models.Crate).\
@@ -202,12 +201,10 @@ class DatabaseImporter:
             print(('ERROR: Cannot find crate with number {0}, exiting...'.format(app_card_info['crate_number'])))
             return
 
-
         link_node = self.find_app_link_node(app_crate, int(app_card_info['slot']))
         if (link_node == None):
           print(('ERROR: Cannot find link_node associated to slot {} in crate {}'.\
                   format(app_card_info['slot'], app_crate.get_name())))
-
         app_card = models.ApplicationCard(name=app_card_info['name'],
                                           number=int(app_card_info['number']),
                                           area=app_card_info['area'],
@@ -377,18 +374,16 @@ class DatabaseImporter:
     and a 'device_states' dictionary which the possible states for the 
     device
     '''
+    faults={}
+    device_states={}
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
     for field in line.split(','):
       fields.append(str(field).lower())
-
-    faults={}
-    device_states={}
     while line:
       state_info={}
       line = f.readline().strip()
-
       if line:
         field_index = 0
         for property in line.split(','):
@@ -400,13 +395,11 @@ class DatabaseImporter:
                                           value=int(state_info['value']),
                                           mask=int(state_info['mask']))
         device_states[state_info['name']]=device_state#state_info
-        #print state_info
-        #print ''
         if (add_faults):
           if (state_info['fault'] != '-'):
             fault_name = state_info['fault']
             fault_desc = state_info['fault_description']
-#            print('Fault: {}: {}'.format(fault_name,fault_desc))
+#             print('Fault: {}: {}'.format(fault_name,fault_desc))
             if (not fault_name in faults):
               fault = models.Fault(name=fault_name, description=fault_desc)
               #self.session.add(fault)
@@ -420,16 +413,13 @@ class DatabaseImporter:
               faults[fault_name]['fault']=fault
             else:
               faults[fault_name]['states'].append(state_info['name'])
-
         self.session.add(device_state)
         self.session.commit()
         self.session.refresh(device_state)
 
-#        print(faults)
-#        print(device_states)
-
+#      print(faults)
+#      print(device_states)
     f.close()
-
     return faults, device_states
 
   #
@@ -614,7 +604,7 @@ class DatabaseImporter:
 
 
   def add_analog_device(self, directory, card_name, add_ignore=False):
-#    if (self.lcls1_only and card_name == "BPM Card"):
+#    if (self.lcls1_only and card_name == "BPM"):
 #      return
 
     sys.stdout.write('Adding {}\n'.format(directory))
@@ -1291,6 +1281,7 @@ importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=Tr
 importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_digital_device('import/PROF')
 importer.add_digital_device('import/STOP')
+importer.add_digital_device('import/DUMP')
 
 
 
@@ -1298,6 +1289,7 @@ importer.add_digital_device('import/STOP')
 if (True):
   importer.add_analog_device('import/PBLM', card_name="Generic ADC")
   importer.add_analog_device('import/LBLM', card_name="Generic ADC")
+  importer.add_analog_device('import/FADC', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
   importer.add_analog_device('import/BEND', card_name="Generic ADC") 
@@ -1306,7 +1298,8 @@ if (True):
   importer.add_analog_device('import/TORO', card_name="Analog Card")
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
-  #importer.add_digital_device('import/KICK_STATUS')
+  importer.add_digital_device('import/KICK_STATUS')
+  importer.add_digital_device('import/SCKICK_STATUS')
   importer.add_digital_device('import/BEND_SOFT', card_name="Virtual Card")
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
@@ -1314,12 +1307,9 @@ if (True):
   #importer.add_digital_device('import/COLL')
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/XTES')
-  importer.add_digital_device('import/WIRE', card_name="Analog Card") # Treat this one as digital?
-
-
+  importer.add_digital_device('import/WIRE', card_name="Wire Scanner") # Treat this one as digital?
   importer.add_digital_device('import/BLMHV', card_name="Virtual Card")
   importer.add_digital_device('import/WDOG', card_name="Virtual Card")
-  importer.add_digital_device('import/WDOG_IOC', card_name="Virtual Card")
 
 importer.cleanup()
 

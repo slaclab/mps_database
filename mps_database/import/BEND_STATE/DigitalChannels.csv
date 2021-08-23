@@ -1,3 +1,3 @@
 Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Debounce
-ON,Magnet Rack,0/24V,1,NOT_ON,ON,0,0,10
-OFF,Magnet Rack,0/24V,2,NOT_OFF,OFF,1,1,10
+ON,Magnet Rack,0/24V,1,NOT_ON,ON,0,1,10
+OFF,Magnet Rack,0/24V,2,NOT_OFF,OFF,0,0,10

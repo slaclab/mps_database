@@ -1,0 +1,399 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Header Stufff
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\fileversion{1.0}
+\def\filedate{2006/10/23}
+\@ifundefined{ProvidesPackage}{}{%
+\ProvidesPackage{lcls-article}[\filedate\space\fileversion]}
+
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{graphicx}}
+\ProcessOptions
+\RequirePackage{graphicx}
+
+\PassOptionsToPackage{pdftex,backref}{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% URL Line Breaking Setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% From jules-verne.sty
+% http://www.ctan.org/tex-archive/macros/latex/contrib/gatech-thesis/julesverne/bellswhistles/
+
+% Ordinarily, the url{} package will not line-break on a hyphen (is
+% the '-' character a line-continuation mark, or is it actually
+% part of the url itself?)  However, in my experience that's usually
+% pretty obvious, and NOT allowing line breaks at the hyphens 
+% causes most of the problems.  So, allow those line breaks, and live
+% with the confusion.
+\PassOptionsToPackage{T1,hyphens,obeyspaces,spaces}{url}
+
+% We'll use the url{} command from the url package to typeset
+% filenames (unlike \texttt{}, it allows hyphenation and line
+% breaks, which is good -- filenames can sometimes be long,
+% and \texttt{alongfilename} = overful hboxes (eg. stuff
+% sticking out in the margins).
+\RequirePackage{url}
+% But, since hyperref redefines \Url, let's make an opaque
+% copy of the command before loading hyperref
+\let\noHyperUrl\Url
+% More on this later...
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Some packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{geometry}
+\geometry{letterpaper}
+
+\usepackage{caption}
+\captionsetup{labelfont=bf, labelsep=period}
+
+\usepackage{ifthen}
+\usepackage{titlesec}
+\usepackage{rotating}
+\usepackage[parfill]{parskip}
+\usepackage{lastpage}
+\usepackage{graphicx}
+\usepackage[squaren]{SIunits}
+\usepackage{binary}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{fmtcount}
+\usepackage{appendix}
+\usepackage{comment}
+\usepackage{relsize}
+\usepackage[printonlyused]{acronym}
+\usepackage[latin1, applemac]{inputenc}
+\usepackage{calc}
+\usepackage{fancyhdr}
+\usepackage{pxfonts}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{array, makecell}
+%\usepackage{courier}
+%\usepackage{pslatex}
+\usepackage{microtype} % load after fonts
+\usepackage[table]{xcolor}
+\definecolor{light-gray}{gray}{0.75}
+\setcellgapes{1pt}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Continued URL and Hyperref Setup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% From jules-verne.sty
+
+\AtEndOfPackage{%
+    \RequirePackage{hyperref}
+    \hypersetup{%
+        %plainpages=true,
+        %bookmarks=true,% default, not necessary to specify
+        bookmarksopen=false,
+        bookmarksopenlevel=1,
+        bookmarksnumbered=true,
+        pdfpagemode={UseOutlines},
+        pdfborder=0 0 0,
+        %hypertexnames=false,%not ideal, but needed when pagenums duplicate (`i' vs. `1')
+        pageanchor=true,
+        colorlinks=false
+    }
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom Graphics Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\defaultgraphicwidth{0.8}
+
+\newcommand\insertgraphicw[3]{
+	\begin{figure}[htbp]
+	\begin{center}
+	\includegraphics[width=#1\textwidth]{graphics/#2} 
+	\caption{#3}
+	\label{#2}
+	\end{center}
+	\end{figure}
+}
+
+\newcommand\insertgraphic[2]{
+	\insertgraphicw{\defaultgraphicwidth}{#1}{#2}
+}
+
+\newcommand\insertgraphicwr[4]{
+	\begin{figure}[htbp]
+	\begin{center}
+	\includegraphics[width=#1\textwidth,angle=#2]{graphics/#3} 
+	\caption{#4}
+	\label{#3}
+	\end{center}
+	\end{figure}
+}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% URL usage continued...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Here's where we use the Url{} command...
+\newcommand{\programname}{\begingroup \urlstyle{tt}\noHyperUrl}
+% this \texttt allows hyphenation at `discretionary hyphens' (\-)
+% it won't hyphenate on its own.  See also \programname.
+\newcommand\hyphtt[1]{% keywords
+  \texttt{\spaceskip .5em plus .3em minus .3em
+    \hyphenchar\font=`\-\relax #1}}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title Page and PDF Info
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\revnum{--}
+\newcommand\LCLSDocumentTypeShortName{ESD}
+\newcommand\LCLSDocumentTypeFullName{Engineering Specifications Document}
+
+\newcommand{\lclsdocumenttype}[1]{
+    \ifthenelse{\equal{#1}{ICD}}{%
+        \renewcommand\LCLSDocumentTypeShortName{ICD}
+        \renewcommand\LCLSDocumentTypeFullName{Interface Control Document}
+    }{
+        \ifthenelse{\equal{#1}{PRD}}{%
+            \renewcommand\LCLSDocumentTypeShortName{PRD}
+            \renewcommand\LCLSDocumentTypeFullName{Physics Requirements Document}
+        }{}
+    }
+}
+
+\newcommand\lclsdocumentnumber[1]{\def\@LCLSDocumentNumber{#1}}
+\def\@LCLSDocumentNumber{1.x-xxx}
+
+\newcommand\keywords[1]{\def\@keywords{#1}}
+\def\@keywords{\@title~\LCLSDocumentTypeFullName~LCLS~\LCLSDocumentTypeShortName}
+
+\newcommand\summary[1]{\def\@summary{#1}}
+\def\@summary{\@title~\LCLSDocumentTypeFullName.}
+
+\newcommand\currentrevision[1]{\def\@lclsCurrentRevision{#1}}
+\def\@lclsCurrentRevision{0}
+
+\newcommand\systemname[1]{\def\@LCLSSystemName{#1}}
+\def\@LCLSSystemName{System Name}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reviewer File (.rev)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\printreviewer[2]{%
+    &&\\
+    \multicolumn{1}{|l}{#1}&&\\\cline{2-3}
+    \multicolumn{1}{|l}{\begin{minipage}{14em}\raggedright#2\end{minipage}}&
+    \multicolumn{1}{c}{Signature}&
+    \multicolumn{1}{c|}{Date}\\
+}
+
+\newwrite\reviewersfile						% File handle
+\openout\reviewersfile = \jobname.rev		% Open the file
+
+\newcommand{\addreviewer}[2]{%
+	\begingroup
+		\let\protect\noexpand
+		\write\reviewersfile{\string\printreviewer{#1}{#2}}
+	\endgroup
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change History Log File (.chl)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\printchangehistory[4]{%
+    #1&#2&#3&
+    \begin{minipage}{12em}
+    #4
+    \end{minipage}\\
+}
+
+\newwrite\changehistoryfile						% File handle
+\openout\changehistoryfile = \jobname.chl		% Open the file
+
+\newcommand{\addchangehistory}[4]{%
+	\begingroup
+		\let\protect\noexpand
+		\write\changehistoryfile{\string\printchangehistory{#1}{#2}{#3}{#4}}
+	\endgroup
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title Page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\defaulttitlefont}{\fontsize{10.95}{13.6}\selectfont}
+\newcommand{\titlefont}{\bfseries \fontsize{18}{18.36pt}\selectfont}
+\newcommand{\largetitlefont}{\bfseries \fontsize{29.88}{35.88pt}\selectfont}
+\newcommand{\othertitlefont}{\fontsize{14.4}{17.28}\selectfont}
+\newcommand{\authorfont}{\bfseries \fontsize{14.4}{17.28}\selectfont}
+\newcommand{\informationfont}{\fontsize{10}{12}\selectfont}
+\newcommand{\dedicationfont}{\slshape \fontsize{14.4}{17.28}\selectfont}
+
+\newcommand{\thisyear}{\number\year}
+\def\thismonth{\ifcase\month\or January\or February\or March\or
+  April\or May\or June\or July\or August\or September\or October\or November\or December\fi}
+\newcommand{\todaysdate}{\thismonth, \thisyear}
+
+\providecommand*{\sectfont}{\relax}
+
+\newcommand\addpdfinfo{
+    \hypersetup{%
+        pdftitle    = \@title,
+        pdfauthor   = \@author,
+    }
+}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Make LCLS headers, footers, and page size
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{fancy}
+\headheight 52pt
+
+% Nothing on empty pages
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+% Nothing on empty pages for twoside styles
+\makeatletter 
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else 
+\hbox{} 
+\vspace*{\fill} 
+\begin{center} 
+%This page intentionally contains only this sentence. 
+\end{center} 
+\vspace{\fill} 
+\thispagestyle{empty} 
+\newpage 
+\if@twocolumn\hbox{}\newpage\fi\fi\fi} 
+\makeatother
+
+\fancyheadoffset[LE,RO]{\marginparsep+\marginparwidth}
+\fancyheadoffset[LO]{\marginparsep+\marginparwidth}
+
+
+
+% Define styles once for fancy, plain, and empty pages
+\makeatletter 
+\newcommand{\LCLSHeader}{
+\fancyhead{}
+
+\ifthenelse{\boolean{@twoside}}{
+    \fancyhead[LO, RE]{\includegraphics[width=\paperwidth]{lcls}}
+}{
+    \fancyhead[LO]{\includegraphics[width=\paperwidth]{lcls}}
+}
+
+\renewcommand{\headrulewidth}{0pt}
+}
+
+\newcommand{\LCLSFooter}{
+\fancyfoot{}
+
+\ifthenelse{\boolean{@twoside}}
+{\fancyfoot[LE, RO]{\it{Revision~\revnum\linebreak Page \thepage~of~\pageref{LastPage}}}}
+{\fancyfoot[RO]{\it{Revision~\revnum\linebreak Page \thepage~of~\pageref{LastPage}}}}
+
+\renewcommand{\footrulewidth}{0.4pt}
+}
+\makeatother
+
+
+\newcommand{\LCLSHeaderAndFooter}{%
+    \LCLSHeader\LCLSFooter
+}
+
+\LCLSHeaderAndFooter
+
+% redefine plain and empty pages
+\fancypagestyle{plain}{
+\LCLSHeaderAndFooter
+}
+
+\textheight=540pt
+\footskip=50pt
+
+\fancypagestyle{empty}{}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Update heading text and size
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\titleformat{\chapter}
+	{\bfseries\fontsize{18}{18.36}}
+	{\bfseries\thechapter\enspace} 
+	{8pt} 
+	{\bfseries\fontsize{18}{18.36}\filright} 
+
+\titlespacing{\chapter} 
+	{0pt}
+	{*1}
+	{*0.1}
+
+
+\titleformat{\section}
+	{\bfseries\fontsize{18}{18.36}}
+	{\bfseries\thesection\enspace} 
+	{8pt} 
+	{\bfseries\fontsize{18}{18.36}\filright} 
+
+\titlespacing{\section} 
+	{0pt}
+	{*4}
+	{*0.1}
+
+
+\titleformat{\subsection}
+	{\bfseries\fontsize{14}{14.28}}
+	{\bfseries\thesubsection\enspace} 
+	{8pt} 
+	{\bfseries\fontsize{14}{14.28}\filright} 
+
+\titlespacing{\subsection} 
+	{0pt}
+	{*4}
+	{*0.1}
+
+
+
+
+
+
+
+
+
+

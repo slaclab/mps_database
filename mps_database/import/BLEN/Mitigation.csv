@@ -1,2 +1,2 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,I0_IMAX_T0,1,Bunch Length Fault,1,-,-,-
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,IMAX_T0,1,Bunch Length Fault,1,-,-,-

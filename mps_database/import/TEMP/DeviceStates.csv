@@ -1,3 +1,3 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description
 IS_OK,1,Temperature OK,1,4294967295,-,-
-IS_FAULTED,2,Temperature Faulted,0,4294967295,STATE,Temperature Faulted
+IS_FAULTED,2,Temperature Faulted,0,4294967295,TEMP_PERMIT_STATE,Temperature Faulted
