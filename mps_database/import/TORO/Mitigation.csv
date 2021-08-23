@@ -1,5 +1,5 @@
 Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
-LINAC,I0_CHRG_T0,1,LINAC Toroid current fault,1,-,-,-
-DIAG0,I0_CHRG_T0,1,Diag0 Toroid current fault,-,1,-,-
-SXU,I0_CHRG_T0,1,SXU Toroid current fault,-,-,1,-
-HXU,I0_CHRG_T0,1,HXU Toroid current fault,-,-,-,1
+LINAC,CHRG_T0,1,Toroid charge fault,1,-,-,-
+DIAG0,CHRG_T0,1,Toroid charge fault,-,1,-,-
+SXU,CHRG_T0,1,Toroid charge fault,-,-,1,-
+HXU,CHRG_T0,1,Toroid charge fault,-,-,-,1

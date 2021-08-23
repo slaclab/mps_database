@@ -1,0 +1,4 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,OFF,2,Kicker Off,-,-,-,-
+SXU,OFF,2,Kicker Off,-,-,-,-
+HXU,OFF,2,Kicker Off,-,-,-,-

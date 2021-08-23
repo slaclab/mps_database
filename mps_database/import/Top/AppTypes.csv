@@ -5,3 +5,4 @@ Analog Card,3,6,1,0,1,0,0,12
 BPM Card,4,2,1,0,1,0,0,12
 LLRF,5,0,0,32,0,0,0,14
 Virtual Card,6,0,0,32,1,0,1,
+Wire Scanner,7,0,0,32,0,0,0,

@@ -25,7 +25,7 @@ QDSW,23,Quad Current (Soft),0
 BDST,24,Dipole On/Off State,0
 PBLM,25,Point BLM,1
 LLRF,26,Low Level RF,0
-KCST,27,Kicker Status,0
+KCNC,27,Kicker Status (Normal Conductin),0
 PMPS,28,XTES Beam Class,0
 LBLM,29,BCS Fiber BLM,1
 WVGD,30,Waveguide ,0
@@ -36,3 +36,6 @@ YAGS,34,Profile Monitor (YAG),0
 OTRS,35,Profile Monitor (OTR),0
 SLIT,36,SXRSS Slit,0
 MIRR,37,Mirror,0
+FADC,38,LBLM Fast waveform output,1
+DUMP,38,Tuneup Dump,0
+KCSC,39,Kicker Status (Super Conducting),0

@@ -82,7 +82,6 @@ class MpsAppReader:
             app_description = app_card.get_app_description()
         except exc.SQLAlchemyError as e:
             raise
-
         slot_info['type'] = app_type.name
         slot_info['description'] = app_description
         if slot_info['type'] == "Digital Card":
@@ -91,32 +90,17 @@ class MpsAppReader:
           print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
                       format(ln_name, app_card.slot_number)))
           exit(1)
+        n = slot_info['type']
+        if n == 'Generic ADC':
+          n = 'MPS Analog'
+        if n == 'Digital Card':
+          n = 'MPS Digital'
+        if n == 'Analog Card':
+          n = 'BCM/BLEN'
+        if n == 'BPM Card':
+          n = 'BPM'
+        slot_info['type'] = n
         self.link_nodes[ln_name]['slots'][slot_number] = slot_info
-
-    def __add_slot_information_by_crate(self, mps_db_session, ln_name, crat, app_card):
-        if app_card.slot_number in self.link_nodes[ln_name]['slots']:
-            print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number)))
-            exit(1)
-        
-        slot_info['type'] = app_type.name
-        slot_info['description'] = app_description
-        if slot_info['type'] == "Digital Card":
-          slot_number = 1
-        if slot_number in self.link_nodes[ln_name]['slots']:
-          print(('ERROR: Found multiple apps in same slot: link node {}, slot {}'.\
-                      format(ln_name, app_card.slot_number)))
-          exit(1)
-        self.link_nodes[ln_name]['slots'][slot_number] = slot_info
-
-        try:
-            app_type = mps_db_session.query(models.ApplicationType).\
-                filter(models.ApplicationType.id == app_card.type_id).one()
-        except exc.SQLAlchemyError as e:
-            raise
-
-        slot_info['type'] = app_type.name
-        self.link_nodes[ln_name]['slots'][app_card.slot_number] = slot_info
 
     def __extract_destinations(self, mps_db_session):
         try:
@@ -303,6 +287,7 @@ class MpsAppReader:
 
                 # Get this application data
                 app_data = {}
+                app_data["type"] = 'analog'
                 app_data["app_id"] = app_card.global_id
                 app_data["db_id"] = app_card.id
                 app_data["cpu_name"] = app_card.link_node.cpu
@@ -319,6 +304,7 @@ class MpsAppReader:
                 app_data['link_node_name_prev'] = app_card.link_node.get_name()
                 app_data["name"] = app_card.name
                 app_data['central_node'] = self.get_cn_index(app_card.link_node.group)
+                app_data['cn_prefix'] = self.get_cn_prefix(app_card.link_node.group)
 
                 self.link_nodes[ln_name]["physical"] = app_data["physical"]
                 self.link_nodes[ln_name]["sioc"] = ln_name
@@ -390,6 +376,9 @@ class MpsAppReader:
                                 fault_data = {}
                                 fault_data["id"] = fault_id
                                 fault_data["name"] = fault.name
+                                fault_data["readback"] = fault.name
+                                if fault_data["readback"] == "CHRG":
+                                  fault_data["readback"] = '{0}'.format("CHRGDIFF")
                                 fault_data["description"] = fault.description[:39]
                                 fault_data["bit_positions"] = []
                                 fault_data["integrators"] = []
@@ -450,6 +439,7 @@ class MpsAppReader:
 
                 # Get this application data
                 app_data = {}
+                app_data["type"] = 'digital'
                 app_data["app_id"] = app_card.global_id
                 app_data["db_id"] = app_card.id
                 app_data["cpu_name"] = app_card.link_node.cpu
@@ -466,6 +456,7 @@ class MpsAppReader:
                 app_data["app_prefix"] = app_card.get_pv_name()
                 app_data['central_node'] = self.get_cn_index(app_card.link_node.group)
                 app_data["name"] = app_card.name
+                app_data['cn_prefix'] = self.get_cn_prefix(app_card.link_node.group)
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
@@ -794,7 +785,7 @@ class MpsAppReader:
         if device_type_name in ["SOLN", "BEND","BLEN","KICK"]:
             # Solenoid devices use 'uA'.
             return "GeV/c"
-        elif device_type_name in ["BLM","LBLM","CBLM","PBLM"]:
+        elif device_type_name in ["BLM","LBLM","CBLM","PBLM","FADC"]:
             # Beam loss monitors set threshold in Volts initially
             return "mV"
         elif device_type_name == "BPMS":
@@ -862,7 +853,7 @@ class MpsAppReader:
         if device_type_name in ["SOLN", "BEND", "BLEN", "KICK"]:
             integration_channel = 0
             return "{}{}".format(channel_number,integration_channel)
-        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM"]:
+        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM","FADC"]:
             # For BLM devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = 0
@@ -877,7 +868,7 @@ class MpsAppReader:
         else:
             # For other application, the get index from the following 2-D dict
             bpm_fault_index = { "X":"0", "Y":"1", "CHRG":"2" }
-            bcm_fault_index = { "CHARGE":"0", "DIFF": "1" }
+            bcm_fault_index = { "CHRG":"0", "DIFF": "1" }
             fault_indexes = {   "BPMS":bpm_fault_index,
                                 "FARC":bcm_fault_index,
                                 "TORO":bcm_fault_index }
@@ -893,7 +884,7 @@ class MpsAppReader:
         """
         if device_type_name in ["SOLN", "BEND", "KICK"]:
             return "BACT"
-        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM"]:
+        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC"]:
             return "LOSS"
         elif device_type_name in ["TORO", "FARC"]:
             return "CHARGE"
@@ -914,7 +905,7 @@ class MpsAppReader:
           * TORO, FARC => BCM
         """
 
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK","FADC"]:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":

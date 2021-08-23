@@ -1,2 +1,2 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description
-I0_IMAX_T0,1,Current T0,1,1,I0_IMAX,BLEN IMAX Fault (T0)
+IMAX_T0,1,Current T0,1,1,IMAX,BLEN IMAX Fault (T0)

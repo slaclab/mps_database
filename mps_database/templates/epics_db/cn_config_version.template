@@ -1,0 +1,9 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node Ignore Conditions                        #
+# Macro description:                                                             #
+#   - VERSION       : Configuratio Version                                       #
+#================================================================================#
+record(stringin, "$(BASE):CONFIG_VERSION") {
+  field(DESC, "MPS Configuration Database Version")
+  field(VAL, "$(VERSION)")
+}

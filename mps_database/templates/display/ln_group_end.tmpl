@@ -17,6 +17,31 @@
      <string>$PYDM/mps/lcls_mps_lockup_sidebyside_digital.png</string>
     </property>
    </widget>
+   <widget class="PyDMPushButton" name="PyDMPushButton">
+    <property name="geometry">
+     <rect>
+      <x>$(BUTTON_X)</x>
+      <y>$(BUTTON_Y)</y>
+      <width>200</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Clear Application Timeouts</string>
+    </property>
+    <property name="channel" stdset="0">
+     <string>ca://$(CN):TO_ERR_CLR</string>
+    </property>
+    <property name="pressValue" stdset="0">
+     <string>1</string>
+    </property>
+    <property name="releaseValue" stdset="0">
+     <string>0</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <customwidgets>
@@ -24,6 +49,11 @@
    <class>PyDMEmbeddedDisplay</class>
    <extends>QFrame</extends>
    <header>pydm.widgets.embedded_display</header>
+  </customwidget>
+  <customwidget>
+   <class>PyDMPushButton</class>
+   <extends>QPushButton</extends>
+   <header>pydm.widgets.pushbutton</header>
   </customwidget>
   <customwidget>
    <class>PyDMDrawingImage</class>

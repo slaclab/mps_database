@@ -42,6 +42,69 @@ file "common/RegRO.template" { pattern
 { LAST_MSG_BYTE_3,      "Mps last message byte 3",              LAST_MSG_BYTE_3,        "2"     }
 { LAST_MSG_BYTE_4,      "Mps last message byte 4",              LAST_MSG_BYTE_4,        "2"     }
 { LAST_MSG_BYTE_5,      "Mps last message byte 5",              LAST_MSG_BYTE_5,        "2"     }
+{ TX_PKT_PERIOD,        "Tx Period between packets",            TX_PKT_PERIOD,          "2"     }
+{ TX_PKT_PERIOD_MIN,    "Min Tx Period between packets",        TX_PKT_PERIOD_MIN,      "2"     }
+{ TX_PKT_PERIOD_MAX,    "Max Tx Period between packets",        TX_PKT_PERIOD_MAX,      "2"     }
+{ DIAG_STRB_CNT,        "Counts the diagnostic strobes",        DIAG_STRB_CNT,          "2"     }
+{ PLL_LOCK_CNT,         "Counts the PLL Lock events",           PLL_LOCK_CNT,           "2"     }
+{ TX_EOFE_SENT_CNT,     "Tx EOFE Sent Counter",                 TX_EOFE_SENT_CNT,       "2"     }
+{ RX_PKT_PERIOD_0,      "Rx Period between packets",            RX_PKT_PERIOD_0,        "2"     }
+{ RX_PKT_PERIOD_1,      "Rx Period between packets",            RX_PKT_PERIOD_1,        "2"     }
+{ RX_PKT_PERIOD_2,      "Rx Period between packets",            RX_PKT_PERIOD_2,        "2"     }
+{ RX_PKT_PERIOD_3,      "Rx Period between packets",            RX_PKT_PERIOD_3,        "2"     }
+{ RX_PKT_PERIOD_4,      "Rx Period between packets",            RX_PKT_PERIOD_4,        "2"     }
+{ RX_PKT_PERIOD_5,      "Rx Period between packets",            RX_PKT_PERIOD_5,        "2"     }
+{ RX_PKT_PERIOD_6,      "Rx Period between packets",            RX_PKT_PERIOD_6,        "2"     }
+{ RX_PKT_PERIOD_7,      "Rx Period between packets",            RX_PKT_PERIOD_7,        "2"     }
+{ RX_PKT_PERIOD_8,      "Rx Period between packets",            RX_PKT_PERIOD_8,        "2"     }
+{ RX_PKT_PERIOD_9,      "Rx Period between packets",            RX_PKT_PERIOD_9,        "2"     }
+{ RX_PKT_PERIOD_10,     "Rx Period between packets",            RX_PKT_PERIOD_10,       "2"     }
+{ RX_PKT_PERIOD_11,     "Rx Period between packets",            RX_PKT_PERIOD_11,       "2"     }
+{ RX_PKT_PERIOD_12,     "Rx Period between packets",            RX_PKT_PERIOD_12,       "2"     }
+{ RX_PKT_PERIOD_13,     "Rx Period between packets",            RX_PKT_PERIOD_13,       "2"     }
+{ RX_PKT_PERIOD_MIN_0,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_0,    "2"     }
+{ RX_PKT_PERIOD_MIN_1,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_1,    "2"     }
+{ RX_PKT_PERIOD_MIN_2,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_2,    "2"     }
+{ RX_PKT_PERIOD_MIN_3,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_3,    "2"     }
+{ RX_PKT_PERIOD_MIN_4,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_4,    "2"     }
+{ RX_PKT_PERIOD_MIN_5,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_5,    "2"     }
+{ RX_PKT_PERIOD_MIN_6,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_6,    "2"     }
+{ RX_PKT_PERIOD_MIN_7,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_7,    "2"     }
+{ RX_PKT_PERIOD_MIN_8,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_8,    "2"     }
+{ RX_PKT_PERIOD_MIN_9,  "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_9,    "2"     }
+{ RX_PKT_PERIOD_MIN_10, "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_10,   "2"     }
+{ RX_PKT_PERIOD_MIN_11, "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_11,   "2"     }
+{ RX_PKT_PERIOD_MIN_12, "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_12,   "2"     }
+{ RX_PKT_PERIOD_MIN_13, "Min Rx Period between packets",        RX_PKT_PERIOD_MIN_13,   "2"     }
+{ RX_PKT_PERIOD_MAX_0,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_0,    "2"     }
+{ RX_PKT_PERIOD_MAX_1,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_1,    "2"     }
+{ RX_PKT_PERIOD_MAX_2,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_2,    "2"     }
+{ RX_PKT_PERIOD_MAX_3,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_3,    "2"     }
+{ RX_PKT_PERIOD_MAX_4,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_4,    "2"     }
+{ RX_PKT_PERIOD_MAX_5,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_5,    "2"     }
+{ RX_PKT_PERIOD_MAX_6,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_6,    "2"     }
+{ RX_PKT_PERIOD_MAX_7,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_7,    "2"     }
+{ RX_PKT_PERIOD_MAX_8,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_8,    "2"     }
+{ RX_PKT_PERIOD_MAX_9,  "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_9,    "2"     }
+{ RX_PKT_PERIOD_MAX_10, "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_10,   "2"     }
+{ RX_PKT_PERIOD_MAX_11, "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_11,   "2"     }
+{ RX_PKT_PERIOD_MAX_12, "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_12,   "2"     }
+{ RX_PKT_PERIOD_MAX_13, "Max Rx Period between packets",        RX_PKT_PERIOD_MAX_13,   "2"     }
+{ RX_ERR_DET_CNT_0,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_0,       "2"     }
+{ RX_ERR_DET_CNT_1,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_1,       "2"     }
+{ RX_ERR_DET_CNT_2,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_2,       "2"     }
+{ RX_ERR_DET_CNT_3,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_3,       "2"     }
+{ RX_ERR_DET_CNT_4,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_4,       "2"     }
+{ RX_ERR_DET_CNT_5,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_5,       "2"     }
+{ RX_ERR_DET_CNT_6,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_6,       "2"     }
+{ RX_ERR_DET_CNT_7,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_7,       "2"     }
+{ RX_ERR_DET_CNT_8,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_8,       "2"     }
+{ RX_ERR_DET_CNT_9,     "Rx Error Detected Counter",            RX_ERR_DET_CNT_9,       "2"     }
+{ RX_ERR_DET_CNT_10,    "Rx Error Detected Counter",            RX_ERR_DET_CNT_10,      "2"     }
+{ RX_ERR_DET_CNT_11,    "Rx Error Detected Counter",            RX_ERR_DET_CNT_11,      "2"     }
+{ RX_ERR_DET_CNT_12,    "Rx Error Detected Counter",            RX_ERR_DET_CNT_12,      "2"     }
+{ RX_ERR_DET_CNT_13,    "Rx Error Detected Counter",            RX_ERR_DET_CNT_13,      "2"     }
+{ CH_ENABLE,            "Rx Channel enable bitmask",            CH_ENABLE,              "2"     }
 { DIG_SWBITERR_RBV,         "SW Bit Error",                         SOFT_CH_ERROR_WORD,     "3"     }
 { DIG_SWBIT_RBV,            "SW Bit",                               SOFT_CH_VALUE_WORD,     "3"     }
 }
@@ -84,8 +147,8 @@ file "common/RegRW.template" { pattern
 
 file "common/Reg1BitRW.template" { pattern
 { R,                DESC,                                       PARAM,          ADDR,   ZNAM,       ONAM,      ZSV,        RBV_ZSV,    ASG,   DISV, SDIS              }
-{ MPS_EN,           "MPS Enabled",                              MPS_EN,         "2",    "Disabled", "Enabled", "MAJOR",    "MAJOR",    "MCC", 0   , "$(P):THR_LOADED" }
-{ LC1_MODE,         "LCLS operation mode",                      LCLS1_MODE,     "2",    "Disabled", "Enabled", "NO_ALARM", "NO_ALARM", "MCC", 1   , ""                }
+{ MPS_EN,           "MPS Enabled",                              MPS_EN,         "2",    "Disabled", "Enabled", "MAJOR",    "MAJOR",    "DEFAULT", 0   , "$(P):THR_LOADED" }
+{ LC1_MODE,         "LCLS operation mode",                      LCLS1_MODE,     "2",    "Disabled", "Enabled", "NO_ALARM", "NO_ALARM", "DEFAULT", 1   , ""                }
 }
 
 file "common/RegStringRO.template" { pattern
@@ -95,7 +158,7 @@ file "common/RegStringRO.template" { pattern
 
 file "common/thr_control.template" { pattern
 {ASG}
-{"MCC"}
+{"DEFAULT"}
 }
 
 

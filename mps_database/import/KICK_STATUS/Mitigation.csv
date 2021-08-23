@@ -8,4 +8,4 @@ SXU,BROKEN,4,ON/Off Fault (both high),-,-,1,-
 HXU,BROKEN,1,On/Off Fault (both low),-,-,-,1
 HXU,OFF,2,Kicker Off,-,-,-,1
 HXU,BROKEN,4,ON/Off Fault (both high),-,-,-,1
-CLTS,ON,0,Info,-,-,-,-
+CLTS,ON,3,Kicker On,-,-,-,-

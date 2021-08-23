@@ -153,7 +153,7 @@
      <rect>
       <x>2</x>
       <y>2</y>
-      <width>$(HEADER_WIDTH)</width>
+      <width>198</width>
       <height>$(HEADER_HEIGHT)</height>
      </rect>
     </property>
@@ -181,9 +181,9 @@
    <widget class="PyDMLabel" name="PyDMLabel_4">
     <property name="geometry">
      <rect>
-      <x>$(HEADER_MIDDLE)</x>
+      <x>280</x>
       <y>2</y>
-      <width>$(HEADER_WIDTH)</width>
+      <width>198</width>
       <height>$(HEADER_HEIGHT)</height>
      </rect>
     </property>
@@ -206,5 +206,35 @@
     </property>
     <property name="channel" stdset="0">
      <string>ca://$(P):LN_SHM_NAME</string>
+    </property>
+   </widget>
+   <widget class="PyDMLabel" name="PyDMLabel_5">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>2</y>
+      <width>80</width>
+      <height>$(HEADER_HEIGHT)</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(174, 174, 174);</string>
+    </property>
+    <property name="text">
+     <string>LN#</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="rules" stdset="0">
+     <string>[{&quot;channels&quot;: [{&quot;trigger&quot;: true, &quot;channel&quot;: &quot;ca://${P}:LN_ID&quot;}], &quot;property&quot;: &quot;Text&quot;, &quot;expression&quot;: &quot;'LN {0}'.format(str(ch[0]))&quot;, &quot;name&quot;: &quot;New Rule&quot;, &quot;initial_value&quot;: &quot;&quot;}]</string>
     </property>
    </widget>
