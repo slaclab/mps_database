@@ -43,7 +43,7 @@ record(calcout, "$(P)_CALC") {
     field(INPF, "$(INPF)")
     field(INPG, "$(INPG)")
     field(INPH, "$(INPH)")
-    field(CALC, "A+B+C+D+E+F+G+H")
+    field(CALC, "A?1:B?2:C?3:D?4:E?5:F?6:G?7:H?8:0")
     field(OUT,  "$(P)")
 } 
 record(mbbi, "$(P)") {

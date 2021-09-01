@@ -2,10 +2,13 @@ Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU
 LINAC,BROKEN,1,On/Off Fault (both low),1,-,-,-
 LINAC,OFF,2,Kicker Off,1,-,-,-
 LINAC,BROKEN,4,ON/Off Fault (both high),1,-,-,-
+LINAC,ON,3,Kicker On,10,-,-,-
 SXU,BROKEN,1,On/Off Fault (both low),-,-,1,-
 SXU,OFF,2,Kicker Off,-,-,1,-
 SXU,BROKEN,4,ON/Off Fault (both high),-,-,1,-
+SXU,ON,3,Kicker On,-,-,10,-
 HXU,BROKEN,1,On/Off Fault (both low),-,-,-,1
 HXU,OFF,2,Kicker Off,-,-,-,1
 HXU,BROKEN,4,ON/Off Fault (both high),-,-,-,1
+HXU,ON,3,Kicker On,-,-,-,10
 CLTS,ON,3,Kicker On,-,-,-,-

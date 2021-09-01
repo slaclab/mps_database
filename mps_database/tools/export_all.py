@@ -146,6 +146,7 @@ class MpsExporter(MpsAppReader):
                             "MPS_CRATE_LOCATION":'{0}'.format(ln['physical']),
                             "MPS_CPU_NAME":'{0}'.format(ln['cpu_name']),
                             "MPS_SHM_NAME":'{0}'.format(ln['shm_name']),
+                            "GROUP":'{0}'.format(ln['group']),
                             "IS_LN":'{0}'.format(1)}
                   self.__write_epics_db(path=app_path,filename='mps.db', template_name="link_node_info.template", macros=macros)
                   macros = {'CPU':'{0}'.format(ln['cpu_name']),
@@ -214,6 +215,7 @@ class MpsExporter(MpsAppReader):
                       "MPS_CRATE_LOCATION":'{0}'.format(ln['physical']),
                       "MPS_CPU_NAME":'{0}'.format(ln['cpu_name']),
                       "MPS_SHM_NAME":'{0}'.format(ln['shm_name']),
+                      "GROUP":'{0}'.format(ln['group']),
                       "IS_LN":'{0}'.format(1)}
             self.__write_epics_db(path=app_path,filename='mps.db', template_name="link_node_info.template", macros=macros)
         # ---------------------------#
@@ -224,6 +226,7 @@ class MpsExporter(MpsAppReader):
           app_prefix = app['app_prefix']
           self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
           has_virtual = False
+          json_macros = {}
           for device in app['devices']:
             for input in device["inputs"]:
               if app["virtual"]:
@@ -310,12 +313,28 @@ class MpsExporter(MpsAppReader):
                 spare_channels[device["channel_index"]] = -1
                 for integrator in range(4):
                   bsa_slot = integrator*6 + device["channel_index"]
+                  channel = device["channel_index"]
                   inpv = "{0}:ANA_BSA_DATA_{1}".format(app_prefix,bsa_slot)
+                  offset = device['offset']
+                  slope = device['slope']
+                  if offset == 0:
+                    offset = 1
+                  lowerLimit = (-32768 - offset) * slope
+                  upperLimit = (32768 - offset) * slope
+                  rang = upperLimit - lowerLimit
+                  egul = (0-offset)*slope
+                  eguf = rang + egul
                   macros = { "P_DEV":device_prefix,
                              "R_DEV":'I{0}_{1}'.format(integrator,self.get_analog_type_name(device["type_name"])),
                              "INT":'I{0}'.format(integrator),
                              "EGU":self.get_app_units(device["type_name"],''),
-                             "INPV":inpv
+                             "INPV":inpv,
+                             "SLOPE":'{0}'.format(device['slope']),
+                             "OFFSET":'{0}'.format(device['offset']),
+                             "EGUF":'{0}'.format(eguf),
+                             "EGUL":"{0}".format(egul),
+                             "CH":"{0}".format(channel),
+                             "P":"{0}".format(app_prefix)
                             }
                   self.__write_analog_db(path=app_path, macros=macros)
                   chan = device["channel_number"]
@@ -606,7 +625,7 @@ class MpsExporter(MpsAppReader):
           if len(ordered_states) == 2:
             macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
                        'DESC':'{0}'.format(fault['description']),
-                       'INPA':'{0}_{1}'.format(device['inputs'][0]['input_pv'],'SCMPS'),
+                       'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
                        'ZRST':'{0}'.format(ordered_states[0]['state_name']),
                        'ONST':'{0}'.format(ordered_states[1]['state_name']),
                        'ZRSV':'NO_ALARM',
@@ -620,7 +639,7 @@ class MpsExporter(MpsAppReader):
             for dest in self.beam_destinations:
               macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
                          'DESC':'{0} {1}'.format(fault['description'],dest['name']),
-                         'INPA':'{0}_{1}'.format(device['inputs'][0]['input_pv'],'SCMPS'),
+                         'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
                          'ZRST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
                          'ONST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
                          'ZRSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
@@ -634,8 +653,10 @@ class MpsExporter(MpsAppReader):
           if len(ordered_states) == 4:
             macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
                        'DESC':'{0}'.format(fault['description']),
-                       'INPA':'{0}_{1}'.format(device['inputs'][0]['input_pv'],'SCMPS'),
-                       'INPB':'{0}_{1}'.format(device['inputs'][1]['input_pv'],'SCMPS'),
+                       'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
+                       'INPB':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[1]['state_name']),
+                       'INPC':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[2]['state_name']),
+                       'INPD':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[3]['state_name']),
                        'ZRST':'{0}'.format(ordered_states[0]['state_name']),
                        'ONST':'{0}'.format(ordered_states[1]['state_name']),
                        'TWST':'{0}'.format(ordered_states[2]['state_name']),
@@ -653,8 +674,10 @@ class MpsExporter(MpsAppReader):
             for dest in self.beam_destinations:
               macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
                          'DESC':'{0} {1}'.format(fault['description'],dest['name']),
-                         'INPA':'{0}_{1}'.format(device['inputs'][0]['input_pv'],'SCMPS'),
-                         'INPB':'{0}_{1}'.format(device['inputs'][1]['input_pv'],'SCMPS'),
+                         'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
+                         'INPB':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[1]['state_name']),
+                         'INPC':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[2]['state_name']),
+                         'INPD':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[3]['state_name']),
                          'ZRST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
                          'ONST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
                          'TWST':'{0}'.format(ordered_states[2][dest['name']]['mitigation']),
@@ -727,14 +750,43 @@ class MpsExporter(MpsAppReader):
               elif app['central_node'] in [1]:
                 self.__write_fault_state_db(path=self.cn1_path, macros=macros)
             ordered_states = sorted(fault['logic'],key=lambda x:x['state_number'])
+            if len(ordered_states) == 1:
+              macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
+                         'DESC':'{0}'.format(fault['description']),
+                         'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
+                         'ZRST':'{0}'.format('OK'),
+                         'ONST':'{0}'.format(ordered_states[0]['description']),
+                         'ZRSV':'NO_ALARM',
+                         'ONSV':'NO_ALARM',
+                         'TWSV':'NO_ALARM' }
+              if app['central_node'] in [0,2]:
+                self.__write_logic_2_db(path=self.cn0_path, macros=macros)
+                if app['central_node'] in [2]:
+                  self.__write_logic_2_db(path=self.cn2_path, macros=macros)
+              elif app['central_node'] in [1]:
+                self.__write_logic_2_db(path=self.cn1_path, macros=macros)
+              for dest in self.beam_destinations:
+                macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
+                           'DESC':'{0}'.format(fault['description']),
+                           'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
+                           'ZRST':'{0}'.format('-'),
+                           'ONST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
+                           'ZRSV':'NO_ALARM',
+                           'ONSV':'{0}'.format(ordered_states[0][dest['name']]['severity'])}
+                if app['central_node'] in [0,2]:
+                  self.__write_logic_2_db(path=self.cn0_path, macros=macros)
+                  if app['central_node'] in [2]:
+                    self.__write_logic_2_db(path=self.cn2_path, macros=macros)
+                elif app['central_node'] in [1]:
+                  self.__write_logic_2_db(path=self.cn1_path, macros=macros)
             if len(ordered_states) == 2:
               macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
                          'DESC':'{0}'.format(fault['description']),
                          'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
                          'INPB':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][1]),
                          'ZRST':'{0}'.format('OK'),
-                         'ONST':'{0}'.format(ordered_states[1]['description']),
-                         'TWST':'{0}'.format(ordered_states[0]['description']),
+                         'ONST':'{0}'.format(ordered_states[0]['description']),
+                         'TWST':'{0}'.format(ordered_states[1]['description']),
                          'ZRSV':'NO_ALARM',
                          'ONSV':'NO_ALARM',
                          'TWSV':'NO_ALARM' }
@@ -750,11 +802,11 @@ class MpsExporter(MpsAppReader):
                            'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
                            'INPB':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][1]),
                            'ZRST':'{0}'.format('-'),
-                           'ONST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
-                           'TWST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
+                           'ONST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
+                           'TWST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
                            'ZRSV':'NO_ALARM',
-                           'ONSV':'{0}'.format(ordered_states[1][dest['name']]['severity']),
-                           'TWSV':'{0}'.format(ordered_states[0][dest['name']]['severity']) }
+                           'ONSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
+                           'TWSV':'{0}'.format(ordered_states[1][dest['name']]['severity']) }
                 if app['central_node'] in [0,2]:
                   self.__write_logic_3_db(path=self.cn0_path, macros=macros)
                   if app['central_node'] in [2]:
@@ -773,14 +825,14 @@ class MpsExporter(MpsAppReader):
                          'INPG':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][6]),
                          'INPH':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][7]),
                          'ZRST':'{0}'.format('OK'),
-                         'ONST':'{0}'.format(ordered_states[7]['description']),
-                         'TWST':'{0}'.format(ordered_states[6]['description']),
-                         'THST':'{0}'.format(ordered_states[5]['description']),
-                         'FRST':'{0}'.format(ordered_states[4]['description']),
-                         'FVST':'{0}'.format(ordered_states[3]['description']),
-                         'SXST':'{0}'.format(ordered_states[2]['description']),
-                         'SVST':'{0}'.format(ordered_states[1]['description']),
-                         'EIST':'{0}'.format(ordered_states[0]['description']),
+                         'ONST':'{0}'.format(ordered_states[0]['description']),
+                         'TWST':'{0}'.format(ordered_states[1]['description']),
+                         'THST':'{0}'.format(ordered_states[2]['description']),
+                         'FRST':'{0}'.format(ordered_states[3]['description']),
+                         'FVST':'{0}'.format(ordered_states[4]['description']),
+                         'SXST':'{0}'.format(ordered_states[5]['description']),
+                         'SVST':'{0}'.format(ordered_states[6]['description']),
+                         'EIST':'{0}'.format(ordered_states[7]['description']),
                          'ZRSV':'NO_ALARM',
                          'ONSV':'NO_ALARM',
                          'TWSV':'NO_ALARM',
@@ -808,23 +860,23 @@ class MpsExporter(MpsAppReader):
                            'INPG':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][6]),
                            'INPH':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][7]),
                            'ZRST':'{0}'.format('-'),
-                           'ONST':'{0}'.format(ordered_states[7][dest['name']]['mitigation']),
-                           'TWST':'{0}'.format(ordered_states[6][dest['name']]['mitigation']),
-                           'THST':'{0}'.format(ordered_states[5][dest['name']]['mitigation']),
-                           'FRST':'{0}'.format(ordered_states[4][dest['name']]['mitigation']),
-                           'FVST':'{0}'.format(ordered_states[3][dest['name']]['mitigation']),
-                           'SXST':'{0}'.format(ordered_states[2][dest['name']]['mitigation']),
-                           'SVST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
-                           'EIST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
+                           'ONST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
+                           'TWST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
+                           'THST':'{0}'.format(ordered_states[2][dest['name']]['mitigation']),
+                           'FRST':'{0}'.format(ordered_states[3][dest['name']]['mitigation']),
+                           'FVST':'{0}'.format(ordered_states[4][dest['name']]['mitigation']),
+                           'SXST':'{0}'.format(ordered_states[5][dest['name']]['mitigation']),
+                           'SVST':'{0}'.format(ordered_states[6][dest['name']]['mitigation']),
+                           'EIST':'{0}'.format(ordered_states[7][dest['name']]['mitigation']),
                            'ZRSV':'NO_ALARM',
-                           'ONSV':'{0}'.format(ordered_states[7][dest['name']]['severity']),
-                           'TWSV':'{0}'.format(ordered_states[6][dest['name']]['severity']),
-                           'THSV':'{0}'.format(ordered_states[5][dest['name']]['severity']),
-                           'FRSV':'{0}'.format(ordered_states[4][dest['name']]['severity']),
-                           'FVSV':'{0}'.format(ordered_states[3][dest['name']]['severity']),
-                           'SXSV':'{0}'.format(ordered_states[2][dest['name']]['severity']),
-                           'SVSV':'{0}'.format(ordered_states[1][dest['name']]['severity']),
-                           'EISV':'{0}'.format(ordered_states[0][dest['name']]['severity'])}
+                           'ONSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
+                           'TWSV':'{0}'.format(ordered_states[1][dest['name']]['severity']),
+                           'THSV':'{0}'.format(ordered_states[2][dest['name']]['severity']),
+                           'FRSV':'{0}'.format(ordered_states[3][dest['name']]['severity']),
+                           'FVSV':'{0}'.format(ordered_states[4][dest['name']]['severity']),
+                           'SXSV':'{0}'.format(ordered_states[5][dest['name']]['severity']),
+                           'SVSV':'{0}'.format(ordered_states[6][dest['name']]['severity']),
+                           'EISV':'{0}'.format(ordered_states[7][dest['name']]['severity'])}
                 if app['central_node'] in [0,2]:
                   self.__write_logic_9_db(path=self.cn0_path, macros=macros)
                   if app['central_node'] in [2]:
@@ -839,6 +891,9 @@ class MpsExporter(MpsAppReader):
         self.__generate_group_display()
         self.__generate_threshold_display()
         self.__generate_logic_display()
+        self.__generate_ln_area_displays()
+        self.__generate_compact_crate_display()
+        self.__generate_compact_group_display()
 
     def __generate_logic_display(self):
       for app in self.analog_apps:
@@ -929,7 +984,169 @@ class MpsExporter(MpsAppReader):
         filename = '{0}thresholds/app{1}_rtm.json'.format(self.display_path,app['app_id'])
         self.__write_json_file(filename, app_macros)
       
-            
+    def __generate_ln_area_displays(self):
+      areas = ['GUNB', 'L3B', 'DOG', 'LTUH',
+               'LTUS', 'UNDH', 'UNDS', 'DMPH', 'DMPS', 
+               'FEEH', 'FEES','SPS','SPH']
+      for area in areas:
+        area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] == area and x['analog_slot'] == 2]
+        self.__generate_ln_area_display(area,area_link_nodes)
+      #now do special case areas
+      #L0B includes L0B and COL0
+      area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] in ['L0B','COL0'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('L0B',area_link_nodes)
+      #L1B includes L1B and BC1B
+      area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] in ['L1B','BC1B'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('L1B',area_link_nodes)
+      #L2B includes L2B and BC2B
+      area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] in ['L2B','BC2B'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('L2B',area_link_nodes)
+      #all BPNs
+      area_link_nodes = [x for key,x in self.link_nodes.items() if 'BPN' in x['area'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('BYP',area_link_nodes)
+      #BSYsc
+      area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] in ['BSYH','BSYS'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('BSYsc',area_link_nodes)
+      #BSYcu
+      area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] in ['BSYH','BSYS','CLTS'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('BSYcu',area_link_nodes)
+      #SPD
+      area_link_nodes = [x for key,x in self.link_nodes.items() if x['area'] in ['SPD','SLTD'] and x['analog_slot'] == 2]
+      self.__generate_ln_area_display('SPD',area_link_nodes)
+
+    def __generate_ln_area_display(self,area,area_link_nodes):
+      header_height = 30
+      height = int(header_height + (len(area_link_nodes)*35))
+      edl_height = int(header_height + (len(area_link_nodes)*30)+30)
+      macros = { 'HEIGHT':'{0}'.format(int(height))}
+      filename = '{0}areas/mps_{1}_link_nodes.ui'.format(self.display_path,area.lower())
+      self.__write_area_header(path=filename,macros=macros)
+      macros = { 'HEIGHT':'{0}'.format(int(edl_height))}
+      filename_edl = '{0}edl/mps_{1}_link_nodes.edl'.format(self.display_path,area.lower())
+      self.__write_area_edl_header(path=filename_edl,macros=macros)
+      y = header_height
+      edl_y = header_height+5
+      groups = []
+      for ln in area_link_nodes:
+        if ln['analog_slot'] == 2:
+          macros = {"Y":"{0}".format(int(y)),
+                    "PREFIX":"{0}".format(ln['app_prefix']),
+                    "LN_ID":"{0}".format(ln['lc1_node_id']),
+                    'SLOT_FILE':'LinkNode{0}_slot.ui'.format(ln['lc1_node_id']),
+                    'LOCA':'{0}'.format(ln['app_prefix'].split(':')[1]),
+                    'IOC_UNIT':'{0}'.format(ln['app_prefix'].split(':')[2]),
+                    'INST':'{0}'.format(ln['app_prefix'].split(':')[3])}
+          self.__write_area_embed(path=filename, macros=macros)
+          macros = {"Y":"{0}".format(int(edl_y)),
+                    "PREFIX":"{0}".format(ln['app_prefix']),
+                    "LN_ID":"{0}".format(ln['lc1_node_id']),
+                    'SLOT_FILE':'LinkNode{0}_slot.ui'.format(ln['lc1_node_id']),
+                    'LOCA':'{0}'.format(ln['app_prefix'].split(':')[1]),
+                    'IOC_UNIT':'{0}'.format(ln['app_prefix'].split(':')[2]),
+                    'INST':'{0}'.format(ln['app_prefix'].split(':')[3])}
+          self.__write_area_edl_embed(path=filename_edl, macros=macros)
+          if ln['group'] not in groups:
+            groups.append(ln['group'])
+          y += 35
+          edl_y += 30
+      edl_x = 14
+      for group in groups:
+        macros = {"GROUP":"{0}".format(group),
+                  "X":"{0}".format(int(edl_x)),
+                  "Y":"{0}".format(int(edl_y))}
+        self.__write_area_edl_group(path=filename_edl,macros=macros)
+        edl_x += 110
+        
+      self.__write_area_footer(path=filename,macros={"P":"P"})
+
+    def __generate_compact_group_display(self):
+      header_height = 50
+      footer_height = 51
+      embedded_width = 150
+      # TODO: Change this to vary based off of how many active rows there are -- KEL
+      embedded_height = 250
+      extra = 10
+      for group in range(0,24):
+	    # Filtering the link nodes
+        filtered_link_nodes = {key: val for (key,val) in list(self.link_nodes.items()) if val['group'] == group and val['analog_slot'] == 2}
+        last_ln = {key: val for (key,val) in list(filtered_link_nodes.items()) if val['group_link'] == 0}
+        last_ln_key = list(last_ln.keys())
+        next_to_last_ln = {key: val for (key,val) in list(filtered_link_nodes.items()) if val['group_link'] == last_ln[last_ln_key[0]]['crate_index']}
+        # Formatting the y height        
+        last_y = header_height
+        rows = 1
+        window_width = len(filtered_link_nodes) * embedded_width + extra*2
+        # Start of writing the embedded displays:
+        if len(next_to_last_ln) > 1:
+          last_y = last_y + embedded_height/2
+          rows = 2
+          window_width = (len(filtered_link_nodes)/2+1) * embedded_width + extra * 2        
+        last_x = window_width - embedded_width - extra
+        window_height = header_height + footer_height + rows*embedded_height
+        macros = { 'WIDTH':'{0}'.format(window_width),
+                   'HEIGHT':'{0}'.format(window_height),
+                   'TITLE':'SC Linac MPS Link Node Group {0}'.format(group) }
+        filename = '{0}groups/CompactLinkNodeGroup{1}.ui'.format(self.display_path,group)
+        self.__write_compact_group_header(path=filename,macros=macros)
+        macros = { 'P':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix']),
+                   'CN':'{0}'.format(last_ln[last_ln_key[0]]['cn_prefix']),
+                   'AID':'{0}'.format(last_ln[last_ln_key[0]]['dig_app_id']),
+                   'SLOT_FILE':'LinkNode{0}_slot_compact.ui'.format(last_ln[last_ln_key[0]]['lc1_node_id']),
+                   'P_IN':'{0}'.format(last_ln[last_ln_key[0]]['cn_prefix']),
+                   'X':'{0}'.format(last_x),
+                   'Y':'{0}'.format(last_y),
+                   'PGP':'{0}'.format(last_ln[last_ln_key[0]]['group_link_destination']),
+                   'LN':'{0}'.format(last_ln[last_ln_key[0]]['lc1_node_id']),
+                   'TYPE':'REM' }
+        self.__write_compact_group_embed(path=filename,macros=macros)
+        y = header_height
+        for key in next_to_last_ln:
+          p_in = last_ln[last_ln_key[0]]['app_prefix']
+          test_ln = next_to_last_ln[key]
+          x = last_x - embedded_width
+          macros = { 'P':'{0}'.format(test_ln['app_prefix']),
+                     'CN':'{0}'.format(test_ln['cn_prefix']),
+                     'AID':'{0}'.format(test_ln['dig_app_id']),
+                     'SLOT_FILE':'LinkNode{0}_slot_compact.ui'.format(test_ln['lc1_node_id']),
+                     'P_IN':'{0}'.format(p_in),
+                     'X':'{0}'.format(x),
+                     'Y':'{0}'.format(y),
+                     'PGP':'{0}'.format(test_ln['group_link_destination']),
+                     'LN':'{0}'.format(test_ln['lc1_node_id']),
+                     'TYPE':'LOC' }
+          self.__write_compact_group_embed(path=filename,macros=macros)
+          more_lns = True
+          while more_lns:
+            p_in = test_ln['app_prefix']
+            link = {k: v for (k,v) in list(filtered_link_nodes.items()) if v['group_link'] == test_ln['crate_index']}
+            lk = list(link.keys())
+            if len(lk) < 1:
+              more_lns = False
+              break
+            test_ln = link[lk[0]]
+            x = x-embedded_width
+            macros = { 'P':'{0}'.format(test_ln['app_prefix']),
+                       'CN':'{0}'.format(test_ln['cn_prefix']),
+                       'AID':'{0}'.format(test_ln['dig_app_id']),
+                       'SLOT_FILE':'LinkNode{0}_slot_compact.ui'.format(test_ln['lc1_node_id']),
+                       'P_IN':'{0}'.format(p_in),
+                       'X':'{0}'.format(x),
+                       'Y':'{0}'.format(y),
+                       'PGP':'{0}'.format(test_ln['group_link_destination']) ,
+                       'LN':'{0}'.format(test_ln['lc1_node_id']),
+                       'TYPE':'LOC' }
+            self.__write_compact_group_embed(path=filename,macros=macros)
+            # End of writing the embedded displays
+          y = y+embedded_height
+        y = window_height-footer_height-1
+        # TODO: Pass X and Y coordinates for the related display button
+        x_button = window_width / 2
+        y_button = window_height - 30
+        macros = { "Y":"{0}".format(y),
+                   'GN':'{0}'.format(group),
+                   'XB':'{0}'.format(x_button),
+                   'YB':'{0}'.format(y_button) } 
+        self.__write_compact_group_end(path=filename,macros=macros)            
 
     def __generate_group_display(self):
       header_height = 50
@@ -974,7 +1191,10 @@ class MpsExporter(MpsAppReader):
                    'Y':'{0}'.format(int(last_y)),
                    'PGP':'{0}'.format(last_ln[last_ln_key[0]]['group_link_destination']),
                    'LN':'{0}'.format(last_ln[last_ln_key[0]]['lc1_node_id']),
-                   'TYPE':'REM' }
+                   'TYPE':'REM',
+                   'LOCA':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[1]),
+                   'IOC_UNIT':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[2]),
+                   'INST':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[3])}
         self.__write_group_embed(path=filename,macros=macros)
         if rows > 1:
           y = header_height + embedded_height
@@ -993,7 +1213,10 @@ class MpsExporter(MpsAppReader):
                      'Y':'{0}'.format(int(y)),
                      'PGP':'{0}'.format(test_ln['group_link_destination']),
                      'LN':'{0}'.format(test_ln['lc1_node_id']),
-                     'TYPE':'LOC' }
+                     'TYPE':'LOC',
+                     'LOCA':'{0}'.format(test_ln['app_prefix'].split(':')[1]),
+                     'IOC_UNIT':'{0}'.format(test_ln['app_prefix'].split(':')[2]),
+                     'INST':'{0}'.format(test_ln['app_prefix'].split(':')[3])}
           self.__write_group_embed(path=filename,macros=macros)
           more_lns = True
           while more_lns:
@@ -1018,7 +1241,10 @@ class MpsExporter(MpsAppReader):
                        'Y':'{0}'.format(int(y)),
                        'PGP':'{0}'.format(test_ln['group_link_destination']) ,
                        'LN':'{0}'.format(test_ln['lc1_node_id']),
-                       'TYPE':'LOC' }
+                       'TYPE':'LOC',
+                       'LOCA':'{0}'.format(test_ln['app_prefix'].split(':')[1]),
+                       'IOC_UNIT':'{0}'.format(test_ln['app_prefix'].split(':')[2]),
+                       'INST':'{0}'.format(test_ln['app_prefix'].split(':')[3])}
             self.__write_group_embed(path=filename,macros=macros)
           y = y-embedded_height
         y = window_height-footer_height-1
@@ -1084,7 +1310,10 @@ class MpsExporter(MpsAppReader):
                           'X':'{0}'.format(int(x)),
                           'Y':'{0}'.format(int(y)),
                           'POSTFIX':postfix,
-                          'FILENAME':'{0}'.format(fn)}
+                          'FILENAME':'{0}'.format(fn),
+                          'LOCA':'{0}'.format(ln['slots'][slot]['pv_base'].split(':')[1]),
+                          'IOC_UNIT':'{0}'.format(ln['slots'][slot]['pv_base'].split(':')[2]),
+                          'INST':'{0}'.format(ln['slots'][slot]['pv_base'].split(':')[3])}
                 self.__write_crate_embed(path=filename,macros=macros)
               else:
                 macros = {'SLOT':'{0}'.format(int(slot)),
@@ -1093,6 +1322,52 @@ class MpsExporter(MpsAppReader):
                 self.__write_empty_slot(path=filename,macros=macros)
             self.__write_crate_footer(path=filename,macros=macros)
 
+    def __generate_compact_crate_display(self):
+        """
+        function to create .json files that feed into pydm template repeater to generate compact crate profiles that show:
+        	* AppID
+        	* Status
+        Macros: SLOT, CN, AID, MPS_PREFIX
+        """
+        # TODO: Reconfigure the width and height for the minimalist display header --KEL
+        width = 50
+        header_height = 40
+        header_width = 60
+        header_middle = width/2
+        widget_height = 20
+        for ln_name, ln in self.link_nodes.items():
+            installed = ln['slots'].keys()
+            installed_num = len(installed)
+            height = header_height + widget_height * installed_num + 2
+            if ln['analog_slot'] == 2:
+                # This shouldn't change. The display template should.
+                macros = {'HEADER_HEIGHT':'{0}'.format(header_height),
+                          'HEADER_WIDTH':'{0}'.format(header_width),
+                          'HEADER_MIDDLE':'{0}'.format(header_middle),
+                          'WIDTH':'{0}'.format(width),
+                          'HEIGHT':'{0}'.format(height),
+                          'P':'{0}'.format(ln['app_prefix'])}
+                filename = '{0}slots/LinkNode{1}_slot_compact.ui'.format(self.display_path,ln['lc1_node_id'])
+                self.__write_compact_crate_header(path=filename,macros=macros)
+                for slot in range(1,8):
+                    if slot in installed:
+                      macros = {}
+                      y = header_height + slot * widget_height
+                      x = 5
+                      postfix = 'APP_ID'
+                      if slot is 1:
+                        slot_publish = 'RTM'
+                        postfix = 'DIG_APPID_RBV'      
+                      macros = {'CN':'{0}'.format(ln['cn_prefix']),
+                                'AID':'{0}'.format(ln['slots'][slot]['app_id']),
+                                'MPS_PREFIX':'{0}'.format(ln['slots'][slot]['pv_base']),
+                                'TYPE':type,
+                                'DESC':'{0}'.format(ln['slots'][slot]['description']),
+                                'X':'{0}'.format(x),
+                                'Y':'{0}'.format(y),
+                                'POSTFIX':postfix}
+                      self.__write_compact_crate_embed(path=filename,macros=macros)
+                self.__write_compact_crate_footer(path=filename,macros=macros)
 
     def __generate_input_display(self):
       header_height = 50
@@ -1152,6 +1427,13 @@ class MpsExporter(MpsAppReader):
           self.__write_cn_input_embed(path=filename,macros=macro)
           y += 20
         self.__write_cn_input_footer(path=filename,macros={"Y":"{0}".format(int(y))})
+
+    def generate_full_app_id_status_display(self):
+    	'''
+    	The purpose of this function is to generate a full display of the status of all the app ids 
+    	using the generated compact group display
+    	'''
+    	pass
 
     def generate_yaml(self):
       mps = MPSConfig(self.database)
@@ -1641,12 +1923,48 @@ class MpsExporter(MpsAppReader):
     def __write_crate_embed(self,path,macros):
         self.__write_ui_file(path=path, template_name="ln_crate_embed.tmpl", macros=macros)
 
+    def __write_area_header(self, path,macros):
+        self.__write_ui_file(path=path, template_name="ln_area_header.tmpl", macros=macros)
+
+    def __write_area_footer(self, path,macros):
+        self.__write_ui_file(path=path, template_name="ln_area_footer.tmpl", macros=macros)
+
+    def __write_area_embed(self,path,macros):
+        self.__write_ui_file(path=path, template_name="ln_area_embed.tmpl", macros=macros)
+
+    def __write_area_edl_header(self, path,macros):
+        self.__write_ui_file(path=path, template_name="link_node_area_edl_header.tmpl", macros=macros)
+
+    def __write_area_edl_group(self,path,macros):
+        self.__write_ui_file(path=path, template_name="link_node_group_button_edl.tmpl", macros=macros)
+
+    def __write_area_edl_embed(self,path,macros):
+        self.__write_ui_file(path=path, template_name="link_node_area_edl_embed.tmpl", macros=macros)
+
     def __write_empty_slot(self,path,macros):
         self.__write_ui_file(path=path, template_name="ln_crate_empty.tmpl", macros=macros)
 
     def __write_ui_file(self, path, template_name, macros):
         template = '{}display/{}'.format(self.template_path, template_name)
         self.__write_file_from_template(file=path,template=template,macros=macros)
+
+    def __write_compact_crate_header(self, path,macros):
+        self.__write_ui_file(path=path, template_name="ln_compact_crate_header.tmpl", macros=macros)
+
+    def __write_compact_crate_footer(self, path,macros):
+        self.__write_ui_file(path=path, template_name="ln_compact_crate_footer.tmpl", macros=macros)
+
+    def __write_compact_crate_embed(self,path,macros):
+        self.__write_ui_file(path=path, template_name="ln_compact_crate_embed.tmpl", macros=macros)
+
+    def __write_compact_group_header(self, path, macros):
+        self.__write_ui_file(path=path, template_name="ln_compact_group_header.tmpl",macros=macros)
+
+    def __write_compact_group_embed(self, path, macros):
+        self.__write_ui_file(path=path, template_name="link_node_compact_group_embedded_display.tmpl",macros=macros)
+
+    def __write_compact_group_end(self, path, macros):
+        self.__write_ui_file(path=path, template_name="ln_compact_group_end.tmpl",macros=macros)
 
     def __write_epics_db(self, path,filename, template_name, macros):
         """
@@ -1754,15 +2072,15 @@ def main(db_file, dest_path, template_path=None, app_id=None,
 
     # Generated the application output file
     print("Generate link node databases...")
-    mps_reader.generate_ln_epics_db()
+    #mps_reader.generate_ln_epics_db()
     print("Generate central node databases...")
-    mps_reader.generate_cn_db()
+    #mps_reader.generate_cn_db()
     print("Generate display files...")
     mps_reader.generate_displays()
     print("Generate yaml...")
-    mps_reader.generate_yaml()
+    #mps_reader.generate_yaml()
     print("Generate reports...")
-    mps_reader.generate_reports()
+    #mps_reader.generate_reports()
     print("Done!")
 
 if __name__ == "__main__":

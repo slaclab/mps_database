@@ -1,5 +1,33 @@
 Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
-LINAC,I0_BACT_T0,1,LINAC Dipole Current Fault,1,-,-,-
-SXU,I0_BACT_T0,1,SXU Dipole Current Fault,-,-,1,-
-HXU,I0_BACT_T0,1,HXU Dipole Current Fault,-,-,-,1
-CLTS,I0_BACT_T0,1,CLTS Dipole Current Fault,11,-,-,-
+LINAC,I0_BACT_T0,1,Dipole Fault Fault,1,-,-,-
+LINAC,I0_BACT_T1,2,Dipole Fault Fault,3,-,-,-
+LINAC,I0_BACT_T2,3,Dipole Fault Fault,4,-,-,-
+LINAC,I0_BACT_T3,4,Dipole Fault Fault,5,-,-,-
+LINAC,I0_BACT_T4,5,Dipole Fault Fault,6,-,-,-
+LINAC,I0_BACT_T5,6,Dipole Fault Fault,7,-,-,-
+LINAC,I0_BACT_T6,7,Dipole Fault Fault,8,-,-,-
+LINAC,I0_BACT_T7,8,Dipole Fault Fault,9,-,-,-
+SXU,I0_BACT_T0,1,Dipole Fault Fault,-,-,1,-
+SXU,I0_BACT_T1,2,Dipole Fault Fault,-,-,3,-
+SXU,I0_BACT_T2,3,Dipole Fault Fault,-,-,4,-
+SXU,I0_BACT_T3,4,Dipole Fault Fault,-,-,5,-
+SXU,I0_BACT_T4,5,Dipole Fault Fault,-,-,6,-
+SXU,I0_BACT_T5,6,Dipole Fault Fault,-,-,7,-
+SXU,I0_BACT_T6,7,Dipole Fault Fault,-,-,8,-
+SXU,I0_BACT_T7,8,Dipole Fault Fault,-,-,9,-
+HXU,I0_BACT_T0,1,Dipole Fault Fault,-,-,-,1
+HXU,I0_BACT_T1,2,Dipole Fault Fault,-,-,-,3
+HXU,I0_BACT_T2,3,Dipole Fault Fault,-,-,-,4
+HXU,I0_BACT_T3,4,Dipole Fault Fault,-,-,-,5
+HXU,I0_BACT_T4,5,Dipole Fault Fault,-,-,-,6
+HXU,I0_BACT_T5,6,Dipole Fault Fault,-,-,-,7
+HXU,I0_BACT_T6,7,Dipole Fault Fault,-,-,-,8
+HXU,I0_BACT_T7,8,Dipole Fault Fault,-,-,-,9
+CLTS,I0_BACT_T0,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T1,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T2,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T3,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T4,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T5,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T6,1,Dipole Fault Fault,11,-,-,-
+CLTS,I0_BACT_T7,1,Dipole Fault Fault,11,-,-,-

@@ -257,6 +257,7 @@ class MpsAppReader:
                 self.link_nodes[name]["lc1_node_id"] = ln.lcls1_id
                 self.link_nodes[name]["cpu_name"] = ln.cpu
                 self.link_nodes[name]["crate_id"] = ln.crate.crate_id
+                self.link_nodes[name]['area'] = ln.area
 
         # Check if there were applications defined in the database
         if len(app_cards) == 0:
@@ -377,7 +378,7 @@ class MpsAppReader:
                                 fault_data["id"] = fault_id
                                 fault_data["name"] = fault.name
                                 fault_data["readback"] = fault.name
-                                if fault_data["readback"] == "CHRG":
+                                if fault_data["readback"] == "CHRG" and device_data["type_name"] == 'BPMS':
                                   fault_data["readback"] = '{0}'.format("CHRGDIFF")
                                 fault_data["description"] = fault.description[:39]
                                 fault_data["bit_positions"] = []
@@ -415,6 +416,8 @@ class MpsAppReader:
                                         state_data[dest['name']]['mitigation'] = cur_mit
                                         if cur_mit in ['BC0','BC1']:
                                           state_data[dest['name']]['severity'] = 'MAJOR'
+                                        elif cur_mit in ['BC10']:
+                                          state_data[dest['name']]['severity'] = 'NO_ALARM'
                                         else:
                                           state_data[dest['name']]['severity'] = 'MINOR'
                                     fault_data["logic"].append(state_data)                                   
