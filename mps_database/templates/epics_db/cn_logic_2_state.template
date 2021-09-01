@@ -15,7 +15,7 @@ record(calcout, "$(P)_CALC") {
     field(PINI, "YES")
     field(FLNK, "$(P)")
     field(INPA, "$(INPA)")
-    field(CALC, "(A&1)?1:0")
+    field(CALC, "A?0:1")
     field(OUT,  "$(P)")
 } 
 record(mbbi, "$(P)") {

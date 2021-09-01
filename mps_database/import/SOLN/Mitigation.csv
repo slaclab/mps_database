@@ -1,2 +1,9 @@
 Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
-LINAC,I0_BACT_T0,1,Soleniod charge fault,1,-,-,-
+LINAC,I0_BACT_T0,1,Soleniod B-Field Fault,1,-,-,-
+LINAC,I0_BACT_T1,2,Soleniod B-Field Fault,2,-,-,-
+LINAC,I0_BACT_T2,3,Soleniod B-Field Fault,3,-,-,-
+LINAC,I0_BACT_T3,4,Soleniod B-Field Fault,4,-,-,-
+LINAC,I0_BACT_T4,5,Soleniod B-Field Fault,5,-,-,-
+LINAC,I0_BACT_T5,6,Soleniod B-Field Fault,6,-,-,-
+LINAC,I0_BACT_T6,7,Soleniod B-Field Fault,7,-,-,-
+LINAC,I0_BACT_T7,8,Soleniod B-Field Fault,8,-,-,-

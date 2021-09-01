@@ -1,2 +1,9 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description
 CHRG_T0,1,Charge,1,1,CHRG,Charge Fault T0
+CHRG_T1,2,Charge,2,2,CHRG,Charge Fault T1
+CHRG_T2,3,Charge,4,4,CHRG,Charge Fault T2
+CHRG_T3,4,Charge,8,8,CHRG,Charge Fault T3
+CHRG_T4,5,Charge,16,16,CHRG,Charge Fault T4
+CHRG_T5,6,Charge,32,32,CHRG,Charge Fault T5
+CHRG_T6,7,Charge,64,64,CHRG,Charge Fault T6
+CHRG_T7,8,Charge,128,128,CHRG,Charge Fault T7

@@ -21,7 +21,9 @@ record(calcout, "$(P)_CALC") {
     field(FLNK, "$(P)")
     field(INPA, "$(INPA)")
     field(INPB, "$(INPB)")
-    field(CALC, "(!A&!B)?0:(!A&B)?1:(A&!B)?2:(A&B)?3:4")
+    field(INPC, "$(INPC)")
+    field(INPD, "$(INPD)")
+    field(CALC, "A?0:B?1:C?2:D?3:4")
     field(OUT,  "$(P)")
 } 
 record(mbbi, "$(P)") {

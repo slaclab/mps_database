@@ -804,8 +804,6 @@ class DatabaseImporter:
               self.session.add(fault_state)
               self.session.commit()
               self.session.refresh(fault_state)
-              #print mitigation[mit_location][fs]
-              #print ''
               for d in self.beam_destinations:
                 power_class_str = mitigation[mit_location][fs][d.lower()]
                 if (power_class_str != '-'):
@@ -895,7 +893,6 @@ class DatabaseImporter:
     while line:
       channel_info={}
       line = f.readline().strip()
-
       if line:
         field_index = 0
         for property in line.split(','):
@@ -1044,7 +1041,8 @@ class DatabaseImporter:
               device_input = models.DeviceInput(channel = digital_channel,
                                                 bit_position = int(channel[key]['bit_position']),
                                                 digital_device = device,
-                                                fault_value = int(channel[key]['alarm_state']))
+                                                fault_value = int(channel[key]['alarm_state']),
+                                                auto_reset = int(channel[key]['auto_reset']))
               self.session.add(device_input)
               self.session.commit()
               self.session.refresh(device_input)
@@ -1313,7 +1311,7 @@ if (True):
 
 importer.cleanup()
 
-importer.create_runtime_database()
+#importer.create_runtime_database()
 
 print('Done.')
 

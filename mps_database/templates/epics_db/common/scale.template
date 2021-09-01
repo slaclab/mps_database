@@ -32,7 +32,6 @@ record(ao,      "$(P):$(R)_SS") {
     field(DOL,  "$(SCALE_SLOPE_PV)")
     field(DTYP, "asynFloat64")
     field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALESLOPE_$(CH)")    
-    info(autosaveFields, "EGU")
 }
 
 record(ai,      "$(P):$(R)_SS_RBV") {
@@ -42,7 +41,6 @@ record(ai,      "$(P):$(R)_SS_RBV") {
     field(PREC, "$(PREC)")
     field(DTYP, "asynFloat64")
     field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALESLOPE_$(CH)")
-    info(autosaveFields, "EGU")
 }
 
 # Scale Offset PVs
