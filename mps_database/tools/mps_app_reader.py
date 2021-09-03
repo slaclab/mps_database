@@ -52,6 +52,7 @@ class MpsAppReader:
         self.beam_classes = []
         self.beam_destinations = []
         self.conditions = []
+        self.device_types = []
         
         # List of Link Nodes by cpu_name + slot - track if it has only digital, analog or both apps
         self.link_nodes = {}
@@ -65,6 +66,7 @@ class MpsAppReader:
             self.mps_name = MpsName(mps_db_session)
             self.__extract_destinations(mps_db_session)
             self.__extract_conditions(mps_db_session)
+            self.__extract_device_types(mps_db_session)
             self.__extract_apps(mps_db_session)
 
     def __add_slot_information_by_name(self, mps_db_session, ln_name, app_card):
@@ -101,6 +103,19 @@ class MpsAppReader:
           n = 'BPM'
         slot_info['type'] = n
         self.link_nodes[ln_name]['slots'][slot_number] = slot_info
+
+    def __extract_device_types(self, mps_db_session):
+        try:
+            # Get all the apps defined in the database
+            dts = mps_db_session.query(models.DeviceType).all()
+        except exc.SQLAlchemyError as e:
+            raise
+        for dt in dts:
+            data = {}
+            data['id'] = dt.id
+            data['name'] = dt.name
+            data['description'] = dt.description
+            self.device_types.append(data)
 
     def __extract_destinations(self, mps_db_session):
         try:

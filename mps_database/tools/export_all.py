@@ -221,14 +221,26 @@ class MpsExporter(MpsAppReader):
         # ---------------------------#
         # Generate digital application databases and configuration files
         # ---------------------------#
+        export_data = []
         for app in self.digital_apps:
           app_path = '{}link_node_db/app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
           app_prefix = app['app_prefix']
           self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
           has_virtual = False
-          json_macros = {}
           for device in app['devices']:
+            device_data = {}
+            device_data['prefix'] = device['prefix']
+            device_data['area'] = device['area']
+            device_data['device_type'] = device['type_name']
+            device_data['app_prefix'] = app_prefix
+            device_data['app_id'] = app['app_id']
+            device_data['fault'] = device['faults'][0]['name']
+            device_data['ln'] = app['lc1_node_id']
+            device_data['inputs'] = []
+            device_data['channels'] = []
             for input in device["inputs"]:
+              device_data['inputs'].append(input['input_pv'])
+              cha = input['bit_position']
               if app["virtual"]:
                 has_virtual = True
                 if input["bit_position"] >= 32:
@@ -255,14 +267,20 @@ class MpsExporter(MpsAppReader):
                                "SCAN":scan}
                   if (input['name'] == 'WDOG'):
                     self.__write_virtual_wdog_db(path=app_path, macros=vmacros)
+                    cha = '{0}_WDOG_RBV'.format(n)
                   else:
                     self.__write_virtual_db(path=app_path, macros=vmacros)
+                    cha = '{0}_INPUT_RBV'.format(n)
+              device_data['channels'].append(cha)
               if (self.verbose):
-                print(("    Digital Input : {}".format(input["name"])))
+                print(("    Digital Input : {}".format(input["name"])))     
+            export_data.append(device_data)          
           if has_virtual:
             self.__write_mps_virt_db(path=app_path, macros={"P":app_prefix,"HAS_VIRTUAL":"1"})
           else:
             self.__write_mps_virt_db(path=app_path, macros={"P":app_prefix,"HAS_VIRTUAL":"0"})
+        filename = '{0}/digital_checkout.json'.format(self.checkout_path,app['app_id'])
+        self.__write_json_file(filename, export_data)
 
         # ---------------------------#
         # Generate analog application databases and configuration files
@@ -2072,15 +2090,15 @@ def main(db_file, dest_path, template_path=None, app_id=None,
 
     # Generated the application output file
     print("Generate link node databases...")
-    #mps_reader.generate_ln_epics_db()
+    mps_reader.generate_ln_epics_db()
     print("Generate central node databases...")
-    #mps_reader.generate_cn_db()
+    mps_reader.generate_cn_db()
     print("Generate display files...")
     mps_reader.generate_displays()
     print("Generate yaml...")
-    #mps_reader.generate_yaml()
+    mps_reader.generate_yaml()
     print("Generate reports...")
-    #mps_reader.generate_reports()
+    mps_reader.generate_reports()
     print("Done!")
 
 if __name__ == "__main__":
