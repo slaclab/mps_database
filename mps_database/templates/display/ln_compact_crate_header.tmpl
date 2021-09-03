@@ -19,7 +19,7 @@
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>1</x>
      <y>0</y>
      <width>$(WIDTH)</width>
      <height>$(HEIGHT)</height>
@@ -45,7 +45,7 @@
    </property>
    <!-- End of Frame Construction -->
    <!-- Start of Header Labels -->
-   <widget class="PyDMLabel" name="PyDMLabel_3">
+   <widget class="PyDMLabel" name="PyDMLabel_1">
     <property name="geometry">
      <rect>
       <x>2</x>
@@ -56,7 +56,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="toolTip">
@@ -66,43 +66,13 @@
      <string notr="true">background-color: rgb(174, 174, 174);</string>
     </property>
     <property name="text">
-     <string>Crate Location</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-    <property name="channel" stdset="0">
-     <string>$(P):LN_LOCATION</string>
-    </property>
-   </widget>
-   <widget class="PyDMLabel" name="PyDMLabel_4">
-    <property name="geometry">
-     <rect>
-      <x>$(HEADER_MIDDLE)</x>
-      <y>2</y>
-      <width>$(HEADER_WIDTH)</width>
-      <height>$(HEADER_HEIGHT)</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>8</pointsize>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(174, 174, 174);</string>
-    </property>
-    <property name="text">
-     <string>Shelf Manager</string>
+     <string>LN: $(LN_ID)</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
-    <property name="channel" stdset="0">
-     <string>ca://$(P):LN_SHM_NAME</string>
+        <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <!-- End of Header Labels -->

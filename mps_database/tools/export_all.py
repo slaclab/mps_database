@@ -1060,12 +1060,12 @@ class MpsExporter(MpsAppReader):
       self.__write_area_footer(path=filename,macros={"P":"P"})
 
     def __generate_compact_group_display(self):
-      header_height = 50
-      footer_height = 51
-      embedded_width = 150
+      header_height = 5
+      footer_height = 30
+      embedded_width = 141
       # TODO: Change this to vary based off of how many active rows there are -- KEL
-      embedded_height = 250
-      extra = 10
+      embedded_height = 160
+      extra = 3
       for group in range(0,24):
 	    # Filtering the link nodes
         filtered_link_nodes = {key: val for (key,val) in list(self.link_nodes.items()) if val['group'] == group and val['analog_slot'] == 2}
@@ -1077,12 +1077,12 @@ class MpsExporter(MpsAppReader):
         rows = 1
         window_width = len(filtered_link_nodes) * embedded_width + extra*2
         # Start of writing the embedded displays:
-        if len(next_to_last_ln) > 1:
-          last_y = last_y + embedded_height/2
-          rows = 2
-          window_width = (len(filtered_link_nodes)/2+1) * embedded_width + extra * 2        
+        #if len(next_to_last_ln) > 1:
+        #  last_y = int(last_y + embedded_height/2)
+        #  rows = 2
+        #  window_width = round((len(filtered_link_nodes)/2+1) * embedded_width + extra * 2) + 1
         last_x = window_width - embedded_width - extra
-        window_height = header_height + footer_height + rows*embedded_height
+        window_height = header_height + footer_height + rows*embedded_height + 10
         macros = { 'WIDTH':'{0}'.format(window_width),
                    'HEIGHT':'{0}'.format(window_height),
                    'TITLE':'SC Linac MPS Link Node Group {0}'.format(group) }
@@ -1103,13 +1103,13 @@ class MpsExporter(MpsAppReader):
         for key in next_to_last_ln:
           p_in = last_ln[last_ln_key[0]]['app_prefix']
           test_ln = next_to_last_ln[key]
-          x = last_x - embedded_width
+          last_x = last_x - embedded_width
           macros = { 'P':'{0}'.format(test_ln['app_prefix']),
                      'CN':'{0}'.format(test_ln['cn_prefix']),
                      'AID':'{0}'.format(test_ln['dig_app_id']),
                      'SLOT_FILE':'LinkNode{0}_slot_compact.ui'.format(test_ln['lc1_node_id']),
                      'P_IN':'{0}'.format(p_in),
-                     'X':'{0}'.format(x),
+                     'X':'{0}'.format(last_x),
                      'Y':'{0}'.format(y),
                      'PGP':'{0}'.format(test_ln['group_link_destination']),
                      'LN':'{0}'.format(test_ln['lc1_node_id']),
@@ -1124,24 +1124,24 @@ class MpsExporter(MpsAppReader):
               more_lns = False
               break
             test_ln = link[lk[0]]
-            x = x-embedded_width
+            last_x = last_x-embedded_width
             macros = { 'P':'{0}'.format(test_ln['app_prefix']),
                        'CN':'{0}'.format(test_ln['cn_prefix']),
                        'AID':'{0}'.format(test_ln['dig_app_id']),
                        'SLOT_FILE':'LinkNode{0}_slot_compact.ui'.format(test_ln['lc1_node_id']),
                        'P_IN':'{0}'.format(p_in),
-                       'X':'{0}'.format(x),
+                       'X':'{0}'.format(last_x),
                        'Y':'{0}'.format(y),
                        'PGP':'{0}'.format(test_ln['group_link_destination']) ,
                        'LN':'{0}'.format(test_ln['lc1_node_id']),
                        'TYPE':'LOC' }
             self.__write_compact_group_embed(path=filename,macros=macros)
             # End of writing the embedded displays
-          y = y+embedded_height
+          #y = y+embedded_height
         y = window_height-footer_height-1
         # TODO: Pass X and Y coordinates for the related display button
-        x_button = window_width / 2
-        y_button = window_height - 30
+        x_button = round(window_width / 2) - 75
+        y_button = window_height - 25
         macros = { "Y":"{0}".format(y),
                    'GN':'{0}'.format(group),
                    'XB':'{0}'.format(x_button),
@@ -1330,15 +1330,16 @@ class MpsExporter(MpsAppReader):
         Macros: SLOT, CN, AID, MPS_PREFIX
         """
         # TODO: Reconfigure the width and height for the minimalist display header --KEL
-        width = 50
-        header_height = 40
-        header_width = 60
+        width = 60
+        header_height = 20
+        header_width = 56
         header_middle = width/2
         widget_height = 20
         for ln_name, ln in self.link_nodes.items():
             installed = ln['slots'].keys()
             installed_num = len(installed)
-            height = header_height + widget_height * installed_num + 2
+            installed_count = 0
+            height = header_height + widget_height * installed_num + 4
             if ln['analog_slot'] == 2:
                 # This shouldn't change. The display template should.
                 macros = {'HEADER_HEIGHT':'{0}'.format(header_height),
@@ -1346,14 +1347,16 @@ class MpsExporter(MpsAppReader):
                           'HEADER_MIDDLE':'{0}'.format(header_middle),
                           'WIDTH':'{0}'.format(width),
                           'HEIGHT':'{0}'.format(height),
+                          'LN_ID':'{0}'.format(ln['lc1_node_id']),
                           'P':'{0}'.format(ln['app_prefix'])}
                 filename = '{0}slots/LinkNode{1}_slot_compact.ui'.format(self.display_path,ln['lc1_node_id'])
                 self.__write_compact_crate_header(path=filename,macros=macros)
                 for slot in range(1,8):
                     if slot in installed:
                       macros = {}
-                      y = header_height + slot * widget_height
+                      y = header_height + (installed_count) * widget_height + 2
                       x = 5
+                      installed_count += 1
                       postfix = 'APP_ID'
                       if slot is 1:
                         slot_publish = 'RTM'
