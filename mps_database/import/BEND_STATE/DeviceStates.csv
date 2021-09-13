@@ -1,5 +1,5 @@
 Name,Number,Description,Value,Mask,Fault,Fault_Description
-BROKEN,1,On/Off Disconnected,0,4294967295,STATE,On/Off Fault (both signals low)
+DISCONNECTED,1,On/Off Disconnected,0,4294967295,STATE,On/Off Fault (both signals low)
 OFF,2,Dipole OFF,1,4294967295,STATE,Dipole OFF
-ON,3,Dipole ON,2,4294967295,-,-
+ON,3,Dipole ON,2,4294967295,STATE,Dipole ON
 BROKEN,4,On and Off Fault,3,4294967295,STATE,On/Off Fault (both signals high)

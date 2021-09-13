@@ -1,4 +1,4 @@
-Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Debounce
-FLOW,Flow switch,0/24V,1,FAULT,OK,0,0,10
-FLOW_A,Flow switch at COLL jaw A,0/24V,2,FAULT,OK,0,0,10
-FLOW_B,Flow switch at COLL jaw B,0/24V,3,FAULT,OK,0,0,10
+Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Debounce,auto_reset
+FLOW,Flow switch,0/24V,1,FAULT,OK,0,0,10,1
+FLOW_A,Flow switch at COLL jaw A,0/24V,2,FAULT,OK,0,0,10,1
+FLOW_B,Flow switch at COLL jaw B,0/24V,3,FAULT,OK,0,0,10,1

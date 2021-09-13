@@ -63,7 +63,6 @@ class Crate(Base):
 
     if new_card.slot_number < 0:
       raise ValueError('Slot number must be positive (slot_number={0}).'.format(new_card.slot_number))
-    
     #Ensure the slot isn't taken
     if [new_card.slot_number, new_card.amc] in [[c.slot_number, c.amc] for c in self.cards]:
       print(("Slot is already taken by another card. New card:" + str(new_card.number) + " New amc:" + str(new_card.slot_number) + "; existing card: " + str(c.number) + " amc: " + str(c.slot_number)))

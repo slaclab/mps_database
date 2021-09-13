@@ -1,0 +1,159 @@
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y $(Y)
+w 100
+h 24
+controlPv "$(PREFIX):LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y $(Y)
+w 100
+h 24
+controlPv "$(PREFIX):LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y $(Y)
+w 100
+h 24
+controlPv "$(PREFIX):CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y $(Y)
+w 100
+h 24
+controlPv "$(PREFIX):FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y $(Y)
+w 64
+h 24
+controlPv "$(PREFIX):LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y $(Y)
+w 40
+h 24
+controlPv "$(PREFIX):TIMING_MODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y $(Y)
+w 100
+h 24
+controlPv "$(PREFIX):LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y $(Y)
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node $(LN_ID)"
+numCmds 1
+command {
+  0 "pydm -m \"P=$(PREFIX),SLOT_FILE=$(SLOT_FILE),LOCA=$(LOCA),IOC_UNIT=$(IOC_UNIT),INST=$(INST),LN=$(LN_ID)\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+

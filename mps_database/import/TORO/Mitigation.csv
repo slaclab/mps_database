@@ -1,5 +1,33 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,I0_CHRG_T0,1,Linac Toroid current fault,1,-,-,-
-DIAG0,I0_CHRG_T0,1,Diag0 Toroid current fault,-,1,-,-
-SXU,I0_CHRG_T0,1,SXU Toroid current fault,-,-,1,-
-HXU,I0_CHRG_T0,1,HXU Toroid current fault,-,-,-,1
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,CHRG_T0,1,Toroid charge fault,1,-,-,-
+LINAC,CHRG_T1,2,Toroid charge fault,3,-,-,-
+LINAC,CHRG_T2,3,Toroid charge fault,4,-,-,-
+LINAC,CHRG_T3,4,Toroid charge fault,5,-,-,-
+LINAC,CHRG_T4,5,Toroid charge fault,6,-,-,-
+LINAC,CHRG_T5,6,Toroid charge fault,7,-,-,-
+LINAC,CHRG_T6,7,Toroid charge fault,8,-,-,-
+LINAC,CHRG_T7,8,Toroid charge fault,9,-,-,-
+DIAG0,CHRG_T0,1,Toroid charge fault,-,1,-,-
+DIAG0,CHRG_T1,2,Toroid charge fault,-,3,-,-
+DIAG0,CHRG_T2,3,Toroid charge fault,-,4,-,-
+DIAG0,CHRG_T3,4,Toroid charge fault,-,5,-,-
+DIAG0,CHRG_T4,5,Toroid charge fault,-,6,-,-
+DIAG0,CHRG_T5,6,Toroid charge fault,-,7,-,-
+DIAG0,CHRG_T6,7,Toroid charge fault,-,8,-,-
+DIAG0,CHRG_T7,8,Toroid charge fault,-,9,-,-
+SXU,CHRG_T0,1,Toroid charge fault,-,-,1,-
+SXU,CHRG_T1,2,Toroid charge fault,-,-,3,-
+SXU,CHRG_T2,3,Toroid charge fault,-,-,4,-
+SXU,CHRG_T3,4,Toroid charge fault,-,-,5,-
+SXU,CHRG_T4,5,Toroid charge fault,-,-,6,-
+SXU,CHRG_T5,6,Toroid charge fault,-,-,7,-
+SXU,CHRG_T6,7,Toroid charge fault,-,-,8,-
+SXU,CHRG_T7,8,Toroid charge fault,-,-,9,-
+HXU,CHRG_T0,1,Toroid charge fault,-,-,-,1
+HXU,CHRG_T1,2,Toroid charge fault,-,-,-,3
+HXU,CHRG_T2,3,Toroid charge fault,-,-,-,4
+HXU,CHRG_T3,4,Toroid charge fault,-,-,-,5
+HXU,CHRG_T4,5,Toroid charge fault,-,-,-,6
+HXU,CHRG_T5,6,Toroid charge fault,-,-,-,7
+HXU,CHRG_T6,7,Toroid charge fault,-,-,-,8
+HXU,CHRG_T7,8,Toroid charge fault,-,-,-,9

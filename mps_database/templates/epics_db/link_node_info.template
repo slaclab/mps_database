@@ -10,11 +10,17 @@
 #   - MPS_CPU_NAME            : Cpu Name                                         #
 #   - MPS_SHM_NAME            : Shelf Manager Name                               #
 #   - IS_LN                   : Boolean: True=LN, False=AN or DN                 #
+#   - GROUP                   : Link Node Group                                  #
 #================================================================================#
 
 record(stringin, "$(P):CONFIG_VERSION") {
   field(DESC, "MPS Configuration Database Version")
   field(VAL, "$(MPS_CONFIG_VERSION)")
+}
+
+record(stringin, "$(P):LN_GROUP") {
+  field(DESC, "Link Node Group")
+  field(VAL, "$(GROUP)")
 }
 
 record(mbbi, "$(P):LN_TYPE") {

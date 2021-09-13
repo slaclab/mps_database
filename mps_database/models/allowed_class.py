@@ -18,3 +18,4 @@ class AllowedClass(Base):
   fault_state_id = Column(Integer, ForeignKey('fault_states.id'), nullable=False)
   beam_destination_id = Column(Integer, ForeignKey('beam_destinations.id'), nullable=False)
   beam_class_id  = Column(Integer, ForeignKey('beam_classes.id'), nullable=False)
+

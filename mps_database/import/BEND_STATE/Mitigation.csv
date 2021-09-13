@@ -1,11 +1,17 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,BROKEN,1,On/Off Fault (both signals low),1,-,-,-
-Linac,OFF,2,Dipole OFF,1,-,-,-
-Linac,BROKEN,4,On/Off Fault (both signals high),1,-,-,-
-SXU,BROKEN,1,On/Off Fault (both signals low),-,-,1,-
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,DISCONNECTED,1,On/Off Fault (both signals low),1,-,-,-
+LINAC,OFF,2,Dipole OFF,1,-,-,-
+LINAC,BROKEN,4,On/Off Fault (both signals high),1,-,-,-
+LINAC,ON,3,Dipole ON,10,-,-,-
+SXU,DISCONNECTED,1,On/Off Fault (both signals low),-,-,1,-
 SXU,OFF,2,Dipole OFF,-,-,1,-
 SXU,BROKEN,4,On/Off Fault (both signals high),-,-,1,-
-HXU,BROKEN,1,On/Off Fault (both signals low),-,-,-,1
+SXU,ON,3,Dipole On,-,-,10,-
+HXU,DISCONNECTED,1,On/Off Fault (both signals low),-,-,-,1
 HXU,OFF,2,Dipole OFF,-,-,-,1
 HXU,BROKEN,4,On/Off Fault (both signals high),-,-,-,1
-CLTS,ON,0,Info,-,-,-,-
+HXU,ON,3,Dipole On,-,-,-,10
+CLTS,DISCONNECTED,1,On/Off Fault (both signals low),-,-,-,-
+CLTS,OFF,2,Dipole OFF,-,-,-,-
+CLTS,BROKEN,4,On/Off Fault (both signals high),-,-,-,-
+CLTS,ON,3,Dipole On,-,-,-,-

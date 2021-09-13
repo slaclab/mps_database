@@ -1,49 +1,49 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,X_T0,1,Linac BPM X Fault,5,-,-,-
-Linac,X_T1,2,Linac BPM X Fault,1,-,-,-
-Linac,Y_T0,3,Linac BPM Y Fault,5,-,-,-
-Linac,Y_T1,4,Linac BPM Y Fault,1,-,-,-
-Linac,CHRG_T0,5,Linac BPM CHRG Fault,1,-,-,-
-Linac,CHRG_T1,6,Linac BPM CHRG Fault,3,-,-,-
-Linac,CHRG_T2,7,Linac BPM CHRG Fault,4,-,-,-
-Linac,CHRG_T3,8,Linac BPM CHRG Fault,5,-,-,-
-Linac,CHRG_T4,9,Linac BPM CHRG Fault,6,-,-,-
-Linac,CHRG_T5,10,Linac BPM CHRG Fault,7,-,-,-
-Linac,CHRG_T6,11,Linac BPM CHRG Fault,8,-,-,-
-Linac,CHRG_T7,12,Linac BPM CHRG Fault,9,-,-,-
-DIAG0,X_T0,1,Diag0 BPM X Fault,-,5,-,-
-DIAG0,X_T1,2,Diag0 BPM X Fault,-,1,-,-
-DIAG0,Y_T0,3,Diag0 BPM Y Fault,-,5,-,-
-DIAG0,Y_T1,4,Diag0 BPM Y Fault,-,1,-,-
-DIAG0,CHRG_T0,5,Diag0 BPM CHRG Fault,-,1,-,-
-DIAG0,CHRG_T1,6,Diag0 BPM CHRG Fault,-,3,-,-
-DIAG0,CHRG_T2,7,Diag0 BPM CHRG Fault,-,4,-,-
-DIAG0,CHRG_T3,8,Diag0 BPM CHRG Fault,-,5,-,-
-DIAG0,CHRG_T4,9,Diag0 BPM CHRG Fault,-,6,-,-
-DIAG0,CHRG_T5,10,Diag0 BPM CHRG Fault,-,7,-,-
-DIAG0,CHRG_T6,11,Diag0 BPM CHRG Fault,-,8,-,-
-DIAG0,CHRG_T7,12,Diag0 BPM CHRG Fault,-,9,-,-
-SXU,X_T0,1,SXU BPM X Fault,-,-,5,-
-SXU,X_T1,2,SXU BPM X Fault,-,-,1,-
-SXU,Y_T0,3,SXU BPM Y Fault,-,-,5,-
-SXU,Y_T1,4,SXU BPM Y Fault,-,-,1,-
-SXU,CHRG_T0,5,SXU BPM CHRG Fault,-,-,1,-
-SXU,CHRG_T1,6,SXU BPM CHRG Fault,-,-,3,-
-SXU,CHRG_T2,7,SXU BPM CHRG Fault,-,-,4,-
-SXU,CHRG_T3,8,SXU BPM CHRG Fault,-,-,5,-
-SXU,CHRG_T4,9,SXU BPM CHRG Fault,-,-,6,-
-SXU,CHRG_T5,10,SXU BPM CHRG Fault,-,-,7,-
-SXU,CHRG_T6,11,SXU BPM CHRG Fault,-,-,8,-
-SXU,CHRG_T7,12,SXU BPM CHRG Fault,-,-,9,-
-HXU,X_T0,1,HXU BPM X Fault,-,-,-,5
-HXU,X_T1,2,HXU BPM X Fault,-,-,-,1
-HXU,Y_T0,3,HXU BPM Y Fault,-,-,-,5
-HXU,Y_T1,4,HXU BPM Y Fault,-,-,-,1
-HXU,CHRG_T0,5,HXU BPM CHRG Fault,-,-,-,1
-HXU,CHRG_T1,6,HXU BPM CHRG Fault,-,-,-,3
-HXU,CHRG_T2,7,HXU BPM CHRG Fault,-,-,-,4
-HXU,CHRG_T3,8,HXU BPM CHRG Fault,-,-,-,5
-HXU,CHRG_T4,9,HXU BPM CHRG Fault,-,-,-,6
-HXU,CHRG_T5,10,HXU BPM CHRG Fault,-,-,-,7
-HXU,CHRG_T6,11,HXU BPM CHRG Fault,-,-,-,8
-HXU,CHRG_T7,12,HXU BPM CHRG Fault,-,-,-,9
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,X_T0,1,BPM X Fault,5,-,-,-
+LINAC,X_T1,2,BPM X Fault,10,-,-,-
+LINAC,Y_T0,3,BPM Y Fault,5,-,-,-
+LINAC,Y_T1,4,BPM Y Fault,10,-,-,-
+LINAC,CHRG_T0,5,BPM CHRG Fault,1,-,-,-
+LINAC,CHRG_T1,6,BPM CHRG Fault,3,-,-,-
+LINAC,CHRG_T2,7,BPM CHRG Fault,4,-,-,-
+LINAC,CHRG_T3,8,BPM CHRG Fault,5,-,-,-
+LINAC,CHRG_T4,9,BPM CHRG Fault,6,-,-,-
+LINAC,CHRG_T5,10,BPM CHRG Fault,7,-,-,-
+LINAC,CHRG_T6,11,BPM CHRG Fault,8,-,-,-
+LINAC,CHRG_T7,12,BPM CHRG Fault,9,-,-,-
+DIAG0,X_T0,1,BPM X Fault,-,5,-,-
+DIAG0,X_T1,2,BPM X Fault,-,10,-,-
+DIAG0,Y_T0,3,BPM Y Fault,-,5,-,-
+DIAG0,Y_T1,4,BPM Y Fault,-,10,-,-
+DIAG0,CHRG_T0,5,BPM CHRG Fault,-,1,-,-
+DIAG0,CHRG_T1,6,BPM CHRG Fault,-,3,-,-
+DIAG0,CHRG_T2,7,BPM CHRG Fault,-,4,-,-
+DIAG0,CHRG_T3,8,BPM CHRG Fault,-,5,-,-
+DIAG0,CHRG_T4,9,BPM CHRG Fault,-,6,-,-
+DIAG0,CHRG_T5,10,BPM CHRG Fault,-,7,-,-
+DIAG0,CHRG_T6,11,BPM CHRG Fault,-,8,-,-
+DIAG0,CHRG_T7,12,BPM CHRG Fault,-,9,-,-
+SXU,X_T0,1,BPM X Fault,-,-,5,-
+SXU,X_T1,2,BPM X Fault,-,-,10,-
+SXU,Y_T0,3,BPM Y Fault,-,-,5,-
+SXU,Y_T1,4,BPM Y Fault,-,-,10,-
+SXU,CHRG_T0,5,BPM CHRG Fault,-,-,1,-
+SXU,CHRG_T1,6,BPM CHRG Fault,-,-,3,-
+SXU,CHRG_T2,7,BPM CHRG Fault,-,-,4,-
+SXU,CHRG_T3,8,BPM CHRG Fault,-,-,5,-
+SXU,CHRG_T4,9,BPM CHRG Fault,-,-,6,-
+SXU,CHRG_T5,10,BPM CHRG Fault,-,-,7,-
+SXU,CHRG_T6,11,BPM CHRG Fault,-,-,8,-
+SXU,CHRG_T7,12,BPM CHRG Fault,-,-,9,-
+HXU,X_T0,1,BPM X Fault,-,-,-,5
+HXU,X_T1,2,BPM X Fault,-,-,-,10
+HXU,Y_T0,3,BPM Y Fault,-,-,-,5
+HXU,Y_T1,4,BPM Y Fault,-,-,-,10
+HXU,CHRG_T0,5,BPM CHRG Fault,-,-,-,1
+HXU,CHRG_T1,6,BPM CHRG Fault,-,-,-,3
+HXU,CHRG_T2,7,BPM CHRG Fault,-,-,-,4
+HXU,CHRG_T3,8,BPM CHRG Fault,-,-,-,5
+HXU,CHRG_T4,9,BPM CHRG Fault,-,-,-,6
+HXU,CHRG_T5,10,BPM CHRG Fault,-,-,-,7
+HXU,CHRG_T6,11,BPM CHRG Fault,-,-,-,8
+HXU,CHRG_T7,12,BPM CHRG Fault,-,-,-,9

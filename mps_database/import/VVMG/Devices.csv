@@ -1,4 +1,4 @@
-Device,Mitigation,Fault,Area,Linac_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#
+Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#
 VVMG:LTUS:185,SXU,STATE,LTUS,10677,185,B105-04,221,B106-0131,3,WD-384-490-202-C0
 VVMG:LTUS:384,SXU,STATE,LTUS,10850,384,B105-04,221,B106-0131,4,WD-384-490-202-C0
 VVMG:LTUH:174,HXU,STATE,LTUH,10667.75,174,B105-04,215,B106-0124,9,WD-384-490-202-C0

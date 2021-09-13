@@ -1,0 +1,33 @@
+#================================================================================#
+# LCLS-II MPS PV template for 2 state logic                                      #
+# Macro description:                                                             #
+#   - P,    : PV Name                                                            #
+#   - DESC  : Description                                                        #
+#   - INPA  : Input A                                                            #
+#   - ZRST  : string of zero state                                               #
+#   - ONST  : string of one state                                                #
+#   - ZRSV  : severity of zero state                                             #
+#   - ONSV  : severity of one state                                              #
+#================================================================================#
+record(calcout, "$(P)_CALC") {
+    field(SCAN, "1 second")
+    field(DESC, "State Calc")
+    field(PINI, "YES")
+    field(FLNK, "$(P)")
+    field(INPA, "$(INPA)")
+    field(CALC, "A?0:1")
+    field(OUT,  "$(P)")
+} 
+record(mbbi, "$(P)") {
+    field(DESC, "State")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(INP, "$(P)_CALC")
+    field(ZRST, "$(ZRST)")
+    field(ONST, "$(ONST)")
+    field(TWST, "ERROR")
+    field(ZRSV, "$(ZRSV)")
+    field(ONSV, "$(ONSV)")
+    field(TWSV, "MAJOR")
+}

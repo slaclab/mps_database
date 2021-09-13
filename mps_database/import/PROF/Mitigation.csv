@@ -1,13 +1,17 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,Linac,DIAG0,SXU,HXU
-Linac,IN,2,Linac Screen Fault,2,-,-,-
-Linac,MOVING,3,Linac Screen Fault,1,-,-,-
-Linac,BROKEN,4,Linac Screen Fault,1,-,-,-
-Diag0,IN,2,Diag0 Screen Fault,3,2,-,-
-Diag0,MOVING,3,Diag0 Screen Fault,3,1,-,-
-Diag0,BROKEN,4,Diag0 Screen Fault,3,1,-,-
-SXU,IN,2,SXU Screen Fault,3,-,2,-
-SXU,MOVING,3,SXU Screen Fault,3,-,1,-
-SXU,BROKEN,4,SXU Screen Fault,3,-,1,-
-HXU,IN,2,HXU Screen Fault,3,-,-,2
-HXU,MOVING,3,HXU Screen Fault,3,-,-,1
-HXU,BROKEN,4,HXU Screen Fault,3,-,-,1
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,IN,2,Profile Monitor Screen Fault,4,-,-,-
+LINAC,MOVING,3,Profile Monitor Screen Fault,1,-,-,-
+LINAC,BROKEN,4,Profile Monitor Screen Fault,1,-,-,-
+LINAC,OUT,1,Profile Monitor Screen Out,10,-,-,-
+Diag0,IN,2,Profile Monitor Screen Fault,-,4,-,-
+Diag0,MOVING,3,Profile Monitor Screen Fault,-,1,-,-
+Diag0,BROKEN,4,Profile Monitor Screen Fault,-,1,-,-
+Diag0,OUT,1,Profile Monitor Screen Out,-,10,-,-
+SXU,IN,2,Profile Monitor Screen Fault,-,-,5,-
+SXU,MOVING,3,Profile Monitor Screen Fault,-,-,1,-
+SXU,BROKEN,4,Profile Monitor Screen Fault,-,-,1,-
+SXU,OUT,1,Profile Monitor Screen Out,-,-,10,-
+HXU,IN,2,Profile Monitor Screen Fault,-,-,-,5
+HXU,MOVING,3,Profile Monitor Screen Fault,-,-,-,1
+HXU,BROKEN,4,Profile Monitor Screen Fault,-,-,-,1
+HXU,OUT,1,Profile Monitor Screen Out,-,-,-,10

@@ -1,0 +1,50 @@
+   <!-- Start of PyDM Related Display Button Properties -->
+   <widget class="PyDMRelatedDisplayButton" name="PyDMRelatedDisplayButton_$(GN)">
+    <property name="geometry">
+     <rect>
+      <x>$(XB)</x>
+      <y>$(YB)</y>
+      <width>150</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Group $(GN)...</string>
+    </property>
+    <property name="filenames" stdset="0">
+     <stringlist>
+      <string>$PHYSICS_TOP/mps_configuration/current/display/groups/LinkNodeGroup$(GN).ui</string>
+     </stringlist>
+    </property>
+    <property name="macros" stdset="0">
+     <stringlist/>
+    </property>
+    <property name="openInNewWindow" stdset="0">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PyDMEmbeddedDisplay</class>
+   <extends>QFrame</extends>
+   <header>pydm.widgets.embedded_display</header>
+  </customwidget>
+  <customwidget>
+   <class>PyDMDrawingImage</class>
+   <extends>QWidget</extends>
+   <header>pydm.widgets.drawing</header>
+  </customwidget>
+  <customwidget>
+   <class>PyDMRelatedDisplayButton</class>
+   <extends>QPushButton</extends>
+   <header>pydm.widgets.related_display_button</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
