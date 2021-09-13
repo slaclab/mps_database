@@ -1,8 +1,8 @@
-import socket, sys
+import socket, sys, argparse, datetime, errno
 from ctypes import *
 
 from mps_database.mps_config import MPSConfig, models
-from mps_database.history.tools import history_tools
+from mps_database.history.tools import history_tools, logger
 
 
 class Message(Structure):
@@ -18,6 +18,9 @@ class Message(Structure):
         ("new_value", c_uint),
         ("aux", c_uint),
         ]
+    
+    def to_string(self):
+        return str(self.type) + " " + str(self.id) + " " + str(self.old_value) + " " + str(self.new_value) + " " + str(self.aux) 
 
 class HistoryServer:
     """
@@ -27,20 +30,20 @@ class HistoryServer:
         self.host = host
         self.port = port
         self.sock = None
+        self.logger = logger.Logger(stdout=True)
 
         self.history_db = history_tools.HistorySession()
               # create dgram udp socket
+        
         print(self.host)
 
-        #self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #self.sock.bind((self.host, self.port))
-        
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.bind((self.host, self.port))
         
         except socket.error:
-            print('Failed to create socket')
+            self.logger.log("SOCKET ERROR: Failed to create socket")
+            self.logger.log("Exiting -----")
             sys.exit()
         
 
@@ -61,13 +64,6 @@ class HistoryServer:
             print("Message\n", message.type, message.id, message.old_value, message.new_value, message.aux)
             self.decode_message(message)
     
-
-    #TODO: Ideally "it would be nice to log errors. For now, print
-    def log_error(self, fault):
-        print("ERROR: Unable to log entry in database")
-        print("\t ", fault.type, fault.id)
-        return
-
     def decode_message(self, message):
         """
         Determines the type of the message, and sends it to the proper function for processing/including to the db
@@ -83,12 +79,29 @@ class HistoryServer:
         elif (message.type == 6): # AnalogDevice
             self.history_db.add_analog(message)
         else:
-            self.log_error(message)
+            self.logger.log("DATA ERROR: Bad Message Type", message.to_string())
 
-#host = socket.gethostname()
-host = '127.0.0.1'
-#host = "192.168.0.215"
-port=1234
+def main():
 
-hist = HistoryServer(host, port)
-hist.listen_socket()
+    parser = argparse.ArgumentParser(description='Receive MPS history messages')
+    parser.add_argument('--port', metavar='port', type=int, nargs='?', help='server port (default=3356)')
+    parser.add_argument('--database', metavar='db', nargs=1, default='mps_gun_history.db', 
+                        help='database file name (e.g. mps_gun_history.db)')
+    args = parser.parse_args()
+
+    #host = socket.gethostname()
+    host = '127.0.0.1'
+
+    #Set default port number
+    if args.port:
+        port = args.port
+    else:    
+        port=1234
+
+    hist = HistoryServer(host, port)
+    hist.listen_socket()                        
+    return
+
+
+if __name__ == "__main__":
+    main()
