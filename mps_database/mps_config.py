@@ -34,6 +34,7 @@ class MPSConfig:
         # If no filename provided, use default config
         if not db_file:
             db_file = config_file_name
+        print("creating a db session with file, path:", db_file, file_path)
         self.create_db_session(db_file, debug, file_path=file_path)
         return
 
@@ -52,6 +53,8 @@ class MPSConfig:
     # Make a path to the directory MPSConfig is in, assume db is in there as well
     if not file_path:
       file_path = os.path.join(os.path.dirname(__file__), filename)
+    if filename not in file_path:
+      file_path = os.path.join(file_path, filename)
     print("DB File Path: ", file_path)
     engine = create_engine("sqlite:///{path_to_filename}".format(path_to_filename=file_path), echo=debug)
     self.last_engine = engine
