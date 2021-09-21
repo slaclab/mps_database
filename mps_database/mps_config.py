@@ -15,7 +15,7 @@ class MPSConfig:
   Properties:
   References:
   """
-  def __init__(self, config_file_name='mps_gun_config.db', runtime_file_name='mps_gun_runtime.db', history_file_name='mps_gun_history.db', db_name=None, db_file=None, file_path=None, debug=False):
+  def __init__(self, config_file_name='mps_config-2021-09-20-a.db', runtime_file_name='mps_gun_runtime.db', history_file_name='mps_gun_history.db', db_name=None, db_file=None, file_path=None, debug=False):
     self.db_name = db_name
     self.last_engine = None
     
@@ -24,7 +24,7 @@ class MPSConfig:
     #TODO: create real file path defaults - defaults file?
     DEV_RUNTIME_PATH = "/u1/lcls/physics/mps_manager"
     DEV_HISTORY_PATH = "/u1/lcls/physics/mps_history"
-    DEV_CONFIG_PATH = "$PHYSICS_TOP/mps_configuration/current"
+    DEV_CONFIG_PATH = "/afs/slac/g/lcls/physics/mps_configuration/current"
     lcls_dev = False
 
     
