@@ -225,7 +225,10 @@ class MpsExporter(MpsAppReader):
         for app in self.digital_apps:
           app_path = '{}link_node_db/app_db/{}/{:04}/{:02}/'.format(self.dest_path, app["cpu_name"], app["crate_id"], app["slot_number"])
           app_prefix = app['app_prefix']
-          self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
+          if app['slot_number'] == 2:
+            self.__write_dig_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
+          else:
+            self.__write_dig_payload_app_id_confg(path=app_path, macros={"ID":str(app["app_id"])})
           has_virtual = False
           for device in app['devices']:
             device_data = {}
@@ -332,7 +335,7 @@ class MpsExporter(MpsAppReader):
                 for integrator in range(4):
                   bsa_slot = integrator*6 + device["channel_index"]
                   channel = device["channel_index"]
-                  inpv = "{0}:ANA_BSA_DATA_{1}".format(app_prefix,bsa_slot)
+                  inpv = "{0}:ANA_BSA_DATA_{1}.RVAL".format(app_prefix,bsa_slot)
                   offset = device['offset']
                   slope = device['slope']
                   if offset == 0:
@@ -348,7 +351,7 @@ class MpsExporter(MpsAppReader):
                              "EGU":self.get_app_units(device["type_name"],''),
                              "INPV":inpv,
                              "SLOPE":'{0}'.format(device['slope']),
-                             "OFFSET":'{0}'.format(device['offset']),
+                             "OFFSET":'{0}'.format(egul),
                              "EGUF":'{0}'.format(eguf),
                              "EGUL":"{0}".format(egul),
                              "CH":"{0}".format(channel),
@@ -948,6 +951,7 @@ class MpsExporter(MpsAppReader):
         self.__write_json_file(filename, app_macros)
 
     def __generate_threshold_display(self):
+      lblms = {}
       for app in self.analog_apps:
         bay0_macros = []
         bay1_macros = []
@@ -971,10 +975,48 @@ class MpsExporter(MpsAppReader):
             bay0_macros.append(macros)
           else:
             bay1_macros.append(macros)
+          if device['type_name'] in ['LBLM','PBLM']:
+            lblm = {}
+            lblm['area'] = self.__getBlmArea(device['area'])
+            lblm['z_location'] = device['z_location']
+            name = device['device_name']
+            if len(device['device_name'].split(':')) > 3:
+              ending = device['device_name'].split(':')[3]
+            else:
+              ending = ''
+            if len(ending) > 1:
+              name = name[:-1]
+            lblm['num'] = len(ending)
+            if name not in lblms:
+              lblms[name] = lblm
         filename = '{0}thresholds/app{1}_bay0.json'.format(self.display_path,app['app_id'])
         self.__write_json_file(filename, bay0_macros)
         filename = '{0}thresholds/app{1}_bay1.json'.format(self.display_path,app['app_id'])
         self.__write_json_file(filename,bay1_macros)
+      areas = ['SC','BYP','SPR','LTUH','LTUS','UNDH','UNDS','LTU0','UND0','DMP0']
+      for area in areas:
+        lblm_keys = [key for key,x in lblms.items() if x['area'] == area]
+        height = len(lblm_keys) * 30
+        filename = '{0}blms/blms_{1}.ui'.format(self.display_path,area)
+        self.__write_lblm_header(path=filename,macros={"HEIGHT":"{0}".format(int(height))})
+        y = 0
+        for lblm in lblm_keys:
+          if lblms[lblm]['num'] > 1:
+            pv1 = "{0}H:I0_LOSS".format(lblm)
+            pv2 = "{0}S:I0_LOSS".format(lblm)
+            visible = True
+          else:
+            pv1 = "{0}:I0_LOSS".format(lblm)
+            pv2 = pv1
+            visible = False
+          macros = {"DEVICE":lblm,
+                    "PV1":pv1,
+                    "PV2":pv2,
+                    "Y":"{0}".format(int(y)),
+                    "VISIBLE":'{0}'.format(visible)}
+          self.__write_lblm_embed(path=filename,macros=macros)
+          y += 30
+        self.__write_lblm_footer(path=filename,macros=macros)
       for app in self.digital_apps:
         app_macros = []
         for device in app['devices']:
@@ -1668,6 +1710,24 @@ class MpsExporter(MpsAppReader):
         rows.append([slot_report,slot_app_id,slot_type,slot_description])
       self.latex.crateProfile(lc1_id,shm,rack,rows)    
           
+
+    def __getBlmArea(self,area):
+        """
+        Return larger area of device for display purposes
+        """
+        if area in ['GUNB','HTR','COL0','L1B','L2B','L3B','DOG','BC1B','BC2B','DIAG0','COL1']:
+          return 'SC'
+        elif area in ['BPN28','SPS','SPH','SPD','SLTD','BSY0','BSYS','BSYH','CLTS']:
+          return 'SPR'
+        elif 'BPN' in area:
+          return 'BYP'
+        elif area in ['UNDS','DMPS']:
+          return 'UNDS'
+        elif area in ['UNDH','DMPH']:
+          return 'UNDH'
+        else:
+          return area
+
     def __write_mps_db(self, path, macros):
         """
         Write the base mps records to the application EPICS database file.
@@ -1889,6 +1949,13 @@ class MpsExporter(MpsAppReader):
         """
         self.__write_fw_config(path=path, template_name="dig_app_id.template", macros=macros)
 
+    def __write_dig_payload_app_id_confg(self, path, macros):
+        """
+        Write the digital appID configuration section to the application configuration file.
+        This configuration will be load by all link nodes.
+        """
+        self.__write_fw_config(path=path, template_name="dig_payload_app_id.template", macros=macros)
+
     def __write_app_id_config(self, path, macros):
         """
         Write the appID configuration section to the application configuration file.
@@ -1934,6 +2001,15 @@ class MpsExporter(MpsAppReader):
 
     def __write_cn_input_embed(self, path,macros):
         self.__write_ui_file(path=path, template_name="cn_input_embed.tmpl", macros=macros)
+
+    def __write_lblm_header(self, path,macros):
+        self.__write_ui_file(path=path, template_name="blm_header.tmpl", macros=macros)
+
+    def __write_lblm_footer(self, path,macros):
+        self.__write_ui_file(path=path, template_name="blm_footer.tmpl", macros=macros)
+
+    def __write_lblm_embed(self, path,macros):
+        self.__write_ui_file(path=path, template_name="blm_embed.tmpl", macros=macros)
 
     def __write_crate_header(self, path,macros):
         self.__write_ui_file(path=path, template_name="ln_crate_header.tmpl", macros=macros)

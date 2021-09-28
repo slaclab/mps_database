@@ -50,12 +50,12 @@ record(calcout, "$(P):LC1_CALC_HIGH") {
     field(DESC, "$(DESC) threshold high calc")
     field(PINI, "YES")
     field(SCAN, "Passive")
-    field(FLNK, "$(P):I0_T0_LC1_H.PROC")
+    field(FLNK, "$(P):I0_BACT_T0_LC1_H.PROC")
     field(INPA, "$(P):LC1_INPV")
     field(INPB, "$(P):LC1_CALC_HIGH_TEMP")
     field(INPC, "0.4")
     field(CALC, "B<C?(A+C):(A+B)")
-    field(OUT,  "$(P):I0_T0_LC1_H")
+    field(OUT,  "$(P):I0_BACT_T0_LC1_H")
 } 
 record(calc, "$(P):LC1_CALC_LOW_TEMP") {
     field(DESC, "$(DESC) threshold high calc")
@@ -70,10 +70,10 @@ record(calcout, "$(P):LC1_CALC_LOW") {
     field(DESC, "$(DESC) threshold high calc")
     field(PINI, "YES")
     field(SCAN, "Passive")
-    field(FLNK, "$(P):I0_T0_LC1_L.PROC")
+    field(FLNK, "$(P):I0_BACT_T0_LC1_L.PROC")
     field(INPA, "$(P):LC1_INPV")
     field(INPB, "$(P):LC1_CALC_LOW_TEMP")
     field(INPC, "0.4")
     field(CALC, "B<C?(A-C):(A-B)")
-    field(OUT,  "$(P):I0_T0_LC1_L")
+    field(OUT,  "$(P):I0_BACT_T0_LC1_L")
 }

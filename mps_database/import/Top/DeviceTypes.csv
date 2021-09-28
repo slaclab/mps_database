@@ -39,3 +39,4 @@ MIRR,37,Mirror,0
 FADC,38,LBLM Fast waveform output,1
 DUMP,38,Tuneup Dump,0
 KCSC,39,Kicker Status (Super Conducting),0
+PMT,40,PMT,1

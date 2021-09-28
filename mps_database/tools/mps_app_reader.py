@@ -373,6 +373,7 @@ class MpsAppReader:
                         device_data["prefix"] = '{0}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id))
                         device_data["db_id"] = device.id
                         device_data["channel"] = device.channel.number
+                        device_data["z_location"] = device.z_location
 
 
                         # Iterate over all the faults in this device
@@ -478,10 +479,10 @@ class MpsAppReader:
                 app_data["devices"] = []
                 if (app_card.has_virtual_channels()):
                     app_data["virtual"] = True
-
-                self.link_nodes[ln_name]["dig_app_id"] = app_data["app_id"]
-                self.link_nodes[ln_name]["physical"] = app_data["physical"]
-                self.link_nodes[ln_name]["sioc"] = ln_name
+                if app_data['name'] == 'Digital Card':
+                  self.link_nodes[ln_name]["dig_app_id"] = app_data["app_id"]
+                  self.link_nodes[ln_name]["physical"] = app_data["physical"]
+                  self.link_nodes[ln_name]["sioc"] = ln_name
                 if self.link_nodes[ln_name]['type'] == 'Digital':
                   self.link_nodes[ln_name]['analog_slot'] = 2
                 self.__add_slot_information_by_name(mps_db_session, ln_name, app_card)
@@ -507,6 +508,7 @@ class MpsAppReader:
                         device_data["faults"] = []
                         device_data["logic"] = []
                         device_data["prefix"] = '{}:{}:{}'.format(self.get_prefix(device_data["type_name"]), device.area, device.position)
+                        device_data["z_location"] = device.z_location
                         ty = device.measured_device_type_id
                         if ty is '':
                           ty=None
@@ -1029,3 +1031,4 @@ class MpsAppReader:
         else:
             raise ValueError("Function \"__get_device_type_name(device_type_id={}). More than one device matches.\""
                 .format(device_type_id))
+

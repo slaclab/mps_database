@@ -9,7 +9,7 @@
 
 record(ai, "$(P_DEV):$(R_DEV)") {
     field(DESC, "Analog input value")
-    field(DTYP, "Soft Channel")
+    field(DTYP, "Raw Soft Channel")
     field(EGU,  "$(EGU)")
     field(ASLO, "$(SLOPE)")
     field(AOFF, "$(OFFSET)")
