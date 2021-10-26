@@ -1037,12 +1037,14 @@ class DatabaseImporter:
                 self.session.add(digital_channel)
                 self.session.commit()
                 self.session.refresh(digital_channel)
-
+              ar = 0
+              if(channel[key]['auto_reset']):
+                ar = 1
               device_input = models.DeviceInput(channel = digital_channel,
                                                 bit_position = int(channel[key]['bit_position']),
                                                 digital_device = device,
                                                 fault_value = int(channel[key]['alarm_state']),
-                                                auto_reset = int(channel[key]['auto_reset']))
+                                                auto_reset = int(ar))
               self.session.add(device_input)
               self.session.commit()
               self.session.refresh(device_input)

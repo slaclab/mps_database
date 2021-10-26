@@ -123,7 +123,7 @@ class AnalogDevice(Device):
   __tablename__ = 'analog_devices'
   __mapper_args__ = {'polymorphic_identity': 'analog_device'}
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
-  auto_reset = Column(Boolean, default=False)
+  auto_reset = Column(Integer, nullable=False, default=0)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
   ignore_conditions = relationship("IgnoreCondition", backref='analog_device')
   cable_number = Column(String, nullable=False, default='0')
