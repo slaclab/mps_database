@@ -8,6 +8,13 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+mps_database-R2-1-0: (26 Oct. 2021) J. Mock
+  * Add PVs to force destinations per ESLMPS-146
+  * Change auto_reset behavior to be to int rather than bool to match central_node_engine
+  * Add auto_reset to db import
+  * Change name of some pvs from PC to BC to match new convention
+  * add LASER device (for mechanical shutter)
+
 mps_database-R2-0-4: (7 May 2020) J. Mock
   * Update tools, import list, and templates to support FW and devices installed
     for Cu Linac Operation - All devices in database though.
