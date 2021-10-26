@@ -1,0 +1,5 @@
+Name,Number,Description,Value,Mask,Fault,Fault_Description
+OPEN,1,Screen out,1,4294967295,POSITION,Shutter Broken
+CLOSED,2,Screen in,2,4294967295,POSITION,Shutter Broken
+MOVING,3,Screen moving,0,4294967295,POSITION,Shutter Broken
+BROKEN,4,Screen broken,3,4294967295,POSITION,Shutter Broken
