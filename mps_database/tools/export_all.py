@@ -590,7 +590,12 @@ class MpsExporter(MpsAppReader):
                    'ID':'{0}'.format(beam_destination["id"]) }
         self.__write_dest_db(path=self.cn0_path, macros=macros)
         self.__write_dest_db(path=self.cn1_path, macros=macros)
-        self.__write_dest_db(path=self.cn2_path, macros=macros)              
+        self.__write_dest_db(path=self.cn2_path, macros=macros)
+        macros = { 'DEST':'{0}'.format(beam_destination["name"]),
+                   'ID':'{0}'.format(beam_destination["id"])}
+        self.__write_force_db(path=self.cn0_path, macros=macros)
+        self.__write_force_db(path=self.cn1_path, macros=macros)
+        self.__write_force_db(path=self.cn2_path, macros=macros)              
 
     def generate_digital_db_by_app_id(self, app_id):
       for app in self.digital_apps:
@@ -909,12 +914,12 @@ class MpsExporter(MpsAppReader):
     def generate_displays(self):        
         self.__generate_crate_display()
         self.__generate_input_display()
-        self.__generate_group_display()
-        self.__generate_threshold_display()
+        #self.__generate_group_display()
+        #self.__generate_threshold_display()
         self.__generate_logic_display()
         self.__generate_ln_area_displays()
         self.__generate_compact_crate_display()
-        self.__generate_compact_group_display()
+        #self.__generate_compact_group_display()
 
     def __generate_logic_display(self):
       for app in self.analog_apps:
@@ -1840,6 +1845,14 @@ class MpsExporter(MpsAppReader):
         These records will be loaded once per each device.
         """
         self.__write_epics_db(path=path,filename='destinations.db',template_name="cn_beam_class_destination.template", macros=macros)
+
+    def __write_force_db(self, path, macros):
+        """
+        Write the digital CN records to the CN EPICS database file.
+        These records will be loaded once per each device.
+        """
+        self.__write_epics_db(path=path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
+
 
     def __write_app_db(self, path, macros):
         """

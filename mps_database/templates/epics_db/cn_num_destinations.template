@@ -3,7 +3,7 @@
 # Macro description:                                                             #
 #   - NUM          : number of power classes                                     #
 #================================================================================#
-record(longout, "$(BASE):NUM_PC") {
+record(longout, "$(BASE):NUM_BC") {
   field(DESC, "Total number of beam power classes")
   field(PINI, "YES")
   field(VAL, "$(NUM)")
