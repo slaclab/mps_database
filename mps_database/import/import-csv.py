@@ -1038,7 +1038,7 @@ class DatabaseImporter:
                 self.session.commit()
                 self.session.refresh(digital_channel)
               ar = 0
-              if(channel[key]['auto_reset']):
+              if(int(channel[key]['auto_reset']) > 0):
                 ar = 1
               device_input = models.DeviceInput(channel = digital_channel,
                                                 bit_position = int(channel[key]['bit_position']),
@@ -1292,6 +1292,8 @@ if (True):
   importer.add_analog_device('import/FADC', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_digital_device('import/TEMP')
+  importer.add_digital_device('import/LASER')
+  importer.add_digital_device('import/LSS')
   importer.add_analog_device('import/BEND', card_name="Generic ADC") 
   importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
