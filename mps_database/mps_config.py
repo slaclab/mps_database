@@ -35,19 +35,19 @@ class MPSConfig:
         if not db_file:
             db_file = config_file_name
         print("creating a db session with file, path:", db_file, file_path)
-        self.create_db_session(db_file, debug, file_path=file_path)
+        self.last_engine, self.session = self.create_db_session(db_file, debug, file_path=file_path)
         return
 
     if lcls_dev:
       # Create all sessions
-      self.session = self.create_db_session(config_file_name, debug, file_path=DEV_CONFIG_PATH)
-      self.runtime_session = self.create_db_session(runtime_file_name, debug, file_path=DEV_RUNTIME_PATH)
-      self.history_session = self.create_db_session(history_file_name, debug, file_path=DEV_HISTORY_PATH)
+      self.engine, self.session = self.create_db_session(config_file_name, debug, file_path=DEV_CONFIG_PATH)
+      self.runtime_engine, self.runtime_session = self.create_db_session(runtime_file_name, debug, file_path=DEV_RUNTIME_PATH)
+      self.history_engion, self.history_session = self.create_db_session(history_file_name, debug, file_path=DEV_HISTORY_PATH)
     else:
       # Create all sessions
-      self.session = self.create_db_session(config_file_name, debug)
-      self.runtime_session = self.create_db_session(runtime_file_name, debug)
-      self.history_session = self.create_db_session(history_file_name, debug)
+      self.engine, self.session = self.create_db_session(config_file_name, debug)
+      self.runtime_engine, self.runtime_session = self.create_db_session(runtime_file_name, debug)
+      self.history_engine, self.history_session = self.create_db_session(history_file_name, debug)
 
   def create_db_session(self, filename, debug, file_path=None):
     # Make a path to the directory MPSConfig is in, assume db is in there as well
@@ -57,11 +57,9 @@ class MPSConfig:
       file_path = os.path.join(file_path, filename)
     print("DB File Path: ", file_path)
     engine = create_engine("sqlite:///{path_to_filename}".format(path_to_filename=file_path), echo=debug)
-    self.last_engine = engine
     
     Session = sessionmaker(bind=engine)
-    self.session = Session()
-    return
+    return engine, Session()
 
   def clear_all(self):
     print("Clearing database...")
