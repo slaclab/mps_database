@@ -17,3 +17,23 @@ record(bi, "$(BASE):APP$(APP_ID)_STATUS") {
   field(OSV, "NO_ALARM")
   field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_STATUS")
 }
+record(bo, "$(BASE):APP$(APP_ID)_ENABLE") {
+  field(DESC, "Timeout enable bit for app $(APP_ID)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "Passive")
+  field(ZNAM, "Disable")
+  field(ONAM, "Enable")
+  field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
+}
+
+# Readback PV
+record(bi, "$(BASE):APP$(APP_ID)_ENABLE_RBV") {
+  field(DESC, "Timeout enable bit for app $(APP_ID)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "Disabled")
+  field(ONAM, "Enabled")
+  field(ZSV, "MINOR")
+  field(OSV, "NO_ALARM")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
+}
