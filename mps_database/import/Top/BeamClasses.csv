@@ -1,12 +1,11 @@
-Name,Number,Description,Integration_Window,Total_Charge,Min_Period
-BC0,1,Beam and Kicker Off,1,0,1
-BC1,2,Beam Off Kicker Standby,2,0,1
-BC2,3,Pilot Beam,10,330,1
-BC3,4,Diagnostic-I (10 Hz),1,1,10
-BC4,5,Diagnostic-II (10 nA),10,5000,1
-BC5,6,100 Hz,101,6600,100
-BC6,7,Tuning,103,7000,1
-BC7,8,1% MAP,1000,3000,1
-BC8,9,50% MAP,2000,3000,1
-BC9,10,100% MAP,500,6000,1
-BC10,11,Unlimited,1,1,1
+Name,Index,Description,Integration_Window,Total_Charge,Min_Period,Number
+BC0,1,Beam and Kicker Off,500000,0,1,0
+BC1,2,Beam Off Kicker Standby,500000,0,1,1
+BC2,3,Pilot Beam,1,330,1000000,2
+BC3,4,Diagnostic-I (10 Hz),1,1000,100000,3
+BC4,5,Diagnostic-II (10 nA),500000,5000,1,4
+BC5,6,100 Hz,200000,6600,1,5
+BC6,7,Tuning,200000,7000,1,6
+BC7,8,1% MAP,10000,3000,1,7
+BC8,9,50% MAP,200,3000,1,8
+BC9,10,100% MAP,200,6000,1,9

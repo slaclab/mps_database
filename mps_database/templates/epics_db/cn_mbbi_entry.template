@@ -1,0 +1,3 @@
+  field($(STRING), "$(STR)")
+  field($(VAL),  "$(V)")
+  field($(SEVR), "$(SEV)")

@@ -3,15 +3,3 @@ LINAC,IN,2,Profile Monitor Screen Fault,4,-,-,-
 LINAC,MOVING,3,Profile Monitor Screen Fault,1,-,-,-
 LINAC,BROKEN,4,Profile Monitor Screen Fault,1,-,-,-
 LINAC,OUT,1,Profile Monitor Screen Out,10,-,-,-
-Diag0,IN,2,Profile Monitor Screen Fault,-,4,-,-
-Diag0,MOVING,3,Profile Monitor Screen Fault,-,1,-,-
-Diag0,BROKEN,4,Profile Monitor Screen Fault,-,1,-,-
-Diag0,OUT,1,Profile Monitor Screen Out,-,10,-,-
-SXU,IN,2,Profile Monitor Screen Fault,-,-,5,-
-SXU,MOVING,3,Profile Monitor Screen Fault,-,-,1,-
-SXU,BROKEN,4,Profile Monitor Screen Fault,-,-,1,-
-SXU,OUT,1,Profile Monitor Screen Out,-,-,10,-
-HXU,IN,2,Profile Monitor Screen Fault,-,-,-,5
-HXU,MOVING,3,Profile Monitor Screen Fault,-,-,-,1
-HXU,BROKEN,4,Profile Monitor Screen Fault,-,-,-,1
-HXU,OUT,1,Profile Monitor Screen Out,-,-,-,10

@@ -89,6 +89,9 @@ class MpsExporter(MpsAppReader):
         self.checkout_path = '{}checkout/'.format(self.dest_path)
         self.report_path = '{}reports/build/'.format(self.dest_path)
         self.database = db_file
+        self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
+        self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
+        self.mbbi_sevrs = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
 
     def generate_ln_epics_db(self):
         """
@@ -555,7 +558,8 @@ class MpsExporter(MpsAppReader):
         # Generate beam destinations
         self.generate_dest_db()
         # Generate ignore conditions
-        self.generate_condition_db()          
+        self.generate_condition_db()
+        self.generate_cn_faults()          
 
     def generate_condition_db(self):
       macros = {'VERSION':'{0}'.format(self.config_version)}
@@ -630,95 +634,7 @@ class MpsExporter(MpsAppReader):
           for fault in device["faults"]:
             macros = { 'P':'{0}:{1}'.format(device['prefix'],fault['name']),
                        'DESC':'{0}'.format(fault['description']),
-                       'ID':'{0}'.format(fault['id']) }
-            if app['central_node'] in [0,2]:
-              self.__write_fault_db(path=self.cn0_path, macros=macros)
-              if app['central_node'] in [2]:
-                self.__write_fault_db(path=self.cn2_path, macros=macros)
-            elif app['central_node'] in [1]:
-              self.__write_fault_db(path=self.cn1_path, macros=macros)
-            for idx in range(len(fault['states'])):
-              macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],fault['states'][idx]),
-                         'ID':'{0}'.format(fault["fs_id"][idx]),
-                         'DESC':'{0}'.format(fault["fs_desc"][idx]) }
-              if app['central_node'] in [0,2]:
-                self.__write_fault_state_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_fault_state_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_fault_state_db(path=self.cn1_path, macros=macros)
-          ordered_states = sorted(device['logic'],key=lambda x:x['state_number'])
-          if len(ordered_states) == 2:
-            macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
-                       'DESC':'{0}'.format(fault['description']),
-                       'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
-                       'ZRST':'{0}'.format(ordered_states[0]['state_name']),
-                       'ONST':'{0}'.format(ordered_states[1]['state_name']),
-                       'ZRSV':'NO_ALARM',
-                       'ONSV':'NO_ALARM' }
-            if app['central_node'] in [0,2]:
-              self.__write_logic_2_db(path=self.cn0_path, macros=macros)
-              if app['central_node'] in [2]:
-                self.__write_logic_2_db(path=self.cn2_path, macros=macros)
-            elif app['central_node'] in [1]:
-              self.__write_logic_2_db(path=self.cn1_path, macros=macros)
-            for dest in self.beam_destinations:
-              macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
-                         'DESC':'{0} {1}'.format(fault['description'],dest['name']),
-                         'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
-                         'ZRST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
-                         'ONST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
-                         'ZRSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
-                         'ONSV':'{0}'.format(ordered_states[1][dest['name']]['severity']) }
-              if app['central_node'] in [0,2]:
-                self.__write_logic_2_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_logic_2_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_logic_2_db(path=self.cn1_path, macros=macros)
-          if len(ordered_states) == 4:
-            macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
-                       'DESC':'{0}'.format(fault['description']),
-                       'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
-                       'INPB':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[1]['state_name']),
-                       'INPC':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[2]['state_name']),
-                       'INPD':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[3]['state_name']),
-                       'ZRST':'{0}'.format(ordered_states[0]['state_name']),
-                       'ONST':'{0}'.format(ordered_states[1]['state_name']),
-                       'TWST':'{0}'.format(ordered_states[2]['state_name']),
-                       'THST':'{0}'.format(ordered_states[3]['state_name']),
-                       'ZRSV':'NO_ALARM',
-                       'ONSV':'NO_ALARM',
-                       'TWSV':'NO_ALARM',
-                       'THSV':'NO_ALARM' }
-            if app['central_node'] in [0,2]:
-              self.__write_logic_4_db(path=self.cn0_path, macros=macros)
-              if app['central_node'] in [2]:
-                self.__write_logic_4_db(path=self.cn2_path, macros=macros)
-            elif app['central_node'] in [1]:
-              self.__write_logic_4_db(path=self.cn1_path, macros=macros)
-            for dest in self.beam_destinations:
-              macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
-                         'DESC':'{0} {1}'.format(fault['description'],dest['name']),
-                         'INPA':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[0]['state_name']),
-                         'INPB':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[1]['state_name']),
-                         'INPC':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[2]['state_name']),
-                         'INPD':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],ordered_states[3]['state_name']),
-                         'ZRST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
-                         'ONST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
-                         'TWST':'{0}'.format(ordered_states[2][dest['name']]['mitigation']),
-                         'THST':'{0}'.format(ordered_states[3][dest['name']]['mitigation']),
-                         'ZRSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
-                         'ONSV':'{0}'.format(ordered_states[1][dest['name']]['severity']),
-                         'TWSV':'{0}'.format(ordered_states[2][dest['name']]['severity']),
-                         'THSV':'{0}'.format(ordered_states[3][dest['name']]['severity']) }
-              if app['central_node'] in [0,2]:
-                self.__write_logic_4_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_logic_4_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_logic_4_db(path=self.cn1_path, macros=macros)
-                      
+                       'ID':'{0}'.format(fault['id']) }                     
 
     def generate_analog_db(self, app_id):
       for app in self.analog_apps:        
@@ -744,15 +660,6 @@ class MpsExporter(MpsAppReader):
                 self.__write_analog_byp_db(path=self.cn2_path, macros=macros)
             elif app['central_node'] in [1]:
               self.__write_analog_byp_db(path=self.cn1_path, macros=macros)
-            macros = { 'P':'{0}:{1}'.format(device['prefix'],fault['name']),
-                       'DESC':'{0}'.format(fault['description']),
-                       'ID':'{0}'.format(fault['id']) }
-            if app['central_node'] in [0,2]:
-              self.__write_fault_db(path=self.cn0_path, macros=macros)
-              if app['central_node'] in [2]:
-                self.__write_fault_db(path=self.cn2_path, macros=macros)
-            elif app['central_node'] in [1]:
-              self.__write_fault_db(path=self.cn1_path, macros=macros)
             for idx in range(len(fault['bit_positions'])):
               macros = { 'P':"{0}:{1}".format(device['prefix'],fault['states'][idx]),
                          'CR':'{0}'.format(app['crate_key']),
@@ -766,160 +673,117 @@ class MpsExporter(MpsAppReader):
                   self.__write_analog_ch_db(path=self.cn2_path, macros=macros)
               elif app['central_node'] in [1]:
                 self.__write_analog_ch_db(path=self.cn1_path, macros=macros)
-              macros = { 'P':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][idx]),
-                         'ID':'{0}'.format(fault["fs_id"][idx]),
-                         'DESC':'{0}'.format(fault["fs_desc"][idx]) }
-              if app['central_node'] in [0,2]:
-                self.__write_fault_state_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_fault_state_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_fault_state_db(path=self.cn1_path, macros=macros)
-            ordered_states = sorted(fault['logic'],key=lambda x:x['state_number'])
-            if len(ordered_states) == 1:
-              macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
-                         'DESC':'{0}'.format(fault['description']),
-                         'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
-                         'ZRST':'{0}'.format('OK'),
-                         'ONST':'{0}'.format(ordered_states[0]['description']),
-                         'ZRSV':'NO_ALARM',
-                         'ONSV':'NO_ALARM',
-                         'TWSV':'NO_ALARM' }
-              if app['central_node'] in [0,2]:
-                self.__write_logic_2_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_logic_2_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_logic_2_db(path=self.cn1_path, macros=macros)
-              for dest in self.beam_destinations:
-                macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
-                           'DESC':'{0}'.format(fault['description']),
-                           'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
-                           'ZRST':'{0}'.format('-'),
-                           'ONST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
-                           'ZRSV':'NO_ALARM',
-                           'ONSV':'{0}'.format(ordered_states[0][dest['name']]['severity'])}
-                if app['central_node'] in [0,2]:
-                  self.__write_logic_2_db(path=self.cn0_path, macros=macros)
-                  if app['central_node'] in [2]:
-                    self.__write_logic_2_db(path=self.cn2_path, macros=macros)
-                elif app['central_node'] in [1]:
-                  self.__write_logic_2_db(path=self.cn1_path, macros=macros)
-            if len(ordered_states) == 2:
-              macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
-                         'DESC':'{0}'.format(fault['description']),
-                         'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
-                         'INPB':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][1]),
-                         'ZRST':'{0}'.format('OK'),
-                         'ONST':'{0}'.format(ordered_states[0]['description']),
-                         'TWST':'{0}'.format(ordered_states[1]['description']),
-                         'ZRSV':'NO_ALARM',
-                         'ONSV':'NO_ALARM',
-                         'TWSV':'NO_ALARM' }
-              if app['central_node'] in [0,2]:
-                self.__write_logic_3_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_logic_3_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_logic_3_db(path=self.cn1_path, macros=macros)
-              for dest in self.beam_destinations:
-                macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
-                           'DESC':'{0}'.format(fault['description']),
-                           'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
-                           'INPB':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][1]),
-                           'ZRST':'{0}'.format('-'),
-                           'ONST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
-                           'TWST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
-                           'ZRSV':'NO_ALARM',
-                           'ONSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
-                           'TWSV':'{0}'.format(ordered_states[1][dest['name']]['severity']) }
-                if app['central_node'] in [0,2]:
-                  self.__write_logic_3_db(path=self.cn0_path, macros=macros)
-                  if app['central_node'] in [2]:
-                    self.__write_logic_3_db(path=self.cn2_path, macros=macros)
-                elif app['central_node'] in [1]:
-                  self.__write_logic_3_db(path=self.cn1_path, macros=macros)
-            if len(ordered_states) == 8:
-              macros = { 'P':'{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC'),
-                         'DESC':'{0}'.format(fault['description']),
-                         'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
-                         'INPB':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][1]),
-                         'INPC':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][2]),
-                         'INPD':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][3]),
-                         'INPE':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][4]),
-                         'INPF':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][5]),
-                         'INPG':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][6]),
-                         'INPH':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][7]),
-                         'ZRST':'{0}'.format('OK'),
-                         'ONST':'{0}'.format(ordered_states[0]['description']),
-                         'TWST':'{0}'.format(ordered_states[1]['description']),
-                         'THST':'{0}'.format(ordered_states[2]['description']),
-                         'FRST':'{0}'.format(ordered_states[3]['description']),
-                         'FVST':'{0}'.format(ordered_states[4]['description']),
-                         'SXST':'{0}'.format(ordered_states[5]['description']),
-                         'SVST':'{0}'.format(ordered_states[6]['description']),
-                         'EIST':'{0}'.format(ordered_states[7]['description']),
-                         'ZRSV':'NO_ALARM',
-                         'ONSV':'NO_ALARM',
-                         'TWSV':'NO_ALARM',
-                         'THSV':'NO_ALARM',
-                         'FRSV':'NO_ALARM',
-                         'FVSV':'NO_ALARM',
-                         'SXSV':'NO_ALARM',
-                         'SVSV':'NO_ALARM',
-                         'EISV':'NO_ALARM'}
-              if app['central_node'] in [0,2]:
-                self.__write_logic_9_db(path=self.cn0_path, macros=macros)
-                if app['central_node'] in [2]:
-                  self.__write_logic_9_db(path=self.cn2_path, macros=macros)
-              elif app['central_node'] in [1]:
-                self.__write_logic_9_db(path=self.cn1_path, macros=macros)
-              for dest in self.beam_destinations:
-                macros = { 'P':'{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],dest['name'],'LOGIC'),
-                           'DESC':'{0}'.format(fault['description']),
-                           'INPA':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][0]),
-                           'INPB':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][1]),
-                           'INPC':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][2]),
-                           'INPD':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][3]),
-                           'INPE':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][4]),
-                           'INPF':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][5]),
-                           'INPG':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][6]),
-                           'INPH':'{0}:{1}_STATE'.format(device['prefix'],fault['states'][7]),
-                           'ZRST':'{0}'.format('-'),
-                           'ONST':'{0}'.format(ordered_states[0][dest['name']]['mitigation']),
-                           'TWST':'{0}'.format(ordered_states[1][dest['name']]['mitigation']),
-                           'THST':'{0}'.format(ordered_states[2][dest['name']]['mitigation']),
-                           'FRST':'{0}'.format(ordered_states[3][dest['name']]['mitigation']),
-                           'FVST':'{0}'.format(ordered_states[4][dest['name']]['mitigation']),
-                           'SXST':'{0}'.format(ordered_states[5][dest['name']]['mitigation']),
-                           'SVST':'{0}'.format(ordered_states[6][dest['name']]['mitigation']),
-                           'EIST':'{0}'.format(ordered_states[7][dest['name']]['mitigation']),
-                           'ZRSV':'NO_ALARM',
-                           'ONSV':'{0}'.format(ordered_states[0][dest['name']]['severity']),
-                           'TWSV':'{0}'.format(ordered_states[1][dest['name']]['severity']),
-                           'THSV':'{0}'.format(ordered_states[2][dest['name']]['severity']),
-                           'FRSV':'{0}'.format(ordered_states[3][dest['name']]['severity']),
-                           'FVSV':'{0}'.format(ordered_states[4][dest['name']]['severity']),
-                           'SXSV':'{0}'.format(ordered_states[5][dest['name']]['severity']),
-                           'SVSV':'{0}'.format(ordered_states[6][dest['name']]['severity']),
-                           'EISV':'{0}'.format(ordered_states[7][dest['name']]['severity'])}
-                if app['central_node'] in [0,2]:
-                  self.__write_logic_9_db(path=self.cn0_path, macros=macros)
-                  if app['central_node'] in [2]:
-                    self.__write_logic_9_db(path=self.cn2_path, macros=macros)
-                elif app['central_node'] in [1]:
-                  self.__write_logic_9_db(path=self.cn1_path, macros=macros)
 
+    def generate_cn_faults(self):
+      for fault in self.faults:
+        macros = { 'P':'{0}{1}'.format(fault['pv'],'_FLT'),
+                   'DESC':'{0}'.format(fault['description']),
+                   'ID':'{0}'.format(fault['db_id']),
+                   'SHIFT':'{0}'.format(fault['shift']) }
+        if fault['central_node'] in [0,2]:
+          self.__write_fault_db(path=self.cn0_path, macros=macros)
+          if fault['central_node'] in [2]:
+            self.__write_fault_db(path=self.cn2_path, macros=macros)
+          elif fault['central_node'] in [1]:
+            self.__write_fault_db(path=self.cn1_path, macros=macros)
+        if fault['analog']:
+          inp = '{0}_FLT_CALC'.format(fault['pv'])
+        else:
+          inp = '{0}_FLT_INP'.format(fault['pv'])
+        macros = { 'P':'{0}{1}'.format(fault['pv'],'_FLT'),
+                   'DESC':'{0}'.format(fault['description']),
+                   'ID':'{0}'.format(fault['db_id']),
+                   'INP':inp,
+                   'DTYP':'Soft Channel',
+                   'FLNK':'{0}{1}_{2}_STATE'.format(fault['pv'],'_FLT',self.beam_destinations[0]['name']) }
+        if fault['central_node'] in [0,2]:
+          self.__write_fault_mbbi_header(path=self.cn0_path, macros=macros)
+          if fault['central_node'] in [2]:
+            self.__write_fault_mbbi_header(path=self.cn2_path, macros=macros)
+          elif fault['central_node'] in [1]:
+            self.__write_fault_mbbi_header(path=self.cn1_path, macros=macros)
+        ordered_states = sorted(fault['states'],key=lambda x:x['value'])
+        count = 0
+        for state in ordered_states:
+          if fault['analog']:
+            val = '{0}'.format(count)
+          else:
+            val = '{0}'.format(state['value'])
+          macros = { 'STRING':self.mbbi_strings[count],
+                     'VAL':self.mbbi_vals[count],
+                     'SEVR':self.mbbi_sevrs[count],
+                     'STR':state['name'],
+                     'V':val,
+                     'SEV':'NO_ALARM'}
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_mbbi_entry(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_mbbi_entry(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_mbbi_entry(path=self.cn1_path, macros=macros)
+          count = count + 1
+        if fault['central_node'] in [0,2]:
+          self.__write_fault_mbbi_finish(path=self.cn0_path, macros=macros)
+          if fault['central_node'] in [2]:
+            self.__write_fault_mbbi_finish(path=self.cn2_path, macros=macros)
+          elif fault['central_node'] in [1]:
+            self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
+        num_dest = len(self.beam_destinations)
+        dest_count = 0
+        for dest in self.beam_destinations:
+          dest_count = dest_count + 1
+          if dest_count < num_dest:
+            flnk = '{0}{1}_{2}_STATE'.format(fault['pv'],'_FLT',self.beam_destinations[dest_count]['name'])
+          else:
+            flnk = ""
+          macros = { 'P':'{0}{1}_{2}'.format(fault['pv'],'_FLT',dest['name']),
+                     'DESC':'{0}'.format(fault['description']),
+                     'ID':'{0}'.format(fault['db_id']),
+                     'INP':inp,
+                     'DTYP':'Soft Channel',
+                     'FLNK':flnk }
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_mbbi_header(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_mbbi_header(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_mbbi_header(path=self.cn1_path, macros=macros)
+          ordered_states = sorted(fault['states'],key=lambda x:x['value'])
+          count = 0
+          for state in ordered_states:
+            if fault['analog']:
+              val = '{0}'.format(count)
+            else:
+              val = '{0}'.format(state['value'])
+            macros = { 'STRING':self.mbbi_strings[count],
+                       'VAL':self.mbbi_vals[count],
+                       'SEVR':self.mbbi_sevrs[count],
+                       'STR':state[dest['name']]['mitigation'],
+                       'V':val,
+                       'SEV':state[dest['name']]['severity']}
+            if fault['central_node'] in [0,2]:
+              self.__write_fault_mbbi_entry(path=self.cn0_path, macros=macros)
+              if fault['central_node'] in [2]:
+                self.__write_fault_mbbi_entry(path=self.cn2_path, macros=macros)
+              elif fault['central_node'] in [1]:
+                self.__write_fault_mbbi_entry(path=self.cn1_path, macros=macros)
+            count = count + 1
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_mbbi_finish(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_mbbi_finish(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
     
     def generate_displays(self):        
         self.__generate_crate_display()
         self.__generate_input_display()
-        #self.__generate_group_display()
-        #self.__generate_threshold_display()
+        self.__generate_group_display()
+        self.__generate_threshold_display()
         self.__generate_logic_display()
         self.__generate_ln_area_displays()
         self.__generate_compact_crate_display()
-        #self.__generate_compact_group_display()
+        self.__generate_compact_group_display()
 
     def __generate_logic_display(self):
       for app in self.analog_apps:
@@ -1021,7 +885,7 @@ class MpsExporter(MpsAppReader):
                     "VISIBLE":'{0}'.format(visible)}
           self.__write_lblm_embed(path=filename,macros=macros)
           y += 30
-        self.__write_lblm_footer(path=filename,macros=macros)
+        self.__write_lblm_footer(path=filename,macros={})
       for app in self.digital_apps:
         app_macros = []
         for device in app['devices']:
@@ -1131,7 +995,7 @@ class MpsExporter(MpsAppReader):
       # TODO: Change this to vary based off of how many active rows there are -- KEL
       embedded_height = 160
       extra = 3
-      for group in range(0,24):
+      for group in self.groups:
 	    # Filtering the link nodes
         filtered_link_nodes = {key: val for (key,val) in list(self.link_nodes.items()) if val['group'] == group and val['analog_slot'] == 2}
         last_ln = {key: val for (key,val) in list(filtered_link_nodes.items()) if val['group_link'] == 0}
@@ -1220,7 +1084,7 @@ class MpsExporter(MpsAppReader):
       embedded_height = 250
       extra = 10
       max_width = 2400
-      for group in range(0,24):
+      for group in self.groups:
         filtered_link_nodes = {key: val for (key,val) in list(self.link_nodes.items()) if val['group'] == group and val['analog_slot'] == 2}
         last_ln = {key: val for (key,val) in list(filtered_link_nodes.items()) if val['group_link'] == 0}
         last_ln_key = list(last_ln.keys())
@@ -1924,6 +1788,15 @@ class MpsExporter(MpsAppReader):
         """
         self.__write_epics_db(path=path, filename='logic.db', template_name="cn_logic_9_state.template", macros=macros)
 
+    def __write_fault_mbbi_header(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_mbbi_header.template",macros=macros)
+
+    def __write_fault_mbbi_entry(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_mbbi_entry.template",macros=macros)
+
+    def __write_fault_mbbi_finish(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_mbbi_finish.template",macros=macros)
+
     def __write_fault_state_db(self, path, macros):
         """
         Write the digital CN records to the CN EPICS database file.
@@ -2190,7 +2063,7 @@ def main(db_file, dest_path, template_path=None, app_id=None,
     print("Generate yaml...")
     mps_reader.generate_yaml()
     print("Generate reports...")
-    mps_reader.generate_reports()
+    #mps_reader.generate_reports()
     print("Done!")
 
 if __name__ == "__main__":

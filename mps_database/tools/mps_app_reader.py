@@ -53,6 +53,8 @@ class MpsAppReader:
         self.beam_destinations = []
         self.conditions = []
         self.device_types = []
+        self.faults = []
+        self.groups = []
         
         # List of Link Nodes by cpu_name + slot - track if it has only digital, analog or both apps
         self.link_nodes = {}
@@ -68,6 +70,7 @@ class MpsAppReader:
             self.__extract_conditions(mps_db_session)
             self.__extract_device_types(mps_db_session)
             self.__extract_apps(mps_db_session)
+            self.__extract_faults(mps_db_session)
 
     def __add_slot_information_by_name(self, mps_db_session, ln_name, app_card):
         slot_number = app_card.slot_number
@@ -155,6 +158,87 @@ class MpsAppReader:
           cond_data["description"] = cond.description
           cond_data["db_id"] = cond.id
           self.conditions.append(cond_data)
+
+    def __extract_faults(self,mps_db_session):
+        try:
+            # Get all the apps defined in the database
+            flts = mps_db_session.query(models.Fault).all()
+        except exc.SQLAlchemyError as e:
+            raise
+        for flt in flts:
+          is_analog = False
+          flt_data = {}
+          flt_data['name'] = flt.name
+          flt_data['description'] = flt.description
+          flt_data['db_id'] = flt.id
+          flt_data['inputs'] = {}
+          flt_data['states'] = []
+          flt_inputs = mps_db_session.query(models.FaultInput).filter(models.FaultInput.fault_id == flt.id).one()
+          device = mps_db_session.query(models.Device).filter(models.Device.id == flt_inputs.device_id).one()
+          #app = mps_db_session.query(models.ApplicationCard).filter(models.ApplicationCard.id == device.card_id).one()
+          flt_data['central_node'] = self.get_cn_index(device.card.link_node.group)
+          if type(device) is models.device.DigitalDevice:
+            prefix = '{}:{}:{}'.format(self.get_prefix(self.__get_device_type_name(mps_db_session, device.device_type_id)), device.area, device.position)
+            for input in device.inputs:
+              digital_channel = self.__get_digital_channel(mps_db_session, input.channel_id)
+              if (digital_channel.num_inputs == 1):
+                input_data["input_pv"] = digital_channel.monitored_pvs
+              else:
+                if device.measured_device_type_id is not None:
+                  pv_device_type = self.__get_device_type_name(mps_db_session, device.measured_device_type_id)
+                else:
+                  pv_device_type = self.__get_device_type_name(mps_db_session, device.device_type_id)
+              bp = '{0}'.format(input.bit_position)
+              flt_data['inputs'][bp] = '{0}:{1}:{2}:{3}'.format(pv_device_type,device.area, device.position, digital_channel.name)
+          if type(device) is models.device.AnalogDevice:
+            prefix = '{0}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id))
+            flt_data['inputs']['0'] = '{0}:{1}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id),flt.name)
+            is_analog = True
+          fault_states = mps_db_session.query(models.FaultState).filter(models.FaultState.fault_id==flt.id).all()
+          min_value = 1e12
+          for fs in fault_states:
+            state_data = {}
+            state_data['name'] = fs.device_state.name
+            state_data['description'] = fs.device_state.description
+            state_data['value'] = fs.device_state.value
+            state_data['mask'] = fs.device_state.mask
+            if fs.device_state.value < min_value:
+              min_value = fs.device_state.value
+            allowed_classes = mps_db_session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id == fs.id).all()
+            for ac in allowed_classes:
+              cur_dest = self.__get_beam_destination_name(mps_db_session,ac.beam_destination_id)
+              cur_mit = self.__get_beam_class_name(mps_db_session,ac.beam_class_id)
+              for dest in self.beam_destinations:
+                state_data[dest['name']] = {}
+                state_data[dest['name']]['mitigation'] = '-'
+                state_data[dest['name']]['severity'] = 'NO_ALARM'
+                if cur_dest == dest['name']:
+                  state_data[dest['name']]['mitigation'] = cur_mit
+                  if cur_mit in ['BC0','BC1']:
+                    state_data[dest['name']]['severity'] = 'MAJOR'
+                  elif cur_mit in ['BC9']:
+                    state_data[dest['name']]['severity'] = 'NO_ALARM'
+                  else:
+                    state_data[dest['name']]['severity'] = 'MINOR'
+            flt_data['states'].append(state_data)
+          if is_analog is True:
+            state_data = {}
+            state_data['name'] = 'OK'
+            state_data['description'] = 'No Fault'
+            state_data['value'] = 0
+            state_data['mask'] = 0
+            for dest in self.beam_destinations:
+              state_data[dest['name']] = {}
+              state_data[dest['name']]['mitigation'] = '-'
+              state_data[dest['name']]['severity'] = 'NO_ALARM'
+            flt_data['states'].append(state_data)
+          flt_data['pv'] = '{0}:{1}'.format(prefix,flt.name)
+          flt_data['analog'] = is_analog
+          shift = min_value.bit_length() - 1
+          if shift < 0:
+            shift = 0
+          flt_data['shift'] = shift
+          self.faults.append(flt_data)
         
 
     def __extract_apps(self, mps_db_session):
@@ -273,6 +357,8 @@ class MpsAppReader:
                 self.link_nodes[name]["cpu_name"] = ln.cpu
                 self.link_nodes[name]["crate_id"] = ln.crate.crate_id
                 self.link_nodes[name]['area'] = ln.area
+                if ln_group not in self.groups:
+                  self.groups.append(ln_group)
 
         # Check if there were applications defined in the database
         if len(app_cards) == 0:
@@ -571,10 +657,12 @@ class MpsAppReader:
                                 fault_data["fs_desc"] = []
                                 fault_data["destination"] = []
                                 fault_data["mitigation"] = []
+                                fault_data["value"] = []
                                 for fs in fault_states:
                                     fault_data["states"].append(fs.device_state.name)
                                     fault_data["fs_id"].append(fs.id)
                                     fault_data["fs_desc"].append(fs.device_state.description)
+                                    fault_data["value"].append(fs.device_state.value)
                                     allowed_classes = mps_db_session.query(models.AllowedClass).\
                                                     filter(models.AllowedClass.fault_state_id == fs.id).all()
                                     for ac in allowed_classes:

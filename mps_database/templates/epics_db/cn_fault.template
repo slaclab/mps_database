@@ -6,30 +6,33 @@
 #   - DESC       : Fault Description                                             #
 #================================================================================#
 
-record(bi, "$(P)_FLT_SCMPSC") {
+record(longin, "$(P)_INP") {
   field(DESC, "$(DESC)")
-  field(DTYP, "asynUInt32Digital")
+  field(DTYP, "asynInt32")
   field(SCAN, "1 second")
-  field(ZNAM, "OK")
-  field(ONAM, "FAULTED")
-  field(ZSV, "NO_ALARM")
-  field(OSV, "MAJOR")
-  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT")
+  field(INP,  "@asynMask(CENTRAL_NODE $(ID) 0)MPS_FAULT")
+  field(FLNK, "$(P)")
+}
+record(mbbiDirect, "$(P)") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "Soft Channel")
+  field(SCAN, "Passive")
+  field(SHFT, "$(SHIFT)")
+  field(INP,  "$(P)_INP")
+  field(FLNK, "$(P)_CALC")
+}
+record(calc, "$(P)_CALC") {
+  field(DESC, "$(DESC)")
+  field(SCAN, "Passive")
+  field(CALC, "A?1:B?2:C?3:D?4:E?5:F?6:G?7:H?8:0")
+  field(INPA, "$(P).B0")
+  field(INPB, "$(P).B1")
+  field(INPC, "$(P).B2")
+  field(INPD, "$(P).B3")
+  field(INPE, "$(P).B4")
+  field(INPF, "$(P).B5")
+  field(INPG, "$(P).B6")
+  field(INPH, "$(P).B7")
+  field(FLNK, "$(P)_STATE")
 }
 
-record(bi, "$(P)_FLT_SCMPS") {
-  field(DESC, "$(DESC)")
-  field(DTYP, "asynUInt32Digital")
-  field(SCAN, "1 second")
-  field(ZNAM, "OK")
-  field(ONAM, "FAULTED")
-  field(ZSV, "NO_ALARM")
-  field(OSV, "MAJOR")
-  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_LATCHED")
-}
-
-record(bo, "$(P)_FLT_SCUNLH") {
-  field(DESC, "$(DESC)")
-  field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_UNLATCH")
-}

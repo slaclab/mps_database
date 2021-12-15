@@ -1,4 +1,1 @@
-Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,Drawing_#
-D2_Stopper_Set,HXU,POSITION,BSYH,10475,847,B005-L2613-TB08,227,B005-L0811,12,13,MISSING
-STBP34AB,SXU,POSITION,BSYS,10504.45678,889,B005-L2613-TB08,228,B005-L0716,1,2,MISSING
-STCLTS,-,POSITION,CLTS,10302.00459,585,B005-L2613-TB09,227,B005-L0811,14,15,MISSING
+Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,Drawing_#,LN_OK,CN_OK,Logic_OK

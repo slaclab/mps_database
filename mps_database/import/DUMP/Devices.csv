@@ -1,3 +1,1 @@
-Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,Drawing_#
-TDUND,HXU,POSITION,LTUH,11683.025,970,B913-??,294,B913-10725,9,10,MISSING
-TDUNDB,SXU,POSITION,LTUS,11692.21112,972,B913-??,272,B913-10233,4,5,MISSING
+Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,LN_OK,CN_OK,Logic_Ok,Drawing_#
