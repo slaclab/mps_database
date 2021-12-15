@@ -1,0 +1,4 @@
+Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Debounce,auto_reset
+POSITION,Vac valve,0/24V,1,IS_NOT_OPEN,IS_OPEN,0,1,10,1
+CLOSED,Vac Valve,0/24V,2,IS_NOT_CLOSED,IS_CLOSED,0,0,10,1
+LSS_OK,LSS,0/24V,3,IS_NOT_READY,IS_READY,0,2,10,0
