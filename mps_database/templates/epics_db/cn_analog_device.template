@@ -7,6 +7,7 @@
 #================================================================================#
 record(bi, "$(P)_SCBYPS") {
   field(DESC, "Bypass Status")
+  alias("$(P)_FLT_SCBYPS")
   field(SCAN, "1 second")
   field(DTYP, "asynInt32")
   field(ZNAM, "Not Bypassed")
@@ -17,6 +18,7 @@ record(bi, "$(P)_SCBYPS") {
 }
 
 record(longout, "$(P)_SCBYPD") {
+  alias("$(P)_FLT_SCBYPD")
   field(DESC, "Bypass duration in seconds")
   field(DTYP, "asynInt32")
   field(VAL, "0")
@@ -27,6 +29,7 @@ record(longout, "$(P)_SCBYPD") {
 record(longin, "$(P)_SCBYPT") {
   field(DESC, "Remaining bypass duration is seconds")
   field(DTYP, "asynInt32")
+  alias("$(P)_FLT_SCBYPT")
   field(EGU, "Seconds")
   field(SCAN, "1 second")
   field(VAL, "0")
@@ -36,6 +39,7 @@ record(longin, "$(P)_SCBYPT") {
 
 record(stringin, "$(P)_SCBYP_END") {
   field(DESC, "Bypass Expiration Date/Time String")
+  alias("$(P)_FLT_SCBYP_END")
   field(DTYP, "asynOctetRead")
   field(SCAN, "1 second")
   field(VAL, "Invalid")
@@ -45,6 +49,7 @@ record(stringin, "$(P)_SCBYP_END") {
 
 record(bi, "$(P)_SCBYPV") {
   field(DESC, "Bypass Value")
+  alias("$(P)_FLT_SCBYPV")
   field(SCAN, "1 second")
   field(ZNAM, "OK")
   field(ONAM, "OK")

@@ -33,6 +33,6 @@ record(calc, "$(P)_CALC") {
   field(INPF, "$(P).B5")
   field(INPG, "$(P).B6")
   field(INPH, "$(P).B7")
-  field(FLNK, "$(P)_STATE")
+  field(FLNK, "$(FLNK)")
 }
 
