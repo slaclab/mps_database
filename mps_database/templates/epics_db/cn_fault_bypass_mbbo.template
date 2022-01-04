@@ -1,0 +1,6 @@
+record(mbbo, "$(P)_SCBYPV") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "$(DTYP)")
+  field(OUT,  "$(OUT)")
+  field(FLNK, "$(OUT)")
+  field(PINI, "YES")

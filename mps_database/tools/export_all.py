@@ -92,6 +92,7 @@ class MpsExporter(MpsAppReader):
         self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
         self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
         self.mbbi_sevrs = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
+        self.dfanout = ['OUTA','OUTB','OUTC','OUTD','OUTE','OUTF','OUTG','OUTH']
 
     def generate_ln_epics_db(self):
         """
@@ -676,32 +677,43 @@ class MpsExporter(MpsAppReader):
 
     def generate_cn_faults(self):
       for fault in self.faults:
+        if fault['analog']:
+          inp = '{0}_FLT_CALC'.format(fault['pv'])
+          p = '{0}{1}'.format(fault['pv'],'_SCMPSC')
+        else:
+          inp = '{0}_FLT_INP'.format(fault['pv'])
+          p = '{0}{1}{2}'.format(fault['pv'],'_FLT','_SCMPSC')
+        alias = '{0}{1}{2}'.format(fault['pv'],'_FLT','_SCMPSC')
         macros = { 'P':'{0}{1}'.format(fault['pv'],'_FLT'),
                    'DESC':'{0}'.format(fault['description']),
                    'ID':'{0}'.format(fault['db_id']),
-                   'SHIFT':'{0}'.format(fault['shift']) }
+                   'SHIFT':'{0}'.format(fault['shift']),
+                   'FLNK':p}
         if fault['central_node'] in [0,2]:
           self.__write_fault_db(path=self.cn0_path, macros=macros)
           if fault['central_node'] in [2]:
             self.__write_fault_db(path=self.cn2_path, macros=macros)
           elif fault['central_node'] in [1]:
             self.__write_fault_db(path=self.cn1_path, macros=macros)
-        if fault['analog']:
-          inp = '{0}_FLT_CALC'.format(fault['pv'])
-        else:
-          inp = '{0}_FLT_INP'.format(fault['pv'])
-        macros = { 'P':'{0}{1}'.format(fault['pv'],'_FLT'),
+        macros = { 'P':p,
                    'DESC':'{0}'.format(fault['description']),
                    'ID':'{0}'.format(fault['db_id']),
                    'INP':inp,
                    'DTYP':'Soft Channel',
-                   'FLNK':'{0}{1}_{2}_STATE'.format(fault['pv'],'_FLT',self.beam_destinations[0]['name']) }
+                   'FLNK':'{0}{1}_{2}_STATE'.format(fault['pv'],'_FLT',self.beam_destinations[0]['name'])}
         if fault['central_node'] in [0,2]:
           self.__write_fault_mbbi_header(path=self.cn0_path, macros=macros)
           if fault['central_node'] in [2]:
             self.__write_fault_mbbi_header(path=self.cn2_path, macros=macros)
           elif fault['central_node'] in [1]:
             self.__write_fault_mbbi_header(path=self.cn1_path, macros=macros)
+        if fault['analog']:
+          macros = {'ALIAS':alias}
+          self.__write_fault_alias(path=self.cn0_path, macros=macros)
+          if fault['central_node'] in [2]:
+            self.__write_fault_alias(path=self.cn2_path, macros=macros)
+          elif fault['central_node'] in [1]:
+            self.__write_fault_alias(path=self.cn1_path, macros=macros)
         ordered_states = sorted(fault['states'],key=lambda x:x['value'])
         count = 0
         for state in ordered_states:
@@ -736,12 +748,12 @@ class MpsExporter(MpsAppReader):
             flnk = '{0}{1}_{2}_STATE'.format(fault['pv'],'_FLT',self.beam_destinations[dest_count]['name'])
           else:
             flnk = ""
-          macros = { 'P':'{0}{1}_{2}'.format(fault['pv'],'_FLT',dest['name']),
+          macros = { 'P':'{0}{1}_{2}_STATE'.format(fault['pv'],'_FLT',dest['name']),
                      'DESC':'{0}'.format(fault['description']),
                      'ID':'{0}'.format(fault['db_id']),
                      'INP':inp,
                      'DTYP':'Soft Channel',
-                     'FLNK':flnk }
+                     'FLNK':flnk}
           if fault['central_node'] in [0,2]:
             self.__write_fault_mbbi_header(path=self.cn0_path, macros=macros)
             if fault['central_node'] in [2]:
@@ -774,10 +786,94 @@ class MpsExporter(MpsAppReader):
               self.__write_fault_mbbi_finish(path=self.cn2_path, macros=macros)
             elif fault['central_node'] in [1]:
               self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
+        if not fault['analog']:
+          macros = { 'P':'{0}{1}'.format(fault['pv'],'_FLT'),
+                     'DESC':'{0}'.format(fault['description']),
+                     'DTYP':'Soft Channel',
+                     'FLNK': "",
+                     'OUT':'{0}{1}'.format(fault['pv'],'_FLT_SCBYPV_PROC')}
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_byp_mbbiDirect(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_byp_mbbiDirect(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_byp_mbbiDirect(path=self.cn1_path, macros=macros)
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_mbbo_byp_state_header(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_mbbo_byp_state_header(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_mbbo_byp_state_header(path=self.cn1_path, macros=macros)
+          count = 0
+          for state in ordered_states:
+            if fault['analog']:
+              val = '{0}'.format(count)
+            else:
+              val = '{0}'.format(state['value'])
+            macros = { 'STRING':self.mbbi_strings[count],
+                       'VAL':self.mbbi_vals[count],
+                       'SEVR':self.mbbi_sevrs[count],
+                       'STR':state['name'],
+                       'V':val,
+                       'SEV':'NO_ALARM'}
+            if fault['central_node'] in [0,2]:
+              self.__write_fault_mbbi_entry(path=self.cn0_path, macros=macros)
+              if fault['central_node'] in [2]:
+                self.__write_fault_mbbi_entry(path=self.cn2_path, macros=macros)
+              elif fault['central_node'] in [1]:
+                self.__write_fault_mbbi_entry(path=self.cn1_path, macros=macros)
+            count = count + 1
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_mbbi_finish(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_mbbi_finish(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
+          for key in fault['inputs']:
+            macros = {'P':'{0}{1}'.format(fault['pv'],'_FLT'),
+                      'OUTPV':fault['inputs'][key],
+                      'B':'{0}'.format(key)}
+            if fault['central_node'] in [0,2]:
+              self.__write_fault_byp_input(path=self.cn0_path, macros=macros)
+              if fault['central_node'] in [2]:
+                self.__write_fault_byp_input(path=self.cn2_path, macros=macros)
+              elif fault['central_node'] in [1]:
+                self.__write_fault_byp_input(path=self.cn1_path, macros=macros)
+            if int(key) < 1:
+              if fault['central_node'] in [0,2]:
+                self.__write_fault_byp_info(path=self.cn0_path, macros=macros)
+                if fault['central_node'] in [2]:
+                  self.__write_fault_byp_info(path=self.cn2_path, macros=macros)
+                elif fault['central_node'] in [1]:
+                  self.__write_fault_byp_info(path=self.cn1_path, macros=macros)              
+          macros = {'P':'{0}{1}'.format(fault['pv'],'_FLT')}
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_byp_time_header(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_byp_time_header(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_byp_time_header(path=self.cn1_path, macros=macros)
+          count = 0
+          for key in fault['inputs']:
+            macros = {'OUT':self.dfanout[count],
+                   'VALUE':fault['inputs'][key]}
+            if fault['central_node'] in [0,2]:
+              self.__write_fault_byp_time_entry(path=self.cn0_path, macros=macros)
+              if fault['central_node'] in [2]:
+                self.__write_fault_byp_time_entry(path=self.cn2_path, macros=macros)
+              elif fault['central_node'] in [1]:
+                self.__write_fault_byp_time_entry(path=self.cn1_path, macros=macros)
+            count = count + 1
+          if fault['central_node'] in [0,2]:
+            self.__write_fault_mbbi_finish(path=self.cn0_path, macros=macros)
+            if fault['central_node'] in [2]:
+              self.__write_fault_mbbi_finish(path=self.cn2_path, macros=macros)
+            elif fault['central_node'] in [1]:
+              self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
     
     def generate_displays(self):        
         self.__generate_crate_display()
-        self.__generate_input_display()
+        self.__generate_input_display_new()
         self.__generate_group_display()
         self.__generate_threshold_display()
         self.__generate_logic_display()
@@ -786,38 +882,21 @@ class MpsExporter(MpsAppReader):
         self.__generate_compact_group_display()
 
     def __generate_logic_display(self):
-      for app in self.analog_apps:
-        app_macros = []
-        for device in app['devices']:
-          for key, fault in list(device['faults'].items()):
+      all_macros = []
+      for ln_name, ln in self.link_nodes.items():
+        ln_macros = []
+        for fault in self.faults:
+          if fault['link_node'] == ln['lc1_node_id']:
             macros = {}
-            macros['DEVICE'] = device['device_name']
-            macros['FAULT'] = fault['name']
-            macros['PV'] = device['prefix']
-            macros['STATE'] = '{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC')
-            macros['LINAC'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'LINAC','LOGIC')
-            macros['DIAG0'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'DIAG0','LOGIC')
-            macros['SXU'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'SXU','LOGIC')
-            macros['HXU'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'HXU','LOGIC')
-            app_macros.append(macros)
-        filename = '{0}logic/app_{1}_logic.json'.format(self.display_path,app['app_id'])
-        self.__write_json_file(filename, app_macros)
-      for app in self.digital_apps:
-        app_macros = []
-        for device in app['devices']:
-          for fault in device['faults']:
-            macros = {}
-            macros['DEVICE'] = device['device_name']
-            macros['FAULT'] = fault['name']
-            macros['PV'] = device['prefix']
-            macros['STATE'] = '{0}:{1}_{2}'.format(device['prefix'],fault['name'],'LOGIC')
-            macros['LINAC'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'LINAC','LOGIC')
-            macros['DIAG0'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'DIAG0','LOGIC')
-            macros['SXU'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'SXU','LOGIC')
-            macros['HXU'] = '{0}:{1}_{2}_{3}'.format(device['prefix'],fault['name'],'HXU','LOGIC')
-            app_macros.append(macros)
-        filename = '{0}logic/app_{1}_logic.json'.format(self.display_path,app['app_id'])
-        self.__write_json_file(filename, app_macros)
+            macros['DESCRIPTION'] = fault['description']
+            macros['FLT'] = '{0}{1}'.format(fault['pv'],'_FLT')
+            macros['VIS'] = fault['analog']
+            ln_macros.append(macros)
+            all_macros.append(macros)
+        filename = '{0}logic/ln{1}_logic.json'.format(self.display_path,ln['lc1_node_id'])
+        self.__write_json_file(filename, ln_macros)
+      filename = '{0}logic/all_logic.json'.format(self.display_path)
+      self.__write_json_file(filename, all_macros)
 
     def __generate_threshold_display(self):
       lblms = {}
@@ -827,6 +906,7 @@ class MpsExporter(MpsAppReader):
         for device in app['devices']:
           macros = {}
           macros["P"] = '{0}'.format(app['app_prefix'])
+          macros['SORT'] = device['channel_index']
           macros['CH'] = '{0}'.format(device['channel_index'])
           macros['DEVICE_NAME'] = '{0}'.format(device['device_name'])
           macros['PV_PREFIX'] = '{0}'.format(device['prefix'])
@@ -858,10 +938,12 @@ class MpsExporter(MpsAppReader):
             lblm['num'] = len(ending)
             if name not in lblms:
               lblms[name] = lblm
+        sorted_macros = sorted(bay0_macros, key = lambda i: i['SORT'])
         filename = '{0}thresholds/app{1}_bay0.json'.format(self.display_path,app['app_id'])
-        self.__write_json_file(filename, bay0_macros)
+        self.__write_json_file(filename, sorted_macros)
+        sorted_macros = sorted(bay1_macros, key = lambda i: i['SORT'])
         filename = '{0}thresholds/app{1}_bay1.json'.format(self.display_path,app['app_id'])
-        self.__write_json_file(filename,bay1_macros)
+        self.__write_json_file(filename,sorted_macros)
       areas = ['SC','BYP','SPR','LTUH','LTUS','UNDH','UNDS','LTU0','UND0','DMP0']
       for area in areas:
         lblm_keys = [key for key,x in lblms.items() if x['area'] == area]
@@ -888,6 +970,7 @@ class MpsExporter(MpsAppReader):
         self.__write_lblm_footer(path=filename,macros={})
       for app in self.digital_apps:
         app_macros = []
+        ln_macros = []
         for device in app['devices']:
           for input in device['inputs']:
             shift = 0
@@ -903,6 +986,7 @@ class MpsExporter(MpsAppReader):
             if input['name'] == 'WDOG':
               byte_pv = '{0}_WDOG_RBV'.format(input['input_pv'])
             macros = {}
+            macros['SORT'] = input['bit_position']
             macros['CH'] = '{0}'.format(input['bit_position'])
             macros['PV'] = '{0}'.format(input['input_pv'])
             macros['DISP_PV'] = '{0}'.format(byte_pv)
@@ -910,8 +994,9 @@ class MpsExporter(MpsAppReader):
             macros['SHIFT'] = '{0}'.format(shift)
             macros['VISIBLE'] = '{0}'.format(visible)
             app_macros.append(macros)
+        sorted_macros = sorted(app_macros, key = lambda i: i['SORT'])
         filename = '{0}thresholds/app{1}_rtm.json'.format(self.display_path,app['app_id'])
-        self.__write_json_file(filename, app_macros)
+        self.__write_json_file(filename, sorted_macros)
       
     def __generate_ln_area_displays(self):
       areas = ['GUNB', 'L3B', 'DOG', 'LTUH',
@@ -1080,8 +1165,8 @@ class MpsExporter(MpsAppReader):
     def __generate_group_display(self):
       header_height = 50
       footer_height = 51
-      embedded_width = 590
-      embedded_height = 250
+      embedded_width = 457
+      embedded_height = 230
       extra = 10
       max_width = 2400
       for group in self.groups:
@@ -1111,11 +1196,15 @@ class MpsExporter(MpsAppReader):
                    'TITLE':'SC Linac MPS Link Node Group {0}'.format(group) }
         filename = '{0}groups/LinkNodeGroup{1}.ui'.format(self.display_path,group)
         self.__write_group_header(path=filename,macros=macros)
+        vis = "0"
+        if last_ln[last_ln_key[0]]['cn'] == 2:
+          vis = "1"
         macros = { 'P':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix']),
                    'CN':'{0}'.format(last_ln[last_ln_key[0]]['cn_prefix']),
                    'AID':'{0}'.format(last_ln[last_ln_key[0]]['dig_app_id']),
                    'SLOT_FILE':'LinkNode{0}_slot.ui'.format(last_ln[last_ln_key[0]]['lc1_node_id']),
-                   'P_IN':'{0}'.format(last_ln[last_ln_key[0]]['cn_prefix']),
+                   'P_IN':'{0}'.format(last_ln[last_ln_key[0]]['cn1']),
+                   'P_IN2':'{0}'.format(last_ln[last_ln_key[0]]['cn2']),
                    'X':'{0}'.format(int(last_x)),
                    'Y':'{0}'.format(int(last_y)),
                    'PGP':'{0}'.format(last_ln[last_ln_key[0]]['group_link_destination']),
@@ -1123,7 +1212,9 @@ class MpsExporter(MpsAppReader):
                    'TYPE':'REM',
                    'LOCA':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[1]),
                    'IOC_UNIT':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[2]),
-                   'INST':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[3])}
+                   'INST':'{0}'.format(last_ln[last_ln_key[0]]['app_prefix'].split(':')[3]),
+                   'VIS':vis,
+                   'TEXT':'CN B005'}
         self.__write_group_embed(path=filename,macros=macros)
         if rows > 1:
           y = header_height + embedded_height
@@ -1138,6 +1229,7 @@ class MpsExporter(MpsAppReader):
                      'AID':'{0}'.format(test_ln['dig_app_id']),
                      'SLOT_FILE':'LinkNode{0}_slot.ui'.format(test_ln['lc1_node_id']),
                      'P_IN':'{0}'.format(p_in),
+                     'P_IN2':'{0}'.format(p_in),
                      'X':'{0}'.format(int(x)),
                      'Y':'{0}'.format(int(y)),
                      'PGP':'{0}'.format(test_ln['group_link_destination']),
@@ -1145,7 +1237,9 @@ class MpsExporter(MpsAppReader):
                      'TYPE':'LOC',
                      'LOCA':'{0}'.format(test_ln['app_prefix'].split(':')[1]),
                      'IOC_UNIT':'{0}'.format(test_ln['app_prefix'].split(':')[2]),
-                     'INST':'{0}'.format(test_ln['app_prefix'].split(':')[3])}
+                     'INST':'{0}'.format(test_ln['app_prefix'].split(':')[3]),
+                     'VIS':'0',
+                     'TEXT':'LN Rx'}
           self.__write_group_embed(path=filename,macros=macros)
           more_lns = True
           while more_lns:
@@ -1166,6 +1260,7 @@ class MpsExporter(MpsAppReader):
                        'AID':'{0}'.format(test_ln['dig_app_id']),
                        'SLOT_FILE':'LinkNode{0}_slot.ui'.format(test_ln['lc1_node_id']),
                        'P_IN':'{0}'.format(p_in),
+                       'P_IN2':'{0}'.format(p_in),
                        'X':'{0}'.format(int(x)),
                        'Y':'{0}'.format(int(y)),
                        'PGP':'{0}'.format(test_ln['group_link_destination']) ,
@@ -1173,7 +1268,9 @@ class MpsExporter(MpsAppReader):
                        'TYPE':'LOC',
                        'LOCA':'{0}'.format(test_ln['app_prefix'].split(':')[1]),
                        'IOC_UNIT':'{0}'.format(test_ln['app_prefix'].split(':')[2]),
-                       'INST':'{0}'.format(test_ln['app_prefix'].split(':')[3])}
+                       'INST':'{0}'.format(test_ln['app_prefix'].split(':')[3]),
+                       'VIS':"0",
+                       'TEXT':'LN Rx'}
             self.__write_group_embed(path=filename,macros=macros)
           y = y-embedded_height
         y = window_height-footer_height-1
@@ -1191,8 +1288,8 @@ class MpsExporter(MpsAppReader):
         function to create .json files that feed into pydm template repeater to generate crate profiles
         Macros: SLOT, CN, AID, MPS_PREFIX
         """
-        width = 480
-        header_height = 40
+        width = 347
+        header_height = 30
         widget_height = 20
         height = header_height + widget_height * 8 + 5
         for ln_name, ln in self.link_nodes.items():
@@ -1232,6 +1329,8 @@ class MpsExporter(MpsAppReader):
                 macros = {'SLOT':'{0}'.format(slot_publish),
                           'CRATE':'{0}'.format(ln['physical']),
                           'CN':'{0}'.format(ln['cn_prefix']),
+                          'CN1':'{0}'.format(ln['cn1']),
+                          'CN2':'{0}'.format(ln['cn2']),
                           'AID':'{0}'.format(ln['slots'][slot]['app_id']),
                           'MPS_PREFIX':'{0}'.format(ln['slots'][slot]['pv_base']),
                           'TYPE':type,
@@ -1301,6 +1400,54 @@ class MpsExporter(MpsAppReader):
                       self.__write_compact_crate_embed(path=filename,macros=macros)
                 self.__write_compact_crate_footer(path=filename,macros=macros)
 
+    def __generate_input_display_new(self):
+      for ln_name, ln in self.link_nodes.items():
+        ln_macros = []
+        installed = ln['slots'].keys()
+        for slot in range(1,8):
+          if slot in installed:
+            for app in self.digital_apps:
+              if app['app_id'] == ln['slots'][slot]['app_id']:
+                input_macros = []
+                for device in app['devices']:
+                  for input in device['inputs']:
+                    macros = {}
+                    macros['CRATE'] = '{0}'.format(app['physical'])
+                    if app['slot_number'] > 2:
+                      macros['SLOT'] = '{0}'.format(app['slot_number'])
+                    else:
+                      macros['SLOT'] = 'RTM'
+                    macros['CHANNEL'] = '{0}'.format(input['bit_position'])
+                    macros['SORT'] = input['bit_position']
+                    macros['DEVICE'] = '{0}'.format(input['input_pv'])
+                    macros['DEVICE_BYP'] = '{0}'.format(input['input_pv'])
+                    macros['APPID'] = '{0}'.format(app['app_id'])
+                    input_macros.append(macros)
+                sorted_macros = sorted(input_macros, key = lambda i: i['SORT'])
+                for macro in sorted_macros:
+                  ln_macros.append(macro)
+            for app in self.analog_apps:
+              if app['app_id'] == ln['slots'][slot]['app_id']:
+                input_macros = []
+                for device in app['devices']:
+                  for key in device['faults']:
+                    for input in range(0,len(device['faults'][key]['bit_positions'])):
+                      macros = {}
+                      macros['CRATE'] = '{0}'.format(app['physical'])
+                      macros['SLOT'] = '{0}'.format(app['slot_number'])
+                      macros['CHANNEL'] = '{0}'.format(device['channel_index'])
+                      macros['SORT'] = device['channel_index']
+                      macros['DEVICE'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input])
+                      macros['DEVICE_BYP'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['name'])
+                      macros['APPID'] = '{0}'.format(app['app_id'])
+                      input_macros.append(macros)
+                sorted_macros = sorted(input_macros, key = lambda i: i['SORT'])
+                for macro in sorted_macros:
+                  ln_macros.append(macro)
+        filename = '{0}inputs/ln_{1}_inputs.json'.format(self.display_path,ln['lc1_node_id'])
+        self.__write_json_file(filename, ln_macros)
+
+
     def __generate_input_display(self):
       header_height = 50
       footer_height = 51
@@ -1313,7 +1460,7 @@ class MpsExporter(MpsAppReader):
             macros = {}
             macros['CRATE'] = '{0}'.format(app['physical'])
             if app['slot_number'] > 2:
-              macro['SLOT'] = '{0}'.format(app['slot_number'])
+              macros['SLOT'] = '{0}'.format(app['slot_number'])
             else:
               macros['SLOT'] = 'RTM'
             macros['CHANNEL'] = input['bit_position']
@@ -1796,6 +1943,27 @@ class MpsExporter(MpsAppReader):
 
     def __write_fault_mbbi_finish(self,path,macros):
         self.__write_epics_db(path=path, filename='faults.db',template_name="cn_mbbi_finish.template",macros=macros)
+
+    def __write_fault_alias(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_mbbi_alias.template",macros=macros)
+
+    def __write_fault_mbbo_byp_state_header(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_fault_bypass_mbbo.template",macros=macros)
+
+    def __write_fault_byp_mbbiDirect(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_fault_byp_mbbiDirect.template",macros=macros)
+
+    def __write_fault_byp_input(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_fault_bypass_device.template",macros=macros)
+
+    def __write_fault_byp_info(self,path,macros):
+        self.__write_epics_db(path=path, filename='device_inputs.db',template_name="cn_digital_fault_bypass_alias.template",macros=macros)
+
+    def __write_fault_byp_time_header(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_fault_bypd.template",macros=macros)
+
+    def __write_fault_byp_time_entry(self,path,macros):
+        self.__write_epics_db(path=path, filename='faults.db',template_name="cn_fault_bypd_entry.template",macros=macros)
 
     def __write_fault_state_db(self, path, macros):
         """

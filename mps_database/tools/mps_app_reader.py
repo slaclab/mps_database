@@ -177,6 +177,7 @@ class MpsAppReader:
           device = mps_db_session.query(models.Device).filter(models.Device.id == flt_inputs.device_id).one()
           #app = mps_db_session.query(models.ApplicationCard).filter(models.ApplicationCard.id == device.card_id).one()
           flt_data['central_node'] = self.get_cn_index(device.card.link_node.group)
+          flt_data['link_node'] = device.card.link_node.lcls1_id
           if type(device) is models.device.DigitalDevice:
             prefix = '{}:{}:{}'.format(self.get_prefix(self.__get_device_type_name(mps_db_session, device.device_type_id)), device.area, device.position)
             for input in device.inputs:
@@ -349,6 +350,9 @@ class MpsAppReader:
                 self.link_nodes[name]['group'] = ln_group
                 self.link_nodes[name]['shm_name'] = ln.get_shelf_manager()
                 self.link_nodes[name]['cn_prefix'] = self.get_cn_prefix(ln_group)
+                self.link_nodes[name]['cn'] = self.get_cn_index(ln_group)
+                self.link_nodes[name]['cn1'] = self.get_cn_prefix(ln_group)
+                self.link_nodes[name]['cn2'] = self.get_cn2_prefix(ln_group)
                 self.link_nodes[name]['analog_slot'] = 2
                 self.link_nodes[name]['group_link'] = ln.group_link
                 self.link_nodes[name]['group_link_destination'] = ln.group_link_destination
@@ -728,6 +732,16 @@ class MpsAppReader:
           return 2
         else:
           return -1
+
+    def get_cn2_prefix(self, index):
+        if index in self.cn0:
+          return 'SIOC:SYS0:MP01'
+        elif index in self.cn1:
+          return 'SIOC:SYS0:MP02'
+        elif index in self.cn2:
+          return 'SIOC:SYS0:MP03'
+        else:
+          return None
 
     def get_cn_prefix(self, index):
         if index in self.cn0:

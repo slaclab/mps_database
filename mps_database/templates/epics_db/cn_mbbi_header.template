@@ -1,5 +1,6 @@
-record(mbbi, "$(P)_STATE") {
+record(mbbi, "$(P)") {
   field(DESC, "$(DESC)")
   field(INP,  "$(INP)")
   field(DTYP, "$(DTYP)")
   field(FLNK, "$(FLNK)")
+  field(PINI, "YES")
