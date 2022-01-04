@@ -1,0 +1,10 @@
+record(bo, "$(OUTPV)_SCBYP_PROC") {
+  field(DTYP, "Soft Channel")
+  field(DOL,  "$(P)_SCBYPV_PROC.B$(B) CPP")
+  field(FLNK, "$(OUTPV)_SCBYPV")
+  field(OUT,  "$(OUTPV)_SCBYPV")
+  field(SCAN, "Passive")
+  field(OMSL, "closed_loop")
+  field(ZNAM, "0")
+  field(ONAM, "1")
+}

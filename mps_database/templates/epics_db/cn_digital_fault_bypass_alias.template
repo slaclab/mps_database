@@ -1,0 +1,9 @@
+record(bi, "$(OUTPV)_SCBYPS") {
+  alias("$(P)_SCBYPS")
+}
+record(longin, "$(OUTPV)_SCBYPT") {
+  alias("$(P)_SCBYPT")
+}
+record(stringin, "$(OUTPV)_SCBYP_END") {
+  alias("$(P)_SCBYP_END")
+}
