@@ -580,13 +580,14 @@ class DatabaseImporter:
 
     return cond
       
-  def add_ignore_conditions_analog(self, device):
+  def add_ignore_conditions_analog(self, device, evl=0):
     try:
       conditions = self.session.query(models.Condition).all()
     except:
       print('INFO: Found no conditions to ignore')
       return
-
+    if evl > 0:
+      return
     for cond in conditions:
       cond_device = self.find_condition_input_device(cond)
       if (cond_device != None):
@@ -597,8 +598,7 @@ class DatabaseImporter:
           device_z = float(device.z_location)
           if (cond_device_z < device_z):
             if (self.check_area_order(cond_device.area, device.area)):
-              #            print '{0}, {1}:{2}, {3}:{4}'.format(cond.name, cond_device.name, cond_device.z_location, device.name, device.z_location)
-              ignore_condition = models.IgnoreCondition(condition=cond, analog_device=device)    
+              ignore_condition = models.IgnoreCondition(condition=cond, device = device) 
         except:
           print(('WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location)))
 
@@ -733,7 +733,7 @@ class DatabaseImporter:
         
         # If device should be ignored, add conditions
         if (add_ignore):
-          self.add_ignore_conditions_analog(device)
+          self.add_ignore_conditions_analog(device, int(device_info['always_evaluate']))
 
         # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
         if device_info['fault'] != 'all':
@@ -789,7 +789,7 @@ class DatabaseImporter:
           mit_location = device_info['mitigation']
           for fault in faults:
             fault_name = faults[fault]['name']
-            fault_desc = '{0} {1} {2}'.format(device_info['device'],mit_location,faults[fault]['desc'])
+            fault_desc = device_info['fault_name']
             device_fault = models.Fault(name=fault_name,description=fault_desc)
             self.session.add(device_fault)
             self.session.commit()
@@ -1002,6 +1002,10 @@ class DatabaseImporter:
         self.session.commit()
         self.session.refresh(device)
 
+        # If device should be ignored, add conditions
+        if (True):
+          self.add_ignore_conditions_analog(device,int(device_info['always_evaluate']))
+
         if device_info['mitigation'] != '-':
           # Add the DigitalChannels and DeviceInputs for the device
           for key in channel:
@@ -1051,7 +1055,7 @@ class DatabaseImporter:
           # end for key
 
           # For each device - create a Fault, FaultInputs, FaultStates and the AllowedClasses
-          device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
+          device_fault = models.Fault(name=device_info['fault'], description=device_info['fault_name'])
           self.session.add(device_fault)
           self.session.commit()
           self.session.refresh(device_fault)
@@ -1073,12 +1077,12 @@ class DatabaseImporter:
                 self.session.add(fault_state)
                 self.session.commit()
                 self.session.refresh(fault_state)
-                if (conditions != None and device_states[m].name in conditions):
+                if (conditions != None and device_states[m].name in conditions and int(device_info['ignore_device'])>0):
                   name = device_states[m].name
   #                print '{0} : {1}'.format(device_info['device'], device_states[m].name)
                   # Create condition inputs and conditions
                   condition = models.Condition(name='{0}_{1}'.format(device_info['device'], name.upper()),
-                                               description='{0} in state {1}'.format(device_info['device'], name.upper()),
+                                               description='{0} is {1}'.format(device_info['device'], name.upper()),
                                                value=conditions[name]["value"])
                   self.session.add(condition)
                   self.session.commit()
@@ -1276,11 +1280,8 @@ importer.add_beam_classes('import/Top/BeamClasses.csv')
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
-importer.add_analog_device('import/BLM', card_name="Generic ADC")
-importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
-importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
 importer.add_digital_device('import/PROF')
-importer.add_digital_device('import/STOP')
+#importer.add_digital_device('import/COLL')
 importer.add_digital_device('import/DUMP')
 
 
@@ -1291,6 +1292,9 @@ if (True):
   importer.add_analog_device('import/LBLM', card_name="Generic ADC")
   importer.add_analog_device('import/FADC', card_name="Generic ADC")
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
+  importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
+  importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
+  importer.add_digital_device('import/STOP')
   importer.add_digital_device('import/TEMP')
   importer.add_digital_device('import/LASER')
   importer.add_digital_device('import/LSS')
@@ -1306,7 +1310,7 @@ if (True):
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
-  #importer.add_digital_device('import/COLL')
+  importer.add_analog_device('import/BLM', card_name="Generic ADC")
   importer.add_digital_device('import/FLOW')
   importer.add_digital_device('import/XTES')
   importer.add_digital_device('import/WIRE', card_name="Wire Scanner") # Treat this one as digital?

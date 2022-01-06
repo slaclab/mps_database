@@ -48,6 +48,7 @@ class Device(Base):
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   measured_device_type_id = Column(Integer, ForeignKey('device_types.id'))
   fault_outputs = relationship("FaultInput", backref='device')
+  ignore_conditions = relationship("IgnoreCondition", backref='device')
   __mapper_args__ = {'polymorphic_on': discriminator}
 
   def is_digital(self):
@@ -125,7 +126,6 @@ class AnalogDevice(Device):
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
   auto_reset = Column(Integer, nullable=False, default=0)
   channel_id = Column(Integer, ForeignKey('analog_channels.id'), nullable=False, unique=True)
-  ignore_conditions = relationship("IgnoreCondition", backref='analog_device')
   cable_number = Column(String, nullable=False, default='0')
   offset = Column(Float, nullable=False, default=0)
   slope = Column(Float, nullable=False, default=1)

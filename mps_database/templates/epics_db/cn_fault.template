@@ -36,3 +36,12 @@ record(calc, "$(P)_CALC") {
   field(FLNK, "$(FLNK)")
 }
 
+record(bi, "$(P)_IGNORED") {
+  field(DESC, "$(DESC) Ignored")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "Not Ignored")
+  field(ONAM, "Ignored")
+  field(INP,  "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_IGNORED")
+}
+
