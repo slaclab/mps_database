@@ -93,6 +93,7 @@ class MpsExporter(MpsAppReader):
         self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
         self.mbbi_sevrs = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
         self.dfanout = ['OUTA','OUTB','OUTC','OUTD','OUTE','OUTF','OUTG','OUTH']
+        self.letters = ['A','B','C','D','E','F','G','H','I','J','K','L']
 
     def generate_ln_epics_db(self):
         """
@@ -107,7 +108,7 @@ class MpsExporter(MpsAppReader):
         Using the <cpu_name>, <crate_id>, and <slot_number> defined in each application.
 
         """
-        for group in range(0,24):
+        for group in self.groups:
           filen = '{0}scripts/program_ln_fw_group{1}.sh'.format(self.dest_path,group)
           tmpl = '{}scripts/bash_header.template'.format(self.template_path)
           self.__write_file_from_template(file=filen, template=tmpl, macros={})
@@ -873,7 +874,7 @@ class MpsExporter(MpsAppReader):
     
     def generate_displays(self):        
         self.__generate_crate_display()
-        self.__generate_input_display_new()
+        self.__generate_input_display()
         self.__generate_group_display()
         self.__generate_threshold_display()
         self.__generate_logic_display()
@@ -1400,7 +1401,7 @@ class MpsExporter(MpsAppReader):
                       self.__write_compact_crate_embed(path=filename,macros=macros)
                 self.__write_compact_crate_footer(path=filename,macros=macros)
 
-    def __generate_input_display_new(self):
+    def __generate_input_display(self):
       for ln_name, ln in self.link_nodes.items():
         ln_macros = []
         installed = ln['slots'].keys()
@@ -1447,66 +1448,6 @@ class MpsExporter(MpsAppReader):
         filename = '{0}inputs/ln_{1}_inputs.json'.format(self.display_path,ln['lc1_node_id'])
         self.__write_json_file(filename, ln_macros)
 
-
-    def __generate_input_display(self):
-      header_height = 50
-      footer_height = 51
-      window_width = 950+20
-      for app in self.digital_apps:
-        filename = '{0}inputs/app_{1}_inputs.ui'.format(self.display_path,app['app_id'])
-        input_macros = []
-        for device in app['devices']:
-          for input in device['inputs']:
-            macros = {}
-            macros['CRATE'] = '{0}'.format(app['physical'])
-            if app['slot_number'] > 2:
-              macros['SLOT'] = '{0}'.format(app['slot_number'])
-            else:
-              macros['SLOT'] = 'RTM'
-            macros['CHANNEL'] = input['bit_position']
-            macros['DEVICE'] = '{0}'.format(input['input_pv'])
-            macros['DEVICE_BYP'] = '{0}'.format(input['input_pv'])
-            input_macros.append(macros)
-        sorted_macros = sorted(input_macros, key = lambda i: i['CHANNEL'])
-        window_height = header_height + footer_height + len(sorted_macros)*20
-        header_macros = { "TITLE":"SC Linac Input Status - App ID {0}".format(app['app_id']),
-                          "WIDTH":"{0}".format(window_width),
-                          "HEIGHT":"{0}".format(window_height) }
-        self.__write_cn_input_header(path=filename,macros=header_macros)
-        y = header_height
-        for macro in sorted_macros:
-          macro["Y"] = '{0}'.format(y)
-          macro["CHANNEL"] = '{0}'.format(macro["CHANNEL"])
-          self.__write_cn_input_embed(path=filename,macros=macro)
-          y += 20
-        self.__write_cn_input_footer(path=filename,macros={"Y":"{0}".format(y)})
-      for app in self.analog_apps:
-        input_macros = []
-        filename = '{0}inputs/app_{1}_inputs.ui'.format(self.display_path,app['app_id'])
-        for device in app['devices']:
-          for key in device['faults']:
-            for input in range(0,len(device['faults'][key]['bit_positions'])):
-              macros = {}
-              macros['CRATE'] = '{0}'.format(app['physical'])
-              macros['SLOT'] = '{0}'.format(app['slot_number'])
-              macros['CHANNEL'] = device['channel_index']
-              macros['DEVICE'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input])
-              macros['DEVICE_BYP'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['name'])
-              input_macros.append(macros)
-        sorted_macros = sorted(input_macros, key = lambda i: i['CHANNEL'])
-        window_height = header_height + footer_height + len(sorted_macros)*20
-        header_macros = { "TITLE":"SC Linac Input Status - App ID {0}".format(app['app_id']),
-                          "WIDTH":"{0}".format(window_width),
-                          "HEIGHT":"{0}".format(window_height) }
-        self.__write_cn_input_header(path=filename,macros=header_macros)
-        y = header_height
-        for macro in sorted_macros:
-          macro["Y"] = '{0}'.format(int(y))
-          macro["CHANNEL"] = '{0}'.format(macro["CHANNEL"])
-          self.__write_cn_input_embed(path=filename,macros=macro)
-          y += 20
-        self.__write_cn_input_footer(path=filename,macros={"Y":"{0}".format(int(y))})
-
     def generate_full_app_id_status_display(self):
     	'''
     	The purpose of this function is to generate a full display of the status of all the app ids 
@@ -1544,40 +1485,85 @@ class MpsExporter(MpsAppReader):
       self.__writeDeviceInputs()
       self.__writeLogicTables()
 
-    def __writeCableReport(self):
-      typ = 'cables'
-      filename = '{0}/SCMPS_{1}_LogicTables.tex'.format(self.report_path,self.config_version)
-      self.latex = Latex(filename)
-      self.latex.startDocument('SCMPS Analog Cables Report',self.config_version)
-      for group in range(24):
-        self.writeLinkNodeGroup(group,typ)
-      self.latex.endDocument(self.report_path)
-
     def __writeLogicTables(self):
       typ = 'logic'
       filename = '{0}/SCMPS_{1}_LogicTables.tex'.format(self.report_path,self.config_version)
       self.latex = Latex(filename)
-      self.latex.startDocument('SCMPS Checkout: Logic Tables',self.config_version)
-      for group in range(24):
-        self.writeLinkNodeGroup(group,typ)
+      self.latex.startDocument('SCMPS Logic Tables',self.config_version)
+      faults = self.faults
+      # Part of an ignore group
+      for g in self.ignore_groups:
+        title = 'Ignored when '
+        for element in g:
+          title += self.get_condition_name(element)
+          if element != g[-1]:
+            title += ', '
+        self.latex.startIgnoreGroup(title)
+        for fault in faults:
+          if fault['ignore_group'] == g:
+            self.latex.startFault(fault['description'])
+            [format, header, rows, inputs] = self.__build_fault_table(fault)
+            self.latex.writeLogicTable(format,header,rows,inputs)
+            faults.remove(fault)
+      # Alywas Evaluated
+      title = 'Always Evaluated'
+      self.latex.startIgnoreGroup(title)
+      for fault in faults:
+        self.latex.startFault(fault['description'])
+        [format, header, rows, inputs] = self.__build_fault_table(fault)
+        self.latex.writeLogicTable(format,header,rows,inputs)
       self.latex.endDocument(self.report_path)      
 
+    def __build_fault_table(self, fault):
+      number_of_columns = 5 + len(fault['inputs'])
+      format = '\\begin{tabular}{@{}l'
+      for i in range(1,number_of_columns):
+        format += 'c'
+      format += '@{}}\n'
+      header = 'Name & '
+      inputs = []
+      for inp in range(0,len(fault['inputs'])):
+        header += self.letters[len(fault['inputs'])-inp-1]
+        header += ' & '
+        in_str = '${0} = {1}{2}{3}'.format(self.letters[inp],'\\texttt{',fault['inputs'][str(inp)].replace('_','\_'),'}$\\newline\n')
+        inputs.append(in_str)
+      header += 'LINAC & DIAG0 & HXR & SXR \\\\\n'
+      rows = []
+      for state in sorted(fault['states'],key=lambda x:x['value']):
+        row = '{0} & '.format(state['description'].replace('_','\_'))
+        if not fault['analog']:
+          val = bin(state['value'])[2:].zfill(len(fault['inputs']))
+          for inp in range(0,len(fault['inputs'])):
+            if val[inp] == '1':
+              row += 'T'
+            else:
+              row += 'F'
+            row += ' & '
+        else:
+          row += 'T & '
+        row += state['LINAC']['mitigation'] + ' & '
+        row += state['DIAG0']['mitigation'] + ' & '
+        row += state['HXU']['mitigation'] + ' & '
+        row += state['SXU']['mitigation'] + ' \\\\\n'
+        rows.append(row)
+      return [format, header, rows, inputs]
 
     def __writeDeviceInputs(self):
       typ = 'inputs'
       filename = '{0}/SCMPS_{1}_DeviceInputs.tex'.format(self.report_path,self.config_version)
       self.latex = Latex(filename)
-      self.latex.startDocument('SCMPS Checkout: Device Inputs',self.config_version)
-      for group in range(24):
-        self.writeLinkNodeGroup(group,typ)
+      self.latex.startDocument('SCMPS Device Inputs',self.config_version)
+      for group in self.groups:
+        self.latex.startGroup(group)
+        self.writeLinkNodeInputs(group)
       self.latex.endDocument(self.report_path)      
 
     def __writeCrateProfiles(self):
       filename = '{0}/SCMPS_{1}_CrateProfiles.tex'.format(self.report_path,self.config_version)
       typ = 'crate'
       self.latex = Latex(filename)
-      self.latex.startDocument('SCMPS Checkout: Crate Profiles',self.config_version)
-      for group in range(24):
+      self.latex.startDocument('SCMPS Crate Profiles',self.config_version)
+      for group in self.groups:
         self.writeLinkNodeGroup(group,typ)
       self.latex.endDocument(self.report_path)
 
@@ -1587,15 +1573,53 @@ class MpsExporter(MpsAppReader):
       self.latex.startGroup(group)
       for ln in sorted_filtered_link_nodes:
         if typ == 'crate':
-          self.latex.startLinkNode(filtered_link_nodes[ln]['lc1_node_id'])
+          self.latex.startLinkNode(filtered_link_nodes[ln]['lc1_node_id'], filtered_link_nodes[ln]['physical'])
           self.writeCrateProfile(filtered_link_nodes[ln])
-        elif typ == 'inputs':
-          self.writeAppInput(filtered_link_nodes[ln])
-        elif typ == 'logic':
-          self.writeAppLogic(filtered_link_nodes[ln])
         elif typ == 'cables':
-          self.latex.startLinkNode(filtered_link_nodes[ln]['lc1_node_id'])
+          self.latex.startLinkNode(filtered_link_nodes[ln]['lc1_node_id'], filtered_link_nodes[ln]['physical'])
           self.writeCables(filtered_link_nodes[ln])
+
+    def writeLinkNodeInputs(self,group):
+      filtered_link_nodes = {key: val for (key,val) in list(self.link_nodes.items()) if val['group'] == group and val['analog_slot'] == 2}
+      link_nodes = OrderedDict(sorted(list(filtered_link_nodes.items()),key=lambda node: node[1]['lc1_node_id']))
+      for ln_name, ln in self.link_nodes.items():
+        self.latex.startLinkNode(ln['lc1_node_id'], ln['physical'])
+        rows = []
+        installed = ln['slots'].keys()
+        for slot in range(1,8):
+          if slot in installed:
+            for app in self.digital_apps:
+              if app['app_id'] == ln['slots'][slot]['app_id']:
+                input_list = []
+                for device in app['devices']:
+                  for input in device['inputs']:
+                    if app['slot_number'] > 2:
+                      slot_pub = app['slot_number']
+                    else:
+                      slot_pub = 'RTM'
+                    channel = input['bit_position']
+                    device_name = "{0}".format(device['device_name'])
+                    pv = input["input_pv"]
+                    appid = app['app_id']
+                    input_list.append([appid,slot_pub,channel,device_name,pv])
+                for element in sorted(input_list, key=lambda x: x[2]):
+                  rows.append([element[0],element[1],element[2],element[3],element[4]])
+            for app in self.analog_apps:
+              if app['app_id'] == ln['slots'][slot]['app_id']:
+                input_list = []
+                for device in app['devices']:
+                  for key in device['faults']:
+                    for input in range(0,len(device['faults'][key]['bit_positions'])):
+                      channel = device['channel_index']
+                      slot_pub = app['slot_number']
+                      device_name = "{0} {1}".format(device['device_name'],device['faults'][key]['states'][input].replace('_',' '))
+                      pv = "{0}:{1}".format(device['prefix'],device['faults'][key]['states'][input])
+                      appid = app['app_id']
+                      input_list.append([appid,slot_pub,channel,device_name,pv])
+                for element in sorted(input_list, key=lambda x: x[2]):
+                  rows.append([element[0],element[1],element[2],element[3],element[4]])
+        self.latex.writeAppInputs(rows)
+
 
     def writeCables(self,ln):
       installed = list(ln['slots'].keys())
@@ -1612,97 +1636,6 @@ class MpsExporter(MpsAppReader):
                   pv = "{0}".format(device['prefix'])
                   cable = device['cable']
                   channel_lists.append([channel,slot,name,pv,cable])     
-
-    def writeAppLogic(self,ln):
-      installed = list(ln['slots'].keys())
-      for slot in range(7):
-        if slot in installed:
-          app_id = ln['slots'][slot]['app_id']
-          for app in self.digital_apps + self.analog_apps:
-            if int(app['app_id']) == int(app_id):
-              self.latex.startApplication(app['app_id'],ln['lc1_node_id'])
-              self.latex.appCheckoutTable(app['physical'],app['slot_number'])
-              if app['type'] == 'analog':
-                for device in app['devices']:
-                  for key, fault in list(device['faults'].items()):
-                      title = fault['description']
-                      ordered_states = sorted(fault['logic'],key=lambda x:x['state_number'])
-                      out_logic = []
-                      out_inputs = []
-                      out_state = []
-                      out_state.append('OK')
-                      out_logic.append(['-','-','-','-'])
-                      out_inputs.append('{0}:{1}'.format(device['prefix'],fault['name']))
-                      for state in ordered_states:
-                          out_state.append(state['state_name'])
-                          out_logic.append([state['LINAC']['mitigation'],state['DIAG0']['mitigation'],state['HXU']['mitigation'],state['SXU']['mitigation']])
-                      self.latex.writeAnalogLogicTable(out_state,out_logic,out_inputs,title)
-              if app['type'] == 'digital':
-                for device in app['devices']:
-                  for fault in device['faults']:
-                    title = fault['description']
-                    ordered_states = sorted(device['logic'],key=lambda x:x['state_number'])
-                    out_logic = []
-                    out_inputs = []
-                    out_state = []
-                    if len(ordered_states) == 2:
-                      out_inputs.append(device['inputs'][0]['input_pv'])
-                      for state in ordered_states:
-                        out_state.append(state['state_name'])
-                        out_logic.append([state['LINAC']['mitigation'],state['DIAG0']['mitigation'],state['HXU']['mitigation'],state['SXU']['mitigation']])
-                    if len(ordered_states) == 4:
-                      out_inputs.append(device['inputs'][0]['input_pv'])
-                      out_inputs.append(device['inputs'][1]['input_pv'])
-                      for state in ordered_states:
-                        out_state.append(state['state_name'])
-                        out_logic.append([state['LINAC']['mitigation'],state['DIAG0']['mitigation'],state['HXU']['mitigation'],state['SXU']['mitigation']])
-                    self.latex.writeDigitalLogicTable(out_state,out_logic,out_inputs,title)
-
-    def writeAppInput(self, ln):
-      installed = list(ln['slots'].keys())
-      for slot in range(7):
-        if slot in installed:
-          app_id = ln['slots'][slot]['app_id']
-          for app in self.digital_apps + self.analog_apps:
-            if int(app['app_id']) == int(app_id):
-              self.latex.startApplication(app['app_id'],ln['lc1_node_id'])
-              self.latex.appCheckoutTable(app['physical'],app['slot_number'])
-              self.latex.appCommunicationCheckoutTable()
-              if app['type'] == 'analog':
-                rows = []
-                input_list = []
-                for device in app['devices']:
-                  for key in device['faults']:
-                    for input in range(0,len(device['faults'][key]['bit_positions'])):
-                      channel = device['channel_index']
-                      device_type = device['type_name']
-                      device_name = "{0}".format(device['device_name'])
-                      pv = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input])
-                      slot_out = app['slot_number']
-                      input_list.append([channel,device_name,pv,device_type])
-                for element in sorted(input_list, key=lambda x: x[0]):
-                  rows.append([element[0],element[1],element[2],element[3]])
-                self.latex.writeAppInputs(app['slot_number'],rows)
-              if app['type'] == 'digital':
-                rows = []
-                input_list = []
-                for device in app['devices']:
-                  for input in device["inputs"]:
-                    slot_name = slot
-                    channel = input["bit_position"]
-                    device_type = device['type_name']
-                    name = "{0} {1}".format(device["device_name"], input["name"])
-                    if slot is 1:
-                      slot_name = 'RTM'
-                    if (input["bit_position"] >= 32):
-                      pv = input["input_pv"]
-                      slot_name = 'SW'
-                    else:
-                      pv = "{0}:{1}".format(device["prefix"],input["name"])
-                    input_list.append([channel,name,pv,device_type])
-                for element in sorted(input_list, key = lambda x: x[0]):
-                  rows.append([element[0],element[1],element[2],element[3]])
-                self.latex.writeAppInputs(app['slot_number'],rows)
               
     def writeCrateProfile(self, ln):
       rack = ln['physical']
@@ -2231,7 +2164,7 @@ def main(db_file, dest_path, template_path=None, app_id=None,
     print("Generate yaml...")
     mps_reader.generate_yaml()
     print("Generate reports...")
-    #mps_reader.generate_reports()
+    mps_reader.generate_reports()
     print("Done!")
 
 if __name__ == "__main__":

@@ -66,7 +66,6 @@ class Latex:
         self.f.write('\\centering\n')
         self.f.write('\\makegapedcells\n')
         self.f.write('\\begin{tabularx}{\\textwidth}{|c c c Y<{\\rule[0em]{0pt}{1.1em}}|}\n')
-        self.f.write('{0}{1}{2}\n'.format('\\multicolumn{4}{l}{',rack,'}\\\\'))
         self.f.write('{0}{1}{2}\n'.format('\\multicolumn{4}{l}{',shm,'}\\\\'))
         self.f.write('\\hline\n')
         self.f.write('Slot & App ID & Type & Description\\\\\n')
@@ -77,16 +76,15 @@ class Latex:
         self.f.write('\\end{tabularx}\n')
         self.f.write('\\end{table}\n')
 
-    def writeAppInputs(self, slot, inputs):
-        self.f.write('\\subsubsection{Device Inputs}\n')
-        self.f.write('\\begin{longtable}{@{}ccclll@{}}\n')
+    def writeAppInputs(self, inputs):
+        self.f.write('\\begin{longtable}{@{}cccll@{}}\n')
         self.f.write('\\toprule\n')
-        self.f.write('\\multicolumn{1}{@{}c}{LN} & \\multicolumn{1}{c}{CN}  & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c}{Device Name} & \\multicolumn{1}{c@{}}{Input Name} & \\multicolumn{1}{c@{}}{Device Type} \\\\\n')
+        self.f.write('\\multicolumn{1}{@{}c}{App ID} & \\multicolumn{1}{c}{Slot}  & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c}{Device Name} & \\multicolumn{1}{c@{}}{Input Name} \\\\\n')
         self.f.write('\\midrule\n')
         self.f.write('\\endfirsthead\n')
         self.f.write('\\multicolumn{5}{c}{\\ldots continued from previous page} \\\\\n')
         self.f.write('\\midrule\n')
-        self.f.write('\\multicolumn{1}{@{}c}{LN} & \\multicolumn{1}{c}{CN} & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c}{Device Name} & \\multicolumn{1}{c@{}}{Input Name} & \\multicolumn{1}{c@{}}{Device Type} \\\\\n')
+        self.f.write('\\multicolumn{1}{@{}c}{App ID} & \\multicolumn{1}{c}{Slot}  & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c}{Device Name} & \\multicolumn{1}{c@{}}{Input Name} \\\\\n')
         self.f.write('\\midrule\n')
         self.f.write('\\endhead\n')
         self.f.write('\\midrule\n')
@@ -95,99 +93,40 @@ class Latex:
         self.f.write('\\bottomrule\n')
         self.f.write('\\endlastfoot\n')
         for input in inputs:
-          self.f.write('{0} & {1} & {2}{3}{4}{5}{6}{7}{8}{9}'.format('$\\Box$','$\\Box$',input[0],' & \\texttt{',input[1].replace('_','\_'),'} & \\texttt{',input[2].replace('_','\_'),'} & \\texttt{',input[3].replace('_','\_'),'}\\\\\n'))
+          self.f.write('{0} & {1} & {2}{3}{4}{5}{6}{7}'.format(input[0],input[1],input[2],' & \\texttt{',input[3].replace('_','\_'),'} & \\texttt{',input[4].replace('_','\_'),'}\\\\\n'))
         self.f.write('\\end{longtable}\n')
 
-    def writeDigitalLogicTable(self,state,logic,inputs,title):
-        self.f.write('{0}{1}{2}'.format('\\subsection{',title.replace('_',' '),'}\n'))
+    def writeLogicTable(self,format,header,rows,inputs):
         self.f.write('\\begin{center}\n')
-        if len(inputs) == 2:
-          self.f.write('\\begin{tabular}{@{}lcccccc@{}}\n')
-          self.f.write('\\toprule\n')
-          self.f.write('Name & $B$ & $A$ & LINAC & DIAG0 & HXU & SXU \\\\\n')
-          self.f.write('\\midrule\n')
-          self.f.write('{0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\\n'.format(state[0].replace('_','\_'),'F','F',logic[0][0],logic[0][1],logic[0][2],logic[0][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\\n'.format(state[1].replace('_','\_'),'F','T',logic[1][0],logic[1][1],logic[1][2],logic[1][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\\n'.format(state[2].replace('_','\_'),'T','F',logic[2][0],logic[2][1],logic[2][2],logic[2][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} & {5} & {6} \\\\\n'.format(state[3].replace('_','\_'),'T','T',logic[3][0],logic[3][1],logic[3][2],logic[3][3]))
-          self.f.write('\\bottomrule\n')
-          self.f.write('\\end{tabular}\n')
-          self.f.write('\\end{center}\n')
-          self.f.write('Where \\newline\n')
-          self.f.write('$A = {0}{1}{2}$\n'.format('\\texttt{',inputs[1].replace('_','\_'),'}\\newline'))
-          self.f.write('$B = {0}{1}{2}$\n'.format('\\texttt{',inputs[0].replace('_','\_'),'}'))
-        if len(inputs) == 1:
-          self.f.write('\\begin{tabular}{@{}lccccc@{}}\n')
-          self.f.write('\\toprule\n')
-          self.f.write('Name & $A$ & LINAC & DIAG0 & HXU & SXU \\\\\n')
-          self.f.write('\\midrule\n')
-          self.f.write('{0} & {1} & {2} & {3} & {4} & {5} \\\\\n'.format(state[0].replace('_','\_'),'F',logic[0][0],logic[0][1],logic[0][2],logic[0][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} & {5} \\\\\n'.format(state[1].replace('_','\_'),'T',logic[1][0],logic[1][1],logic[1][2],logic[1][3]))
-          self.f.write('\\bottomrule\n')
-          self.f.write('\\end{tabular}\n')
-          self.f.write('\\end{center}\n')
-          self.f.write('Where \\newline\n')
-          self.f.write('$A = {0}{1}{2}$\n'.format('\\texttt{',inputs[0].replace('_','\_'),'}'))
-
-
-    def writeAnalogLogicTable(self,state,logic,inputs,title):
-        self.f.write('{0}{1}{2}'.format('\\subsection{',title.replace('_',' ').replace('#','\#'),'}\n'))
-        self.f.write('\\begin{center}\n')
-        if len(state) == 2:
-          self.f.write('\\begin{tabular}{@{}lcccccc@{}}\n')
-          self.f.write('\\toprule\n')
-          self.f.write('Name & LINAC & DIAG0 & HXU & SXU \\\\\n')
-          self.f.write('\\midrule\n')
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[0].replace('_','\_'),logic[0][0],logic[0][1],logic[0][2],logic[0][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[1].replace('_','\_'),logic[1][0],logic[1][1],logic[1][2],logic[1][3]))
-          self.f.write('\\bottomrule\n')
-          self.f.write('\\end{tabular}\n')
-          self.f.write('\\end{center}\n')
-          self.f.write('Where \\newline\n')
-          self.f.write('Fault $ = {0}{1}{2}$\n'.format('\\texttt{',inputs[0].replace('_','\_'),'}\\newline'))
-        if len(state) == 3:
-          self.f.write('\\begin{tabular}{@{}lcccc@{}}\n')
-          self.f.write('\\toprule\n')
-          self.f.write('Name & LINAC & DIAG0 & HXU & SXU \\\\\n')
-          self.f.write('\\midrule\n')
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[0].replace('_','\_'),logic[0][0],logic[0][1],logic[0][2],logic[0][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[1].replace('_','\_'),logic[1][0],logic[1][1],logic[1][2],logic[1][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[2].replace('_','\_'),logic[2][0],logic[2][1],logic[2][2],logic[2][3]))
-          self.f.write('\\bottomrule\n')
-          self.f.write('\\end{tabular}\n')
-          self.f.write('\\end{center}\n')
-          self.f.write('Where \\newline\n')
-          self.f.write('Fault $ = {0}{1}{2}$\n'.format('\\texttt{',inputs[0].replace('_','\_'),'}\\newline'))
-        if len(state) == 9:
-          self.f.write('\\begin{tabular}{@{}lcccc@{}}\n')
-          self.f.write('\\toprule\n')
-          self.f.write('Name & LINAC & DIAG0 & HXU & SXU \\\\\n')
-          self.f.write('\\midrule\n')
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[0].replace('_','\_'),logic[0][0],logic[0][1],logic[0][2],logic[0][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[1].replace('_','\_'),logic[1][0],logic[1][1],logic[1][2],logic[1][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[2].replace('_','\_'),logic[2][0],logic[2][1],logic[2][2],logic[2][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[3].replace('_','\_'),logic[3][0],logic[3][1],logic[3][2],logic[3][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[4].replace('_','\_'),logic[4][0],logic[4][1],logic[4][2],logic[4][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[5].replace('_','\_'),logic[5][0],logic[5][1],logic[5][2],logic[5][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[6].replace('_','\_'),logic[6][0],logic[6][1],logic[6][2],logic[6][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[7].replace('_','\_'),logic[7][0],logic[7][1],logic[7][2],logic[7][3]))
-          self.f.write('{0} & {1} & {2} & {3} & {4} \\\\\n'.format(state[8].replace('_','\_'),logic[8][0],logic[8][1],logic[8][2],logic[8][3]))
-          self.f.write('\\bottomrule\n')
-          self.f.write('\\end{tabular}\n')
-          self.f.write('\\end{center}\n')
-          self.f.write('Where \\newline\n')
-          self.f.write('Fault $ = {0}{1}{2}$\n'.format('\\texttt{',inputs[0].replace('_','\_'),'}\\newline'))
-
+        self.f.write(format)
+        self.f.write('\\toprule\n')
+        self.f.write(header)
+        self.f.write('\\midrule\n')
+        for row in rows:
+          self.f.write(row)
+        self.f.write('\\bottomrule\n')
+        self.f.write('\\end{tabular}\n')
+        self.f.write('\\end{center}\n')
+        self.f.write('Where \\newline\n')
+        for input in inputs:
+          self.f.write(input)
 
     def startGroup(self, group):
         self.f.write('\\{0}{1}{2}\n'.format('chapter{Link Node Group ',group,'}'))
 
-    def startLinkNode(self, id):
-        self.f.write('\\{0}{1}{2}\n'.format('section{Link Node  ',id,'}'))
+    def startLinkNode(self, id, location):
+        self.f.write('\\{0}{1}{2}{3}{4}\n'.format('section{Link Node  ',id,': ',location,'}'))
 
     def startApplication(self, id, ln):
         self.f.write('\\newpage\n')
         self.f.write('\\{0}{1}{2}{3}{4}\n'.format('section{Link Node ',ln,': Application Card ',id,'}'))
+
+    def startIgnoreGroup(self, title):
+        self.f.write('\\newpage\n')
+        self.f.write('\\{0}{1}{2}\n'.format('chapter{',title,'}'))
+
+    def startFault(self, title):
+        self.f.write('\\{0}{1}{2}\n'.format('section{',title,'}'))
 
     def appCommunicationCheckoutTable(self):
         self.f.write('\\subsubsection{Communication}\n')
