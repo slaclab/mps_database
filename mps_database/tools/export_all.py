@@ -886,7 +886,6 @@ class MpsExporter(MpsAppReader):
     def __generate_alarm_tree(self):
       self.__generate_ln_group_alarm_config()
 
-
     def __generate_logic_display(self):
       all_macros = []
       for ln_name, ln in self.link_nodes.items():
@@ -2212,6 +2211,9 @@ def main(db_file, dest_path, template_path=None, app_id=None,
     mps_reader.generate_yaml()
     print("Generate reports...")
     mps_reader.generate_reports()
+    print("Generate alarm tree")
+    mps_reader.generate_alarm_tree()
+    
     print("Done!")
 
 if __name__ == "__main__":
