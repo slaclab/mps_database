@@ -86,6 +86,7 @@ class MpsExporter(MpsAppReader):
         self.cn1_path = '{}central_node_db/cn2/'.format(self.dest_path)
         self.cn2_path = '{}central_node_db/cn3/'.format(self.dest_path)
         self.display_path = '{}display/'.format(self.dest_path)
+        self.alarm_path = f'{self.dest_path}alarm/'
         self.checkout_path = '{}checkout/'.format(self.dest_path)
         self.report_path = '{}reports/build/'.format(self.dest_path)
         self.database = db_file
@@ -881,6 +882,10 @@ class MpsExporter(MpsAppReader):
         self.__generate_ln_area_displays()
         self.__generate_compact_crate_display()
         self.__generate_compact_group_display()
+    
+    def __generate_alarm_tree(self):
+      self.__generate_ln_group_alarm_config()
+
 
     def __generate_logic_display(self):
       all_macros = []
@@ -1479,6 +1484,35 @@ class MpsExporter(MpsAppReader):
         file1.close()
       mps.session.close()
 
+    def __generate_ln_group_alarm_config(self, area, area_link_nodes):
+      '''
+      Generates .alhConfig files for link nodes 
+      '''
+
+      for group in self.groups:
+        #TODO: FINISH MACROS FOR HEADER
+        macros = {'MPS_PREFIX': f'{[ln['slots'][slot]['pv_base']}',
+                  'LN_GROUP': f'{group}',
+                  'AREA': 'find this'
+                  'SYSTEM': 'find this'} 
+        filename = f'{self.alarm_path}alarms/mps_group{group}.alhConfig'
+        self.__write_link_node_alarm_header(path=filename, macros=macros)
+
+        for ln_name, ln in self.link_nodes.items():
+          macros = {'MPS_PREFIX': f'{[ln['slots'][slot]['pv_base']}',
+                    'CN', f'{ln['cn_prefix']}'}
+          self.__write_link_node_alarm_group(path=filename, macros=macros)
+          
+          installed = ln['slots'].keys()
+          if ln['analog_slot'] == 2:
+            
+            for slot in range(1,8):
+              if slot in installed:
+                macros = {'CN', f'{ln['cn_prefix']}',
+                          'AID':'{0}'.format(ln['slots'][slot]['app_id'])} #TODO: MACROS FOR LINK NODE CHANNEL 
+                self.__write_link_node_alarm_channel(path=filename, macros=macros)
+    
+
     def generate_reports(self):
       create_dir('{0}'.format(self.report_path))
       self.__writeCrateProfiles()
@@ -2050,6 +2084,19 @@ class MpsExporter(MpsAppReader):
     def __write_compact_group_end(self, path, macros):
         self.__write_ui_file(path=path, template_name="ln_compact_group_end.tmpl",macros=macros)
 
+    def __write_link_node_alarm_header(self, path, macros):
+        self.__write_alhConfig_file(path=path, template_name="mps_group_header.template",macros=macros)
+    
+    def __write_link_node_alarm_group(self, path, macros):
+        self.__write_alhConfig_file(path=path, template_name="mps_link_node_group.tmpl",macros=macros)
+    
+    def __write_link_node_alarm_channel(self, path, macros):
+        self.__write_alhConfig_file(path=path, template_name="mps_link_node_channel.tmpl",macros=macros)
+    
+    def __write_alhConfig_file(self, path, template_name, macros):
+        template = '{}alarm/{}'.format(self.template_path, template_name)
+        self.__write_file_from_template(file=path,template=template,macros=macros)
+
     def __write_epics_db(self, path,filename, template_name, macros):
         """
         Write the EPICS DB file into the 'path' directory.
@@ -2211,7 +2258,7 @@ if __name__ == "__main__":
 
         # Check is the template path exist
         if not os.path.exists(template_path):
-            print(("EPICS DB template directory '{}' not found.".format(template_path)))
+            print(("EPICS DB template directory '{}' not found."alarm(template_path)))
             exit(1)
 
     main(db_file=db_file, dest_path=dest_path, template_path=template_path, app_id=app_id,
