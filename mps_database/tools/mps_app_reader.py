@@ -154,10 +154,15 @@ class MpsAppReader:
         except exc.SQLAlchemyError as e:
             raise      
         for cond in conditions:
+          condition_input = mps_db_session.query(models.ConditionInput).filter(models.ConditionInput.condition_id == cond.id).one()
+          flt = condition_input.fault_state.fault
+          fault_input = mps_db_session.query(models.FaultInput).filter(models.FaultInput.fault_id == flt.id).one()
+          device = mps_db_session.query(models.Device).filter(models.Device.id == fault_input.device_id).one()
           cond_data = {}
           cond_data["name"] = cond.name.upper()
           cond_data["description"] = cond.description
           cond_data["db_id"] = cond.id
+          cond_data['central_node'] = self.get_cn_index(device.card.link_node.group)
           self.conditions.append(cond_data)
 
     def __extract_faults(self,mps_db_session):
@@ -191,22 +196,24 @@ class MpsAppReader:
           flt_data['link_node'] = device.card.link_node.lcls1_id
           if device.device_type.name == 'BPMS':
             flt_data['description'] = '{0} {1}'.format(flt.description, flt.name)
+          if device.measured_device_type_id is not None:
+              pv_device_type = self.__get_device_type_name(mps_db_session, device.measured_device_type_id)
+          else:
+              pv_device_type = self.__get_device_type_name(mps_db_session, device.device_type_id)
+          prefix = '{0}:{1}:{2}'.format(self.get_prefix(pv_device_type), device.area, device.position)
+          pv = '{0}:{1}'.format(prefix,flt.name)
           if type(device) is models.device.DigitalDevice:
-            prefix = '{}:{}:{}'.format(self.get_prefix(self.__get_device_type_name(mps_db_session, device.device_type_id)), device.area, device.position)
             for input in device.inputs:
               digital_channel = self.__get_digital_channel(mps_db_session, input.channel_id)
               if (digital_channel.num_inputs == 1):
-                input_data["input_pv"] = digital_channel.monitored_pvs
+                name = digital_channel.monitored_pvs
+                pv = digital_channel.monitored_pvs
               else:
-                if device.measured_device_type_id is not None:
-                  pv_device_type = self.__get_device_type_name(mps_db_session, device.measured_device_type_id)
-                else:
-                  pv_device_type = self.__get_device_type_name(mps_db_session, device.device_type_id)
+                name = '{0}:{1}:{2}:{3}'.format(pv_device_type,device.area, device.position,digital_channel.name)
               bp = '{0}'.format(input.bit_position)
-              flt_data['inputs'][bp] = '{0}:{1}:{2}:{3}'.format(pv_device_type,device.area, device.position, digital_channel.name)
+              flt_data['inputs'][bp] = name
           if type(device) is models.device.AnalogDevice:
-            prefix = '{0}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id))
-            flt_data['inputs']['0'] = '{0}:{1}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id),flt.name)
+            flt_data['inputs']['0'] = '{0}:{1}'.format(prefix,flt.name)
             is_analog = True
           fault_states = mps_db_session.query(models.FaultState).filter(models.FaultState.fault_id==flt.id).all()
           min_value = 1e12
@@ -246,7 +253,7 @@ class MpsAppReader:
               state_data[dest['name']]['mitigation'] = '-'
               state_data[dest['name']]['severity'] = 'NO_ALARM'
             flt_data['states'].append(state_data)
-          flt_data['pv'] = '{0}:{1}'.format(prefix,flt.name)
+          flt_data['pv'] = pv
           flt_data['analog'] = is_analog
           shift = min_value.bit_length() - 1
           if shift < 0:
@@ -374,6 +381,7 @@ class MpsAppReader:
                 self.link_nodes[name]["cpu_name"] = ln.cpu
                 self.link_nodes[name]["crate_id"] = ln.crate.crate_id
                 self.link_nodes[name]['area'] = ln.area
+                self.link_nodes[name]['ioc_name'] = name.upper().replace('-',':')
                 if ln_group not in self.groups:
                   self.groups.append(ln_group)
 
@@ -459,26 +467,24 @@ class MpsAppReader:
                     fault_inputs = device.fault_outputs
 
                     # Check if this devices has faults. Only devices with defined faults will be included
+                    # get this device data
+                    device_data = {}
+                    device_data["type_name"] = self.__get_device_type_name(mps_db_session, device.device_type_id)
+                    device_data["bay_number"], device_data["channel_number"], device_data["channel_index"] = \
+                        self.__get_bay_ch_number(mps_db_session, device.channel_id, app_card.type_id)
+                    device_data["area"] = device.area
+                    device_data["position"] = device.position
+                    device_data["faults"] = {}
+                    device_data["device_name"] = device.name
+                    device_data["cable"] = device.cable_number
+                    device_data["offset"] = device.offset
+                    device_data["slope"] = device.slope
+                    device_data["prefix"] = '{0}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id))
+                    device_data["db_id"] = device.id
+                    device_data["channel"] = device.channel.number
+                    device_data["z_location"] = device.z_location
+
                     if len(fault_inputs):
-
-                        # get this device data
-                        device_data = {}
-                        device_data["type_name"] = self.__get_device_type_name(mps_db_session, device.device_type_id)
-                        device_data["bay_number"], device_data["channel_number"], device_data["channel_index"] = \
-                            self.__get_bay_ch_number(mps_db_session, device.channel_id, app_card.type_id)
-                        device_data["area"] = device.area
-                        device_data["position"] = device.position
-                        device_data["faults"] = {}
-                        device_data["device_name"] = device.name
-                        device_data["cable"] = device.cable_number
-                        device_data["offset"] = device.offset
-                        device_data["slope"] = device.slope
-                        device_data["prefix"] = '{0}'.format(self.mps_name.getAnalogDeviceNameFromId(device.id))
-                        device_data["db_id"] = device.id
-                        device_data["channel"] = device.channel.number
-                        device_data["z_location"] = device.z_location
-
-
                         # Iterate over all the faults in this device
                         for fault_input in fault_inputs:
                             faults = mps_db_session.query(models.Fault).filter(models.Fault.id==fault_input.fault_id).all()
@@ -521,8 +527,28 @@ class MpsAppReader:
                                 # Add this fault to the list of faults of the current device
                                 device_data["faults"][fault_id] = fault_data
 
-                        # Add this device to the list of devices of the current application
-                        app_data["devices"].append(device_data)
+                    else:
+                      fault_id = 0
+                      fault_data = {}
+                      fault_data["id"] = 0
+                      fault_data["name"] = 'I0_{0}'.format(self.get_analog_type_name(device_data["type_name"]))
+                      fault_data["readback"] = 'I0_{0}'.format(self.get_analog_type_name(device_data["type_name"]))
+                      if fault_data["readback"] == "CHRG" and device_data["type_name"] == 'BPMS':
+                        fault_data["readback"] = '{0}'.format("CHRGDIFF")
+                      fault_data["description"] = "NC Only"
+                      fault_data["bit_positions"] = []
+                      fault_data["integrators"] = []
+                      fault_data["mask"] = []
+                      fault_data["states"] = []
+                      fault_data["fs_id"] = []
+                      fault_data["fs_desc"] = []
+                      fault_data["destination"] = []
+                      fault_data["mitigation"] = []                      
+                      # Add this fault to the list of faults of the current device
+                      device_data["faults"][fault_id] = fault_data
+
+                    # Add this device to the list of devices of the current application
+                    app_data["devices"].append(device_data)
                         
                 # Add this application to the list of applications, if its list of devices is not empty
                 # The list of devices will be empty if not device in this app have defined fault inputs,

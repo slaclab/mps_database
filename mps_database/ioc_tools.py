@@ -26,10 +26,7 @@ def dump_general_to_yaml(mps_config, f):
                    models.DeviceState, 
                    models.MitigationDevice,
                    models.BeamDestination,
-                   models.BeamClass,
-                   models.Condition,
-                   models.IgnoreCondition,
-                   models.ConditionInput]
+                   models.BeamClass]
   for model_class in model_classes:
     collection = session.query(model_class).order_by(model_class.id).all()
     yaml.dump({model_class.__name__: collection}, f, explicit_start=True)
@@ -78,6 +75,10 @@ def dump_link_nodes_to_yaml(mps_config,f,groups):
   for ana in analog_device:
     device_ids.append(ana.id)
 
+  # Ignore Conditions
+  ignore_conditions = session.query(models.IgnoreCondition).filter(models.IgnoreCondition.device_id.in_(device_ids)).all()
+  yaml.dump({models.IgnoreCondition.__name__:ignore_conditions}, f, explicit_start=True)
+
   #DeviceInput
   device_inputs = []
   for digital_channel_id in digital_channel_ids:
@@ -114,6 +115,17 @@ def dump_link_nodes_to_yaml(mps_config,f,groups):
   fs_ids = []
   for fs in fault_states:
     fs_ids.append(fs.id)
+
+  # Condition Inputs
+  c_inputs = []
+  condition_inputs = session.query(models.ConditionInput).filter(models.ConditionInput.fault_state_id.in_(fs_ids)).all()
+  yaml.dump({models.ConditionInput.__name__: condition_inputs}, f, explicit_start=True)
+  for c in condition_inputs:
+    c_inputs.append(c.condition_id)
+
+  # Conditions
+  conditions = session.query(models.Condition).filter(models.Condition.id.in_(c_inputs)).all()
+  yaml.dump({models.Condition.__name__: conditions}, f, explicit_start=True)
 
   #AllowedClass
   #allowed_class = session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id.in_(fs_ids)).order_by(models.AllowedClass.id).all()

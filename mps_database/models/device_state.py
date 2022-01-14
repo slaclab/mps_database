@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 from mps_database.models import Base
 
@@ -28,6 +28,7 @@ class DeviceState(Base):
   description = Column(String, nullable=True)
   value = Column(Integer, nullable=False)
   mask = Column(Integer, nullable=False, default=0xFFFFFFFF)
+  default = Column(Boolean, nullable=False, default=False)
   device_type_id = Column(Integer, ForeignKey('device_types.id'), nullable=False)
   fault_states = relationship("FaultState", backref='device_state')
 
