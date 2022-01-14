@@ -82,7 +82,12 @@ class MpsName:
         :type analogDevice: models.AnalogDevice
         :rtype :string
         """
-        deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==analogDevice.device_type_id).one()
+        if analogDevice.measured_device_type_id is not None:
+          d_id = analogDevice.measured_device_type_id
+        else:
+          d_id = analogDevice.device_type_id
+
+        deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==d_id).one()
         
         return deviceType.name + ":" + analogDevice.area + ":" + str(analogDevice.position)
 

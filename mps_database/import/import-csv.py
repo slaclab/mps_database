@@ -389,12 +389,20 @@ class DatabaseImporter:
         for property in line.split(','):
           state_info[fields[field_index]]=property
           field_index = field_index + 1
+        if 'default' in state_info:
+          if state_info['default']:
+            default = True
+          else:
+            default = False
+        else:
+          default = False
         device_state = models.DeviceState(name=state_info['name'],
                                           device_type=device_type,
                                           description=state_info['description'],
                                           value=int(state_info['value']),
-                                          mask=int(state_info['mask']))
-        device_states[state_info['name']]=device_state#state_info
+                                          mask=int(state_info['mask']),
+                                          default = default)
+        device_states[state_info['name']]=device_state
         if (add_faults):
           if (state_info['fault'] != '-'):
             fault_name = state_info['fault']
@@ -562,22 +570,26 @@ class DatabaseImporter:
 
   # Check if the device in the 'cond_area' should be used
   # as ignore condition for the device in 'device_area'
-  def check_area_order(self, cond_area, device_area):
+  def check_area_order(self, cond_area, device_area,name):
+    if ":" in name and (name.upper().endswith('S') or name.upper().endswith('H')):
+      end = name.upper()[-1]
+    else:
+      end = device_area.upper()[-1]
     cond = False
     if (device_area.upper() == 'DIAG0' and
         (cond_area.upper() == 'GUNB' or
          cond_area.upper() == 'HTR' or
          cond_area.upper() == 'LR00')):
       cond = True
-    elif (device_area.upper().endswith('H') and
+    elif (end == 'H' and
           (not cond_area.upper().endswith('S'))):
       cond = True
-    elif (device_area.upper().endswith('S') and
+    elif (end =='S' and
           (not cond_area.upper().endswith('H'))):
       cond = True
-    elif (cond_area != 'DIAG0'):
+    elif (cond_area.upper() == 'GUNB'):
       cond = True
-
+    #print("{0} {1} {2} {3}".format(name,end,cond_area,cond))
     return cond
       
   def add_ignore_conditions_analog(self, device, evl=0):
@@ -597,7 +609,7 @@ class DatabaseImporter:
           cond_device_z = float(cond_device.z_location)
           device_z = float(device.z_location)
           if (cond_device_z < device_z):
-            if (self.check_area_order(cond_device.area, device.area)):
+            if (self.check_area_order(cond_device.area, device.area,device.name)):
               ignore_condition = models.IgnoreCondition(condition=cond, device = device) 
         except:
           print(('WARN: invalid z_location condition_device={0}, device={1}'.format(cond_device.z_location, device.z_location)))
@@ -653,8 +665,11 @@ class DatabaseImporter:
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
+    has_measured_device = False
     for field in line.split(','):
       fields.append(str(field).lower())
+      if str(field.lower()) ==  'measured_device_type_id':
+        has_measured_device=True
 
     while line:
       device_info={}
@@ -681,6 +696,12 @@ class DatabaseImporter:
         # reporting crate
         if (self.lcls1_only and not self.is_lcls1_ln(app_card)):
           continue
+
+        measured_device = measured_device_type_id
+        if has_measured_device:
+          if device_info['measured_device_type_id'] != '-':
+            measured_device=device_info['measured_device_type_id']
+
 
         # there must be only one channel
         if len(channel) != 1:
@@ -711,18 +732,33 @@ class DatabaseImporter:
           off = device_info['offset']
         if 'slope' in device_info:
           slo = device_info['slope']
-        device = models.AnalogDevice(name=device_info['device'],
-                                     device_type=device_type,
-                                     channel=analog_channel,
-                                     card=app_card,
-                                     position=device_info['position'],
-                                     z_location=device_info['linac_z'],
-                                     description=device_info['device'] + ' ' + device_type.description,
-                                     area=device_info['area'],
-                                     evaluation=1, # Fast evaluation
-                                     cable_number=cab_num,
-                                     slope=slo,
-                                     offset=off)
+        if has_measured_device:
+          device = models.AnalogDevice(name=device_info['device'],
+                                       device_type=device_type,
+                                       channel=analog_channel,
+                                       card=app_card,
+                                       position=device_info['position'],
+                                       z_location=device_info['linac_z'],
+                                       description=device_info['device'] + ' ' + device_type.description,
+                                       area=device_info['area'],
+                                       evaluation=1, # Fast evaluation,
+                                       measured_device_type_id=measured_device,
+                                       cable_number=cab_num,
+                                       slope=slo,
+                                       offset=off)
+        else:
+          device = models.AnalogDevice(name=device_info['device'],
+                                       device_type=device_type,
+                                       channel=analog_channel,
+                                       card=app_card,
+                                       position=device_info['position'],
+                                       z_location=device_info['linac_z'],
+                                       description=device_info['device'] + ' ' + device_type.description,
+                                       area=device_info['area'],
+                                       evaluation=1, # Fast evaluation,
+                                       cable_number=cab_num,
+                                       slope=slo,
+                                       offset=off)
  
         if (self.verbose):
           print(('Analog Channel: ' + device_info['device']))
@@ -731,87 +767,88 @@ class DatabaseImporter:
         self.session.commit()
         self.session.refresh(device)
         
-        # If device should be ignored, add conditions
-        if (add_ignore):
-          self.add_ignore_conditions_analog(device, int(device_info['always_evaluate']))
+        if device_info['mitigation'] != 'NC':
+          # If device should be ignored, add conditions
+          if (add_ignore):
+            self.add_ignore_conditions_analog(device, int(device_info['always_evaluate']))
 
-        # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
-        if device_info['fault'] != 'all':
-          device_fault = self.getFault(faults, device_info['fault'])
+          # For each device - create a Faults, FaultInputs, FaultStates and the AllowedClasses
+          if device_info['fault'] != 'all':
+            device_fault = self.getFault(faults, device_info['fault'])
 
-          if (device_fault == None):
-            print(('ERROR: Failed to find Fault for analog device "{}"'.format(device_info['device'])))
-            exit(-1)
-          #device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
-          self.session.add(device_fault)
-          self.session.commit()
-          self.session.refresh(device_fault_input)
-
-          device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
-          self.session.add(device_fault_input)
-          self.session.commit()
-          self.session.refresh(device_fault_input)
-
-          # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
-          for k in mitigation:
-            if device_info['mitigation'] == k:
-              for m in mitigation[device_info['mitigation']]:
-                # only add new FaultState if there isn't one already for the combination Fault/DeviceState
-                fault_states = self.session.query(models.FaultState).filter(models.FaultState.fault_id==device_fault.id).all()
-                fault_state_exists = False
-                if (len(fault_states)>0):
-                  for fs in fault_states:
-#                    print 'Found fault_state fault_id={0}, device_state_id={1}'.\
-#                        format(fs.fault_id, fs.device_state_id)
-                    if fs.device_state_id == device_states[m].id:
-                      fault_state_exists = True
-                
-                if (not fault_state_exists):
-#                  print 'Adding fault state for {0} (fault_id={1}, device_state_id={2}'.\
-#                      format(device_info['device'], device_fault.id, device_states[m].id)
-                  fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
-                  self.session.add(fault_state)
-                  self.session.commit()
-                  self.session.refresh(fault_state)
-
-                  # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
-                  for d in self.beam_destinations:
-                    power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
-                    if (power_class_str != '-'):
-                      beam_class = self.session.query(models.BeamClass).\
-                          filter(models.BeamClass.id==int(power_class_str)).one()
-
-                      beam_destination = self.session.query(models.BeamDestination).\
-                          filter(models.BeamDestination.name==d).one()
-                      fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
-
-        else: # if fault=='all'
-          mit_location = device_info['mitigation']
-          for fault in faults:
-            fault_name = faults[fault]['name']
-            fault_desc = device_info['fault_name']
-            device_fault = models.Fault(name=fault_name,description=fault_desc)
+            if (device_fault == None):
+              print(('ERROR: Failed to find Fault for analog device "{}"'.format(device_info['device'])))
+              exit(-1)
+            #device_fault = models.Fault(name=device_info['fault'], description=device_info['device'] + ' Fault')
             self.session.add(device_fault)
             self.session.commit()
-            self.session.refresh(device_fault)
+            self.session.refresh(device_fault_input)
 
             device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
             self.session.add(device_fault_input)
             self.session.commit()
             self.session.refresh(device_fault_input)
-            for fs in faults[fault]['states']:
-              fault_state = models.FaultState(device_state=device_states[fs], fault=device_fault)
-              self.session.add(fault_state)
+
+            # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
+            for k in mitigation:
+              if device_info['mitigation'] == k:
+                for m in mitigation[device_info['mitigation']]:
+                  # only add new FaultState if there isn't one already for the combination Fault/DeviceState
+                  fault_states = self.session.query(models.FaultState).filter(models.FaultState.fault_id==device_fault.id).all()
+                  fault_state_exists = False
+                  if (len(fault_states)>0):
+                    for fs in fault_states:
+  #                    print 'Found fault_state fault_id={0}, device_state_id={1}'.\
+  #                        format(fs.fault_id, fs.device_state_id)
+                      if fs.device_state_id == device_states[m].id:
+                        fault_state_exists = True
+                  
+                  if (not fault_state_exists):
+  #                  print 'Adding fault state for {0} (fault_id={1}, device_state_id={2}'.\
+  #                      format(device_info['device'], device_fault.id, device_states[m].id)
+                    fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
+                    self.session.add(fault_state)
+                    self.session.commit()
+                    self.session.refresh(fault_state)
+
+                    # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
+                    for d in self.beam_destinations:
+                      power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
+                      if (power_class_str != '-'):
+                        beam_class = self.session.query(models.BeamClass).\
+                            filter(models.BeamClass.id==int(power_class_str)).one()
+
+                        beam_destination = self.session.query(models.BeamDestination).\
+                            filter(models.BeamDestination.name==d).one()
+                        fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+
+          else: # if fault=='all'
+            mit_location = device_info['mitigation']
+            for fault in faults:
+              fault_name = faults[fault]['name']
+              fault_desc = device_info['fault_name']
+              device_fault = models.Fault(name=fault_name,description=fault_desc)
+              self.session.add(device_fault)
               self.session.commit()
-              self.session.refresh(fault_state)
-              for d in self.beam_destinations:
-                power_class_str = mitigation[mit_location][fs][d.lower()]
-                if (power_class_str != '-'):
-                  beam_class = self.session.query(models.BeamClass).\
-                                filter(models.BeamClass.id==int(power_class_str)).one()
-                  beam_destination = self.session.query(models.BeamDestination).\
-                      filter(models.BeamDestination.name==d).one()
-                  fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+              self.session.refresh(device_fault)
+
+              device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
+              self.session.add(device_fault_input)
+              self.session.commit()
+              self.session.refresh(device_fault_input)
+              for fs in faults[fault]['states']:
+                fault_state = models.FaultState(device_state=device_states[fs], fault=device_fault)
+                self.session.add(fault_state)
+                self.session.commit()
+                self.session.refresh(fault_state)
+                for d in self.beam_destinations:
+                  power_class_str = mitigation[mit_location][fs][d.lower()]
+                  if (power_class_str != '-'):
+                    beam_class = self.session.query(models.BeamClass).\
+                                  filter(models.BeamClass.id==int(power_class_str)).one()
+                    beam_destination = self.session.query(models.BeamDestination).\
+                        filter(models.BeamDestination.name==d).one()
+                    fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
 
     self.session.commit()
 
@@ -1002,10 +1039,6 @@ class DatabaseImporter:
         self.session.commit()
         self.session.refresh(device)
 
-        # If device should be ignored, add conditions
-        if (True):
-          self.add_ignore_conditions_analog(device,int(device_info['always_evaluate']))
-
         if device_info['mitigation'] != '-':
           # Add the DigitalChannels and DeviceInputs for the device
           for key in channel:
@@ -1054,56 +1087,61 @@ class DatabaseImporter:
               self.session.refresh(device_input)
           # end for key
 
-          # For each device - create a Fault, FaultInputs, FaultStates and the AllowedClasses
-          device_fault = models.Fault(name=device_info['fault'], description=device_info['fault_name'])
-          self.session.add(device_fault)
-          self.session.commit()
-          self.session.refresh(device_fault)
 
-          device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
-          self.session.add(device_fault_input)
-          self.session.commit()
-          self.session.refresh(device_fault_input)
+        if (device_info['mitigation'] != 'NC'):
+            # If device should be ignored, add conditions
+            self.add_ignore_conditions_analog(device,int(device_info['always_evaluate']))
 
-          # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
-          for k in mitigation:
-            if self.verbose:
-              print(('  + Mitigation {0}'.format(k)))
-            if device_info['mitigation'] == k:
-              for m in mitigation[device_info['mitigation']]:
-                if self.verbose:
-                  print(('   + {0}'.format(m)))
-                fault_state = models.FaultState(device_state=device_states[m], fault=device_fault)
-                self.session.add(fault_state)
-                self.session.commit()
-                self.session.refresh(fault_state)
-                if (conditions != None and device_states[m].name in conditions and int(device_info['ignore_device'])>0):
-                  name = device_states[m].name
-  #                print '{0} : {1}'.format(device_info['device'], device_states[m].name)
-                  # Create condition inputs and conditions
-                  condition = models.Condition(name='{0}_{1}'.format(device_info['device'], name.upper()),
-                                               description='{0} is {1}'.format(device_info['device'], name.upper()),
-                                               value=conditions[name]["value"])
-                  self.session.add(condition)
+            # For each device - create a Fault, FaultInputs, FaultStates and the AllowedClasses
+            device_fault = models.Fault(name=device_info['fault'], description=device_info['fault_name'])
+            self.session.add(device_fault)
+            self.session.commit()
+            self.session.refresh(device_fault)
+
+            device_fault_input = models.FaultInput(bit_position=0, device=device, fault=device_fault)
+            self.session.add(device_fault_input)
+            self.session.commit()
+            self.session.refresh(device_fault_input)
+
+            # FaultStates (given by the Mitigation.csv file), entries whose Device_Location matches the device 
+            for k in mitigation:
+              if self.verbose:
+                print(('  + Mitigation {0}'.format(k)))
+              if device_info['mitigation'] == k:
+                for m in mitigation[device_info['mitigation']]:
+                  if self.verbose:
+                    print(('   + {0}'.format(m)))
+                  fault_state = models.FaultState(device_state=device_states[m],default=device_states[m].default, fault=device_fault)
+                  self.session.add(fault_state)
                   self.session.commit()
-                  self.session.refresh(condition)
+                  self.session.refresh(fault_state)
+                  if (conditions != None and device_states[m].name in conditions and int(device_info['ignore_device'])>0):
+                    name = device_states[m].name
+    #                print '{0} : {1}'.format(device_info['device'], device_states[m].name)
+                    # Create condition inputs and conditions
+                    condition = models.Condition(name='{0}_{1}'.format(device_info['device'], name.upper()),
+                                                 description='{0} is {1}'.format(device_info['device'], name.upper()),
+                                                 value=conditions[name]["value"])
+                    self.session.add(condition)
+                    self.session.commit()
+                    self.session.refresh(condition)
 
-                  condition_input = models.ConditionInput(bit_position=conditions[name]["bit_position"],
-                                                          fault_state = fault_state, condition=condition)
-                  self.session.add(condition_input)
-                  self.session.commit()
-                  self.session.refresh(condition_input)
+                    condition_input = models.ConditionInput(bit_position=conditions[name]["bit_position"],
+                                                            fault_state = fault_state, condition=condition)
+                    self.session.add(condition_input)
+                    self.session.commit()
+                    self.session.refresh(condition_input)
 
-                # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
-                for d in self.beam_destinations:
-                  power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
-                  if (power_class_str != '-'):
-                    beam_class = self.session.query(models.BeamClass).\
-                        filter(models.BeamClass.id==int(power_class_str)).one()
+                  # Add the AllowedClasses for each fault state (there may be multiple per FaultState)
+                  for d in self.beam_destinations:
+                    power_class_str = mitigation[device_info['mitigation']][device_states[m].name][d.lower()]
+                    if (power_class_str != '-'):
+                      beam_class = self.session.query(models.BeamClass).\
+                          filter(models.BeamClass.id==int(power_class_str)).one()
 
-                    beam_destination = self.session.query(models.BeamDestination).\
-                        filter(models.BeamDestination.name==d).one()
-                    fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
+                      beam_destination = self.session.query(models.BeamDestination).\
+                          filter(models.BeamDestination.name==d).one()
+                      fault_state.add_allowed_class(beam_class=beam_class, beam_destination=beam_destination)
 
     self.session.commit()
     self.session.flush()
@@ -1280,17 +1318,18 @@ importer.add_beam_classes('import/Top/BeamClasses.csv')
 
 # Need to first add the devices that have ignore conditions (e.g. import/PROF/Conditions.csv)
 
-importer.add_digital_device('import/PROF')
+importer.add_digital_device('import/YAG01')
 #importer.add_digital_device('import/COLL')
 importer.add_digital_device('import/DUMP')
-
-
+#importer.add_analog_device('import/PBLM', card_name="Generic ADC", add_ignore=True)
+#importer.add_digital_device('import/WDOG', card_name="Virtual Card")
 
 #if (False):
 if (True):
-  importer.add_analog_device('import/PBLM', card_name="Generic ADC")
-  importer.add_analog_device('import/LBLM', card_name="Generic ADC")
-  importer.add_analog_device('import/FADC', card_name="Generic ADC")
+  importer.add_digital_device('import/PROF')
+  importer.add_analog_device('import/PBLM', card_name="Generic ADC", add_ignore=True)
+  importer.add_analog_device('import/LBLM', card_name="Generic ADC", add_ignore=True)
+  importer.add_analog_device('import/FADC', card_name="Generic ADC", add_ignore=True)
   importer.add_digital_device('import/QUAD', card_name="Virtual Card")
   importer.add_analog_device('import/SOLN', card_name="Generic ADC", add_ignore=True)
   importer.add_analog_device('import/BPMS', card_name="BPM Card", add_ignore=True)
@@ -1298,10 +1337,10 @@ if (True):
   importer.add_digital_device('import/TEMP')
   importer.add_digital_device('import/LASER')
   importer.add_digital_device('import/LSS')
-  importer.add_analog_device('import/BEND', card_name="Generic ADC") 
-  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC") 
+  importer.add_analog_device('import/BEND', card_name="Generic ADC", add_ignore=True) 
+  importer.add_analog_device('import/KICK_CURRENT', card_name="Generic ADC", add_ignore=True) 
   importer.add_analog_device('import/BLEN', card_name="Analog Card", add_ignore=True)
-  importer.add_analog_device('import/TORO', card_name="Analog Card")
+  importer.add_analog_device('import/TORO', card_name="Analog Card", add_ignore=True)
   importer.add_digital_device('import/LLRF', card_name="LLRF")
   importer.add_digital_device('import/BEND_STATE')
   importer.add_digital_device('import/KICK_STATUS')
@@ -1310,9 +1349,9 @@ if (True):
   importer.add_digital_device('import/VVPG')
   importer.add_digital_device('import/VVMG')
   importer.add_digital_device('import/VVFS')
-  importer.add_analog_device('import/BLM', card_name="Generic ADC")
+  importer.add_analog_device('import/BLM', card_name="Generic ADC", add_ignore=True)
   importer.add_digital_device('import/FLOW')
-  importer.add_digital_device('import/XTES')
+  #importer.add_digital_device('import/XTES')
   importer.add_digital_device('import/WIRE', card_name="Wire Scanner") # Treat this one as digital?
   importer.add_digital_device('import/BLMHV', card_name="Virtual Card")
   importer.add_digital_device('import/WDOG', card_name="Virtual Card")
