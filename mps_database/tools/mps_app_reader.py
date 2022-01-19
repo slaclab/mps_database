@@ -896,9 +896,11 @@ class MpsAppReader:
         if device_type_name in ["SOLN", "BEND","BLEN","KICK"]:
             # Solenoid devices use 'uA'.
             return "GeV/c"
-        elif device_type_name in ["BLM","LBLM","CBLM","PBLM","FADC"]:
+        elif device_type_name in ["LBLM","PBLM","FADC"]:
             # Beam loss monitors set threshold in Volts initially
-            return "mV"
+            return "raw"
+        elif device_type_name in ['BLM','CBLM']:
+            return 'mV'
         elif device_type_name == "BPMS":
             # For BPM, the units depend on the type of fault
             if fault_name in ["X", "Y"]:

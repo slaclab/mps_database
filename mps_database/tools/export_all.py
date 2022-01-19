@@ -824,6 +824,8 @@ class MpsExporter(MpsAppReader):
               split_title = flnk_new.split(":")
               split_title.insert(3,"3")
               flnk_new = ":".join(split_title)
+              if flnk == "":
+                flnk_new = ""
               macros = { 'P':title,
                          'DESC':'{0}'.format(fault['description'][:15]),
                          'ID':'{0}'.format(fault['db_id']),
@@ -969,14 +971,16 @@ class MpsExporter(MpsAppReader):
             self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
     
     def generate_displays(self):        
-        self.__generate_crate_display()
-        self.__generate_input_display()
-        self.__generate_group_display()
-        self.__generate_threshold_display()
-        self.__generate_logic_display()
-        self.__generate_ln_area_displays()
-        self.__generate_compact_crate_display()
-        self.__generate_compact_group_display()
+        #self.__generate_crate_display()
+        #self.__generate_input_display()
+        #self.__generate_group_display()
+        #self.__generate_threshold_display()
+        #self.__generate_logic_display()
+        #self.__generate_ln_area_displays()
+        #self.__generate_compact_crate_display()
+        #self.__generate_compact_group_display()
+        #self.__generate_cn_status_display()
+        self.__generate_cblm_display()
     
     def generate_alarm_tree(self):
       self.__generate_ln_group_alarm_config()
@@ -998,12 +1002,16 @@ class MpsExporter(MpsAppReader):
               flt = '{0}{1}'.format(fault['pv'],'_FLT').split(":")
               flt.insert(3,"3")
               flt=":".join(flt)
-              macros['FLT'] = flt
+              cn3macros = {}
+              cn3macros['DESCRIPTION'] = fault['description']
+              cn3macros['FLT'] = flt
+              cn3macros['VIS'] = fault['analog']
+              ln_macros_cn3.append(cn3macros)
         filename = '{0}logic/ln{1}_logic.json'.format(self.display_path,ln['lc1_node_id'])
         self.__write_json_file(filename, ln_macros)
         if ln['cn'] == 2:
-          filename = '{0}logic/ln{1}_logic_cn2.json'.format(self.display_path,ln['lc1_node_id'])
-          self.__write_json_file(filename, ln_macros)
+          filename = '{0}logic/ln{1}_logic_cn3.json'.format(self.display_path,ln['lc1_node_id'])
+          self.__write_json_file(filename, ln_macros_cn3)
       filename = '{0}logic/all_logic.json'.format(self.display_path)
       self.__write_json_file(filename, all_macros)
 
@@ -1391,6 +1399,69 @@ class MpsExporter(MpsAppReader):
                    'Y':'{0}'.format(int(y)) }
         self.__write_group_end(path=filename,macros=macros)
 
+    def __generate_cn_status_display(self):
+      all_macros = []
+      for group in self.groups:
+        filtered_link_nodes = [val for (key,val) in self.link_nodes.items() if val['group'] == group and val['analog_slot'] == 2]
+        for ln in filtered_link_nodes:
+          installed = ln['slots'].keys()
+          for slot in range(1,8):
+            if slot in installed:
+              for app in self.digital_apps:
+                if app['app_id'] == ln['slots'][slot]['app_id']:
+                  macros = {}
+                  macros['GROUP'] = group
+                  macros['LN'] = ln['lc1_node_id']
+                  if app['slot_number'] > 2:
+                    macros['SLOT'] = '{0}'.format(app['slot_number'])
+                  else:
+                    macros['SLOT'] = 'RTM'
+                  macros['APP'] = app['app_id']
+                  macros['P'] = app['app_prefix']
+                  macros['CRATE'] = ln['physical']
+                  macros['CN1'] = ln['cn1']
+                  macros['CN2'] = ln['cn2']
+                  all_macros.append(macros)
+              for app in self.analog_apps:
+                if app['app_id'] == ln['slots'][slot]['app_id']:
+                  macros = {}
+                  macros['GROUP'] = group
+                  macros['LN'] = ln['lc1_node_id']
+                  macros['SLOT'] = '{0}'.format(app['slot_number'])
+                  macros['APP'] = app['app_id']
+                  macros['P'] = app['app_prefix']
+                  macros['CRATE'] = ln['physical']
+                  macros['CN1'] = ln['cn1']
+                  macros['CN2'] = ln['cn2']
+                  all_macros.append(macros)
+      filename = '{0}status/cn_status.json'.format(self.display_path)
+      self.__write_json_file(filename, all_macros)
+
+    def __generate_cblm_display(self):
+      hxr_macros = []
+      sxr_macros = []
+      for app in self.analog_apps:
+        for device in app['devices']:
+          if device['type_name'] == 'CBLM':
+            macros = {}
+            macros['CH_NAME'] = device['device_name']
+            macros['INST'] = app['card_index']
+            macros['LOCA'] = app['link_node_area']
+            macros['IOC_UNIT'] = app['link_node_location']
+            macros['CH_NUM'] = device['channel_index']
+            macros['BAY'] = device['bay_number']
+            macros['CH'] = device['channel_number']
+            macros['P_CH'] = device['prefix']
+            macros['P_TYPE'] = 'LOSS'
+            macros['P'] = app['app_prefix']
+            if device['area'] == 'UNDH':
+              hxr_macros.append(macros)
+            if device['area'] == 'UNDS':
+              sxr_macros.append(macros)
+      filename = '{0}device/cblm_undh.json'.format(self.display_path)
+      self.__write_json_file(filename, hxr_macros)
+      filename = '{0}device/cblm_unds.json'.format(self.display_path)
+      self.__write_json_file(filename, sxr_macros)
 
     def __generate_crate_display(self):
         """
@@ -1514,69 +1585,87 @@ class MpsExporter(MpsAppReader):
         ln_macros = []
         ln_macros_cn3 = []
         installed = ln['slots'].keys()
-        for slot in range(1,8):
-          if slot in installed:
-            for app in self.digital_apps:
-              if app['app_id'] == ln['slots'][slot]['app_id']:
-                input_macros = []
-                cn3_macros = []
-                for device in app['devices']:
-                  for input in device['inputs']:
-                    macros = {}
-                    macros['CRATE'] = '{0}'.format(app['physical'])
-                    if app['slot_number'] > 2:
-                      macros['SLOT'] = '{0}'.format(app['slot_number'])
-                    else:
-                      macros['SLOT'] = 'RTM'
-                    macros['CHANNEL'] = '{0}'.format(input['bit_position'])
-                    macros['SORT'] = input['bit_position']
-                    macros['DEVICE'] = '{0}'.format(input['input_pv'])
-                    macros['DEVICE_BYP'] = '{0}'.format(input['input_pv'])
-                    macros['APPID'] = '{0}'.format(app['app_id'])
-                    input_macros.append(macros)
-                    if app['central_node'] == 2:
-                      device_name = input['input_pv'].split(":")
-                      device_name.insert(3,"3")
-                      device_name = ":".join(device_name)
-                      macros['DEVICE'] = device_name
-                      macros['DEVICE_BYP'] = device_name
-                      cn3_macros.append(macros)
-                sorted_macros = sorted(input_macros, key = lambda i: i['SORT'])
-                for macro in sorted_macros:
-                  ln_macros.append(macro)
-                if ln['cn'] == 2:
-                  sorted_macros = sorted(cn3_macros, key = lambda i: i['SORT'])
-                  for macro in sorted_macros:
-                    ln_macros_cn3.append(macro)
-            for app in self.analog_apps:
-              if app['app_id'] == ln['slots'][slot]['app_id']:
-                input_macros = []
-                for device in app['devices']:
-                  for key in device['faults']:
-                    for input in range(0,len(device['faults'][key]['bit_positions'])):
+        if ln['analog_slot'] == 2:
+          for slot in range(1,8):
+            if slot in installed:
+              for app in self.digital_apps:
+                if app['app_id'] == ln['slots'][slot]['app_id']:
+                  input_macros = []
+                  cn3_macros = []
+                  for device in app['devices']:
+                    for input in device['inputs']:
                       macros = {}
                       macros['CRATE'] = '{0}'.format(app['physical'])
-                      macros['SLOT'] = '{0}'.format(app['slot_number'])
-                      macros['CHANNEL'] = '{0}'.format(device['channel_index'])
-                      macros['SORT'] = device['channel_index']
-                      macros['DEVICE'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input])
-                      macros['DEVICE_BYP'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['name'])
+                      if app['slot_number'] > 2:
+                        macros['SLOT'] = '{0}'.format(app['slot_number'])
+                      else:
+                        macros['SLOT'] = 'RTM'
+                      macros['CHANNEL'] = '{0}'.format(input['bit_position'])
+                      macros['SORT'] = input['bit_position']
+                      macros['DEVICE'] = '{0}'.format(input['input_pv'])
+                      macros['DEVICE_BYP'] = '{0}'.format(input['input_pv'])
                       macros['APPID'] = '{0}'.format(app['app_id'])
                       input_macros.append(macros)
                       if app['central_node'] == 2:
-                        device_name = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input]).split(":")
-                        device_name.insert(3,"3")
-                        device_name = ":".join(device_name)
-                        macros['DEVICE'] = device_name
-                        device_name = '{0}:{1}'.format(device['prefix'],device['faults'][key]['name']).split(":")
-                        device_name.insert(3,"3")
-                        device_name = ":".join(device_name)
-                        macros['DEVICE_BYP'] = device_name
-                        cn3_macros.append(macros)
-                sorted_macros = sorted(input_macros, key = lambda i: i['SORT'])
-                for macro in sorted_macros:
-                  ln_macros.append(macro)
-                if ln['cn'] == 2:
+                        name = '{0}'.format(input['input_pv'])
+                        split_title = name.split(":")
+                        split_title.insert(3,"3")
+                        name = ":".join(split_title)
+                        cn3macros = {}
+                        cn3macros['CRATE'] = '{0}'.format(app['physical'])
+                        if app['slot_number'] > 2:
+                          cn3macros['SLOT'] = '{0}'.format(app['slot_number'])
+                        else:
+                          cn3macros['SLOT'] = 'RTM'
+                        cn3macros['CHANNEL'] = '{0}'.format(input['bit_position'])
+                        cn3macros['SORT'] = input['bit_position']
+                        cn3macros['DEVICE'] = name
+                        cn3macros['DEVICE_BYP'] = name
+                        cn3macros['APPID'] = '{0}'.format(app['app_id'])
+                        cn3_macros.append(cn3macros)
+                  sorted_macros = sorted(input_macros, key = lambda i: i['SORT'])
+                  for macro in sorted_macros:
+                    ln_macros.append(macro)
+                  sorted_macros = sorted(cn3_macros, key = lambda i: i['SORT'])
+                  for macro in sorted_macros:
+                    ln_macros_cn3.append(macro)
+              for app in self.analog_apps:
+                if app['app_id'] == ln['slots'][slot]['app_id']:
+                  input_macros = []
+                  cn3_macros = []
+                  for device in app['devices']:
+                    for key in device['faults']:
+                      for input in range(0,len(device['faults'][key]['bit_positions'])):
+                        macros = {}
+                        macros['CRATE'] = '{0}'.format(app['physical'])
+                        macros['SLOT'] = '{0}'.format(app['slot_number'])
+                        macros['CHANNEL'] = '{0}'.format(device['channel_index'])
+                        macros['SORT'] = device['channel_index']
+                        macros['DEVICE'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input])
+                        macros['DEVICE_BYP'] = '{0}:{1}'.format(device['prefix'],device['faults'][key]['name'])
+                        macros['APPID'] = '{0}'.format(app['app_id'])
+                        input_macros.append(macros)
+                        if app['central_node'] == 2:
+                          name = '{0}:{1}'.format(device['prefix'],device['faults'][key]['states'][input])
+                          split_title = name.split(":")
+                          split_title.insert(3,"3")
+                          name = ":".join(split_title)
+                          byp = '{0}:{1}'.format(device['prefix'],device['faults'][key]['name'])
+                          split_title = byp.split(":")
+                          split_title.insert(3,"3")
+                          byp = ":".join(split_title)
+                          cn3macros = {}
+                          cn3macros['CRATE'] = '{0}'.format(app['physical'])
+                          cn3macros['SLOT'] = '{0}'.format(app['slot_number'])
+                          cn3macros['CHANNEL'] = '{0}'.format(device['channel_index'])
+                          cn3macros['SORT'] = '{0}'.format(device['channel_index'])
+                          cn3macros['DEVICE'] = name
+                          cn3macros['DEVICE_BYP'] = byp
+                          cn3macros['APPID'] = '{0}'.format(app['app_id'])
+                          cn3_macros.append(cn3macros)
+                  sorted_macros = sorted(input_macros, key = lambda i: i['SORT'])
+                  for macro in sorted_macros:
+                    ln_macros.append(macro)
                   sorted_macros = sorted(cn3_macros, key = lambda i: i['SORT'])
                   for macro in sorted_macros:
                     ln_macros_cn3.append(macro)
@@ -1584,7 +1673,7 @@ class MpsExporter(MpsAppReader):
         self.__write_json_file(filename, ln_macros)
         if ln['cn'] == 2:
           filename = '{0}inputs/ln_{1}_inputs_cn3.json'.format(self.display_path,ln['lc1_node_id'])
-          self.__write_json_file(filename, ln_macros)
+          self.__write_json_file(filename, ln_macros_cn3)
 
     def generate_full_app_id_status_display(self):
     	'''
@@ -2180,6 +2269,9 @@ class MpsExporter(MpsAppReader):
     def __write_crate_embed(self,path,macros):
         self.__write_ui_file(path=path, template_name="ln_crate_embed.tmpl", macros=macros)
 
+    def __write_cn_status_embed(self,path,macros):
+        self.__write_ui_file(path=path, template_name="ln_crate_embed.tmpl", macros=macros)
+
     def __write_area_header(self, path,macros):
         self.__write_ui_file(path=path, template_name="ln_area_header.tmpl", macros=macros)
 
@@ -2341,18 +2433,18 @@ def main(db_file, dest_path, template_path=None, app_id=None,
         mps_app_reader.print_app_data()
 
     # Generated the application output file
-    #print("Generate link node databases...")
+    print("Generate link node databases...")
     #mps_reader.generate_ln_epics_db()
-    #print("Generate central node databases...")
+    print("Generate central node databases...")
     #mps_reader.generate_cn_db()
     print("Generate display files...")
     mps_reader.generate_displays()
-    #print("Generate yaml...")
+    print("Generate yaml...")
     #mps_reader.generate_yaml()
-    #print("Generate reports...")
+    print("Generate reports...")
     #mps_reader.generate_reports()
     print("Generate alarm tree")
-    mps_reader.generate_alarm_tree()
+    #mps_reader.generate_alarm_tree()
     
     print("Done!")
 

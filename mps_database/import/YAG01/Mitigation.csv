@@ -1,0 +1,9 @@
+Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
+LINAC,P0,2,Extracted (P0),10,-,-,-
+LINAC,P1,3,YAG Screen with hole (P1),4,-,-,-
+LINAC,P2,4,YAG screen (P2),4,-,-,-
+LINAC,P3,5,COL 1 (P3),10,-,-,-
+LINAC,P4,6,COL 2 (P4),10,-,-,-
+LINAC,P5,7,COL 3 (P5),10,-,-,-
+LINAC,P6,8,COL 4 (P6),10,-,-,-
+LINAC,MOVING,1,Moving,1,-,-,-
