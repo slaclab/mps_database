@@ -5,7 +5,7 @@
       - MpsAnalogCore:
         - MpsAnalogLcls1Reg:
           - ProcessingSelect[$(CH)]: !<value> $(PROC)
-          - IntegrationCounts[$(INT0)]: !<value> 2
+          - IntegrationCounts[$(INT0)]: !<value> $(I0)
           - IntegrationCounts[$(INT1)]: !<value> 179
         - MpsAnalogLcls2Reg:
           - ProcessingSelect[$(CH)]: !<value> $(PROC)

@@ -324,9 +324,11 @@ class MpsExporter(MpsAppReader):
                          }
                 self.__write_link_node_channel_info_db(path=app_path, macros=macros)
                 processing = 1
+                integrate = 0
                 ch = device['channel_index']
                 if (device["type_name"] == "CBLM"):
                     processing = 1
+                    integrate = 2
                 if (device["type_name"] == "KICK"):
                     processing = 1
                 int0 = device['channel_index']*4
@@ -334,7 +336,8 @@ class MpsExporter(MpsAppReader):
                 macros = { "CH":format(device['channel_index']),
                            "PROC":format(processing),
                            "INT0":format(int0),
-                           "INT1":format(int1)
+                           "INT1":format(int1),
+                           "I0":format(integrate)
                          }
                 self.__write_ana_config(path=app_path, macros=macros)
                 spare_channels[device["channel_index"]] = -1
@@ -971,15 +974,15 @@ class MpsExporter(MpsAppReader):
             self.__write_fault_mbbi_finish(path=self.cn1_path, macros=macros)
     
     def generate_displays(self):        
-        #self.__generate_crate_display()
-        #self.__generate_input_display()
-        #self.__generate_group_display()
-        #self.__generate_threshold_display()
-        #self.__generate_logic_display()
-        #self.__generate_ln_area_displays()
-        #self.__generate_compact_crate_display()
-        #self.__generate_compact_group_display()
-        #self.__generate_cn_status_display()
+        self.__generate_crate_display()
+        self.__generate_input_display()
+        self.__generate_group_display()
+        self.__generate_threshold_display()
+        self.__generate_logic_display()
+        self.__generate_ln_area_displays()
+        self.__generate_compact_crate_display()
+        self.__generate_compact_group_display()
+        self.__generate_cn_status_display()
         self.__generate_cblm_display()
     
     def generate_alarm_tree(self):
@@ -2434,17 +2437,17 @@ def main(db_file, dest_path, template_path=None, app_id=None,
 
     # Generated the application output file
     print("Generate link node databases...")
-    #mps_reader.generate_ln_epics_db()
+    mps_reader.generate_ln_epics_db()
     print("Generate central node databases...")
-    #mps_reader.generate_cn_db()
+    mps_reader.generate_cn_db()
     print("Generate display files...")
     mps_reader.generate_displays()
     print("Generate yaml...")
-    #mps_reader.generate_yaml()
+    mps_reader.generate_yaml()
     print("Generate reports...")
-    #mps_reader.generate_reports()
+    mps_reader.generate_reports()
     print("Generate alarm tree")
-    #mps_reader.generate_alarm_tree()
+    mps_reader.generate_alarm_tree()
     
     print("Done!")
 
