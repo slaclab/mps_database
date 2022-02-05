@@ -23,7 +23,7 @@ record(bo, "$(BASE):APP$(APP_ID)_ENABLE") {
   field(SCAN, "Passive")
   field(ZNAM, "Disable")
   field(ONAM, "Enable")
-  field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
+  field(OUT, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
 }
 
 # Readback PV
@@ -35,5 +35,5 @@ record(bi, "$(BASE):APP$(APP_ID)_ENABLE_RBV") {
   field(ONAM, "Enabled")
   field(ZSV, "MINOR")
   field(OSV, "NO_ALARM")
-  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
+  field(INP, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
 }

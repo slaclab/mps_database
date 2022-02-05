@@ -206,7 +206,7 @@ class DatabaseImporter:
           print(('ERROR: Cannot find link_node associated to slot {} in crate {}'.\
                   format(app_card_info['slot'], app_crate.get_name())))
         app_card = models.ApplicationCard(name=app_card_info['name'],
-                                          number=int(app_card_info['number']),
+                                          number=int(app_card_info['global_id']),
                                           area=app_card_info['area'],
 #                                          location=app_card_info['location'],
                                           type=app_card_type,
@@ -683,7 +683,7 @@ class DatabaseImporter:
           
         try:
           app_card = self.session.query(models.ApplicationCard).\
-              filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
+              filter(models.ApplicationCard.number==int(device_info['application_card_number'])).one()
           if app_card.name != card_name:
             print(('ERROR: analog device ({0}) assigned to unexpected card type ({1}), expected {2} card'.\
                     format(device_info['device'], app_card.name, card_name)))
@@ -983,7 +983,7 @@ class DatabaseImporter:
 
         try:
           app_card = self.session.query(models.ApplicationCard).\
-              filter(models.ApplicationCard.id==int(device_info['application_card_number'])).one()
+              filter(models.ApplicationCard.number==int(device_info['application_card_number'])).one()
           if app_card.name != card_name:
             print(('ERROR: digital device ({0}) assigned to non-digital card ({1} at {2} slot {3})'.\
                     format(device_info['device'], app_card.name, app_card.crate.location, app_card.slot_number)))
