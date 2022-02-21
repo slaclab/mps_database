@@ -1,3 +1,0 @@
-Name,MPS_Signal_Source,MPS_Signal_Type,MPS_Channel_#,Z_Name,O_Name,Alarm_State,Bit_Position,Debounce,auto_reset
-IN_SWITCH,Stopper Rack,0/24V,1,NOT_IN,IS_IN,0,1,10,1
-OUT_SWITCH,Stopper Rack,0/24V,2,NOT_OUT,IS_OUT,0,0,10,1

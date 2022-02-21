@@ -1,2 +1,0 @@
-Column1,Location,Sector,Rack,Elevation,Num_Slots,Shelf_Number,Crate_Id,LN_Area,LN_Location,LN_Type,LN_Slot,LCLS1_ID,Group,Group_Link,Group_Link_Destination,Beam_Line,Network_Drawing,CPU_Name,Fiber_id,Number of Apps,Bandwidth,IOC Running,Timing Status,MPS Network,CN Connected Apps,Total Inputs,Inputs OK,Inputs CN,Logic CN
-1,L2KA00-0517,LI00,5,17,7,0,1,GUNB,MP01,2,2,50,0,0,0,Linac,SD-144-182-02-C0,cpu-gunb-sp01,,2,256,Y,Y,Y,2,2,0,0,0

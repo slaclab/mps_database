@@ -1,2 +1,0 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
-LINAC,IS_FAULTED,2,RF Cavity Fault,1,-,-,-
