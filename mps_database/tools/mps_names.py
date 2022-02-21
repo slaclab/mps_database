@@ -1,4 +1,5 @@
 from mps_database.mps_config import MPSConfig, models
+from sqlalchemy import func
 
 class MpsName:
     """
@@ -6,6 +7,59 @@ class MpsName:
     """
     def __init__(self, session):
         self.session = session
+        self.max_beam_class = self.session.query(func.max(models.BeamClass.number)).one()[0]
+
+    def get_beam_class_severity(self,bc):
+        if bc.number >= (self.max_beam_class - 1):
+          return 'NO_ALARM'
+        elif bc.number in [0,1]:
+          return 'MAJOR'
+        return 'MINOR'
+
+    def getConditionNameFromID(self,cond_id):
+      cond = self.session.query(models.Condition).filter(models.Condition.id == cond_id).one()
+      return cond.description
+
+    def getDeviceFromFault(self,fault):
+      devices = []
+      for fi in fault.inputs:
+        devices.append(fi.device)
+      if len(devices) > 1:
+        print("ERROR: Too many devices, special cases not ready yet!")
+        return
+      return devices[0]
+
+    def isDeviceAnalog(self,device):
+      analog = False
+      if type(device) is models.device.AnalogDevice:
+        analog = True
+      return analog
+
+    def getCardFromFault(self,fault):
+      device = self.getDeviceFromFault(fault)
+      return device.card
+
+    def getInputsFromDevice(self,device,fault=None):
+      inputs = []
+      if type(device) is models.device.DigitalDevice:
+        for input in device.inputs:
+          inputs.append(self.getInputPvFromChannel(input.channel))
+      if type(device) is models.device.AnalogDevice:
+        if fault is not None:
+          inputs.append('{0}:{1}'.format(self.getDeviceName(device),fault.name))
+        else:
+          print("ERROR: Cannot build input name for analog fault.  Please specifiy fault name")
+      return inputs
+        
+
+    def getInputPvFromChannel(self,channel):
+        """
+        Builds the PV base name for the specified DeviceInput Channel (see getDeviceInputBaseName())
+
+        :type deviceInputId: int
+        :rtype :string
+        """
+        return "{0}:{1}".format(self.getDeviceInputBaseName(channel.device_input),channel.name.split(":")[-1])
 
     def getDeviceInputNameFromId(self, deviceInputId):
         """
@@ -16,6 +70,24 @@ class MpsName:
         """
         deviceInput = self.session.query(models.DeviceInput).filter(models.DeviceInput.id==deviceInputId).one()
         return self.getDeviceInputName(deviceInput)
+
+    def getDeviceName(self, device):
+        """
+        Builds the PV base name for the specified DeviceInput. The PV
+        name of the DeviceInput is composed of
+
+          <DeviceType.name> : <Device.area> : <Device.position>
+
+        Example: PROF:GUNB:753
+
+        The full PV name for the DeviceInput requires the fourth field, which
+        is given by the Channel associated with the DeviceInput.
+
+        :type deviceInput: models.DeviceInput 
+        :rtype :string
+        """
+        base_name = ":".join(device.name.split(":")[:3])
+        return base_name
 
     def getDeviceInputBaseName(self, deviceInput):
         """
@@ -32,14 +104,8 @@ class MpsName:
         :type deviceInput: models.DeviceInput 
         :rtype :string
         """
-        digitalChannel = self.session.query(models.DigitalChannel).filter(models.DigitalChannel.id==deviceInput.channel_id).one()
-        device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==deviceInput.digital_device_id).one()
-        if device.measured_device_type_id == None:
-            deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.device_type_id).one()
-        else:
-            deviceType = self.session.query(models.DeviceType).filter(models.DeviceType.id==device.measured_device_type_id).one()
-
-        return deviceType.name + ":" + device.area + ":" + str(device.position)
+        base_name = ":".join(deviceInput.digital_device.name.split(":")[:3])
+        return base_name
 
     def getDeviceInputName(self, deviceInput):
         """
@@ -182,6 +248,15 @@ class MpsName:
 
     def getConditionName(self, condition):
         return "$(BASE):" + condition.name.upper() + "_COND"
+
+    def makeDeviceName(self,string,ch=0):
+        if int(ch) < 32:
+          ret_name = ":".join(string.split(":")[:3])
+        else:
+          ret_name = string
+        return ret_name
+        
+        
 
     def getFaultStateName(self, faultState):
 #        print 'name for {0} {1} {2}'.format(faultState.id, faultState.device_state.name, faultState.fault.name)
