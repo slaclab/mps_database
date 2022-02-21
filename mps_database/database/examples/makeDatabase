@@ -1,0 +1,11 @@
+#!/bin/bash
+database/initialize_db.py -v -n --db test.db -d --file import/Top/BeamDestinations.csv
+database/initialize_db.py -v --db test.db -b --file import/Top/BeamClasses.csv
+database/initialize_db.py -v --db test.db -c --file import/Top/Crates.csv
+database/initialize_db.py -v --db test.db -t --file import/Top/AppTypes.csv
+database/initialize_db.py -v --db test.db -a --file import/Top/AppCards.csv
+database/add_digital_device.py -v --db test.db --file import/digital_device.csv
+database/add_analog_device.py -v --db test.db --file import/analog_device.csv
+database/add_logic.py -v --db test.db --file import/vac_logic.json
+database/add_ignore_device.py -v --db test.db --file import/ignore_condition.csv
+database/add_logic.py -v --db test.db --file import/logic_test.json

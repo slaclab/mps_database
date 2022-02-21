@@ -1,0 +1,18 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description": "VVPG GUNB 200 Position",
+            "name":"POSITION",
+            "inputs": [
+                "VVPG:GUNB:200:POSITION"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,null,null,null],
+                [1, "OK","OK",9,null,null,null]
+            ]
+        }
+]
+}
