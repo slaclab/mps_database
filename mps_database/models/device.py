@@ -98,7 +98,7 @@ class DigitalDevice(Device):
   __tablename__ = 'digital_devices'
   __mapper_args__ = {'polymorphic_identity': 'digital_device'}
   id = Column(Integer, ForeignKey('devices.id'), primary_key=True)
-  inputs = relationship("DeviceInput", backref='digital_device')
+  inputs = relationship("DeviceInput",order_by='DeviceInput.bit_position', backref='digital_device')
 #  fault_outputs = relationship("FaultInput", backref='device')
 
 class AnalogDevice(Device):

@@ -30,3 +30,4 @@ from mps_database.models.condition import Condition
 from mps_database.models.ignore_condition import IgnoreCondition
 from mps_database.models.condition_input import ConditionInput
 from mps_database.models.beam_destination import BeamDestination
+from mps_database.models.groups import LinkNodeGroup

@@ -1,0 +1,108 @@
+#!/usr/bin/env python
+from mps_database.mps_config import MPSConfig, models, runtime
+from sqlalchemy import MetaData
+from mps_database.tools.mps_names import MpsName
+import argparse
+import time
+import yaml
+import os
+import sys
+
+class AddAnalogDevice:
+
+  def __init__(self, file_name, verbose, clear_all=False):
+    self.database_file_name = file_name
+    self.conf = MPSConfig(file_name)
+    if (clear_all):
+      self.conf.clear_all()
+    self.session = self.conf.session
+    self.session.autoflush=False
+#    self.session.autoflush=True
+    self.verbose = verbose
+    self.mps_names = MpsName(self.session)
+
+  def __del__(self):
+    self.session.commit()
+
+  def add_analog_device(self,file_name):
+    if self.verbose:
+      print(("Adding Analog Devices... {0}".format(file_name)))
+    f = open(file_name)
+    line = f.readline().strip()
+    fields=[]
+    for field in line.split(','):
+      fields.append(str(field).lower())
+    while line:
+      device_info={}
+      line = f.readline().strip()
+      if line:
+        field_index = 0
+        for property in line.split(','):
+          device_info[fields[field_index]]=property
+          field_index = field_index + 1
+        device_type_name = device_info['device'].split(":")[0]
+        device_type = self.conf.find_device_type(self.session,device_type_name,True)
+        device_name = self.mps_names.makeDeviceName(device_info['device'],device_info['channel'])
+        application_card = self.conf.find_app_card(self.session,device_info['application'])
+        channel = self.add_channel(device_info,application_card)
+        slope = 1
+        offset = 0
+        cable = "N/A"
+        if "slope" in fields:
+          if device_info['slope'] is not '':
+            slope = device_info['slope']
+        if "offset" in fields:
+          if device_info['offset'] is not '':
+            offset = device_info['offset']
+        if "cable" in fields:
+          if device_info['cable'] is not '':
+            cable = device_info['cable']
+        if channel is not None:
+          device = models.AnalogDevice(name=device_name,
+                                       device_type=device_type,
+                                       channel=channel,
+                                       card=application_card,
+                                       position=device_info['device'].split(":")[2],
+                                       area=device_info['device'].split(":")[1],
+                                       z_location=device_info['z'],
+                                       description=device_info['description'],
+                                       evaluation=1,
+                                       cable_number=cable,
+                                       slope=slope,
+                                       offset=offset)
+        else:
+          print("INFO: Device {0} not added because of channel error".format(device_name))
+        self.session.commit()
+
+  def add_channel(self,device_info,card):
+    used_channels = []
+    for ch in card.analog_channels:
+      used_channels.append(ch.number)
+    if int(device_info['channel']) in used_channels:
+      print("ERROR: Channel {0} already used in app {1}".format(device_info['channel'],card.number))
+      return
+    if int(device_info['channel']) > card.type.analog_channel_count:
+      print("ERROR: Invalid channel number {0}".format(device_info['channel']))
+      return
+    analog_channel = models.AnalogChannel(name=device_info['device'],
+                                          number=int(device_info['channel']), card=card)
+    self.session.add(analog_channel)
+    return analog_channel
+
+
+parser = argparse.ArgumentParser(description='Create MPS database')
+parser.add_argument('-v',action='store_true',default=False,dest='verbose',help='Verbose output')
+parser.add_argument('--db',metavar='database',required=True,help='MPS sqlite database file')
+parser.add_argument('--file',metavar='csvFile',required=True,help='relative path to CSV file to add')
+args = parser.parse_args()
+
+verbose=False
+if args.verbose:
+  verbose=True
+
+db_file=args.db
+
+csv_file = args.file
+
+add_device = AddAnalogDevice(db_file,verbose,False)
+add_device.add_analog_device(csv_file)

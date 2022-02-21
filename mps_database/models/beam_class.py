@@ -31,3 +31,4 @@ class BeamClass(Base):
   min_period = Column(Integer, nullable=False)
   total_charge = Column(Integer, nullable=False)
   allowed_classes = relationship("AllowedClass", backref='beam_class')
+    

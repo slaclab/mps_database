@@ -6,37 +6,37 @@
 #   - DESC       : Fault Description                                             #
 #================================================================================#
 
-record(longin, "$(P)_INP") {
+record(longin, "$(NAME)_INP") {
   field(DESC, "$(DESC)")
   field(DTYP, "asynInt32")
   field(SCAN, "1 second")
   field(INP,  "@asynMask(CENTRAL_NODE $(ID) 0)MPS_FAULT")
-  field(FLNK, "$(P)")
+  field(FLNK, "$(NAME)")
 }
-record(mbbiDirect, "$(P)") {
+record(mbbiDirect, "$(NAME)") {
   field(DESC, "$(DESC)")
   field(DTYP, "Soft Channel")
   field(SCAN, "Passive")
   field(SHFT, "$(SHIFT)")
-  field(INP,  "$(P)_INP")
-  field(FLNK, "$(P)_CALC")
+  field(INP,  "$(NAME)_INP")
+  field(FLNK, "$(NAME)_CALC")
 }
-record(calc, "$(P)_CALC") {
+record(calc, "$(NAME)_CALC") {
   field(DESC, "$(DESC)")
   field(SCAN, "Passive")
   field(CALC, "A?1:B?2:C?3:D?4:E?5:F?6:G?7:H?8:0")
-  field(INPA, "$(P).B0")
-  field(INPB, "$(P).B1")
-  field(INPC, "$(P).B2")
-  field(INPD, "$(P).B3")
-  field(INPE, "$(P).B4")
-  field(INPF, "$(P).B5")
-  field(INPG, "$(P).B6")
-  field(INPH, "$(P).B7")
+  field(INPA, "$(NAME).B0")
+  field(INPB, "$(NAME).B1")
+  field(INPC, "$(NAME).B2")
+  field(INPD, "$(NAME).B3")
+  field(INPE, "$(NAME).B4")
+  field(INPF, "$(NAME).B5")
+  field(INPG, "$(NAME).B6")
+  field(INPH, "$(NAME).B7")
   field(FLNK, "$(FLNK)")
 }
 
-record(bi, "$(P)_IGNORED") {
+record(bi, "$(NAME)_IGNORED") {
   field(DESC, "$(DESC) Ignored")
   field(DTYP, "asynUInt32Digital")
   field(SCAN, "1 second")

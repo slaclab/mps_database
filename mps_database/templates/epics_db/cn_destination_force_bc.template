@@ -1,45 +1,11 @@
-#================================================================================#
-# LCLS MPS PV template for Central Node to force beam class at a destination     #
-# Macro description:                                                             #
-#   - DEST         : MPS Destination                                             #
-#   - ID           : Destination ID                                              #
-#================================================================================#
-record(mbbo, "$(BASE):$(DEST)_FORCE_BC") {
+}
+record(mbbo, "$(BASE):$(DEST)_SOFT_PERMIT") {
     field(DESC, "Set BC to $(DEST)")
     field(DTYP, "asynUInt32Digital")
     field(VAL, "0")
-    field(ZRST, "Full")
+    field(ZRST, "Allow Beam")
     field(ZRVL,"0")
-    field(ONST, "BC0")
+    field(ONST, "Revoke Permit")
     field(ONVL,"1")
-    field(TWST, "BC1")
-    field(TWVL,"2")
-    field(THST, "BC2")
-    field(THVL,"3")
-    field(FRST, "BC3")
-    field(FRVL,"4")
-    field(FVST, "BC4")
-    field(FVVL,"5")
-    field(SXST, "BC5")
-    field(SXVL,"6")
-    field(SVST, "BC6")
-    field(SVVL,"7")
-    field(EIST, "BC7")
-    field(EIVL,"8")
-    field(NIST, "BC8")
-    field(NIVL,"9")
-    field(TEST, "BC9")
-    field(TEVL,"10")
-    field(ELST, "BC10")
-    field(ELVL,"11")
-    field(TVST, "BC11")
-    field(TVVL,"12")
-    field(TTST, "BC12")
-    field(TTVL,"13")
-    field(FTST, "BC13")
-    field(FTVL,"14")
-    field(FFST, "BC14")
-    field(FFVL,"15")
-    field(PINI, "YES")
     field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FORCE_DEST")
 }

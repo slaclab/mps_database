@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship, backref, validates
+from sqlalchemy.orm import object_session
+from .groups import LinkNodeGroup
 from mps_database.models import Base
 
 class LinkNode(Base):
@@ -43,7 +45,8 @@ class LinkNode(Base):
   lcls1_id = Column(Integer, nullable=False, default=0)
   slot_number = Column(Integer, nullable=False, default=2)
   crate_id = Column(Integer, ForeignKey('crates.id'))
-  cards = relationship("ApplicationCard", backref='link_node')
+  link_node_group_id = Column(Integer, ForeignKey('link_node_groups.id'), nullable=False)
+  cards = relationship("ApplicationCard", order_by="ApplicationCard.slot_number", backref='link_node')
 
   def show(self):
     print(('> Area: {0}'.format(self.area)))
@@ -124,11 +127,8 @@ class LinkNode(Base):
           # it is a link node without digital inputs and analog inputs in slot 2
           # The link node app_number is also 1
           return 1
-      elif len(self.cards) == 0:
-        raise ValueError("LinkNode '{} [id={}]' with no cards, please check configuration.".\
-                           format(self.get_name(), self.id))
       else:
-        return self.cards[0].slot_number
+        return self.slot_number
 
   def get_app_prefix(self):
     """
@@ -187,3 +187,21 @@ class LinkNode(Base):
       extra = 3
     value = '{0}-{1}'.format(shelf_base,extra)
     return value
+
+  def get_digital_app_id(self):
+    for card in self.cards:
+      if card.slot_number == 2:
+        if card.type.name == 'MPS Digital':
+          return card.number
+    return 0
+
+  def get_cn1_prefix(self):
+    session = object_session(self)
+    group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
+    return group.central_node1
+
+  def get_cn2_prefix(self):
+    session = object_session(self)
+    group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
+    return group.central_node2
+
