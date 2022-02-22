@@ -1,4 +1,0 @@
-Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,Drawing_#,fault_name,always_evaluate,Mapping,LN_OK,CN_OK,Logic_OK
-SOL1B,LINAC,all,GUNB,-32.115049,212,LKG00-5127,2,L2KA00-0517,0,WD37604005C0,SOL1B Magnetic Field,0,OK,,,
-SOL2B,LINAC,all,GUNB,-27.538278,823,LKG00-5127,2,L2KA00-0517,1,WD37604005C0,SOL2B Magnetic Field,0,OK,,,
-

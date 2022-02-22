@@ -1,3 +1,0 @@
-Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,Measured_Device_Type_Id,Drawing_#,fault_name,ignore_device,always_evaluate,LN_OK,CN_OK,Logic_OK
-YAG01B,LINAC,POSITION,GUNB,-28.061394,753,L2KA00-1102,1,L2KA00-0517,0,1,34,WD37604000,YAG01B Position,1,0,,
-

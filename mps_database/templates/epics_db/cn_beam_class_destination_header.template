@@ -1,0 +1,53 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node current beam class at a destination      #
+# Macro description:                                                             #
+#   - DEST         : MPS Destination                                             #
+#   - ID           : Destination ID                                              #
+#================================================================================#
+record(longin, "$(BASE):$(DEST)_SW_BC") {
+  field(DESC, "Software mitigation for: $(DEST)")
+  field(DTYP, "asynInt32")
+  field(SCAN, "1 second")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) 0)MPS_SW_MITIGATION")
+}
+
+record(longin, "$(BASE):$(DEST)_FW_BC") {
+  field(DESC, "Fast mitigation for: $(DEST)")
+  field(DTYP, "asynInt32")
+  field(SCAN, "1 second")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) 0)MPS_FW_MITIGATION")
+}
+
+record(longin, "$(BASE):$(DEST)_BC") {
+  field(DESC, "Current mitigation for: $(DEST)")
+  field(DTYP, "asynInt32")
+  field(SCAN, "1 second")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) 0)MPS_MITIGATION")
+}
+
+record(longin, "$(BASE):$(DEST)_LATCHED_BC") {
+  field(DESC, "Latched mitigation for: $(DEST)")
+  field(DTYP, "asynInt32")
+  field(SCAN, "1 second")
+  field(LOLO, "0")
+  field(LLSV, "MAJOR")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) 0)MPS_LATCHED_MITIGATION")
+}
+#================================================================================#
+# LCLS MPS PV template for Central Node to force beam class at a destination     #
+# Macro description:                                                             #
+#   - DEST         : MPS Destination                                             #
+#   - ID           : Destination ID                                              #
+#================================================================================#
+record(mbbo, "$(BASE):$(DEST)_FORCE_BC") {
+    field(DESC, "Set BC to $(DEST)")
+    field(DTYP, "asynUInt32Digital")
+    field(VAL, "0")
+    field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FORCE_DEST")
+    field(PINI, "YES")

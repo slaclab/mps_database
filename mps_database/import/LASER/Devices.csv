@@ -1,2 +1,0 @@
-Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,Drawing_#,fault_name,always_evaluate
-Mech Shutter,LINAC,POSITION,GUNB,-100,100,L2KA00-1538,1,L2KA00-0517,9,10,WD37604000,Mechanical Shutter Position,0

@@ -52,6 +52,8 @@ class DeviceState(Base):
     initial_shift = 1 * 8 * integrator
     shift = initial_shift
     #print 'Integrator: {0}, shift: {1}, value: {2}'.format(integrator, shift, self.value)
+    if self.value == 0:
+      return 0
     while not bit_found:
       b = (self.value >> shift) & 1
       if b == 1:

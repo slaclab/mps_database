@@ -54,7 +54,6 @@ class Fault(Base):
         if bit_index==-1:
           print(("ERROR: invalid threshold mask (" + hex(state.device_state.mask)))
           return None
-
         # Convert bit_index to integrator index
         # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> CHRG
         # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
@@ -65,5 +64,16 @@ class Fault(Base):
           int_index = 2
         elif (bit_index >= 24 and bit_index <= 31):
           int_index = 3
-
       return int_index
+
+  def get_shift(self):
+    states = self.states
+    min_value = 1e12
+    for state in states:
+      if state.device_state.value < min_value:
+        min_value = state.device_state.value
+    shift = min_value.bit_length() - 1
+    if shift < 0:
+      shift = 0
+    return shift
+

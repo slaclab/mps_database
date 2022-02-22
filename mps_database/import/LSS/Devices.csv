@@ -1,3 +1,0 @@
-Device,Mitigation,Fault,Area,LINAC_Z,Position,MPS_Signal_Source_Location,Application_Card_Number,MPS_Crate,MPS_Channel_#1,MPS_Channel_#2,MPS_Channel_#3,Measured_Device_Type_Id,Drawing_#,fault_name,always_evaluate,LN_OK,CN_OK,Logic_OK
-VVPG:GUNB:941,LINAC,LSS_STATE,GUNB,-10,941,L2KA00-15,1,L2KA00-0517,8,11,14,8,MISSING,VVPG:GUNB:941 Position,0,NO,NO,NO
-

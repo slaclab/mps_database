@@ -1,0 +1,6 @@
+Application,channel,Device,Z,evaluation,description,slope,offset,cable
+3,1,BPMS:GUNB:314,-31.3,1,BPM1B,,,
+3,0,BPMS:GUNB:925,-26.8,1,BPM2B,,,
+2,0,SOLN:GUNB:212,-32.1,1,SOL1B,0.5,0,
+2,1,SOLN:GUNB:823,-27.5,1,SOL2B,,,L2KA0001
+2,3,PBLM:GUNB:622,-30,1,PBLM@Gun Window,,,

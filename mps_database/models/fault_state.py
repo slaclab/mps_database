@@ -68,3 +68,23 @@ class FaultState(Base):
       acs.append(self.add_allowed_class(c, beam_destination))
     return acs
 
+  def get_allowed_class_string_by_dest_name(self,dest_name):
+    acs = [ac for ac in self.allowed_classes if ac.beam_destination.name.upper() == dest_name.upper()]
+    if len(acs) > 1:
+      print("ERROR: Too many allowed classes for one destination")
+      return
+    if len(acs) == 1:
+      return acs[0].beam_class.name
+    else:
+      return '-'
+
+  def get_allowed_class(self,destination):
+    acs = [ac for ac in self.allowed_classes if ac.beam_destination == destination]
+    if len(acs) > 1:
+      print("ERROR: Too many allowed classes for one destination")
+      return
+    if len(acs) == 1:
+      return acs[0]
+    else:
+      return '-'      
+

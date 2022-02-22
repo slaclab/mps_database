@@ -1,9 +1,0 @@
-Name,Number,Description,Value,Mask,Fault,Fault_Description
-I0_LOSS_T0,1,BCS LBLM T0 Fault,1,1,I0_LOSS,Beam Loss Fault
-I0_LOSS_T1,2,BCS LBLM T1 Fault,2,2,I0_LOSS,Beam Loss Fault
-I0_LOSS_T2,3,BCS LBLM T2 Fault,4,4,I0_LOSS,Beam Loss Fault
-I0_LOSS_T3,4,BCS LBLM T3 Fault,8,8,I0_LOSS,Beam Loss Fault
-I0_LOSS_T4,5,BCS LBLM T4 Fault,16,16,I0_LOSS,Beam Loss Fault
-I0_LOSS_T5,6,BCS LBLM T5 Fault,32,32,I0_LOSS,Beam Loss Fault
-I0_LOSS_T6,7,BCS LBLM T6 Fault,64,64,I0_LOSS,Beam Loss Fault
-I0_LOSS_T7,8,BCS LBLM T7 Fault,128,128,I0_LOSS,Beam Loss Fault

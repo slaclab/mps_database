@@ -1,4 +1,0 @@
-Number,Area,Location,Slot,AMC,Crate_Number,Crate,Type,Type_Number,Global_ID,Name,Description
-1,GUNB,MP01,2,2,1,L2KA00-0517,Digital Card,1,1,Digital Card,Digital Inputs
-2,GUNB,MP01,2,1,1,L2KA00-0517,Generic ADC,2,2,Generic ADC,Analog Inputs
-2,GUNB,MP01,3,1,1,L2KA00-0517,BPM Card,4,3,BPM Card,BPM Test

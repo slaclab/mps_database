@@ -1,0 +1,196 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description": "YAGH1 Position",
+            "name":"POSITION",
+            "inputs": [
+                "YAGS:HTR:625:OUT_LMTSW",
+                "YAGS:HTR:625:IN_LMTSW"
+            ],
+            "ignore_when": [
+              "VVPG GUNB 200 Is OK"
+            ],
+            "states": [
+                [0, "Moving", "Moving",0,null,null,null],
+                [1, "Out", "Out",9,null,null,null],
+                [2, "In","In",3,null,null,null],
+                [3, "Broken","Broken",0,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG GUNB 100 Position",
+            "name":"POSITION",
+            "inputs": [
+                "VVPG:GUNB:100:POSITION"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,null,null,null],
+                [1, "OK","OK",9,null,null,null]
+            ]
+        },
+        {
+            "description": "SIOC-GUNB-MP01 Heartbeat Absent",
+            "name":"WDOG",
+            "inputs": [
+                "SIOC:GUNB:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,null,null,null],
+                [1, "OK","OK",9,null,null,null]
+            ]
+        },
+        {
+            "description": "BPMS GUNB 314 X Orbit",
+            "name":"X",
+            "inputs": [
+                "BPMS:GUNB:314:X"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [256, "X_T0","X Thr 0",4,null,null,null],
+                [512, "X_T1","X Thr 1",9,null,null,null]
+            ]
+        },
+        {
+            "description": "BPMS GUNB 314 Y Orbit",
+            "name":"Y",
+            "inputs": [
+                "BPMS:GUNB:314:Y"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [65536, "Y_T0","Y Thr 0",4,null,null,null],
+                [131072, "Y_T1","Y Thr 1",9,null,null,null]
+            ]
+        },
+        {
+            "description": "BPMS GUNB 314 Charge Difference",
+            "name":"CHRG_DIFF",
+            "inputs": [
+                "BPMS:GUNB:314:CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","Chrg Thr 0",0,null,null,null],
+                [2, "CHRG_T1","Chrg Thr 1",2,null,null,null],
+                [4, "CHRG_T2","Chrg Thr 2",3,null,null,null],
+                [8, "CHRG_T3","Chrg Thr 3",4,null,null,null],
+                [16, "CHRG_T4","Chrg Thr 4",5,null,null,null],
+                [32, "CHRG_T5","Chrg Thr 5",6,null,null,null],
+                [64, "CHRG_T6","Chrg Thr 6",7,null,null,null],
+                [128, "CHRG_T7","Chrg Thr 7",8,null,null,null]
+            ]
+        },
+        {
+            "description": "BPMS GUNB 925 X Orbit",
+            "name":"X",
+            "inputs": [
+                "BPMS:GUNB:925:X"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [256, "X_T0","X Thr 0",4,null,null,null],
+                [512, "X_T1","X Thr 1",9,null,null,null]
+            ]
+        },
+        {
+            "description": "BPMS GUNB 925 Y Orbit",
+            "name":"Y",
+            "inputs": [
+                "BPMS:GUNB:925:Y"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [65536, "Y_T0","Y Thr 0",4,null,null,null],
+                [131072, "Y_T1","Y Thr 1",9,null,null,null]
+            ]
+        },
+        {
+            "description": "BPMS GUNB 925 Charge Difference",
+            "name":"CHRG_DIFF",
+            "inputs": [
+                "BPMS:GUNB:925:CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","Chrg Thr 0",0,null,null,null],
+                [2, "CHRG_T1","Chrg Thr 1",2,null,null,null],
+                [4, "CHRG_T2","Chrg Thr 2",3,null,null,null],
+                [8, "CHRG_T3","Chrg Thr 3",4,null,null,null],
+                [16, "CHRG_T4","Chrg Thr 4",5,null,null,null],
+                [32, "CHRG_T5","Chrg Thr 5",6,null,null,null],
+                [64, "CHRG_T6","Chrg Thr 6",7,null,null,null],
+                [128, "CHRG_T7","Chrg Thr 7",8,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL1B Field",
+            "name":"BACT",
+            "inputs": [
+                "SOLN:GUNB:212:CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "BACT_T0","BACT Thr 0",0,null,null,null],
+                [2, "BACT_T1","BACT Thr 1",2,null,null,null],
+                [4, "BACT_T2","BACT Thr 2",3,null,null,null],
+                [8, "BACT_T3","BACT Thr 3",4,null,null,null],
+                [16, "BACT_T4","BACT Thr 4",5,null,null,null],
+                [32, "BACT_T5","BACT Thr 5",6,null,null,null],
+                [64, "BACT_T6","BACT Thr 6",7,null,null,null],
+                [128, "BACT_T7","BACT Thr 7",8,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL2B Field",
+            "name":"BACT",
+            "inputs": [
+                "SOLN:GUNB:823:CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "BACT_T0","BACT Thr 0",0,null,null,null],
+                [2, "BACT_T1","BACT Thr 1",2,null,null,null],
+                [4, "BACT_T2","BACT Thr 2",3,null,null,null],
+                [8, "BACT_T3","BACT Thr 3",4,null,null,null],
+                [16, "BACT_T4","BACT Thr 4",5,null,null,null],
+                [32, "BACT_T5","BACT Thr 5",6,null,null,null],
+                [64, "BACT_T6","BACT Thr 6",7,null,null,null],
+                [128, "BACT_T7","BACT Thr 7",8,null,null,null]
+            ]
+        },
+        {
+            "description": "PBLM Loss",
+            "name":"I0_LOSS",
+            "inputs": [
+                "PBLM:GUNB:622:CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "I0_LOSS_T0","I0 Thr 0",0,null,null,null],
+                [2, "I0_LOSS_T1","I0 Thr 1",2,null,null,null],
+                [4, "I0_LOSS_T2","I0 Thr 2",3,null,null,null],
+                [8, "I0_LOSS_T3","I0 Thr 3",4,null,null,null],
+                [16, "I0_LOSS_T4","I0 Thr 4",5,null,null,null],
+                [32, "I0_LOSS_T5","I0 Thr 5",6,null,null,null],
+                [64, "I0_LOSS_T6","I0 Thr 6",7,null,null,null],
+                [128, "I0_LOSS_T7","I0 Thr 7",8,null,null,null]
+            ]
+        }
+]
+}
+

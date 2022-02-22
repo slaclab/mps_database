@@ -1,7 +1,0 @@
-Device_Location,State_Name,Device_State_Number,Fault_Description,LINAC,DIAG0,SXU,HXU
-LINAC,NOT_OFF,1,Kicker Not Off,10,-,-,-
-LINAC,OFF,2,Kicker Off,10,-,-,-
-SXU,NOT_OFF,1,Kicker Not Off,-,-,10,-
-SXU,OFF,2,Kicker Off,-,-,10,-
-HXU,NOT_OFF,1,Kicker Not off,-,-,-,10
-HXU,OFF,2,Kicker Off,-,-,-,10
