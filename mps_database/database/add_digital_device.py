@@ -10,50 +10,31 @@ import sys
 
 class AddDigitalDevice:
 
-  def __init__(self, file_name, verbose, clear_all=False):
-    self.database_file_name = file_name
-    self.conf = MPSConfig(file_name)
-    if (clear_all):
-      self.conf.clear_all()
-    self.session = self.conf.session
-    self.session.autoflush=False
-#    self.session.autoflush=True
+  def __init__(self, session,conf,verbose):
     self.verbose = verbose
+    self.session = session
+    self.conf = conf
     self.mps_names = MpsName(self.session)
 
   def __del__(self):
     self.session.commit()
 
-  def add_digital_device(self,file_name):
+  def add_digital_device(self,device_info):
     if self.verbose:
-      print(("Adding Digital Device... {0}".format(file_name)))
-    f = open(file_name)
-    line = f.readline().strip()
-    fields=[]
-    for field in line.split(','):
-      fields.append(str(field).lower())
-    while line:
-      device_info={}
-      line = f.readline().strip()
-      if line:
-        field_index = 0
-        for property in line.split(','):
-          device_info[fields[field_index]]=property
-          field_index = field_index + 1
-        device_type_name = device_info['device'].split(":")[0]
-        device_type = self.conf.find_device_type(self.session,device_type_name)
-        device_name = self.mps_names.makeDeviceName(device_info['device'],device_info['channel'])
-        application_card = self.conf.find_app_card(self.session,device_info['application'])
-        device = self.add_device(device_name,device_info['device'].split(":")[2],device_info['z'],
-                                 device_info['description'],device_type,application_card,device_info['device'].split(":")[1],
-                                 device_info['evaluation'])
-        channel = self.add_channel(device_info,application_card)
-        if channel is None:
-          print("INFO: Device Input not created for {0}".format(device_info['device']))
-        if channel is not None:
-          device_input = self.add_input(device_info,device,channel)
-        self.session.commit()
-    f.close()
+      print("Adding digital device {0}".format(device_info['device']))
+    device_type = self.conf.find_device_type(self.session,device_info['type'])
+    device_name = self.mps_names.makeDeviceName(device_info['device'],device_type.name,device_info['channel'])
+    application_card = self.conf.find_app_card(self.session,device_info['appid'])
+    device = self.add_device(device_name,device_info['device'].split(":")[2],device_info['z'],
+                             device_info['description'],device_type,application_card,device_info['device'].split(":")[1],
+                             device_info['evaluation'])
+    channel = self.add_channel(device_info,application_card)
+    if channel is None:
+      print("INFO: Device Input not created for {0}".format(device_info['device']))
+    if channel is not None:
+      device_input = self.add_input(device_info,device,channel)
+    self.session.commit()
+
 
   def add_device(self,name,position,z_location,description,device_type,card,area,evaluation):
     found_device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.name == name).all()
@@ -81,7 +62,7 @@ class AddDigitalDevice:
     if int(device_info['channel']) > card.type.digital_channel_count:
       print("ERROR: Invalid channel number {0}".format(device_info['channel']))
       return
-    if device_info['description'] in ['WDOG','EPICS']:
+    if device_info['type'] in ['WDOG','EPICS']:
       digital_channel = models.DigitalChannel(number=int(device_info['channel']),
                                               name=device_info['device'],
                                               z_name=device_info['z_name'],
@@ -114,20 +95,5 @@ class AddDigitalDevice:
 
         
 
-parser = argparse.ArgumentParser(description='Create MPS database')
-parser.add_argument('-v',action='store_true',default=False,dest='verbose',help='Verbose output')
-parser.add_argument('--db',metavar='database',required=True,help='MPS sqlite database file')
-parser.add_argument('--file',metavar='csvFile',required=True,help='relative path to CSV file to add')
-args = parser.parse_args()
 
-verbose=False
-if args.verbose:
-  verbose=True
-
-db_file=args.db
-
-csv_file = args.file
-
-add_device = AddDigitalDevice(db_file,verbose,False)
-add_device.add_digital_device(csv_file)
 

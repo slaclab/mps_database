@@ -95,3 +95,9 @@ class AnalogChannel(Base):
   name = Column(String, nullable=False)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
   analog_device = relationship("AnalogDevice", uselist=False, backref="channel")
+
+  def get_bay(self):
+    if self.number > 2:
+      return 1
+    else:
+      return 0

@@ -218,7 +218,7 @@ class ExportFaults(MpsReader):
 
   def write_analog_special_case(self,path,dest=None):
     if dest is None:
-      str = 'OK'
+      str = '-'
       filename = 'faults.db'
     else:
       filename = "faults_{0}.db".format(dest.name.lower())
@@ -352,7 +352,7 @@ class ExportFaults(MpsReader):
       self.latex.endDocument(self.report_path)
 
   def __build_fault_table(self, fault):
-    number_of_columns = 5 + len(fault['inputs'])
+    number_of_columns = 7 + len(fault['inputs'])
     format = '\\begin{tabular}{@{}l'
     for i in range(1,number_of_columns):
       format += 'c'
@@ -364,7 +364,7 @@ class ExportFaults(MpsReader):
       header += ' & '
       in_str = '${0} = {1}{2}{3}'.format(self.letters[inp],'\\texttt{',fault['inputs'][inp].replace('_','\_'),'}$\\newline\n')
       inputs.append(in_str)
-    header += 'LINAC & DIAG0 & HXR & SXR \\\\\n'
+    header += 'LASER & DIAG0 & BSY & HXR & SXR & LESA \\\\\n'
     rows = []
     for state in fault['fault'].states:
       row = '{0} & '.format(state.device_state.description.replace('_','\_'))
@@ -378,9 +378,11 @@ class ExportFaults(MpsReader):
           row += ' & '
       else:
         row += 'T & '
-      row += state.get_allowed_class_string_by_dest_name('LINAC') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('DIAG0') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('HXU') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('SXU') + ' \\\\\n'
+      row += state.get_allowed_class_string_by_dest_name('LASER').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('DIAG0').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('DUMPBSY').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('DUMPHXR').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('DUMPSXR').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('LESA').replace('%','\%') + ' \\\\\n'
       rows.append(row)
     return [format, header, rows, inputs]

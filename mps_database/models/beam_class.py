@@ -32,3 +32,4 @@ class BeamClass(Base):
   total_charge = Column(Integer, nullable=False)
   allowed_classes = relationship("AllowedClass", backref='beam_class')
     
+    

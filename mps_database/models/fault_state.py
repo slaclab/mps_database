@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, func
+from sqlalchemy.orm import relationship, backref, object_session
 from mps_database.models import Base
 from .allowed_class import AllowedClass
+from .beam_class import BeamClass
 
 class FaultState(Base):
   """
@@ -69,22 +70,32 @@ class FaultState(Base):
     return acs
 
   def get_allowed_class_string_by_dest_name(self,dest_name):
+    session = object_session(self)
+    max_beam_class = session.query(func.max(BeamClass.number)).one()[0]
     acs = [ac for ac in self.allowed_classes if ac.beam_destination.name.upper() == dest_name.upper()]
     if len(acs) > 1:
       print("ERROR: Too many allowed classes for one destination")
       return
     if len(acs) == 1:
-      return acs[0].beam_class.name
+      if acs[0].beam_class.number == max_beam_class:
+        return '-'
+      else:
+        return acs[0].beam_class.name
     else:
       return '-'
 
   def get_allowed_class(self,destination):
+    session = object_session(self)
+    max_beam_class = session.query(func.max(BeamClass.number)).one()[0]
     acs = [ac for ac in self.allowed_classes if ac.beam_destination == destination]
     if len(acs) > 1:
       print("ERROR: Too many allowed classes for one destination")
       return
     if len(acs) == 1:
-      return acs[0]
+      if acs[0].beam_class.number == max_beam_class:
+        return '-'
+      else:
+        return acs[0]
     else:
       return '-'      
 

@@ -1,0 +1,8 @@
+Name,Number,Analog_Channel_Count,Analog_Channel_Size,Digital_Channel_Count,Digital_Channel_Size,Digital_Out_Channel_Count,Digital_Out_Channel_Size,Message Size,Number of Inputs per channel
+MPS Digital,1,0,1,48,1,2,1,14,1
+MPS Analog,2,6,1,4,1,4,1,18,16
+BCM/BLEN,3,6,1,0,1,0,0,12,16
+BPM,4,2,1,0,1,0,0,12,24
+LLRF,5,0,0,32,0,0,0,14,1
+Wire Scanner,6,0,0,32,0,0,0,,1
+

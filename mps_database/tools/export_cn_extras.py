@@ -16,6 +16,7 @@ class ExportCnExtras(MpsReader):
     MpsReader.__init__(self,db_file=db_file,dest_path=dest_path,template_path=template_path,clean=clean,verbose=verbose)
     self.verbose = verbose
     self.bc_names = []
+    self.bc_sevr = []
 
   def export_conditions(self,mps_db_session):
     if self.verbose:
@@ -52,10 +53,17 @@ class ExportCnExtras(MpsReader):
     self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
     self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
     self.bc_names.append('Full')
+    self.bc_sevr.append('NO_ALARM')
     for bc in beamClasses:
       self.bc_names.append(bc.name)
+      if bc.number < 2:
+        self.bc_sevr.append("MAJOR")
+      elif bc.number in [2,3,5]:
+        self.bc_sevr.append("MINOR")
+      else:
+        self.bc_sevr.append("NO_ALARM")
       macros = { 'NUM':'{0}'.format(bc.number),
-                 'NAME':'{0}'.format(bc.name.upper().replace(' ','_')),
+                 'NAME':'{0}'.format(bc.name),
                  'DESC':'{0}'.format(bc.description),
                  'CHRG':'{0}'.format(bc.total_charge),
                  'SPACE':'{0}'.format(bc.min_period),
@@ -65,7 +73,9 @@ class ExportCnExtras(MpsReader):
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_beam_class_definition.template", macros=macros)
     for dest in destinations:
       macros = { 'DEST':'{0}'.format(dest.name.upper()),
-                 'ID':'{0}'.format(dest.id) }
+                 'ID':'{0}'.format(dest.id),
+                 'SHIFT':'{0}'.format(dest.id-1),
+                 'SHIFT1':'{0}'.format(16+dest.id-1) }
       self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
@@ -82,39 +92,76 @@ class ExportCnExtras(MpsReader):
       self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
+      macros = { 'DEST':'{0}'.format(dest.name.upper())}
+      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
+      self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
+      self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
+      for i in range(1,len(self.bc_names)):
+        macros = {"STRING":self.mbbi_strings[i-1],
+                  "VAL":self.mbbi_vals[i-1],
+                  "BC_NAME":self.bc_names[i],
+                  "BC_VAL":"{0}".format(i-1),
+                  "SEVR":self.mbbi_sevr[i-1],
+                  "BC_SEVR":self.bc_sevr[i]}
+        self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
+        self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
+        self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
+      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
+      self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
+      self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
     if self.verbose:
       print('........Done Export Destinations')
 
   def generate_area_displays(self,mps_db_session):
+    self.initialize_mps_names(mps_db_session)
+    self.mps_db_session = mps_db_session
     if self.verbose:
       print("INFO: Generating area displays")
     areas = ['GUNB','L3B','DOG','LTUH','LTUS','UNDH','UNDS','DMPH','DMPS','FEEH','FEES','SPS','SPH']
     for area in areas:
+      areas = []
+      areas.append(area)
       link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area == area).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
       self.generate_area_display(area,link_nodes)
+      self.generate_ln_alarms(area,link_nodes)
+      self.generate_analog_display(area,areas)
     #now do special case areas
     #L0B includes L0B and COL0
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L0B','COL0','HTR'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('L0B',link_nodes)
+    self.generate_ln_alarms('L0B',link_nodes)
+    self.generate_analog_display('L0B',['L0B','COL0','HTR'])
     #L1B includes L1B and BC1B
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L1B','BC1B'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('L1B',link_nodes)
+    self.generate_ln_alarms('L1B',link_nodes)
+    self.generate_analog_display('L1B',['L1B','BC1B'])
     #L2B includes L2B and BC2B
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L2B','BC2B'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('L2B',link_nodes)
+    self.generate_ln_alarms('L2B',link_nodes)
+    self.generate_analog_display('L2B',['L2B','BC2B'])
     #all BPNs
     areas = ['BPN13','BPN14','BPN15','BPN16','BPN17','BPN18','BPN19','BPN20','BPN21','BPN22','BPN23','BPN24','BPN25','BPN26','BPN27','BPN28']
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(areas)).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('BYP',link_nodes)
+    self.generate_ln_alarms('BYP',link_nodes)
+    self.generate_analog_display('BYP',areas)
     #BSYsc
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['BSYH','BSYS'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('BSYsc',link_nodes)
+    self.generate_ln_alarms('BSYsc',link_nodes)
+    self.generate_analog_display('BSYsc',['BSYH','BSYS'])
     #BSYcu
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['BSYH','BSYS','CLTS'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('BSYcu',link_nodes)
+    self.generate_ln_alarms('BSYcu',link_nodes)
+    self.generate_analog_display('BSYcu',['BSYH','BSYS','CLTS'])
     #SPD
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['SPD','SLTD'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('SPD',link_nodes)
+    self.generate_ln_alarms('SPD',link_nodes)
+    self.generate_analog_display('SPD',['SPD','SLTD'])
     #finish up by generating display for MPS global which has all link nodes.  It is a json file with macros
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     ln_macros = []
@@ -133,6 +180,55 @@ class ExportCnExtras(MpsReader):
 
     if self.verbose:
       print("........Done Generating area displays")
+
+  def generate_analog_display(self,area,areas):
+    blm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BLM').all()
+    bpm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BPMS').all()
+    bcm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'TORO').all()
+    blen_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BLEN').all()
+    farc_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'FARC').all()
+    if len(blm_dt) > 0:
+      blms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_analog_display_single(blms,area,'BLM')
+    if len(bpm_dt) > 0:
+      bpms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bpm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_analog_display_single(bpms,area,'BPM')
+    if len(bpm_dt) > 0:
+      bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bcm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_analog_display_single(bcms,area,'BCM')
+    if len(blen_dt) > 0:
+      bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blen_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_analog_display_single(bcms,area,'BCM')
+    if len(farc_dt) > 0:
+      bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == farc_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_analog_display_single(bcms,area,'BCM')
+
+
+  def generate_analog_display_single(self,devices,area,type):
+      macros = []
+      for device in devices:
+        if self.mps_names.getBlmType(device) in ['CBLM','WF']:
+          wf = 'FAST'
+        else:
+          wf = 'MPS'
+        fast = False
+        if self.mps_names.getBlmType(device) in ['LBLM']:
+          fast = True
+        show_wf = False
+        if type == 'BLM':
+          show_wf = True
+        faults = self.get_faults(device)
+        for fault in faults:
+          specific_macros = {}
+          specific_macros['PV_PREFIX'] = self.mps_names.getDeviceName(device)
+          specific_macros['THR'] = fault.name
+          specific_macros['WF'] = wf
+          specific_macros['HAS_FAST'] = fast
+          specific_macros['SHOW_WF'] = show_wf
+          macros.append(specific_macros)
+      filename = '{0}/thresholds/{1}_{2}_thr.json'.format(self.display_path,area.upper(),type.upper())
+      self.write_json_file(filename, macros)
+
 
   def generate_area_display(self,area,link_nodes):
       header_height = 30
@@ -184,6 +280,17 @@ class ExportCnExtras(MpsReader):
       filename = '{0}areas/{1}_inputs_global.json'.format(self.display_path,area.lower())
       self.write_json_file(filename, ln_macros)
 
+  def generate_ln_alarms(self,area,link_nodes):
+      include_path = '{0}mpln_{1}_include.txt'.format(self.alarm_path,area)
+      for ln in link_nodes:
+        macros = {'PREFIX':ln.get_app_prefix(),
+                  'LNID':'{0}'.format(ln.lcls1_id)}
+        filename = 'mpln_{0}_{1}.alhConfig'.format(ln.area.lower(),ln.location.lower())
+        path = '{0}areas/{1}'.format(self.alarm_path,filename)
+        self.write_alarm_file(path=path, template_name='link_node_alarm.template', macros=macros)
+        include_macros = {'AREA':area,
+                          'FILENAME':filename}
+        self.write_alarm_file(path=include_path, template_name='mps_include.template', macros=include_macros)
 
   def __write_area_header(self, path,macros):
       self.write_ui_file(path=path, template_name="ln_area_header.tmpl", macros=macros)

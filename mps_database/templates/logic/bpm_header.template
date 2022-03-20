@@ -1,0 +1,8 @@
+        {
+            "description": "$(DESCRIPTION) $(TEXT)",
+            "name":"$(FAULT)",
+            "dtype":"$(DTYPE)",
+            "inputs": [
+                "$(INPUT)"
+            ],
+            "ignore_when": [

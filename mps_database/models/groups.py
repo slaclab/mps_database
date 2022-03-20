@@ -20,5 +20,5 @@ class LinkNodeGroup(Base):
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False)
   link_nodes = relationship("LinkNode", order_by="LinkNode.lcls1_id", backref='link_node_groups')
-  central_node1 = Column(Integer,nullable=False)
+  central_node1 = Column(String,nullable=False)
   central_node2 = Column(String,nullable=False)

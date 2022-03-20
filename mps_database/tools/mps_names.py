@@ -86,8 +86,18 @@ class MpsName:
         :type deviceInput: models.DeviceInput 
         :rtype :string
         """
-        base_name = ":".join(device.name.split(":")[:3])
+        if device.device_type.name in ['WDOG','EPICS']:
+          base_name = ":".join(device.name.split(":")[1:-1])
+        else:
+          base_name = ":".join(device.name.split(":")[1:])
         return base_name
+
+    def getBlmType(self,device):
+        if device.device_type.name in ['BLM','CBLM','LBLM']:
+          type = device.name.split(':')[1]
+        else:
+          type = device.device_type.name
+        return type
 
     def getDeviceInputBaseName(self, deviceInput):
         """
@@ -104,7 +114,7 @@ class MpsName:
         :type deviceInput: models.DeviceInput 
         :rtype :string
         """
-        base_name = ":".join(deviceInput.digital_device.name.split(":")[:3])
+        base_name = self.getDeviceName(deviceInput.digital_device)
         return base_name
 
     def getDeviceInputName(self, deviceInput):
@@ -249,11 +259,19 @@ class MpsName:
     def getConditionName(self, condition):
         return "$(BASE):" + condition.name.upper() + "_COND"
 
-    def makeDeviceName(self,string,ch=0):
-        if int(ch) < 32:
-          ret_name = ":".join(string.split(":")[:3])
-        else:
-          ret_name = string
+    def makeDeviceName(self,string,type,ch=0):
+        sub = string.split(":")
+        dt = []
+        dt.append(type)
+        len = 4
+        if sub[-1] in ['A','B','AS','BS','AH','BH','A_WF','B_WF']:
+          len = 5
+        elif sub[-2] in ['A','B','AS','BS','AH','BH','A_WF','B_WF']:
+          len = 5
+        elif type in ['EPICS','WDOG']:
+          len = 5
+        more_sub = dt+sub
+        ret_name = ":".join(more_sub[:len])
         return ret_name
         
         

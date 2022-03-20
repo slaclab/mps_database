@@ -1,0 +1,8 @@
+Name,Number,Description,Destination_Mask
+LASER,1,Laser stop at mech shutter,1
+DIAG0,2,Diagnostics Line,2
+DUMPBSY,3,Linac to BSY,4
+DUMPHXR,4,HXR beamline,8
+DUMPSXR,5,SXR Beamline,16
+LESA,6,A-Line,32
+

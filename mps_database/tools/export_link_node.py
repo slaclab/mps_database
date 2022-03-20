@@ -23,7 +23,7 @@ class ExportLinkNode(MpsReader):
   def export(self,mps_db_session,link_nodes=None,crate_profiles=None,input_report=None,cn_disp=None):
       # Extract the application information
       if link_nodes is None:
-        link_nodes = mps_db_session.query(models.LinkNode).all()
+        link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.slot_number == 2).all()
       for link_node in link_nodes:
         app_path = self.get_app_path(link_node,link_node.slot_number)
         # only do this stuff for "link nodes" in slot 2
@@ -58,7 +58,7 @@ class ExportLinkNode(MpsReader):
         if link_node.get_type() == 'Digital':
           self.__write_app_id_config(path=app_path, macros={"ID":"0","PROC":"3"}) # If there are no analog cards, set ID to invalid
           for ch in range(0,6):
-            macros = { "P": app_prefix,
+            macros = { "P": link_node.get_app_prefix(),
                        "CH":str(ch),
                        "CH_NAME":"Not Available",
                        "CH_PVNAME":"None",
@@ -66,6 +66,14 @@ class ExportLinkNode(MpsReader):
                        "TYPE":"None"
                      }
             self.write_link_node_channel_info_db(path=app_path, macros=macros)
+            macros = {"P":'{0}:CH{1}_WF'.format(link_node.get_app_prefix(),ch),
+                      "CH":"{0}".format(ch)}
+            self.write_epics_env(path=app_path, template_name='waveform.template', macros=macros)
+            macros = {"P":'{0}'.format(link_node.get_app_prefix()),
+                      "CH":"{0}".format(ch),
+                      "ATTR0":"I0_CH{0}".format(ch),
+                      "ATTR1":"I1_CH{0}".format(ch)}
+            self.write_epics_env(path=app_path, template_name='bsa.template', macros=macros)
         slots = []
         cards = link_node.cards
         if link_node.slot_number == 2:
@@ -78,6 +86,7 @@ class ExportLinkNode(MpsReader):
           self.__write_lc1_info_config(app_path,link_node)
           self.__generate_crate_display(link_node)
           for card in cards:
+            self.app_timeout_alarms(card)
             if cn_disp is not None:
               self.write_cn_status_macros(cn_disp,card)
             self.export_app.export(mps_db_session,card,self.inputDisplay)
@@ -104,6 +113,22 @@ class ExportLinkNode(MpsReader):
                         "SLOT_PREFIX":'Spare',
                         "SLOT_DESC":'Spare'}
               self.__write_link_node_slot_info_db(path=app_path, macros=macros)
+
+  def app_timeout_alarms(self,card):
+    cn1 = card.link_node.get_cn1_prefix()
+    cn2 = card.link_node.get_cn2_prefix()
+    macros = {'MPS_PREFIX':cn1,
+              'LN_GROUP':'{0}'.format(card.link_node.group),
+              'ID':'{0}'.format(card.number)}
+    file_path1 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,card.link_node.group,cn1.split(':')[2].lower())
+    self.write_alarm_file(path=file_path1, template_name='mps_group.template', macros=macros)
+    if cn1 != cn2:
+      macros = {'MPS_PREFIX':cn2,
+                'LN_GROUP':'{0}'.format(card.link_node.group),
+                'ID':'{0}'.format(card.number)}
+      file_path2 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,card.link_node.group,cn2.split(':')[2].lower())
+      self.write_alarm_file(path=file_path2, template_name='mps_group.template', macros=macros)
+    
 
   def write_cn_status_macros(self,cn_disp,card):
     macros = {}

@@ -84,20 +84,20 @@ class LinkNode(Base):
     has_analog = False
     is_slot2 = False
     for c in self.cards:
-      if c.slot_number == 2:
+      if c.slot_number < 3:
         is_slot2 = True
-        if c.type.name == 'Digital Card':
+        if c.type.name == 'MPS Digital':
           has_digital = True
-        elif c.type.name == 'Generic ADC':
+        elif c.type.name == 'MPS Analog':
           has_analog = True
 
     if not is_slot2:
       for c in self.cards:
         if c.slot_number == 2:
           is_slot2 = True
-          if c.type.name == 'Digital Card':
+          if c.type.name == 'MPS Digital':
             has_digital = True
-          elif c.type.name == 'Generic ADC':
+          elif c.type.name == 'MPS Analog':
             has_analog = True
 
     if has_digital and has_analog:
@@ -112,7 +112,9 @@ class LinkNode(Base):
   def get_app_number(self):
     is_slot2 = False
     for c in self.cards:
-      if c.slot_number == 2:
+      if c.slot_number == 1:
+        return 1
+      elif c.slot_number == 2:
         return 1
       
     ln_type = self.get_type()

@@ -33,6 +33,7 @@ class ExportLinkNodeGroups(MpsReader):
     self.input_report.startDocument('SCMPS Device Inputs',self.config_version)
     groups = mps_db_session.query(models.LinkNodeGroup).order_by(models.LinkNodeGroup.number).all()
     for group in groups:
+      self.generate_group_alarm(group)
       self.crate_profiles.startGroup(group.number)
       self.input_report.startGroup(group.number)
       self.export_ln.export(mps_db_session,group.link_nodes,self.crate_profiles,self.input_report,self.cn_status_display)
@@ -44,6 +45,26 @@ class ExportLinkNodeGroups(MpsReader):
       self.input_report.endDocument(self.report_path)
     if self.verbose:
       print('........Done Exporting Devices')   
+
+  def generate_group_alarm(self,group):
+    macros = {'MPS_PREFIX':group.central_node1,
+              'LN_GROUP':'{0}'.format(group.number)}
+    file_path1 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,group.number,group.central_node1.split(':')[2].lower())
+    self.write_alarm_file(path=file_path1, template_name='mps_group_header.template', macros=macros)
+    include_path1 = '{0}group_{1}_include.txt'.format(self.alarm_path,group.central_node1.split(':')[2].lower())
+    include_macros1 = {'PREFIX':group.central_node1,
+                      'FILENAME':'group_{0}_{1}.alhConfig'.format(group.number,group.central_node1.split(':')[2].lower())}
+    self.write_alarm_file(path=include_path1, template_name='group_include.template', macros=include_macros1)
+    if group.central_node1 != group.central_node2:
+      macros = {'MPS_PREFIX':group.central_node2,
+                'LN_GROUP':'{0}'.format(group.number)}
+      file_path2 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,group.number,group.central_node2.split(':')[2].lower())
+      self.write_alarm_file(path=file_path2, template_name='mps_group_header.template', macros=macros)
+      include_path2 = '{0}group_{1}_include.txt'.format(self.alarm_path,group.central_node2.split(':')[2].lower())
+      include_macros2 = {'PREFIX':group.central_node2,
+                        'FILENAME':'group_{0}_{1}.alhConfig'.format(group.number,group.central_node2.split(':')[2].lower())}
+      self.write_alarm_file(path=include_path2, template_name='group_include.template', macros=include_macros2)
+    
 
   def generate_group_display(self,group,link_nodes):
     header_height = 50
@@ -103,7 +124,7 @@ class ExportLinkNodeGroups(MpsReader):
       self.write_group_embed(node,x,y,'LOC','0','LN Rx',pin,pin,filename)
       more_lns = True
       while more_lns:
-        pin = node.get_app_prefix()
+        pin = test_ln.get_app_prefix()
         lk = [ln for ln in link_nodes if ln.group_link == test_ln.crate.id]
         if len(lk) < 1:
           more_lns = False

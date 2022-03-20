@@ -1,0 +1,48 @@
+        {
+            "description": "$(DESCRIPTION) X Orbit",
+            "name":"X",
+            "dtype":"$(DTYPE)"
+            "inputs": [
+                "$(DEVICE):X"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [256, "X_T0","X Thr 0",null,null,4,null,null,null],
+                [512, "X_T1","X Thr 1",null,null,null,null,null,null]
+            ]
+        },
+        {
+            "description": "$(DESCRIPTION) Y Orbit",
+            "name":"Y",
+            "dtype":"$(DTYPE)"
+            "inputs": [
+                "$(DEVICE):Y"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [65536, "Y_T0","Y Thr 0",null,null,4,null,null,null],
+                [131072, "Y_T1","Y Thr 1",null,null,null,null,null,null]
+            ]
+        },
+        {
+            "description": "$(DESCRIPTION) Charge Difference",
+            "name":"CHRG_DIFF",
+            "dtype":"$(DTYPE)"
+            "inputs": [
+                "$(DEVICE):CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","Chrg Thr 0",null,null,0,null,null,null],
+                [2, "CHRG_T1","Chrg Thr 1",null,null,2,null,null,null],
+                [4, "CHRG_T2","Chrg Thr 2",null,null,6,null,null,null],
+                [8, "CHRG_T3","Chrg Thr 3",null,null,7,null,null,null],
+                [16, "CHRG_T4","Chrg Thr 4",null,null,8,null,null,null],
+                [32, "CHRG_T5","Chrg Thr 5",null,null,9,null,null,null],
+                [64, "CHRG_T6","Chrg Thr 6",null,null,10,null,null,null],
+                [128, "CHRG_T7","Chrg Thr 7",null,null,11,null,null,null]
+            ]
+        },

@@ -1,0 +1,20 @@
+        {
+            "description": "$(DESCRIPTION)",
+            "name":"$(NAME)",
+            "dtype":"$(DTYPE)",
+            "inputs": [
+                "(INPUT)"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "$(FLT)_T0","$(FLTL) Thr 0",null,null,0,null,null,null],
+                [2, "$(FLT)_T1","$(FLTL) Thr 1",null,null,2,null,null,null],
+                [4, "$(FLT)_T2","$(FLTL) Thr 2",null,null,6,null,null,null],
+                [8, "$(FLT)_T3","$(FLTL) Thr 3",null,null,7,null,null,null],
+                [16, "$(FLT)_T4","$(FLTL) Thr 4",null,null,8,null,null,null],
+                [32, "$(FLT)_T5","$(FLTL) Thr 5",null,null,9,null,null,null],
+                [64, "$(FLT)_T6","$(FLTL) Thr 6",null,null,10,null,null,null],
+                [128, "$(FLT)_T7","$(FLTL) Thr 7",null,null,11,null,null,null]
+            ]
+        },

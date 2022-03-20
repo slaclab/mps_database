@@ -1,0 +1,3 @@
+    field($(STRING), "$(BC_NAME)")
+    field($(VAL),"$(BC_VAL)")
+    field($(SEVR),"$(BC_SEVR)")

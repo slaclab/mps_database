@@ -1,0 +1,6 @@
+            ],
+            "states": [
+                [0, "$(Z_STATE)","$(Z_STATE)",$(LASER0),$(DIAG0),$(DUMPBSY0),$(DUMPHXR0),$(DUMPSXR0),$(LESA0)],
+                [1, "$(O_STATE)","$(O_STATE)",$(LASER1),$(DIAG1),$(DUMPBSY1),$(DUMPHXR1),$(DUMPSXR1),$(LESA1)]
+            ]
+        },

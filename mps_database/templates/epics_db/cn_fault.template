@@ -15,7 +15,7 @@ record(longin, "$(NAME)_INP") {
 }
 record(mbbiDirect, "$(NAME)") {
   field(DESC, "$(DESC)")
-  field(DTYP, "Soft Channel")
+  field(DTYP, "Raw Soft Channel")
   field(SCAN, "Passive")
   field(SHFT, "$(SHIFT)")
   field(INP,  "$(NAME)_INP")
