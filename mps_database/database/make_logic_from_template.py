@@ -21,7 +21,7 @@ class MakeLogic(MpsReader):
     self.ignore2 = ['YAG01B_IGNORE','VV02_IGNORE']
     self.ignore3 = ['YAG01B_IGNORE','VV02_IGNORE','COL0_IGNORE']
     self.bpm_text = ['X Orbit','Y Orbit','Charge Difference']
-    self.fault = ['X','Y','CHRG']
+    self.fault = ['X','Y','CHRGDIFF']
     self.val1 = [256,65536]
     self.val2 = [512,131072]
     self.vals = [1,2,4,8,16,32,64,128]
@@ -222,8 +222,8 @@ class MakeLogic(MpsReader):
             fault = 'I0_LOSS'
             fltl = 'LOSS'
           if device_info['type'] == 'TORO':
-            fault = 'CHARGE'
-            fltl = 'CHARGE'
+            fault = 'CHRG'
+            fltl = 'CHRG'
           if device_info['type'] == 'BLEN':
             fault = 'L'
             fltl = 'L'

@@ -109,3 +109,4 @@ record(mbbo, "$(BASE):$(DEST)_FORCE_BC") {
     field(VAL, "0")
     field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FORCE_DEST")
     field(PINI, "YES")
+    field(ASG,  "$(ASG1)")

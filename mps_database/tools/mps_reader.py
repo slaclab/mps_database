@@ -112,10 +112,12 @@ class MpsReader:
         """
         if device_type_name in ["SOLN", "BEND", "KICK","BACT"]:
             return "BACT"
-        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC","WF",'SBLM']:
+        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC",'SBLM']:
             return "LOSS"
+        elif device_type_name in ['WF']:
+            return 'WF'
         elif device_type_name in ["TORO", "FARC"]:
-            return "CHARGE"
+            return "CHRG"
         elif device_type_name in ['BPMS']:
             return ""
         elif device_type_name in ['BLEN']:
@@ -195,7 +197,7 @@ class MpsReader:
         else:
             # For other application, the get index from the following 2-D dict
             bpm_fault_index = { "X":"0", "Y":"1", "CHRG":"2","CHRG_DIFF":"2","CHRGDIFF":"2" }
-            bcm_fault_index = { "CHARGE":"0", "DIFF": "1" }
+            bcm_fault_index = { "CHRG":"0", "DIFF": "1" }
             fault_indexes = {   "BPMS":bpm_fault_index,
                                 "FARC":bcm_fault_index,
                                 "TORO":bcm_fault_index }

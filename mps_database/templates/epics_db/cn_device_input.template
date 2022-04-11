@@ -38,6 +38,7 @@ record(bo, "$(P)_SCUNLH") {
   field(DESC, "CR[1], CA[1], CH[23] Unlatch")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_DEVICE_INPUT_UNLATCH")
+  field(ASG,  "$(ASG1)")
 }
 
 record(bo, "$(P)_SCBYPV") {
@@ -70,6 +71,7 @@ record(longout, "$(P)_SCBYPD") {
   field(VAL, "0")
   field(PINI, "YES")
   field(OUT, "@asyn(CENTRAL_NODE $(ID) 0)MPS_DEVICE_INPUT_BYPEXPDATE")
+  field(ASG,  "$(ASG2)")
 }
 
 record(longin, "$(P)_SCBYPT") {

@@ -208,11 +208,11 @@ class ExportDevice(MpsReader):
     thr_pv = ''
     if channel.number < 32:
       shift = channel.number
-    if channel.device_input.digital_device.description == 'EPICS':
+    if channel.device_input.digital_device.device_type.name == 'EPICS':
       byte_pv = '{0}_INPUT_RBV'.format(channel.monitored_pvs)
       thr_pv = '{0}_THR'.format(channel.monitored_pvs)
       visible = True
-    if channel.device_input.digital_device.description == 'WDOG':
+    if channel.device_input.digital_device.device_type.name == 'WDOG':
       byte_pv = '{0}_WDOG_RBV'.format(channel.monitored_pvs)
     macros = {}
     macros['CH'] = '{0}'.format(channel.number)

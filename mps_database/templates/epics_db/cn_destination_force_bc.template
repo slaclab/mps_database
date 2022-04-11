@@ -8,4 +8,5 @@ record(mbbo, "$(BASE):$(DEST)_SOFT_PERMIT") {
     field(ONST, "Revoke Permit")
     field(ONVL,"1")
     field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FORCE_DEST")
+    field(ASG,  "$(ASG1)")
 }

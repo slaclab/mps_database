@@ -24,6 +24,7 @@ record(longout, "$(P)_SCBYPD") {
   field(VAL, "0")
   field(PINI, "YES")
   field(OUT, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_ANALOG_DEVICE_BYPEXPDATE")
+  field(ASG,  "$(ASG2)")
 }
 
 record(longin, "$(P)_SCBYPT") {
