@@ -26,16 +26,22 @@ class MPSConfig:
     Tries to find the most recent db configuration to use.
     Default db name of mps_gun_config.db
     """
+    #TODO: remove this
+    test_path = "/u/cd/lking/mps/mps_dbtest"
     afs_current_path = "/afs/slac/g/lcls/physics/mps_configuration/current/"
-    #Add nums to exclude -cn- dbs
-    db_naming = 'mps_config-[0-9]*.db'
+    local_path = "/usr/local/lcls/physics/mps_configuration/current"
+    db_naming = "mps_config-[0-9]*.db"
     try:
-      dbs = sorted(glob.glob(afs_current_path+db_naming))
+    #Add nums to exclude -cn- dbs
+      dbs = sorted(glob.glob(test_path+db_naming))
+      #dbs = sorted(glob.glob(afs_current_path+db_naming))
+      if not dbs:
+        dbs = sorted(glob.glob(local_path+db_naming))
       if not dbs:
         raise
-      filename = dbs[-1]
+      return dbs[-1]
     except:
-      filename = 'mps_gun_config.db'
+      filename = "mps_gun_config.db"
     print("Choosing ", filename, " as filename")
     return filename
 
