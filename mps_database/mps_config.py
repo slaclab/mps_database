@@ -26,8 +26,6 @@ class MPSConfig:
     Tries to find the most recent db configuration to use.
     Default db name of mps_gun_config.db
     """
-    #TODO: remove this
-    #test_path = "/u/cd/lking/mps/mps_dbtest/"
     test_path = "/afs/slac/g/lcls/physics/mps_configuration/2022-03-14-a/"
     afs_current_path = "/afs/slac/g/lcls/physics/mps_configuration/current/"
     local_path = "/usr/local/lcls/physics/mps_configuration/current"
@@ -35,20 +33,17 @@ class MPSConfig:
 
     try:
     #Add nums to exclude -cn- dbs
-      print("Trying /usr/local/")
       dbs = sorted(glob.glob(local_path+db_naming))
       if not dbs:
-        print("Trying /afs/slac/")
         dbs = sorted(glob.glob(afs_current_path+db_naming))
       if not dbs:
-        print("Trying local testing")
         dbs = sorted(glob.glob(test_path+db_naming))
       if not dbs:
         raise
       filename = dbs[-1]
     except:
       filename = "mps_gun_config.db"
-    print("Choosing ", filename, " as filename")
+    print("Choosing ", filename, " as configuration db.")
     return filename
 
   def find_device_type(self,session,typ,analog=False):
