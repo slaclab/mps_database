@@ -27,14 +27,15 @@ class MPSConfig:
     Default db name of mps_gun_config.db
     """
     #TODO: remove this
-    #test_path = "/u/cd/lking/mps/mps_dbtest/
+    #test_path = "/u/cd/lking/mps/mps_dbtest/"
     test_path = "/afs/slac/g/lcls/physics/mps_configuration/2022-03-14-a/"
     afs_current_path = "/afs/slac/g/lcls/physics/mps_configuration/current/"
     local_path = "/usr/local/lcls/physics/mps_configuration/current"
-    db_naming = "mps_config-[0-9]*.db"
+    db_naming = "mps_config-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.db"
+
     try:
     #Add nums to exclude -cn- dbs
-      print("Trying /usr/local")
+      print("Trying /usr/local/")
       dbs = sorted(glob.glob(local_path+db_naming))
       if not dbs:
         print("Trying /afs/slac/")
