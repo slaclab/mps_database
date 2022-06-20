@@ -1,0 +1,30 @@
+\documentclass[10pt, oneside]{book}
+\usepackage{lcls-article}
+\usepackage{longtable}
+\usepackage{tabularx}
+\newcommand\code{\begingroup \urlstyle{tt}\Url}
+\renewcommand\revnum{testing}
+\title{Appendix B: SCMPS Device Input Checkout:\\testing}
+\date{}
+\begin{document}
+\maketitle
+\addtocounter{page}{1}
+\chapter{Link Node Group 0}
+\section{Link Node  50: L2KA00-0517}
+\begin{longtable}{@{}ccclcc@{}}
+\toprule
+\multicolumn{1}{@{}c}{App ID} & \multicolumn{1}{c}{Slot}  & \multicolumn{1}{c}{Channel} & \multicolumn{1}{c@{}}{Input Name} & \multicolumn{1}{c@{}}{LN Check} & \multicolumn{1}{c@{}}{CN Check}\\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\ldots continued from previous page} \\
+\midrule
+\multicolumn{1}{@{}c}{App ID} & \multicolumn{1}{c}{Slot}  & \multicolumn{1}{c}{Channel}  & \multicolumn{1}{c@{}}{Input Name} & \multicolumn{1}{c@{}}{LN Check} & \multicolumn{1}{c@{}}{CN Check}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{c}{continued on next page\ldots} \\
+\endfoot
+\bottomrule
+\endlastfoot
+2 & 2 & 2& \texttt{SBLM:GUNB:753:I0\_LOSS} & $\Box$ & $\Box$\\
+\end{longtable}

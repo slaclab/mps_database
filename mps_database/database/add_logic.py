@@ -21,7 +21,7 @@ class AddLogic:
 #    self.session.autoflush=True
     self.verbose = verbose
     self.mps_names = MpsName(self.session)
-    self.destination_order = ['LASER','DIAG0','DUMPBSY','DUMPHXR','DUMPSXR','LESA']
+    self.destination_order = ['LASER','SC_DIAG0','SC_BSYD','SC_HXR','SC_SXR','SC_LESA']
 
   def __del__(self):
     self.session.commit()

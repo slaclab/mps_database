@@ -59,6 +59,7 @@ class DigitalChannel(Base):
   name = Column(String, nullable=False)
   z_name = Column(String, nullable=False)
   o_name = Column(String, nullable=False)
+  description = Column(String,nullable=False,default="")
   num_inputs = Column(Integer, nullable=False, default=0) # for SoftChannels only
   monitored_pvs = Column(String, nullable=False, default="") # for SoftChannels only
   alarm_state = Column(Integer, nullable=False, default=0)

@@ -20,7 +20,7 @@ class ExportLinkNode(MpsReader):
     self.export_app = ExportApplication(db_file,template_path,dest_path,False,verbose)
     self.verbose = verbose
 
-  def export(self,mps_db_session,link_nodes=None,crate_profiles=None,input_report=None,cn_disp=None):
+  def export(self,mps_db_session,link_nodes=None,crate_profiles=None,input_report=None,cn_disp=None,appendixA=None):
       # Extract the application information
       if link_nodes is None:
         link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.slot_number == 2).all()
@@ -81,8 +81,8 @@ class ExportLinkNode(MpsReader):
           if crate_profiles is not None:
             crate_profiles.startLinkNode(link_node.lcls1_id,link_node.crate.location)
             self.writeCrateProfile(link_node,crate_profiles)
-          if input_report is not None:
-            input_report.startLinkNode(link_node.lcls1_id,link_node.crate.location)
+          if appendixA is not None:
+            self.writeAppendixA(link_node,appendixA)
           self.__write_lc1_info_config(app_path,link_node)
           self.__generate_crate_display(link_node)
           for card in cards:
@@ -103,7 +103,11 @@ class ExportLinkNode(MpsReader):
           self.write_json_file(input_display_filename,self.inputDisplay.get_macros(False)) 
           input_display_filename = '{0}inputs/ln_{1}_inputs_cn3.json'.format(self.display_path,link_node.lcls1_id)
           self.write_json_file(input_display_filename,self.inputDisplay.get_macros(True))
-          input_report.writeAppInputs(self.inputDisplay.get_input_report_rows())
+          if input_report is not None:
+            rows = self.inputDisplay.get_input_report_rows()
+            if len(rows) > 0:
+              input_report.startLinkNode(link_node.lcls1_id,link_node.crate.location)
+              input_report.writeAppInputs(rows)
           for slot in range(2,8):
             if slot not in slots:
               macros = {"P":link_node.get_app_prefix(),
@@ -208,18 +212,23 @@ class ExportLinkNode(MpsReader):
       lc1_id = link_node.lcls1_id
       rows = []
       app = self.__find_slot2_digital(link_node)
-      slot_type = app.type.name
-      slot_app_id = app.number
-      slot_description = app.description
+      slot_type = 'N/A'
+      slot_app_id = 'N/A'
+      slot_description = "Not In MPS"
+      if len(app.digital_channels) > 0:
+        slot_type = app.type.name
+        slot_app_id = app.number
+        slot_description = app.description
       rows.append(['RTM',slot_app_id,slot_type,slot_description])
       slot_type = 'N/A'
       slot_app_id = 'N/A'
       slot_description = "Not In MPS"
       app = self.__find_slot2_analog(link_node)
       if app is not None:
-        slot_type = app.type.name
-        slot_app_id = app.number
-        slot_description = app.description   
+        if len(app.digital_channels) > 0 or len(app.analog_channels) > 0:
+          slot_type = app.type.name
+          slot_app_id = app.number
+          slot_description = app.description   
       rows.append(['2',slot_app_id,slot_type,slot_description])       
       for slot in range(3,8):
         slot_type = 'N/A'
@@ -230,12 +239,48 @@ class ExportLinkNode(MpsReader):
           print("ERROR: Too many apps!")
           continue   
         if len(apps) == 1:
-          slot_type = '{0}'.format(apps[0].type.name)
-          slot_app_id = '{0}'.format(apps[0].number)
-          slot_description = '{0}'.format(apps[0].description)
+          if len(apps[0].digital_channels) > 0 or len(apps[0].analog_channels) > 0:
+            slot_type = '{0}'.format(apps[0].type.name)
+            slot_app_id = '{0}'.format(apps[0].number)
+            slot_description = '{0}'.format(apps[0].description)
         slot_report = slot
         rows.append([slot_report,slot_app_id,slot_type,slot_description])
-      crate_profiles.crateProfile(lc1_id,shm,rack,rows) 
+      crate_profiles.crateProfile(lc1_id,shm,rack,rows)
+
+  def writeAppendixA(self,link_node,appendixA):
+      shouldWrite = False
+      rack = link_node.crate.location
+      shm = link_node.get_shelf_manager()
+      lc1_id = link_node.lcls1_id
+      rows = []
+      app = self.__find_slot2_digital(link_node)
+      if len(app.digital_channels) > 0:
+        shouldWrite = True
+        slot_app_id = app.number
+        slot_prefix = app.get_pv_name()
+        rows.append(['RTM',slot_app_id,slot_prefix])
+      app = self.__find_slot2_analog(link_node)
+      if app is not None:
+        if len(app.digital_channels) > 0 or len(app.analog_channels) > 0:
+          shouldWrite = True
+          slot_app_id = app.number
+          slot_prefix = app.get_pv_name()
+          rows.append(['2',slot_app_id,slot_prefix])       
+      for slot in range(3,8):
+        apps = [app for app in link_node.cards if app.slot_number == slot]   
+        if len(apps) > 1:
+          print("ERROR: Too many apps!")
+          continue   
+        if len(apps) == 1:
+          if len(apps[0].digital_channels) > 0 or len(apps[0].analog_channels) > 0:
+            shouldWrite = True
+            slot_app_id = '{0}'.format(apps[0].number)
+            slot_prefix = apps[0].get_pv_name()
+            slot_report = slot
+            rows.append([slot_report,slot_app_id,slot_prefix])
+      if shouldWrite:
+        appendixA.startLinkNode(link_node.lcls1_id,link_node.crate.location)
+        appendixA.appendixA(lc1_id,shm,rack,rows)
 
   def __generate_crate_display(self,link_node):
     width = 347

@@ -27,22 +27,28 @@ class ExportLinkNodeGroups(MpsReader):
       print("INFO: Begin Exporting Devices")
     crate_filename = '{0}/SCMPS_{1}_CrateProfiles.tex'.format(self.report_path,self.config_version)
     input_filename = '{0}/SCMPS_{1}_DeviceInputs.tex'.format(self.report_path,self.config_version)
+    appendixA_filename = '{0}/SCMPS_{1}_AppendixA.tex'.format(self.report_path,self.config_version)
+    appendixB_filename = '{0}/SCMPS_{1}_AppendixB.tex'.format(self.report_path,self.config_version)
     self.crate_profiles = Latex(crate_filename)
     self.crate_profiles.startDocument('SCMPS Crate Profiles',self.config_version)
     self.input_report = Latex(input_filename)
-    self.input_report.startDocument('SCMPS Device Inputs',self.config_version)
+    self.input_report.startDocument('Appendix B: SCMPS Device Input Checkout',self.config_version)
+    self.appendixA = Latex(appendixA_filename)
+    self.appendixA.startDocument('Appendix A: SCMPS FW/SW Checkout',self.config_version)
     groups = mps_db_session.query(models.LinkNodeGroup).order_by(models.LinkNodeGroup.number).all()
     for group in groups:
       self.generate_group_alarm(group)
       self.crate_profiles.startGroup(group.number)
-      self.input_report.startGroup(group.number)
-      self.export_ln.export(mps_db_session,group.link_nodes,self.crate_profiles,self.input_report,self.cn_status_display)
+      if group.has_inputs():
+        self.input_report.startGroup(group.number)
+      self.export_ln.export(mps_db_session,group.link_nodes,self.crate_profiles,self.input_report,self.cn_status_display,self.appendixA)
       self.generate_group_display(group.number,[ln for ln in group.link_nodes if ln.slot_number == 2])
     filename = '{0}status/cn_status.json'.format(self.display_path)
     self.write_json_file(filename, self.cn_status_display.get_macros())
     if self.report:
       self.crate_profiles.endDocument(self.report_path)
       self.input_report.endDocument(self.report_path)
+      self.appendixA.endDocument(self.report_path)
     if self.verbose:
       print('........Done Exporting Devices')   
 

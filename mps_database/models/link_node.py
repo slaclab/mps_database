@@ -164,6 +164,13 @@ class LinkNode(Base):
 #                         format(self.get_name()))
       return 1
 
+  def has_inputs(self):
+    has_inputs = False
+    for card in self.cards:
+      if len(card.digital_channels) > 0 or len(card.analog_channels) > 0:
+        has_inputs = True
+    return has_inputs
+
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()
 

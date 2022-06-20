@@ -76,24 +76,39 @@ class Latex:
         self.f.write('\\end{tabularx}\n')
         self.f.write('\\end{table}\n')
 
+    def appendixA(self,lc1_id,shm,rack,slots):
+        self.f.write('\\begin{table}[H]\n')
+        self.f.write('\\centering\n')
+        self.f.write('\\makegapedcells\n')
+        self.f.write('\\begin{tabularx}{\\textwidth}{c c l | c c c c c}\n')
+        self.f.write('{0}{1}{2}\n'.format('\\multicolumn{4}{l}{',shm,'}\\\\'))
+        self.f.write('\\hline\n')
+        self.f.write('Slot & App ID & PV Prefix & SW Version & FW Version & Enable & Initials & Date\\\\\n')
+        self.f.write('\\hline\n')
+        for slot in slots:
+          self.f.write('{0} & {1} & {2}{3}{4} & & & & & \\\\\n'.format(slot[0],slot[1],'\\texttt{',slot[2],'}'))
+          self.f.write('\\hline\n')
+        self.f.write('\\end{tabularx}\n')
+        self.f.write('\\end{table}\n')
+
     def writeAppInputs(self, inputs):
-        self.f.write('\\begin{longtable}{@{}cccll@{}}\n')
+        self.f.write('\\begin{longtable}{@{}ccclcc@{}}\n')
         self.f.write('\\toprule\n')
-        self.f.write('\\multicolumn{1}{@{}c}{App ID} & \\multicolumn{1}{c}{Slot}  & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c}{Device Name} & \\multicolumn{1}{c@{}}{Input Name} \\\\\n')
+        self.f.write('\\multicolumn{1}{@{}c}{App ID} & \\multicolumn{1}{c}{Slot}  & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c@{}}{Input Name} & \\multicolumn{1}{c@{}}{LN Check} & \\multicolumn{1}{c@{}}{CN Check}\\\\\n')
         self.f.write('\\midrule\n')
         self.f.write('\\endfirsthead\n')
-        self.f.write('\\multicolumn{5}{c}{\\ldots continued from previous page} \\\\\n')
+        self.f.write('\\multicolumn{6}{c}{\\ldots continued from previous page} \\\\\n')
         self.f.write('\\midrule\n')
-        self.f.write('\\multicolumn{1}{@{}c}{App ID} & \\multicolumn{1}{c}{Slot}  & \\multicolumn{1}{c}{Channel} & \\multicolumn{1}{c}{Device Name} & \\multicolumn{1}{c@{}}{Input Name} \\\\\n')
+        self.f.write('\\multicolumn{1}{@{}c}{App ID} & \\multicolumn{1}{c}{Slot}  & \\multicolumn{1}{c}{Channel}  & \\multicolumn{1}{c@{}}{Input Name} & \\multicolumn{1}{c@{}}{LN Check} & \\multicolumn{1}{c@{}}{CN Check}\\\\\n')
         self.f.write('\\midrule\n')
         self.f.write('\\endhead\n')
         self.f.write('\\midrule\n')
-        self.f.write('\\multicolumn{5}{c}{continued on next page\\ldots} \\\\\n')
+        self.f.write('\\multicolumn{6}{c}{continued on next page\\ldots} \\\\\n')
         self.f.write('\\endfoot\n')
         self.f.write('\\bottomrule\n')
         self.f.write('\\endlastfoot\n')
         for input in inputs:
-          self.f.write('{0} & {1} & {2}{3}{4}{5}{6}{7}'.format(input[0],input[1],input[2],' & \\texttt{',input[3].replace('_','\_'),'} & \\texttt{',input[4].replace('_','\_'),'}\\\\\n'))
+          self.f.write('{0} & {1} & {2}{3}{4}{5}'.format(input[0],input[1],input[2],'& \\texttt{',input[4].replace('_','\_').replace('&','\&'),'} & $\Box$ & $\Box$\\\\\n'))
         self.f.write('\\end{longtable}\n')
 
     def writeLogicTable(self,format,header,rows,inputs):
@@ -127,6 +142,8 @@ class Latex:
 
     def startFault(self, title):
         self.f.write('\\{0}{1}{2}\n'.format('section{',title,'}'))
+        self.f.write('Checked By:\\\\\n')
+        self.f.write('Date:\n')
 
     def appCommunicationCheckoutTable(self):
         self.f.write('\\subsubsection{Communication}\n')

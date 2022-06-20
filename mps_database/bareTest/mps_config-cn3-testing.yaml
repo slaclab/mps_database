@@ -1,0 +1,1053 @@
+---
+ApplicationType:
+- id: 1
+  number: 1
+  name: "MPS Digital"
+  analog_channel_count: 0
+  analog_channel_size: 1
+  digital_channel_count: 48
+  digital_channel_size: 1
+  digital_out_channel_count: 2
+  digital_out_channel_size: 1
+- id: 2
+  number: 2
+  name: "MPS Analog"
+  analog_channel_count: 6
+  analog_channel_size: 1
+  digital_channel_count: 4
+  digital_channel_size: 1
+  digital_out_channel_count: 4
+  digital_out_channel_size: 1
+- id: 3
+  number: 3
+  name: "BCM/BLEN"
+  analog_channel_count: 6
+  analog_channel_size: 1
+  digital_channel_count: 0
+  digital_channel_size: 1
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+- id: 4
+  number: 4
+  name: "BPM"
+  analog_channel_count: 2
+  analog_channel_size: 1
+  digital_channel_count: 0
+  digital_channel_size: 1
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+- id: 5
+  number: 5
+  name: "LLRF"
+  analog_channel_count: 0
+  analog_channel_size: 0
+  digital_channel_count: 32
+  digital_channel_size: 0
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+- id: 6
+  number: 6
+  name: "Wire Scanner"
+  analog_channel_count: 0
+  analog_channel_size: 0
+  digital_channel_count: 32
+  digital_channel_size: 0
+  digital_out_channel_count: 0
+  digital_out_channel_size: 0
+---
+DeviceType:
+- id: 1
+  name: "BLM"
+  description: "BLM"
+  num_integrators: 1
+---
+DeviceState:
+- id: 1
+  name: "I0_LOSS_T0"
+  description: "I0_LOSS Thr 0"
+  value: 1
+  mask: 1
+  default: False
+  device_type_id: 1
+- id: 2
+  name: "I0_LOSS_T1"
+  description: "I0_LOSS Thr 1"
+  value: 2
+  mask: 2
+  default: False
+  device_type_id: 1
+- id: 3
+  name: "I0_LOSS_T2"
+  description: "I0_LOSS Thr 2"
+  value: 4
+  mask: 4
+  default: False
+  device_type_id: 1
+- id: 4
+  name: "I0_LOSS_T3"
+  description: "I0_LOSS Thr 3"
+  value: 8
+  mask: 8
+  default: False
+  device_type_id: 1
+- id: 5
+  name: "I0_LOSS_T4"
+  description: "I0_LOSS Thr 4"
+  value: 16
+  mask: 16
+  default: False
+  device_type_id: 1
+- id: 6
+  name: "I0_LOSS_T5"
+  description: "I0_LOSS Thr 5"
+  value: 32
+  mask: 32
+  default: False
+  device_type_id: 1
+---
+MitigationDevice: []
+---
+BeamDestination:
+- id: 1
+  name: "LASER"
+  description: "Laser stop at mech shutter"
+  destination_mask: 1
+- id: 2
+  name: "SC_DIAG0"
+  description: "Diagnostics Line"
+  destination_mask: 2
+- id: 3
+  name: "SC_BSYD"
+  description: "Linac to BSY"
+  destination_mask: 4
+- id: 4
+  name: "SC_HXR"
+  description: "HXR beamline"
+  destination_mask: 8
+- id: 5
+  name: "SC_SXR"
+  description: "SXR Beamline"
+  destination_mask: 16
+- id: 6
+  name: "SC_LESA"
+  description: "A-Line"
+  destination_mask: 32
+---
+BeamClass:
+- id: 1
+  number: 0
+  name: "Beam Off"
+  description: "Beam Off"
+  integration_window: 455000
+  min_period: 0
+  total_charge: 0
+- id: 2
+  number: 1
+  name: "Kicker STBY"
+  description: "Kicker STBY"
+  integration_window: 455000
+  min_period: 0
+  total_charge: 0
+- id: 3
+  number: 2
+  name: "BC1Hz"
+  description: "BC1Hz"
+  integration_window: 910000
+  min_period: 909999
+  total_charge: 350
+- id: 4
+  number: 3
+  name: "BC10Hz"
+  description: "BC10Hz"
+  integration_window: 910000
+  min_period: 90999
+  total_charge: 3500
+- id: 5
+  number: 4
+  name: "Diagnostic"
+  description: "Diagnostic"
+  integration_window: 455000
+  min_period: 0
+  total_charge: 5000
+- id: 6
+  number: 5
+  name: "BC120Hz"
+  description: "BC120Hz"
+  integration_window: 182000
+  min_period: 7582
+  total_charge: 8400
+- id: 7
+  number: 6
+  name: "Tuning"
+  description: "Tuning"
+  integration_window: 182000
+  min_period: 0
+  total_charge: 7000
+- id: 8
+  number: 7
+  name: "1% MAP"
+  description: "1% MAP"
+  integration_window: 9100
+  min_period: 0
+  total_charge: 3000
+- id: 9
+  number: 8
+  name: "5% MAP"
+  description: "5% MAP"
+  integration_window: 2730
+  min_period: 0
+  total_charge: 4500
+- id: 10
+  number: 9
+  name: "10% MAP"
+  description: "10% MAP"
+  integration_window: 910
+  min_period: 0
+  total_charge: 3000
+- id: 11
+  number: 10
+  name: "25% MAP"
+  description: "25% MAP"
+  integration_window: 364
+  min_period: 0
+  total_charge: 3000
+- id: 12
+  number: 11
+  name: "50% MAP"
+  description: "50% MAP"
+  integration_window: 182
+  min_period: 0
+  total_charge: 3000
+- id: 13
+  number: 12
+  name: "100% MAP"
+  description: "100% MAP"
+  integration_window: 182
+  min_period: 0
+  total_charge: 6000
+- id: 14
+  number: 13
+  name: "Full"
+  description: "Full"
+  integration_window: 182
+  min_period: 0
+  total_charge: 100000
+---
+LinkNode:
+- id: 1
+  area: "GUNB"
+  location: "MP01"
+  cpu: "cpu-gunb-sp01"
+  group: 0
+  group_link: 0
+  group_link_destination: 0
+  group_drawing: "SD-144-182-02-C0"
+  ln_type: 2
+  lcls1_id: 50
+  slot_number: 2
+  crate_id: 1
+  link_node_group_id: 1
+- id: 2
+  area: "L0B"
+  location: "MP01"
+  cpu: "cpu-l0b-sp01"
+  group: 0
+  group_link: 1
+  group_link_destination: 0
+  group_drawing: "SD-144-182-02-C0"
+  ln_type: 2
+  lcls1_id: 51
+  slot_number: 2
+  crate_id: 2
+  link_node_group_id: 1
+- id: 3
+  area: "L0B"
+  location: "MP02"
+  cpu: "cpu-l0b-sp01"
+  group: 0
+  group_link: 2
+  group_link_destination: 0
+  group_drawing: "SD-144-182-02-C0"
+  ln_type: 2
+  lcls1_id: 52
+  slot_number: 2
+  crate_id: 3
+  link_node_group_id: 1
+- id: 4
+  area: "L0B"
+  location: "MP03"
+  cpu: "cpu-l0b-sp02"
+  group: 1
+  group_link: 5
+  group_link_destination: 0
+  group_drawing: "SD-144-182-03-C0"
+  ln_type: 2
+  lcls1_id: 53
+  slot_number: 2
+  crate_id: 4
+  link_node_group_id: 2
+- id: 5
+  area: "L0B"
+  location: "MP04"
+  cpu: "cpu-l0b-sp02"
+  group: 1
+  group_link: 6
+  group_link_destination: 0
+  group_drawing: "SD-144-182-03-C0"
+  ln_type: 2
+  lcls1_id: 54
+  slot_number: 2
+  crate_id: 5
+  link_node_group_id: 2
+- id: 6
+  area: "L0B"
+  location: "MP05"
+  cpu: "cpu-l0b-sp02"
+  group: 1
+  group_link: 7
+  group_link_destination: 0
+  group_drawing: "SD-144-182-03-C0"
+  ln_type: 2
+  lcls1_id: 55
+  slot_number: 2
+  crate_id: 6
+  link_node_group_id: 2
+- id: 7
+  area: "COL0"
+  location: "MP01"
+  cpu: "cpu-col0-sp01"
+  group: 1
+  group_link: 0
+  group_link_destination: 1
+  group_drawing: "SD-144-182-03-C0"
+  ln_type: 2
+  lcls1_id: 56
+  slot_number: 2
+  crate_id: 7
+  link_node_group_id: 2
+- id: 107
+  area: "GUNB"
+  location: "MP02"
+  cpu: "cpu-gunb-sp02"
+  group: 0
+  group_link: 3
+  group_link_destination: 0
+  group_drawing: "SD-144-182-02-C0"
+  ln_type: 2
+  lcls1_id: 49
+  slot_number: 2
+  crate_id: 90
+  link_node_group_id: 1
+---
+Crate:
+- id: 1
+  crate_id: 1
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KA00-0517"
+  sector: "LI00"
+  rack: "5"
+  elevation: 17
+- id: 2
+  crate_id: 101
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KA00-0615"
+  sector: "LI00"
+  rack: "6"
+  elevation: 15
+- id: 3
+  crate_id: 1
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KA00-0608"
+  sector: "LI00"
+  rack: "6"
+  elevation: 8
+- id: 4
+  crate_id: 1
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KG01-1925"
+  sector: "LI01"
+  rack: "19"
+  elevation: 25
+- id: 5
+  crate_id: 101
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KG01-1931"
+  sector: "LI01"
+  rack: "19"
+  elevation: 31
+- id: 6
+  crate_id: 201
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KG01-1937"
+  sector: "LI01"
+  rack: "19"
+  elevation: 37
+- id: 7
+  crate_id: 1
+  shelf_number: 0
+  num_slots: 7
+  location: "L2KG01-2037"
+  sector: "LI01"
+  rack: "20"
+  elevation: 37
+- id: 90
+  crate_id: 1
+  shelf_number: 0
+  num_slots: 7
+  location: "L2CID-0707"
+  sector: "LI00"
+  rack: "7"
+  elevation: 7
+---
+ApplicationCard:
+- id: 1
+  number: 1
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 1
+  amc: 2
+  crate_id: 1
+  type_id: 1
+  global_id: 1
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 1
+- id: 2
+  number: 2
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 2
+  amc: 1
+  crate_id: 1
+  type_id: 2
+  global_id: 2
+  name: "MPS Analog"
+  description: "Analog Inputs"
+  link_node_id: 1
+- id: 3
+  number: 3
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 3
+  amc: 0
+  crate_id: 1
+  type_id: 4
+  global_id: 3
+  name: "BPM"
+  description: "BPM1B/BPM2B"
+  link_node_id: 1
+- id: 4
+  number: 4
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 4
+  amc: 0
+  crate_id: 1
+  type_id: 4
+  global_id: 4
+  name: "BPM"
+  description: "CMB01/"
+  link_node_id: 1
+- id: 5
+  number: 5
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 5
+  amc: 2
+  crate_id: 1
+  type_id: 5
+  global_id: 5
+  name: "LLRF"
+  description: "GUN/BUNCHER"
+  link_node_id: 1
+- id: 6
+  number: 6
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 6
+  amc: 0
+  crate_id: 1
+  type_id: 3
+  global_id: 6
+  name: "BCM/BLEN"
+  description: "Faraday Cup"
+  link_node_id: 1
+- id: 7
+  number: 7
+  area: "GUNB"
+  location: "MP01"
+  slot_number: 7
+  amc: 0
+  crate_id: 1
+  type_id: 3
+  global_id: 7
+  name: "BCM/BLEN"
+  description: "IM01 Torroid"
+  link_node_id: 1
+- id: 8
+  number: 8
+  area: "L0B"
+  location: "MP01"
+  slot_number: 3
+  amc: 0
+  crate_id: 2
+  type_id: 4
+  global_id: 8
+  name: "BPM"
+  description: "BPM0H01/BPM0H04"
+  link_node_id: 2
+- id: 9
+  number: 9
+  area: "L0B"
+  location: "MP01"
+  slot_number: 4
+  amc: 0
+  crate_id: 2
+  type_id: 3
+  global_id: 9
+  name: "BCM/BLEN"
+  description: "BZ0H04 BLEN"
+  link_node_id: 2
+- id: 10
+  number: 10
+  area: "L0B"
+  location: "MP01"
+  slot_number: 5
+  amc: 0
+  crate_id: 2
+  type_id: 4
+  global_id: 10
+  name: "BPM"
+  description: "BPM0H05/BPM0H08"
+  link_node_id: 2
+- id: 11
+  number: 11
+  area: "L0B"
+  location: "MP01"
+  slot_number: 6
+  amc: 0
+  crate_id: 2
+  type_id: 4
+  global_id: 11
+  name: "BPM"
+  description: "BPMH1/BPMH2"
+  link_node_id: 2
+- id: 12
+  number: 12
+  area: "L0B"
+  location: "MP01"
+  slot_number: 7
+  amc: 0
+  crate_id: 2
+  type_id: 4
+  global_id: 12
+  name: "BPM"
+  description: "BPMHD01/BPMHD02"
+  link_node_id: 2
+- id: 13
+  number: 13
+  area: "L0B"
+  location: "MP02"
+  slot_number: 3
+  amc: 2
+  crate_id: 3
+  type_id: 5
+  global_id: 13
+  name: "LLRF"
+  description: "CM01 / CM02"
+  link_node_id: 3
+- id: 14
+  number: 14
+  area: "L0B"
+  location: "MP02"
+  slot_number: 4
+  amc: 2
+  crate_id: 3
+  type_id: 5
+  global_id: 14
+  name: "LLRF"
+  description: "CM03 / CM04"
+  link_node_id: 3
+- id: 15
+  number: 15
+  area: "L0B"
+  location: "MP02"
+  slot_number: 5
+  amc: 2
+  crate_id: 3
+  type_id: 5
+  global_id: 15
+  name: "LLRF"
+  description: "HL01 / HL02"
+  link_node_id: 3
+- id: 16
+  number: 16
+  area: "L0B"
+  location: "MP03"
+  slot_number: 1
+  amc: 2
+  crate_id: 4
+  type_id: 1
+  global_id: 16
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 4
+- id: 17
+  number: 17
+  area: "L0B"
+  location: "MP03"
+  slot_number: 2
+  amc: 1
+  crate_id: 4
+  type_id: 2
+  global_id: 17
+  name: "MPS Analog"
+  description: "Analog Inputs"
+  link_node_id: 4
+- id: 18
+  number: 18
+  area: "L0B"
+  location: "MP03"
+  slot_number: 3
+  amc: 0
+  crate_id: 4
+  type_id: 4
+  global_id: 18
+  name: "BPM"
+  description: "BPMC009/BPMC010"
+  link_node_id: 4
+- id: 19
+  number: 19
+  area: "L0B"
+  location: "MP03"
+  slot_number: 4
+  amc: 0
+  crate_id: 4
+  type_id: 4
+  global_id: 19
+  name: "BPM"
+  description: "BPMC005/BPMC006"
+  link_node_id: 4
+- id: 20
+  number: 20
+  area: "L0B"
+  location: "MP03"
+  slot_number: 5
+  amc: 0
+  crate_id: 4
+  type_id: 4
+  global_id: 20
+  name: "BPM"
+  description: "BPMC003/BPMC004"
+  link_node_id: 4
+- id: 21
+  number: 21
+  area: "L0B"
+  location: "MP03"
+  slot_number: 6
+  amc: 0
+  crate_id: 4
+  type_id: 4
+  global_id: 21
+  name: "BPM"
+  description: "BPMC001/BPMC002"
+  link_node_id: 4
+- id: 22
+  number: 22
+  area: "L0B"
+  location: "MP03"
+  slot_number: 7
+  amc: 2
+  crate_id: 4
+  type_id: 6
+  global_id: 22
+  name: "Wire Scanner"
+  description: "WS0H04/WSDG01"
+  link_node_id: 4
+- id: 23
+  number: 23
+  area: "L0B"
+  location: "MP04"
+  slot_number: 1
+  amc: 2
+  crate_id: 5
+  type_id: 1
+  global_id: 23
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 5
+- id: 24
+  number: 24
+  area: "L0B"
+  location: "MP04"
+  slot_number: 2
+  amc: 1
+  crate_id: 5
+  type_id: 2
+  global_id: 24
+  name: "MPS Analog"
+  description: "Analog Inputs"
+  link_node_id: 5
+- id: 25
+  number: 25
+  area: "L0B"
+  location: "MP04"
+  slot_number: 3
+  amc: 0
+  crate_id: 5
+  type_id: 4
+  global_id: 25
+  name: "BPM"
+  description: "BPMDG000/BPMDG002"
+  link_node_id: 5
+- id: 26
+  number: 26
+  area: "L0B"
+  location: "MP04"
+  slot_number: 4
+  amc: 0
+  crate_id: 5
+  type_id: 4
+  global_id: 26
+  name: "BPM"
+  description: "BPMDG003/BPMDG004"
+  link_node_id: 5
+- id: 27
+  number: 27
+  area: "L0B"
+  location: "MP04"
+  slot_number: 5
+  amc: 0
+  crate_id: 5
+  type_id: 4
+  global_id: 27
+  name: "BPM"
+  description: "BPMDG005/BPMDG0RF"
+  link_node_id: 5
+- id: 28
+  number: 28
+  area: "L0B"
+  location: "MP04"
+  slot_number: 6
+  amc: 0
+  crate_id: 5
+  type_id: 4
+  global_id: 28
+  name: "BPM"
+  description: "BPMDG008/BPMDG009"
+  link_node_id: 5
+- id: 29
+  number: 29
+  area: "L0B"
+  location: "MP04"
+  slot_number: 7
+  amc: 0
+  crate_id: 5
+  type_id: 4
+  global_id: 29
+  name: "BPM"
+  description: "BPMDG011/BPMDG012"
+  link_node_id: 5
+- id: 30
+  number: 30
+  area: "L0B"
+  location: "MP05"
+  slot_number: 3
+  amc: 0
+  crate_id: 6
+  type_id: 4
+  global_id: 30
+  name: "BPM"
+  description: "CMB02/"
+  link_node_id: 6
+- id: 31
+  number: 31
+  area: "L0B"
+  location: "MP05"
+  slot_number: 4
+  amc: 0
+  crate_id: 6
+  type_id: 4
+  global_id: 31
+  name: "BPM"
+  description: "BPMHD03/BPMHD04"
+  link_node_id: 6
+- id: 32
+  number: 32
+  area: "L0B"
+  location: "MP05"
+  slot_number: 5
+  amc: 0
+  crate_id: 6
+  type_id: 4
+  global_id: 32
+  name: "BPM"
+  description: "BPMC007/BPMC008"
+  link_node_id: 6
+- id: 33
+  number: 33
+  area: "COL0"
+  location: "MP01"
+  slot_number: 3
+  amc: 0
+  crate_id: 7
+  type_id: 4
+  global_id: 33
+  name: "BPM"
+  description: "BPMDG001/"
+  link_node_id: 7
+- id: 34
+  number: 34
+  area: "COL0"
+  location: "MP01"
+  slot_number: 4
+  amc: 0
+  crate_id: 7
+  type_id: 4
+  global_id: 34
+  name: "BPM"
+  description: "BPMC011/BPMC012"
+  link_node_id: 7
+- id: 35
+  number: 35
+  area: "COL0"
+  location: "MP01"
+  slot_number: 5
+  amc: 2
+  crate_id: 7
+  type_id: 5
+  global_id: 35
+  name: "LLRF"
+  description: "CM07 / CM08"
+  link_node_id: 7
+- id: 36
+  number: 36
+  area: "COL0"
+  location: "MP01"
+  slot_number: 6
+  amc: 2
+  crate_id: 7
+  type_id: 5
+  global_id: 36
+  name: "LLRF"
+  description: "CM05 / CM06"
+  link_node_id: 7
+- id: 350
+  number: 350
+  area: "L0B"
+  location: "MP01"
+  slot_number: 1
+  amc: 2
+  crate_id: 2
+  type_id: 1
+  global_id: 350
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 2
+- id: 351
+  number: 351
+  area: "L0B"
+  location: "MP02"
+  slot_number: 1
+  amc: 2
+  crate_id: 3
+  type_id: 1
+  global_id: 351
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 3
+- id: 352
+  number: 352
+  area: "L0B"
+  location: "MP05"
+  slot_number: 1
+  amc: 2
+  crate_id: 6
+  type_id: 1
+  global_id: 352
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 6
+- id: 353
+  number: 353
+  area: "COL0"
+  location: "MP01"
+  slot_number: 1
+  amc: 2
+  crate_id: 7
+  type_id: 1
+  global_id: 353
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 7
+- id: 379
+  number: 379
+  area: "GUNB"
+  location: "MP02"
+  slot_number: 1
+  amc: 2
+  crate_id: 90
+  type_id: 1
+  global_id: 379
+  name: "MPS Digital"
+  description: "Digital Inputs"
+  link_node_id: 107
+- id: 383
+  number: 383
+  area: "L0B"
+  location: "MP01"
+  slot_number: 2
+  amc: 1
+  crate_id: 3
+  type_id: 2
+  global_id: 383
+  name: "MPS Analog"
+  description: "Analog Inputs"
+  link_node_id: 3
+- id: 384
+  number: 384
+  area: "GUNB"
+  location: "MP02"
+  slot_number: 2
+  amc: 2
+  crate_id: 90
+  type_id: 2
+  global_id: 384
+  name: "MPS Analog"
+  description: "AOM Permit Test"
+  link_node_id: 107
+---
+DigitalChannel: []
+---
+AnalogChannel:
+- id: 1
+  number: 2
+  name: "SBLM:GUNB:753"
+  card_id: 2
+---
+DigitalDevice: []
+---
+AnalogDevice:
+- id: 1
+  auto_reset: 0
+  channel_id: 1
+  cable_number: "N/A"
+  offset: 0.0
+  slope: 1.0
+  id: 1
+  name: "BLM:SBLM:GUNB:753"
+  description: "SBLM at Gun Window (SBLM:GUNB:753)"
+  position: "753"
+  z_location: -28.061394
+  area: "GUNB"
+  evaluation: 1
+  card_id: 2
+  device_type_id: 1
+  measured_device_type_id: !!int 'None'
+---
+IgnoreCondition: []
+---
+DeviceInput: []
+---
+FaultInput:
+- id: 1
+  fault_id: 1
+  bit_position: 0
+  device_id: 1
+---
+Fault:
+- id: 1
+  name: "I0_LOSS"
+  description: "SBLM at Gun Window (SBLM:GUNB:753) Loss Fault"
+---
+FaultState:
+- id: 1
+  default: False
+  fault_id: 1
+  device_state_id: 1
+- id: 2
+  default: False
+  fault_id: 1
+  device_state_id: 2
+- id: 3
+  default: False
+  fault_id: 1
+  device_state_id: 3
+- id: 4
+  default: False
+  fault_id: 1
+  device_state_id: 4
+- id: 5
+  default: False
+  fault_id: 1
+  device_state_id: 5
+- id: 6
+  default: False
+  fault_id: 1
+  device_state_id: 6
+---
+ConditionInput: []
+---
+Condition: []
+---
+AllowedClass:
+- id: 1
+  fault_state_id: 1
+  beam_destination_id: 2
+  beam_class_id: 1
+- id: 2
+  fault_state_id: 1
+  beam_destination_id: 3
+  beam_class_id: 1
+- id: 3
+  fault_state_id: 2
+  beam_destination_id: 2
+  beam_class_id: 3
+- id: 4
+  fault_state_id: 2
+  beam_destination_id: 3
+  beam_class_id: 3
+- id: 5
+  fault_state_id: 3
+  beam_destination_id: 2
+  beam_class_id: 4
+- id: 6
+  fault_state_id: 3
+  beam_destination_id: 3
+  beam_class_id: 4
+- id: 7
+  fault_state_id: 4
+  beam_destination_id: 2
+  beam_class_id: 5
+- id: 8
+  fault_state_id: 4
+  beam_destination_id: 3
+  beam_class_id: 5
+- id: 9
+  fault_state_id: 5
+  beam_destination_id: 2
+  beam_class_id: 6
+- id: 10
+  fault_state_id: 5
+  beam_destination_id: 3
+  beam_class_id: 6
+- id: 11
+  fault_state_id: 6
+  beam_destination_id: 2
+  beam_class_id: 7
+- id: 12
+  fault_state_id: 6
+  beam_destination_id: 3
+  beam_class_id: 7
+---
+DatabaseInfo:
+- source: mps_config-testing.db
+  date: Tue May  3 08:09:25 2022
+  user: b'jmock'
+  md5sum: b'cd7988a6eddef96d6716c9d8a3db51ec'

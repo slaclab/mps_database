@@ -24,6 +24,7 @@ class ExportDevice(MpsReader):
   def export(self,mps_db_session,card,inputDisplay):
     self.inputDisplay = inputDisplay
     self.initialize_mps_names(mps_db_session)
+    self.beam_destinations = mps_db_session.query(models.BeamDestination).all()
     self.app_path = self.get_app_path(card.link_node,card.slot_number)
     if len(card.digital_channels) > 0:
       has_virtual = self.export_digital_channels(card)
@@ -73,6 +74,8 @@ class ExportDevice(MpsReader):
     json_macros['cn_prefix'] = card.link_node.get_cn1_prefix()
     json_macros['devices'] = []
     json_macros['inputs'] = []
+    json_macros['states'] = []
+    json_macros['destinations'] = []
     json_macros['version_prefix'] = card.get_pv_name()
     for channel in card.analog_channels:
       json_macros = self.__export_analog_inputs(channel,card,json_macros)
@@ -105,6 +108,8 @@ class ExportDevice(MpsReader):
     self.__write_ana_config(path=self.app_path, macros=macros)
     self.spare_channels[channel.number] = -1
     self.__write_integrator_db(card,channel)
+    if channel.analog_device.device_type.name not in ['WF']:
+      self.__write_proc_timing_db(card,channel)
     self.__write_waveform_db(card,channel)
 
   def __write_waveform_db(self,card,channel):
@@ -126,6 +131,18 @@ class ExportDevice(MpsReader):
     if self.mps_names.getBlmType(channel.analog_device) == 'CBLM':
       attr = 'FAST'
     return attr
+
+  def __write_proc_timing_db(self,card,channel):
+      macros = { "P_DEV":self.mps_names.getDeviceName(channel.analog_device),
+                 "P":"{0}".format(card.get_pv_name()),
+                 "BAY":"{0}".format(channel.get_bay()),
+                 "CH":"{0}".format(channel.number),
+                 "TRG":"{0}".format(channel.number+10),
+                 "AREA":card.area,
+                 "LOCA":card.location,
+                 "INST":"{0}".format(card.get_card_id())
+                }
+      self.__write_analog_proc_db(path=self.app_path, macros=macros)
 
   def __write_integrator_db(self,card,channel):
     for integrator in range(4):
@@ -152,12 +169,7 @@ class ExportDevice(MpsReader):
                  "EGUL":"{0}".format(egul),
                  "CH":"{0}".format(chan),
                  "P":"{0}".format(card.get_pv_name()),
-                 "BAY":"{0}".format(channel.get_bay()),
-                 "CH":"{0}".format(channel.number),
-                 "TRG":"{0}".format(channel.number+10),
-                 "AREA":card.area,
-                 "LOCA":card.location,
-                 "INST":"{0}".format(card.get_card_id())
+                 "BAY":"{0}".format(channel.get_bay())
                 }
       self.__write_analog_db(path=self.app_path, macros=macros)
       if chan > 2:
@@ -185,19 +197,19 @@ class ExportDevice(MpsReader):
     else:
       slot = '{0}'.format(card.slot_number)
     ch = '{0}'.format(channel.number)
-    device_name = channel.device_input.digital_device.description.replace(':','_').replace('_',' ')[:30]
+    device_name = channel.description.replace(':','_').replace('_',' ')[:30]
     pv = self.mps_names.getInputPvFromChannel(channel)
     appid = card.number
     self.inputDisplay.append_row([appid,slot,ch,device_name,pv])
 
-  def __write_analog_input_report(self,channel,card,fault,state):
+  def __write_analog_input_report(self,channel,card,fault):
     if card.slot_number < 2:
       slot = 'RTM'
     else:
       slot = '{0}'.format(card.slot_number)
     ch = '{0}'.format(channel.number)
-    device_name = "{0} {1}".format(channel.analog_device.description.replace(':','_').replace('_',' '),state.device_state.description)[:30]
-    pv = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),state.device_state.name)
+    device_name = "{0} {1}".format(channel.analog_device.description.replace(':','_').replace('_',' '),fault.name.upper())[:30]
+    pv = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name.upper())
     appid = card.number
     self.inputDisplay.append_row([appid,slot,ch,device_name,pv])  
 
@@ -256,9 +268,10 @@ class ExportDevice(MpsReader):
     faults = self.get_faults(channel.analog_device)
     self.export_threshold_display_macros(channel,card,faults)
     for fault in faults:
+      name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name)
       if json_macros is not None:
         json_macros['devices'].append('{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name))
-        json_macros['inputs'].append('{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name))
+      name = self.exchange(name)
       if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
         self.write_cn_analog_byp_macros(card,channel,fault,self.cn0_path,False)
       elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':   
@@ -266,7 +279,16 @@ class ExportDevice(MpsReader):
       if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
         self.write_cn_analog_byp_macros(card,channel,fault,self.cn2_path,True)
       self.write_thr_base_db(card,channel,fault)
+      self.__write_analog_input_report(channel,card,fault)
+      state_data = {}
+      state_name = {}
+      input_name = {}
       for state in fault.states:
+        dest_data = {}
+        for dest in self.beam_destinations:
+          dest_data['{0}{1}_{2}_STATE'.format(name,'_FLT',dest.name.upper())] = state.get_allowed_class_string_by_dest_name(dest.name)
+        state_data[state.device_state.name[-1]] = dest_data
+        state_name[state.device_state.name[-1]] = state.device_state.description
         if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
           self.export_cn_analog_states(self.cn0_path,card,channel,fault,state,False)
           macros = self.get_analog_input_display_macros(card,channel,fault,state,False)
@@ -279,8 +301,11 @@ class ExportDevice(MpsReader):
           self.export_cn_analog_states(self.cn2_path,card,channel,fault,state,True)
           macros = self.get_analog_input_display_macros(card,channel,fault,state,True)
           self.inputDisplay.add_macros(macros,True)
-        self.__write_analog_input_report(channel,card,fault,state)
         self.write_thr(channel,card,fault,state)
+      if json_macros is not None:
+        json_macros['destinations'].append(state_data)
+        json_macros['states'].append(state_name)
+        json_macros['inputs'].append('{0}{1}{2}'.format(name,'_FLT','_SCMPSC'))
     return json_macros
 
   def write_thr(self,channel,card,fault,state):
@@ -406,15 +431,18 @@ class ExportDevice(MpsReader):
     self.write_epics_db(path=path,filename='analog_devices.db', template_name="cn_analog_fault.template", macros=macros)    
 
   def __export_cn_device_input(self,channel,card):
+    filename = "cn_device_input.template";
+    if channel.alarm_state:
+      filename = "cn_device_input_fast.template";
     if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
       macros = self.get_cn_device_macros(channel,card,False)
-      self.write_epics_db(path=self.cn0_path,filename='device_inputs.db',template_name="cn_device_input.template", macros=macros)
+      self.write_epics_db(path=self.cn0_path,filename='device_inputs.db',template_name=filename, macros=macros)
     elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':   
       macros = self.get_cn_device_macros(channel,card,False)
-      self.write_epics_db(path=self.cn1_path,filename='device_inputs.db',template_name="cn_device_input.template", macros=macros)
+      self.write_epics_db(path=self.cn1_path,filename='device_inputs.db',template_name=filename, macros=macros)
     if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
       macros = self.get_cn_device_macros(channel,card,True)
-      self.write_epics_db(path=self.cn2_path,filename='device_inputs.db',template_name="cn_device_input.template", macros=macros)
+      self.write_epics_db(path=self.cn2_path,filename='device_inputs.db',template_name=filename, macros=macros)
 
   def get_cn_device_macros(self,channel,card,exchange=False):
     name=self.mps_names.getInputPvFromChannel(channel)
@@ -504,6 +532,14 @@ class ExportDevice(MpsReader):
       """
       self.write_fw_config(path=path, template_name="analog_settings.template", macros=macros)
 
+  def __write_analog_proc_db(self, path, macros):
+      """
+      Write the records for analog inputs to the application EPICS database file.
+
+      These records will be loaded once per each device.
+      """
+      self.write_epics_db(path=path,filename='mps.db', template_name="ln_ana_proc.template", macros=macros)
+
   def __write_analog_db(self, path, macros):
       """
       Write the records for analog inputs to the application EPICS database file.
@@ -538,11 +574,11 @@ class ExportDevice(MpsReader):
       Write the base threshold record to the application EPICS database file.
       These records will be loaded once per each fault.
       """
-      self.write_epics_db(path=path,filename='mps.db', template_name="thr_base.template", macros=macros)
+      self.write_epics_db(path=path,filename='mps.db', template_name="thr_base_no_alt.template", macros=macros)
     
   def __write_thr_db(self, path, macros):
       """
       Write the threshold records to the application EPICS database file.
       These records will be load once per each bit in each fault.
       """
-      self.write_epics_db(path=path,filename='mps.db', template_name="thr.template", macros=macros)
+      self.write_epics_db(path=path,filename='mps.db', template_name="thr_no_alt.template", macros=macros)

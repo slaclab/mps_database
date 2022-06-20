@@ -27,11 +27,11 @@
             ]
         },
         {
-            "description": "$(DESCRIPTION) Charge Difference",
-            "name":"CHRG_DIFF",
+            "description": "$(DESCRIPTION) TMIT",
+            "name":"TMIT",
             "dtype":"$(DTYPE)"
             "inputs": [
-                "$(DEVICE):CHRG"
+                "$(DEVICE):TMIT"
             ],
             "ignore_when": [
             ],

@@ -35,7 +35,7 @@ class ExportFaults(MpsReader):
     self.initialize_mps_names(mps_db_session)
     self.beam_destinations = mps_db_session.query(models.BeamDestination).all()
     self.num_dest = len(self.beam_destinations)
-    faults = mps_db_session.query(models.Fault).all()
+    faults = mps_db_session.query(models.Fault).order_by(models.Fault.description).all()
     conditions = mps_db_session.query(models.Condition).all()
     for fault in faults:
       self.write_fault_db(fault)
@@ -124,7 +124,7 @@ class ExportFaults(MpsReader):
     name = '{0}:{1}'.format(self.mps_names.getDeviceName(device),fault.name)
     if exchange:
       name = self.exchange(name)
-    if self.mps_names.isDeviceAnalog(device):
+    if self.mps_names.isDeviceReallyAnalog(device):
       p = '{0}{1}'.format(name,'_SCMPSC')
     else:
       p = '{0}{1}{2}'.format(name,'_FLT','_SCMPSC')
@@ -148,7 +148,7 @@ class ExportFaults(MpsReader):
     if dest is None:
       filename = "faults.db"
       flnk = '{0}{1}_{2}_STATE'.format(name,'_FLT',self.beam_destinations[0].name.upper())
-      if self.mps_names.isDeviceAnalog(device):
+      if self.mps_names.isDeviceReallyAnalog(device):
         p = '{0}{1}'.format(name,'_SCMPSC')
         inp = '{0}_FLT_CALC'.format(name)
         dtyp = 'Raw Soft Channel'
@@ -177,7 +177,7 @@ class ExportFaults(MpsReader):
                'DTYP':dtyp,
                'FLNK':'{0}'.format(flnk)}
     self.write_epics_db(path=path, filename=filename, template_name="cn_mbbi_header.template", macros=macros)
-    if self.mps_names.isDeviceAnalog(device) and dest is None:
+    if self.mps_names.isDeviceReallyAnalog(device) and dest is None:
       self.write_epics_db(path=path, filename='faults.db', template_name="cn_mbbi_alias.template", macros={'ALIAS':alias})
 
   def write_fault_state_entry_dest(self,path,device,state,exchange):
@@ -325,7 +325,7 @@ class ExportFaults(MpsReader):
     typ = 'logic'
     filename = '{0}/SCMPS_{1}_LogicTables.tex'.format(self.report_path,self.config_version)
     self.latex = Latex(filename)
-    self.latex.startDocument('SCMPS Logic Tables',self.config_version)
+    self.latex.startDocument('Appendix C: SCMPS Logic Checkout',self.config_version)
     faults = self.faults_for_report
     # Part of an ignore group
     for g in self.ignore_groups:
@@ -362,12 +362,12 @@ class ExportFaults(MpsReader):
     for inp in range(0,len(fault['inputs'])):
       header += self.letters[len(fault['inputs'])-inp-1]
       header += ' & '
-      in_str = '${0} = {1}{2}{3}'.format(self.letters[inp],'\\texttt{',fault['inputs'][inp].replace('_','\_'),'}$\\newline\n')
+      in_str = '${0} = {1}{2}{3}'.format(self.letters[inp],'\\texttt{',fault['inputs'][inp].replace('_','\_').replace('&','\&'),'}$\\newline\n')
       inputs.append(in_str)
-    header += 'LASER & DIAG0 & BSY & HXR & SXR & LESA \\\\\n'
+    header += 'LASER & SC\_DIAG0 & SC\_BSYD & SC\_HXR & SC\_SXR & SC\_LESA \\\\\n'
     rows = []
     for state in fault['fault'].states:
-      row = '{0} & '.format(state.device_state.description.replace('_','\_'))
+      row = '{0} & '.format(state.device_state.description.replace('_','\_').replace('&','\&'))
       if not self.mps_names.isDeviceAnalog(fault['device']):
         val = bin(state.device_state.value)[2:].zfill(len(fault['inputs']))
         for inp in range(0,len(fault['inputs'])):
@@ -379,10 +379,10 @@ class ExportFaults(MpsReader):
       else:
         row += 'T & '
       row += state.get_allowed_class_string_by_dest_name('LASER').replace('%','\%') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('DIAG0').replace('%','\%') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('DUMPBSY').replace('%','\%') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('DUMPHXR').replace('%','\%') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('DUMPSXR').replace('%','\%') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('LESA').replace('%','\%') + ' \\\\\n'
+      row += state.get_allowed_class_string_by_dest_name('SC_DIAG0').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('SC_BSYD').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('SC_HXR').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('SC_SXR').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('SC_LESA').replace('%','\%') + ' \\\\\n'
       rows.append(row)
     return [format, header, rows, inputs]

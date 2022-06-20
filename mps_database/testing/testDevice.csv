@@ -1,0 +1,3 @@
+ln,crate,slot,appid,channel,type,device,z,bit_position,z_name,o_name,auto_reset,evaluation,description,ignore,dest,slope,offset,cable,ln status,cn status,cn logic,checked date,inconfig
+50,L2KA00-0517,2,2,2,BLM,SBLM:GUNB:753,-28.061394,,,,0,1,SBLM at Gun Window (SBLM:GUNB:753),0,DUMPBSY,1,0,N/A,1,1,1,44631,100
+

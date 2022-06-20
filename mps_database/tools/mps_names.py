@@ -33,7 +33,21 @@ class MpsName:
       analog = False
       if type(device) is models.device.AnalogDevice:
         analog = True
+      if type(device) is models.device.DigitalDevice:
+        if len(device.inputs) == 1:
+          for input in device.inputs:
+            if input.fault_value == 1:
+              analog = True 
       return analog
+
+    def isDeviceReallyAnalog(self,device):
+      analog = False
+      if type(device) is models.device.AnalogDevice:
+        analog = True
+      return analog
+
+    def isFastDigital(self,device):
+      analog = False
 
     def getCardFromFault(self,fault):
       device = self.getDeviceFromFault(fault)

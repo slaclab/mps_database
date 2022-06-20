@@ -1,0 +1,1371 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description": "VVPG HTR 93 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:HTR:93:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG HTR 162 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:HTR:162:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG HTR 217 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:HTR:217:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG HTH 417 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:HTR:417:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG HTR 889 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:HTR:889:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG HTR 986 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:HTR:986:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG HTR 205 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:COL0:205:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG DIAG0 268 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:DIAG0:268:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,null,null,null,null],
+                [1, "Is Open","Is Open",null,13,null,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG COL0 994 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:COL0:994:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L1B 0201 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L1B:0201:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS HTR 244 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:HTR:244:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS COL0 991 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:COL0:991:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS HTR 244 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:HTR:244:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS COL0 991 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:COL0:991:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN57 (SIOC BC1B MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BC1B:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L1B H295 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L1B:H295:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BC1B 88 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BC1B:88:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG COL1 446 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:COL1:446:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG COL1 978 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:COL1:978:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L2B 0401 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L2B:0401:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS BC1B 96 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:BC1B:96:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS COL1 972 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:COL1:972:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS BC1B 95 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:BC1B:96:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS COL1 972 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:COL1:972:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN58 (SIOC BC1B MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BC1B:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN59 (SIOC BC1B MP03) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BC1B:MP03:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN60 (SIOC L2B MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L2B:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN61 (SIOC L2B MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L2B:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS BC2B 119 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:BC2B:119:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS EMIT2 939 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:EMIT2:939:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS BC2B 119 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:BC2B:119:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS EMIT2 939 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:EMIT2:939:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L2B 1593 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L2B:1593:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BC2B 115 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BC2B:115:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG EMIT2 364 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:EMIT2:364:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG EMIT2 958 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:EMIT2:958:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L3B 1601 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L3B:1601:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN62 (SIOC BC2B MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BC2B:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN63 (SIOC L2B MP03) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L2B:MP03:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN64 (SIOC L2B MP04) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L2B:MP04:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN65 (SIOC BC2B MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BC2B:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN66 (SIOC BC2B MP03) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BC2B:MP03:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN67 (SIOC L3B MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L3B:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L3B 2596 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L3B:2596:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN68 (SIOC L3B MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L3B:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN97 (SIOC L3B MP06) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L3B:MP06:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG DOG 247 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:DOG:247:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN71 (SIOC L3B MP05) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L3B:MP05:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG DOG 605 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:DOG:605:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN74 (SIOC DOG MP03) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:DOG:MP03:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN77 (SIOC BPN13 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN13:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN78 (SIOC BPN14 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN14:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BPN15 106 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BPN15:106:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN79 (SIOC BPN15 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN15:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN80 (SIOC BPN16 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOCLBPN16:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN81 (SIOC BPN17 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN17:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BPN18 106 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BPN18:106:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN82 (SIOC BPN18 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN18:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN83 (SIOC BPN19 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN19:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN84 (SIOC BPN20 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN20:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BPN21 106 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BPN21:106:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN85 (SIOC BPN21 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN21:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN86 (SIOC BPN22 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN22:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN87 (SIOC BPN23 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN23:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BPN24 106 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BPN24:106:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN88 (SIOC BPN24 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN24:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN89 (SIOC BPN25 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN25:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN90 (SIOC BPN26 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN26:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG BPN27 106 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:BPN27:106:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN91 (SIOC BPN27 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:BPN27:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG L3B 3594 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:L3B:3594:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG EXT 143 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:EXT:143:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG EXT 985 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:EXT:985:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS EXT 159 Interlock Summary",
+            "name":"STATUS",
+            "dtype":"VACI",
+            "inputs": [
+                "VVFS:EXT:159:INTERLOCK_SUM"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVFS EXT 159 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVFS:EXT:159:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN69 (SIOC L3B MP03) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L3B:MP03:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN70 (SIOC L3B MP04) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L3B:MP04:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN73 (SIOC DOG MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:DOG:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN75 (SIOC DOG MP04) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:DOG:MP04:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG DOG 852 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:DOG:852:POSITION"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,null,0,null,null,null],
+                [1, "Is Open","Is Open",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN75 (SIOC DOG MP05) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:DOG:MP05:HEARTBEAT"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        }
+]
+}

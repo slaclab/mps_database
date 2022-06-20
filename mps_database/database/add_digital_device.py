@@ -62,30 +62,38 @@ class AddDigitalDevice:
     if int(device_info['channel']) > card.type.digital_channel_count:
       print("ERROR: Invalid channel number {0}".format(device_info['channel']))
       return
+    alarm_state = 0
+    if int(device_info['evaluation']) > 0:
+      alarm_state = 1
     if device_info['type'] in ['WDOG','EPICS']:
       digital_channel = models.DigitalChannel(number=int(device_info['channel']),
                                               name=device_info['device'],
                                               z_name=device_info['z_name'],
                                               o_name=device_info['o_name'],
-                                              alarm_state=0,
+                                              alarm_state=alarm_state,
                                               card=card,
                                               num_inputs=1,
-                                              monitored_pvs=device_info['device'])
+                                              monitored_pvs=device_info['device'],
+                                              description=device_info['description'])
     else:
       digital_channel = models.DigitalChannel(number=int(device_info['channel']),
                                               name=device_info['device'].split(":")[-1],
                                               z_name=device_info['z_name'],
                                               o_name=device_info['o_name'],
-                                              alarm_state=0,
-                                              card=card)
+                                              alarm_state=alarm_state,
+                                              card=card,
+                                              description=device_info['description'])
     self.session.add(digital_channel)
     return digital_channel
 
   def add_input(self,device_info,device,channel):
+    alarm_state = 0
+    if int(device_info['evaluation']) > 0:
+      alarm_state = 1
     device_input = models.DeviceInput(channel=channel,
                                       bit_position=device_info['bit_position'],
                                       digital_device = device,
-                                      fault_value = 0,
+                                      fault_value = alarm_state,
                                       auto_reset=int(device_info['auto_reset']))
     self.session.add(device_input)
     return device_input

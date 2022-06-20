@@ -18,14 +18,14 @@ class MakeLogic(MpsReader):
     self.file_name = db_file
     self.ignore0 = []
     self.ignore1 = ['YAG01B_IGNORE']
-    self.ignore2 = ['YAG01B_IGNORE','VV02_IGNORE']
-    self.ignore3 = ['YAG01B_IGNORE','VV02_IGNORE','COL0_IGNORE']
-    self.bpm_text = ['X Orbit','Y Orbit','Charge Difference']
-    self.fault = ['X','Y','CHRGDIFF']
+    self.ignore2 = ['YAG01B_IGNORE']
+    self.ignore3 = ['YAG01B_IGNORE']
+    self.bpm_text = ['X Orbit','Y Orbit','TMIT']
+    self.fault = ['X','Y','TMIT']
     self.val1 = [256,65536]
     self.val2 = [512,131072]
-    self.vals = [1,2,4,8,16,32,64,128]
-    self.ac = [0,2,6,7,8,9,10,11]
+    self.vals = [1,2,4,8,16,32]
+    self.ac = [0,2,3,4,5,6]
     self.kicker_z = 107.23
 
   def write_json(self):
@@ -181,7 +181,7 @@ class MakeLogic(MpsReader):
               self.write_logic_json(path=path,filename='logic.json', template_name='bpm_xy_states.template',macros=macros)
             else:
               self.write_logic_json(path=path,filename='logic.json', template_name='bpm_chrg_end.template',macros=macros)
-              for acount in range(0,8):
+              for acount in range(0,6):
                 laser0 = diag0 = dumpbsy0 = dumphxr0 = dumpsxr0 = lesa0 = 'null'
                 if device_info['dest'] == 'LASER':
                   laser0 = self.ac[acount]
@@ -200,8 +200,8 @@ class MakeLogic(MpsReader):
                 if device_info['dest'].lower() == 'all':
                   laser0 = diag0 = dumpbsy0 = dumphxr0 = dumpsxr0 = lesa0 = self.ac[acount]
                 macros = {"VAL":"{0}".format(self.vals[acount]),
-                          "FAULT":"CHRGDIFF",
-                          "TEXT":"Charge Diff",
+                          "FAULT":"TMIT",
+                          "TEXT":"TMIT",
                           "NUM":"{0}".format(acount),
                           "LASER0":"{0}".format(laser0),
                           "DIAG0":"{0}".format(diag0),
@@ -209,7 +209,7 @@ class MakeLogic(MpsReader):
                           "DUMPHXR0":"{0}".format(dumphxr0),
                           "DUMPSXR0":"{0}".format(dumpsxr0),
                           "LESA0":"{0}".format(lesa0)}
-                if acount < 7:  
+                if acount < 5:  
                   self.write_logic_json(path=path,filename='logic.json', template_name='state_line.template',macros=macros)
                 else:  
                   self.write_logic_json(path=path,filename='logic.json', template_name='state_end.template',macros=macros)
@@ -242,7 +242,7 @@ class MakeLogic(MpsReader):
               else:
                 self.write_logic_json(path=path,filename='logic.json', template_name='ig_condition.template',macros=macros)
           self.write_logic_json(path=path,filename='logic.json', template_name='bpm_chrg_end.template',macros=macros)
-          for acount in range(0,8):
+          for acount in range(0,6):
             laser0 = diag0 = dumpbsy0 = dumphxr0 = dumpsxr0 = lesa0 = 'null'
             if device_info['dest'] == 'LASER':
               laser0 = self.ac[acount]
@@ -270,7 +270,7 @@ class MakeLogic(MpsReader):
                       "DUMPHXR0":"{0}".format(dumphxr0),
                       "DUMPSXR0":"{0}".format(dumpsxr0),
                       "LESA0":"{0}".format(lesa0)}
-            if acount < 7:  
+            if acount < 5:  
               self.write_logic_json(path=path,filename='logic.json', template_name='state_line.template',macros=macros)
             else:  
               self.write_logic_json(path=path,filename='logic.json', template_name='state_end.template',macros=macros)

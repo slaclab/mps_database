@@ -1,0 +1,20 @@
+- mmio:
+  - AmcCarrierCore:
+    - AppMps:
+        - AppMpsSalt: 
+          - MpsChEnable: !<value> 0x3e
+# Analog application AppID
+- mmio:
+  - AmcCarrierCore: 
+    - AppMps:
+      - AppMpsRegBase:
+        - mpsAppId: !<value> 0
+
+
+# Digital application AppID
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsLinkNodeCore:
+        - MpsDigitalMessage:
+          - AppId: !<value> 182

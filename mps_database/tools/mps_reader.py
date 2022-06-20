@@ -63,7 +63,7 @@ class MpsReader:
         self.database = db_file
         self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
         self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
-        self.mbbi_sevr = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TWSV','ELSV','TVSV','TTSV','FTSV','FFSV']
+        self.mbbi_sevr = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
         self.lblms = []
         self.pblms = []
         self.cblms = []
@@ -158,6 +158,8 @@ class MpsReader:
                 return "pC"
             elif fault_name == "CHRGDIFF":
                 return "pC"
+            elif fault_name == 'TMIT':
+                return 'NeI'
             else:
                 raise ValueError("Function \"__get_app_units(device_type_name={}, fault_name={})\". Invalid fault name"
                     .format(device_type_name, fault_name))
@@ -196,7 +198,7 @@ class MpsReader:
             return "{}{}".format(channel_number, integration_channel)
         else:
             # For other application, the get index from the following 2-D dict
-            bpm_fault_index = { "X":"0", "Y":"1", "CHRG":"2","CHRG_DIFF":"2","CHRGDIFF":"2" }
+            bpm_fault_index = { "X":"0", "Y":"1","TMIT":"2","CHRG":"2","CHRG_DIFF":"2","CHRGDIFF":"2" }
             bcm_fault_index = { "CHRG":"0", "DIFF": "1" }
             fault_indexes = {   "BPMS":bpm_fault_index,
                                 "FARC":bcm_fault_index,

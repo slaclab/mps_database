@@ -59,41 +59,79 @@ record(longin, "$(BASE):$(DEST)_TIMING_BC") {
   field(INP, "@asyn(CENTRAL_NODE $(ID) 0)MPS_TIMING_BC")
 }
 
-record(calc, "$(BASE):$(DEST)_TIMING_BC_FAULT_CALC") {
-  field(DESC, "Calculate TPG BC status for $(DEST)")
+record(calc, "$(BASE):$(DEST)_MPS_TIMING_FAULT_CALC") {
+  field(DESC, "Calc TPG BC status $(DEST)")
   field(SCAN, "1 second")
   field(INPA, "$(BASE):FAULT_REASON")
   field(CALC, "(A>>$(SHIFT))&1")
-  field(FLNK, "$(BASE):$(DEST)_TIMING_BC_FAULT")
+  field(FLNK, "$(BASE):$(DEST)_MPS_TIMING_FAULT")
 }
 
-record(bi, "$(BASE):$(DEST)_TIMING_BC_FAULT") {
-  field(DESC, "TPG BC violation: $(DEST)")
+record(bi, "$(BASE):$(DEST)_MPS_TIMING_FAULT") {
+  field(DESC, "TPG BC > MPS BC: $(DEST)")
   field(DTYP, "Raw Soft Channel")
   field(SCAN, "Passive")
   field(ZNAM, "OK")
   field(ONAM, "FAULT")
   field(ZSV, "NO_ALARM")
   field(OSV, "MAJOR")
-  field(INP, "$(BASE):$(DEST)_TIMING_BC_FAULT_CALC")
+  field(INP, "$(BASE):$(DEST)_MPS_TIMING_FAULT_CALC")
 }
 
-record(calc, "$(BASE):$(DEST)_BC_INTEGRATION_FAULT_CALC") {
-  field(DESC, "Calculate TPG BC status for $(DEST)")
+record(calc, "$(BASE):$(DEST)_MIN_SPACING_FAULT_CALC") {
+  field(DESC, "Calc Min Spacing status $(DEST)")
   field(SCAN, "1 second")
   field(INPA, "$(BASE):FAULT_REASON")
   field(CALC, "(A>>$(SHIFT1))&1")
-  field(FLNK, "$(BASE):$(DEST)_BC_INTEGRATION_FAULT")
+  field(FLNK, "$(BASE):$(DEST)_MIN_SPACING_FAULT")
 }
 
-record(bi, "$(BASE):$(DEST)_BC_INTEGRATION_FAULT") {
-  field(DESC, "Chrg Integration Fault: $(DEST)")
+record(bi, "$(BASE):$(DEST)_MIN_SPACING_FAULT") {
+  field(DESC, "Min Spacing Fault: $(DEST)")
   field(DTYP, "Raw Soft Channel")
   field(ZNAM, "OK")
   field(ONAM, "FAULT")
   field(ZSV, "NO_ALARM")
   field(OSV, "MAJOR")
-  field(INP, "$(BASE):$(DEST)_BC_INTEGRATION_FAULT_CALC")
+  field(INP, "$(BASE):$(DEST)_MIN_SPACING_FAULT_CALC")
+  field(SCAN, "Passive")
+}
+
+record(calc, "$(BASE):$(DEST)_CHRG_INT_LOW_FAULT_CALC") {
+  field(DESC, "Calc Q int low status $(DEST)")
+  field(SCAN, "1 second")
+  field(INPA, "$(BASE):FAULT_REASON_MSB")
+  field(CALC, "(A>>$(SHIFT))&1")
+  field(FLNK, "$(BASE):$(DEST)_CHRG_INT_LOW_FAULT")
+}
+
+record(bi, "$(BASE):$(DEST)_CHRG_INT_LOW_FAULT") {
+  field(DESC, "Charge Integrator Low: $(DEST)")
+  field(DTYP, "Raw Soft Channel")
+  field(SCAN, "Passive")
+  field(ZNAM, "OK")
+  field(ONAM, "FAULT")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "$(BASE):$(DEST)_CHRG_INT_LOW_FAULT")
+}
+
+record(calc, "$(BASE):$(DEST)_CHRG_INT_HIGH_FAULT_CALC") {
+  field(DESC, "Calc Q int high status $(DEST)")
+  field(SCAN, "1 second")
+  field(INPA, "$(BASE):FAULT_REASON_MSB")
+  field(CALC, "(A>>$(SHIFT1))&1")
+  field(FLNK, "$(BASE):$(DEST)_CHRG_INT_HIGH_FAULT")
+}
+
+record(bi, "$(BASE):$(DEST)_CHRG_INT_HIGH_FAULT") {
+  field(DESC, "Charge Integrator High: $(DEST)")
+  field(DTYP, "Raw Soft Channel")
+  field(ZNAM, "OK")
+  field(ONAM, "FAULT")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "$(BASE):$(DEST)_CHRG_INT_HIGH_FAULT_CALC")
   field(SCAN, "Passive")
 }
 
@@ -109,4 +147,4 @@ record(mbbo, "$(BASE):$(DEST)_FORCE_BC") {
     field(VAL, "0")
     field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FORCE_DEST")
     field(PINI, "YES")
-    field(ASG,  "$(ASG1)")
+    field(ASG,  "$(ASG2)")

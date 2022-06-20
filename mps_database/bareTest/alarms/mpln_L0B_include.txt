@@ -1,0 +1,6 @@
+INCLUDE MPS:L0B:1  ./mpln_l0b_mp01.alhConfig
+INCLUDE MPS:L0B:1  ./mpln_l0b_mp02.alhConfig
+INCLUDE MPS:L0B:1  ./mpln_l0b_mp03.alhConfig
+INCLUDE MPS:L0B:1  ./mpln_l0b_mp04.alhConfig
+INCLUDE MPS:L0B:1  ./mpln_l0b_mp05.alhConfig
+INCLUDE MPS:L0B:1  ./mpln_col0_mp01.alhConfig

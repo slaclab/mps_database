@@ -1,0 +1,2829 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 440
+y 215
+w 780
+h 540
+##h 80
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 14
+ctlBgColor1 index 4
+ctlBgColor2 index 4
+topShadowColor index 1
+botShadowColor index 11
+title "Link Node Area"
+snapToGrid
+gridSize 2
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 160
+y 18
+w 52
+h 16
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Details"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 677
+y 18
+w 52
+h 16
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "LN CPU"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 255
+y 18
+w 64
+h 16
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "SHM Name"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 465
+y 18
+w 83
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Config Ver."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 345
+y 18
+w 81
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "FPGA Heartbeat"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 563
+y 18
+w 92
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "LN Location"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 58
+y 18
+w 28
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Type"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 14
+y 18
+w 12
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Mode"
+}
+autoSize
+endObjectProperties
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 35
+w 100
+h 24
+controlPv "MPLN:BPN13:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 35
+w 100
+h 24
+controlPv "MPLN:BPN13:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 35
+w 100
+h 24
+controlPv "MPLN:BPN13:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 35
+w 100
+h 24
+controlPv "MPLN:BPN13:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 35
+w 64
+h 24
+controlPv "MPLN:BPN13:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 35
+w 40
+h 24
+controlPv "SIOC:BPN13:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 35
+w 100
+h 24
+controlPv "MPLN:BPN13:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 35
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 77"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN13:MP01:1,SLOT_FILE=LinkNode77_slot.ui,LOCA=BPN13,IOC_UNIT=MP01,INST=1,LN=77\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 65
+w 100
+h 24
+controlPv "MPLN:BPN14:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 65
+w 100
+h 24
+controlPv "MPLN:BPN14:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 65
+w 100
+h 24
+controlPv "MPLN:BPN14:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 65
+w 100
+h 24
+controlPv "MPLN:BPN14:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 65
+w 64
+h 24
+controlPv "MPLN:BPN14:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 65
+w 40
+h 24
+controlPv "SIOC:BPN14:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 65
+w 100
+h 24
+controlPv "MPLN:BPN14:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 65
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 78"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN14:MP01:1,SLOT_FILE=LinkNode78_slot.ui,LOCA=BPN14,IOC_UNIT=MP01,INST=1,LN=78\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 95
+w 100
+h 24
+controlPv "MPLN:BPN15:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 95
+w 100
+h 24
+controlPv "MPLN:BPN15:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 95
+w 100
+h 24
+controlPv "MPLN:BPN15:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 95
+w 100
+h 24
+controlPv "MPLN:BPN15:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 95
+w 64
+h 24
+controlPv "MPLN:BPN15:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 95
+w 40
+h 24
+controlPv "SIOC:BPN15:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 95
+w 100
+h 24
+controlPv "MPLN:BPN15:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 95
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 79"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN15:MP01:1,SLOT_FILE=LinkNode79_slot.ui,LOCA=BPN15,IOC_UNIT=MP01,INST=1,LN=79\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 125
+w 100
+h 24
+controlPv "MPLN:BPN16:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 125
+w 100
+h 24
+controlPv "MPLN:BPN16:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 125
+w 100
+h 24
+controlPv "MPLN:BPN16:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 125
+w 100
+h 24
+controlPv "MPLN:BPN16:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 125
+w 64
+h 24
+controlPv "MPLN:BPN16:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 125
+w 40
+h 24
+controlPv "SIOC:BPN16:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 125
+w 100
+h 24
+controlPv "MPLN:BPN16:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 125
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 80"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN16:MP01:1,SLOT_FILE=LinkNode80_slot.ui,LOCA=BPN16,IOC_UNIT=MP01,INST=1,LN=80\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 155
+w 100
+h 24
+controlPv "MPLN:BPN17:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 155
+w 100
+h 24
+controlPv "MPLN:BPN17:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 155
+w 100
+h 24
+controlPv "MPLN:BPN17:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 155
+w 100
+h 24
+controlPv "MPLN:BPN17:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 155
+w 64
+h 24
+controlPv "MPLN:BPN17:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 155
+w 40
+h 24
+controlPv "SIOC:BPN17:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 155
+w 100
+h 24
+controlPv "MPLN:BPN17:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 155
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 81"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN17:MP01:1,SLOT_FILE=LinkNode81_slot.ui,LOCA=BPN17,IOC_UNIT=MP01,INST=1,LN=81\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 185
+w 100
+h 24
+controlPv "MPLN:BPN18:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 185
+w 100
+h 24
+controlPv "MPLN:BPN18:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 185
+w 100
+h 24
+controlPv "MPLN:BPN18:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 185
+w 100
+h 24
+controlPv "MPLN:BPN18:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 185
+w 64
+h 24
+controlPv "MPLN:BPN18:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 185
+w 40
+h 24
+controlPv "SIOC:BPN18:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 185
+w 100
+h 24
+controlPv "MPLN:BPN18:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 185
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 82"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN18:MP01:1,SLOT_FILE=LinkNode82_slot.ui,LOCA=BPN18,IOC_UNIT=MP01,INST=1,LN=82\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 215
+w 100
+h 24
+controlPv "MPLN:BPN19:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 215
+w 100
+h 24
+controlPv "MPLN:BPN19:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 215
+w 100
+h 24
+controlPv "MPLN:BPN19:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 215
+w 100
+h 24
+controlPv "MPLN:BPN19:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 215
+w 64
+h 24
+controlPv "MPLN:BPN19:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 215
+w 40
+h 24
+controlPv "SIOC:BPN19:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 215
+w 100
+h 24
+controlPv "MPLN:BPN19:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 215
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 83"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN19:MP01:1,SLOT_FILE=LinkNode83_slot.ui,LOCA=BPN19,IOC_UNIT=MP01,INST=1,LN=83\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 245
+w 100
+h 24
+controlPv "MPLN:BPN20:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 245
+w 100
+h 24
+controlPv "MPLN:BPN20:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 245
+w 100
+h 24
+controlPv "MPLN:BPN20:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 245
+w 100
+h 24
+controlPv "MPLN:BPN20:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 245
+w 64
+h 24
+controlPv "MPLN:BPN20:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 245
+w 40
+h 24
+controlPv "SIOC:BPN20:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 245
+w 100
+h 24
+controlPv "MPLN:BPN20:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 245
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 84"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN20:MP01:1,SLOT_FILE=LinkNode84_slot.ui,LOCA=BPN20,IOC_UNIT=MP01,INST=1,LN=84\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 275
+w 100
+h 24
+controlPv "MPLN:BPN21:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 275
+w 100
+h 24
+controlPv "MPLN:BPN21:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 275
+w 100
+h 24
+controlPv "MPLN:BPN21:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 275
+w 100
+h 24
+controlPv "MPLN:BPN21:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 275
+w 64
+h 24
+controlPv "MPLN:BPN21:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 275
+w 40
+h 24
+controlPv "SIOC:BPN21:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 275
+w 100
+h 24
+controlPv "MPLN:BPN21:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 275
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 85"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN21:MP01:1,SLOT_FILE=LinkNode85_slot.ui,LOCA=BPN21,IOC_UNIT=MP01,INST=1,LN=85\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 305
+w 100
+h 24
+controlPv "MPLN:BPN22:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 305
+w 100
+h 24
+controlPv "MPLN:BPN22:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 305
+w 100
+h 24
+controlPv "MPLN:BPN22:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 305
+w 100
+h 24
+controlPv "MPLN:BPN22:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 305
+w 64
+h 24
+controlPv "MPLN:BPN22:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 305
+w 40
+h 24
+controlPv "SIOC:BPN22:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 305
+w 100
+h 24
+controlPv "MPLN:BPN22:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 305
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 86"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN22:MP01:1,SLOT_FILE=LinkNode86_slot.ui,LOCA=BPN22,IOC_UNIT=MP01,INST=1,LN=86\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 335
+w 100
+h 24
+controlPv "MPLN:BPN23:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 335
+w 100
+h 24
+controlPv "MPLN:BPN23:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 335
+w 100
+h 24
+controlPv "MPLN:BPN23:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 335
+w 100
+h 24
+controlPv "MPLN:BPN23:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 335
+w 64
+h 24
+controlPv "MPLN:BPN23:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 335
+w 40
+h 24
+controlPv "SIOC:BPN23:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 335
+w 100
+h 24
+controlPv "MPLN:BPN23:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 335
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 87"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN23:MP01:1,SLOT_FILE=LinkNode87_slot.ui,LOCA=BPN23,IOC_UNIT=MP01,INST=1,LN=87\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 365
+w 100
+h 24
+controlPv "MPLN:BPN24:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 365
+w 100
+h 24
+controlPv "MPLN:BPN24:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 365
+w 100
+h 24
+controlPv "MPLN:BPN24:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 365
+w 100
+h 24
+controlPv "MPLN:BPN24:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 365
+w 64
+h 24
+controlPv "MPLN:BPN24:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 365
+w 40
+h 24
+controlPv "SIOC:BPN24:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 365
+w 100
+h 24
+controlPv "MPLN:BPN24:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 365
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 88"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN24:MP01:1,SLOT_FILE=LinkNode88_slot.ui,LOCA=BPN24,IOC_UNIT=MP01,INST=1,LN=88\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 395
+w 100
+h 24
+controlPv "MPLN:BPN25:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 395
+w 100
+h 24
+controlPv "MPLN:BPN25:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 395
+w 100
+h 24
+controlPv "MPLN:BPN25:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 395
+w 100
+h 24
+controlPv "MPLN:BPN25:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 395
+w 64
+h 24
+controlPv "MPLN:BPN25:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 395
+w 40
+h 24
+controlPv "SIOC:BPN25:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 395
+w 100
+h 24
+controlPv "MPLN:BPN25:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 395
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 89"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN25:MP01:1,SLOT_FILE=LinkNode89_slot.ui,LOCA=BPN25,IOC_UNIT=MP01,INST=1,LN=89\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 425
+w 100
+h 24
+controlPv "MPLN:BPN26:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 425
+w 100
+h 24
+controlPv "MPLN:BPN26:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 425
+w 100
+h 24
+controlPv "MPLN:BPN26:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 425
+w 100
+h 24
+controlPv "MPLN:BPN26:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 425
+w 64
+h 24
+controlPv "MPLN:BPN26:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 425
+w 40
+h 24
+controlPv "SIOC:BPN26:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 425
+w 100
+h 24
+controlPv "MPLN:BPN26:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 425
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 90"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN26:MP01:1,SLOT_FILE=LinkNode90_slot.ui,LOCA=BPN26,IOC_UNIT=MP01,INST=1,LN=90\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 455
+w 100
+h 24
+controlPv "MPLN:BPN27:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 455
+w 100
+h 24
+controlPv "MPLN:BPN27:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 455
+w 100
+h 24
+controlPv "MPLN:BPN27:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 455
+w 100
+h 24
+controlPv "MPLN:BPN27:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 455
+w 64
+h 24
+controlPv "MPLN:BPN27:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 455
+w 40
+h 24
+controlPv "SIOC:BPN27:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 455
+w 100
+h 24
+controlPv "MPLN:BPN27:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 455
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 91"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN27:MP01:1,SLOT_FILE=LinkNode91_slot.ui,LOCA=BPN27,IOC_UNIT=MP01,INST=1,LN=91\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 234
+y 485
+w 100
+h 24
+controlPv "MPLN:BPN28:MP01:1:LN_SHM_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 550
+y 485
+w 100
+h 24
+controlPv "MPLN:BPN28:MP01:1:LN_LOCATION"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 446
+y 485
+w 100
+h 24
+controlPv "MPLN:BPN28:MP01:1:CONFIG_VERSION"
+displayMode "hex"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 340
+y 485
+w 100
+h 24
+controlPv "MPLN:BPN28:MP01:1:FPGA_UPTIMECNT"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 58
+y 485
+w 64
+h 24
+controlPv "MPLN:BPN28:MP01:1:LN_TYPE"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 14
+y 485
+w 40
+h 24
+controlPv "SIOC:BPN28:MP01:LCLSMODE_RBV"
+displayMode "decimal"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 656
+y 485
+w 100
+h 24
+controlPv "MPLN:BPN28:MP01:1:LN_CPU_NAME"
+fgColor index 16
+fgAlarm
+bgColor index 14
+fill
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 132
+y 485
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Link Node 190"
+numCmds 1
+command {
+  0 "pydm -m \"P=MPLN:BPN28:MP01:1,SLOT_FILE=LinkNode190_slot.ui,LOCA=BPN28,IOC_UNIT=MP01,INST=1,LN=190\" $PYDM/mps/mps_link_node.ui"
+}
+endObjectProperties
+
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 14
+y 515
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Group 8"
+numCmds 1
+command {
+  0 "pydm $PHYSICS_TOP/mps_configuration/current/display/groups/LinkNodeGroup8.ui"
+}
+endObjectProperties
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 124
+y 515
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Group 9"
+numCmds 1
+command {
+  0 "pydm $PHYSICS_TOP/mps_configuration/current/display/groups/LinkNodeGroup9.ui"
+}
+endObjectProperties
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 234
+y 515
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Group 10"
+numCmds 1
+command {
+  0 "pydm $PHYSICS_TOP/mps_configuration/current/display/groups/LinkNodeGroup10.ui"
+}
+endObjectProperties
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 344
+y 515
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Group 11"
+numCmds 1
+command {
+  0 "pydm $PHYSICS_TOP/mps_configuration/current/display/groups/LinkNodeGroup11.ui"
+}
+endObjectProperties
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 454
+y 515
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Group 12"
+numCmds 1
+command {
+  0 "pydm $PHYSICS_TOP/mps_configuration/current/display/groups/LinkNodeGroup12.ui"
+}
+endObjectProperties

@@ -1,0 +1,2 @@
+INCLUDE SIOC:SYS0:MP03  ./group_0_mp03.alhConfig
+INCLUDE SIOC:SYS0:MP03  ./group_1_mp03.alhConfig

@@ -22,3 +22,10 @@ class LinkNodeGroup(Base):
   link_nodes = relationship("LinkNode", order_by="LinkNode.lcls1_id", backref='link_node_groups')
   central_node1 = Column(String,nullable=False)
   central_node2 = Column(String,nullable=False)
+
+  def has_inputs(self):
+    has_inputs = False
+    for ln in self.link_nodes:
+      if ln.has_inputs():
+        has_inputs = True
+    return has_inputs
