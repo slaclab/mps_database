@@ -41,11 +41,13 @@ class MpsReader:
         self.create_dir(dest_path, clean=clean, debug=verbose)
         self.dest_path = dest_path
         self.display_path = '{}display/'.format(self.dest_path)
+        self.alarm_path = '{}alarms/'.format(self.dest_path)
         self.report_path = '{}reports/build/'.format(self.dest_path)
+        self.checkout_path = '{}checkout/'.format(self.dest_path)
         self.create_dir('{0}'.format(self.report_path))
-        self.cn0_path = '{}central_node_db/cn1/'.format(self.dest_path)
-        self.cn1_path = '{}central_node_db/cn2/'.format(self.dest_path)
-        self.cn2_path = '{}central_node_db/cn3/'.format(self.dest_path)
+        self.cn1_path = '{}central_node_db/cn1/'.format(self.dest_path)
+        self.cn2_path = '{}central_node_db/cn2/'.format(self.dest_path)
+        self.cn3_path = '{}central_node_db/cn3/'.format(self.dest_path)
         self.mps_names = None
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
         self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH","FEES","FEEH","LTU0","UND0","BSY0","DMP0","DMPH","DMPS"]
@@ -53,14 +55,19 @@ class MpsReader:
         self.soft_areas = ['CLTS','BSYS','LTUS','UNDS','FEES','DMPS']
         self.nc_int0_cycles = 2
         self.nc_int1_cycles = 179
-        self.sc_int0_cycles = 538462 #500 ms integration time (500000 us * 1400 cycles/1300 us)
-        self.sc_int1_cycles = 538462
-        self.cn0 = [2,3,4,5,6,7,8,9,10,11]
-        self.cn1 = [12,13,14,15,16,17,18,19,20,21,22,23]
-        self.cn2 = [0,1]
+        self.sc_int0_cycles = 1023 #1023 is biggest value for this register --> 1023/910000 = 1 ms integration
+        self.sc_int1_cycles = 1023
+        self.cn1 = [8,9,10,11,12,13,14]
+        self.cn2 = [15,16,17,18,19,20,21,22,23]
+        self.cn3 = [0,1,2,3,4,5,6,7]
         self.database = db_file
         self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
         self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
+        self.mbbi_sevr = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
+        self.lblms = []
+        self.pblms = []
+        self.cblms = []
+        self.bpms = []
         
         # If the template path is specified, check its format and if it exists
         if template_path:
@@ -88,6 +95,13 @@ class MpsReader:
       else:
         return None
 
+    def get_faults(self,device):
+      fault_inputs = device.fault_outputs
+      faults = []
+      for fi in fault_inputs:
+        faults.append(fi.fault)
+      return faults
+
     def get_analog_type_name(self, device_type_name):
         """
         Return the fourth PV field for the analog measument type 
@@ -96,16 +110,20 @@ class MpsReader:
           * PBLM, LBLM, CBLM => LOSS
           * TORO, FARC => CHARGE
         """
-        if device_type_name in ["SOLN", "BEND", "KICK"]:
+        if device_type_name in ["SOLN", "BEND", "KICK","BACT"]:
             return "BACT"
-        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC"]:
+        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC",'SBLM']:
             return "LOSS"
+        elif device_type_name in ['WF']:
+            return 'WF'
         elif device_type_name in ["TORO", "FARC"]:
-            return "CHARGE"
+            return "CHRG"
         elif device_type_name in ['BPMS']:
             return ""
         elif device_type_name in ['BLEN']:
             return ""
+        elif device_type_name in ['TEST']:
+            return 'TEST'
         else:
             raise ValueError("Function \"get_analog_type_name(device_type_name={})\". Invalid device type name"
                              .format(device_type_name))
@@ -120,10 +138,10 @@ class MpsReader:
             - CHRG     => pC
           * TORO, FARC => Nel
         """
-        if device_type_name in ["SOLN", "BEND","BLEN","KICK"]:
+        if device_type_name in ["SOLN", "BEND","BLEN","KICK","BACT"]:
             # Solenoid devices use 'uA'.
             return "GeV/c"
-        elif device_type_name in ["LBLM","PBLM","FADC"]:
+        elif device_type_name in ["LBLM","PBLM","FADC","WF",'SBLM','TEST']:
             # Beam loss monitors set threshold in Volts initially
             return "raw"
         elif device_type_name in ['BLM','CBLM']:
@@ -138,6 +156,10 @@ class MpsReader:
                 return "pC"
             elif fault_name == "CHRG_DIFF":
                 return "pC"
+            elif fault_name == "CHRGDIFF":
+                return "pC"
+            elif fault_name == 'TMIT':
+                return 'NeI'
             else:
                 raise ValueError("Function \"__get_app_units(device_type_name={}, fault_name={})\". Invalid fault name"
                     .format(device_type_name, fault_name))
@@ -157,10 +179,10 @@ class MpsReader:
           * TORO,FC => (X),    X=Channel (0:Charge, 1:Difference)
           * BLEN    => 0
         """
-        if device_type_name in ["SOLN", "BEND", "BLEN", "KICK"]:
+        if device_type_name in ["SOLN", "BEND", "BLEN", "KICK","BACT"]:
             integration_channel = 0
             return "{}{}".format(channel_number,integration_channel)
-        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM","FADC"]:
+        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM","FADC","WF",'TEST']:
             # For BLM devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = 0
@@ -176,7 +198,7 @@ class MpsReader:
             return "{}{}".format(channel_number, integration_channel)
         else:
             # For other application, the get index from the following 2-D dict
-            bpm_fault_index = { "X":"0", "Y":"1", "CHRG":"2","CHRG_DIFF":"2" }
+            bpm_fault_index = { "X":"0", "Y":"1","TMIT":"2","CHRG":"2","CHRG_DIFF":"2","CHRGDIFF":"2" }
             bcm_fault_index = { "CHRG":"0", "DIFF": "1" }
             fault_indexes = {   "BPMS":bpm_fault_index,
                                 "FARC":bcm_fault_index,
@@ -191,7 +213,7 @@ class MpsReader:
           * BPMS       => BPM
           * TORO, FARC => BCM
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK","FADC"]:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK","FADC","BACT","WF",'TEST']:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -242,11 +264,16 @@ class MpsReader:
         else:
             return 1
 
-    def exchange(self,string):
-      name = string.split(":")
-      name.insert(3,"3")
-      name = ":".join(name)
-      return name
+    def get_cn_path(self,link_node):
+      group = link_node.group
+      if group in self.cn1:
+        return self.cn1_path
+      elif group in self.cn2:
+        return self.cn2_path
+      elif group in self.cn3:
+        return self.cn3_path
+      else:
+        return None
 
     def format_path(self,path):
         """
@@ -311,6 +338,25 @@ class MpsReader:
     def write_ui_file(self, path, template_name, macros):
         template = '{}display/{}'.format(self.template_path, template_name)
         self.write_file_from_template(file=path,template=template,macros=macros)
+
+    def write_alarm_file(self, path, template_name, macros):
+        template = '{}alarms/{}'.format(self.template_path, template_name)
+        self.write_file_from_template(file=path,template=template,macros=macros)
+
+    def write_logic_json(self, path,filename, template_name, macros):
+        """
+        Write the EPICS DB file into the 'path' directory.
+
+        The resulting file is named "mps.db". Calling this function
+        multiple times, will append the results into the same file.
+
+        The file is created from the template file located in the directory
+        "epics_db" inside the global template directory, substituting the
+        macros definitions.
+        """
+        file = "{0}{1}".format(path,filename)
+        template = "{}logic/{}".format(self.template_path, template_name)
+        self.write_file_from_template(file=file, template=template, macros=macros)
 
     def write_file_from_template(self, file, template, macros):
         """

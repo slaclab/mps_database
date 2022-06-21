@@ -1,0 +1,6 @@
+            ],
+            "states": [
+                [$(VAL1), "$(FAULT)_T0","$(FAULT) Thr 0",$(LASER0),$(DIAG0),$(DUMPBSY0),$(DUMPHXR0),$(DUMPSXR0),$(LESA0)],
+                [$(VAL2), "$(FAULT)_T1","$(FAULT) Thr 1",$(LASER1),$(DIAG1),$(DUMPBSY1),$(DUMPHXR1),$(DUMPSXR1),$(LESA1)]
+            ]
+        },

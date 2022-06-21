@@ -1,0 +1,14 @@
+        {
+            "description": "$(DESCRIPTION)",
+            "name":"$(FNAME)",
+            "dtype":"$(DTYPE)",
+            "inputs": [
+                "$(INPUT1)"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "$(Z_STATE)","$(Z_STATE)",null,null,0,null,null,null],
+                [1, "$(O_STATE)","$(OSTATE)",null,null,null,null,null,null]
+            ]
+        },

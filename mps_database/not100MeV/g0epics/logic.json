@@ -1,0 +1,135 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description": "BLRDG0 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "BEND:DIAG0:155:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,null,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,null,null,null,null]
+            ]
+        },
+        {
+            "description": "BYDG0 Magner INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "BEND:DIAG0:510:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,null,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,null,null,null,null]
+            ]
+        },
+        {
+            "description": "BCX11 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "BEND:BC1B:200:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "BCX21 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "BEND:BC2B:200:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,null,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,null,13,null,null,null]
+            ]
+        },
+        {
+            "description": "QCM01 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "QUAD:L0B:0185:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "QDG001 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "QUAD:DIAG0:190:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,null,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,null,null,null,null]
+            ]
+        },
+        {
+            "description": "QDG003 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "QUAD:DIAG0:230:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,null,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,null,null,null,null]
+            ]
+        },
+        {
+            "description": "BCXH1 Magnet INTOL (EPICS)",
+            "name":"STATUS",
+            "dtype":"EPICS",
+            "inputs": [
+                "BEND:HTR:480:INTOL"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        }
+]
+}

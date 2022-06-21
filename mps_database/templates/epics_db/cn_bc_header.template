@@ -1,0 +1,12 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node to force beam class at a destination     #
+# Macro description:                                                             #
+#   - DEST         : MPS Destination                                             #
+#   - ID           : Destination ID                                              #
+#================================================================================#
+record(mbbi, "$(BASE):$(DEST)_BC") {
+    field(DESC, "BC at $(DEST)")
+    field(DTYP, "Raw Soft Channel")
+    field(VAL, "0")
+    field(INP, "$(BASE):$(DEST)_BC_NUM")
+    field(PINI, "YES")

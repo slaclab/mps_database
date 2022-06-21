@@ -1,0 +1,3 @@
+epicsEnvSet("DEV$(CH)", "$(P)")
+epicsEnvSet("C$(CH)_I0", "$(ATTR0)")
+epicsEnvSet("C$(CH)_I1", "$(ATTR1)")

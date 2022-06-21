@@ -1,0 +1,2 @@
+database/add_device.py --db mps_config-vac.db --file g0blm/devices.csv
+database/add_logic.py --file g0blm/logic.json --db mps_config-vac.db

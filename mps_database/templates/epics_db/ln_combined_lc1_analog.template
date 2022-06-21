@@ -34,3 +34,4 @@ record(calc, "$(P_DEV):$(R_DEV)NORML") {
     field(EGU, "%")
     field(SCAN, "Passive")
 }
+

@@ -23,26 +23,25 @@ class ExportYaml(MpsReader):
   def export(self,mps_db_session):
     if self.verbose:
       print("INFO: Starting Export Yaml...")
-      for cn in range(0,3):
-        yaml_filename = yaml_filename = '{0}/mps_config-cn{1}-{2}.yaml'.format(self.dest_path,cn+1,self.config_version)
-        self.dump_yaml(mps_db_session,yaml_filename,cn)
-        cmd = "whoami"
-        process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        user_name, error = process.communicate()
+    for cn in range(0,3):
+      yaml_filename = yaml_filename = '{0}/mps_config-cn{1}-{2}.yaml'.format(self.dest_path,cn+1,self.config_version)
+      self.dump_yaml(mps_db_session,yaml_filename,cn)
+      cmd = "whoami"
+      process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+      user_name, error = process.communicate()
+      cmd = "md5sum {0}".format(self.database)
+      process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+      md5sum_output, error = process.communicate()
 
-        cmd = "md5sum {0}".format(self.database)
-        process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
-        md5sum_output, error = process.communicate()
-
-        md5sum_tokens = md5sum_output.split()
-        file1 = open(yaml_filename,"a")
-        file1.write("---\n")
-        file1.write("DatabaseInfo:\n")
-        file1.write("- source: {0}\n".format(self.database))
-        file1.write("  date: {0}\n".format(time.asctime(time.localtime(time.time()))))
-        file1.write("  user: {0}\n".format(user_name.strip()))
-        file1.write("  md5sum: {0}\n".format(md5sum_tokens[0].strip()))
-        file1.close()     
+      md5sum_tokens = md5sum_output.split()
+      file1 = open(yaml_filename,"a")
+      file1.write("---\n")
+      file1.write("DatabaseInfo:\n")
+      file1.write("- source: {0}\n".format(self.database))
+      file1.write("  date: {0}\n".format(time.asctime(time.localtime(time.time()))))
+      file1.write("  user: {0}\n".format(user_name.strip()))
+      file1.write("  md5sum: {0}\n".format(md5sum_tokens[0].strip()))
+      file1.close()     
     if self.verbose:
       print('........Done Exporting Yaml')  
 
@@ -50,11 +49,11 @@ class ExportYaml(MpsReader):
     f = open(filename,"w")
     self.dump_general_to_yaml(session,f)
     if cn == 0:
-      self.dump_link_nodes_to_yaml(session,f,self.cn0+self.cn2)
-    elif cn == 1:
       self.dump_link_nodes_to_yaml(session,f,self.cn1)
-    elif cn == 2:
+    elif cn == 1:
       self.dump_link_nodes_to_yaml(session,f,self.cn2)
+    elif cn == 2:
+      self.dump_link_nodes_to_yaml(session,f,self.cn3)
 
   def dump_general_to_yaml(self,session,f):
     yaml.add_multi_representer(models.Base, self.model_representer)

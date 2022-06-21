@@ -1,0 +1,52 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description": "YAG01B Injector Collimator Position",
+            "name":"POSITION",
+            "dtype":"YAG01B",
+            "inputs": [
+                "MOVR:GUNB:753:P0_SWITCH",
+                "MOVR:GUNB:753:P1_SWITCH",
+                "MOVR:GUNB:753:P2_SWITCH",
+                "MOVR:GUNB:753:P3_SWITCH",
+                "MOVR:GUNB:753:P4_SWITCH",
+                "MOVR:GUNB:753:P5_SWITCH",
+                "MOVR:GUNB:753:P6_SWITCH"          
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Moving","Moving",null,0,0,null,null,null],
+                [1, "Extracted","Extracted (P0)",null,13,13,null,null,null],
+                [2, "YAG_HOLE","YAG Screen with Hole (P1)",null,3,3,null,null,null],
+                [4, "YAG","YAG Screen (P2)",null,3,3,null,null,null],
+                [8, "COL1","24mm Collimator",null,13,13,null,null,null],
+                [16, "COL2","20mm Collimator",null,13,13,null,null,null],
+                [32, "COL3","16mm Collimator",null,13,13,null,null,null],
+                [64, "COL4","12mm Collimator",null,13,13,null,null,null],
+                [128, "SPARE","Spare Switch",null,0,0,null,null,null]
+            ]
+        },
+        {
+            "description":"VVPG GUNB 941 Closed",
+            "name":"POSITION",
+            "dtype":"VV02",
+            "inputs": [
+                "VVPG:GUNB:941:CLOSED"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Broken","Broken",null,0,0,0,0,0],
+                [1, "Closed","Closed",null,0,0,0,0,0],
+                [2, "Valve Open","Valve Open",null,13,13,0,0,0],
+                [3, "Broken","Broken",null,0,0,0,0,0],
+                [4, "Broken","Broken",null,0,0,0,0,0],
+                [5, "LSS Mode","LSS Mode",null,3,3,0,0,0],
+                [6, "Broken","Broken",null,0,0,0,0,0],
+                [7, "Broken","Broken",null,0,0,0,0,0]
+            ]
+        }
+]
+}

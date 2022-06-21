@@ -42,9 +42,9 @@ class AddIgnoreDevice:
           device_info[fields[field_index]]=property
           field_index = field_index + 1
         if(self.validate_condition(device_info['name'])):
-          condition = models.Condition(name=device_info['name'],description=device_info['name'],value=1)
+          condition = models.Condition(name=device_info['name'],description=device_info['description'],value=1)
           self.session.add(condition)
-          device_name = self.mps_names.makeDeviceName(device_info['device'])
+          device_name = self.mps_names.makeDeviceName(device_info['device'],device_info['type'])
           device = self.find_device(device_name,device_name)
           fault_state = self.find_fault_state(device,device_info['state'])
           if fault_state is not None:

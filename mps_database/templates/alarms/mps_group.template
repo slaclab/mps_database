@@ -1,2 +1,1 @@
-
-CHANNEL  $(GROUP_NAME)     $(FAULT_PV)		-----
+CHANNEL  $(MPS_PREFIX):$(LN_GROUP)     $(MPS_PREFIX):APP$(ID)_STATUS		-----

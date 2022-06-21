@@ -1,0 +1,1 @@
+epicsEnvSet("WF$(CH)", "$(P)")

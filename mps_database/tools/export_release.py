@@ -40,9 +40,9 @@ class ExportRelease(MpsReader):
         self.export_faults.export(mps_db_session)
         self.export_extra.export_conditions(mps_db_session)
         self.export_extra.export_destinations(mps_db_session)
-        self.export_extra.generate_area_displays(mps_db_session)
       if self.yaml:
         self.export_yaml.export(mps_db_session)
+        self.export_extra.generate_area_displays(mps_db_session)
     if self.verbose:
       print("INFO: Done Export Process")
     

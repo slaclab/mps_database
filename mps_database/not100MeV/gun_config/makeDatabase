@@ -1,0 +1,5 @@
+#!/bin/bash
+database/add_device.py --db mps_config-gun.db --file gun_config/gun_only_devices.csv
+database/add_logic.py --file gun_config/yag_gun_logic.json --db mps_config-gun.db
+database/add_ignore_device.py -v --db mps_config-gun.db --file gun_config/ignore_devices.csv
+database/add_logic.py -v --db mps_config-gun.db --file gun_config/gun_logic.json

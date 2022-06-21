@@ -11,11 +11,11 @@ record(longin, "$(NAME)_INP") {
   field(DTYP, "asynInt32")
   field(SCAN, "1 second")
   field(INP,  "@asynMask(CENTRAL_NODE $(ID) 0)MPS_FAULT")
-  field(FLNK, "$(NAME)")
+  field(FLNK, "$(NAME)_MBBI")
 }
-record(mbbiDirect, "$(NAME)") {
+record(mbbiDirect, "$(NAME)_MBBI") {
   field(DESC, "$(DESC)")
-  field(DTYP, "Soft Channel")
+  field(DTYP, "Raw Soft Channel")
   field(SCAN, "Passive")
   field(SHFT, "$(SHIFT)")
   field(INP,  "$(NAME)_INP")
@@ -43,5 +43,14 @@ record(bi, "$(NAME)_IGNORED") {
   field(ZNAM, "Not Ignored")
   field(ONAM, "Ignored")
   field(INP,  "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_IGNORED")
+}
+
+record(bi, "$(NAME)") {
+  field(DESC, "$(DESC) Faulted")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "Not Faulted")
+  field(ONAM, "Faulted")
+  field(INP,  "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FAULT_DISPLAY")
 }
 

@@ -27,23 +27,41 @@ class ExportLinkNodeGroups(MpsReader):
       print("INFO: Begin Exporting Devices")
     crate_filename = '{0}/SCMPS_{1}_CrateProfiles.tex'.format(self.report_path,self.config_version)
     input_filename = '{0}/SCMPS_{1}_DeviceInputs.tex'.format(self.report_path,self.config_version)
+    appendixA_filename = '{0}/SCMPS_{1}_AppendixA.tex'.format(self.report_path,self.config_version)
+    appendixB_filename = '{0}/SCMPS_{1}_AppendixB.tex'.format(self.report_path,self.config_version)
     self.crate_profiles = Latex(crate_filename)
     self.crate_profiles.startDocument('SCMPS Crate Profiles',self.config_version)
     self.input_report = Latex(input_filename)
-    self.input_report.startDocument('SCMPS Device Inputs',self.config_version)
+    self.input_report.startDocument('Appendix B: SCMPS Device Input Checkout',self.config_version)
+    self.appendixA = Latex(appendixA_filename)
+    self.appendixA.startDocument('Appendix A: SCMPS FW/SW Checkout',self.config_version)
     groups = mps_db_session.query(models.LinkNodeGroup).order_by(models.LinkNodeGroup.number).all()
     for group in groups:
+      self.generate_group_alarm(group)
       self.crate_profiles.startGroup(group.number)
-      self.input_report.startGroup(group.number)
-      self.export_ln.export(mps_db_session,group.link_nodes,self.crate_profiles,self.input_report,self.cn_status_display)
+      if group.has_inputs():
+        self.input_report.startGroup(group.number)
+      self.export_ln.export(mps_db_session,group.link_nodes,self.crate_profiles,self.input_report,self.cn_status_display,self.appendixA)
       self.generate_group_display(group.number,[ln for ln in group.link_nodes if ln.slot_number == 2])
     filename = '{0}status/cn_status.json'.format(self.display_path)
     self.write_json_file(filename, self.cn_status_display.get_macros())
     if self.report:
       self.crate_profiles.endDocument(self.report_path)
       self.input_report.endDocument(self.report_path)
+      self.appendixA.endDocument(self.report_path)
     if self.verbose:
       print('........Done Exporting Devices')   
+
+  def generate_group_alarm(self,group):
+    macros = {'MPS_PREFIX':group.central_node,
+              'LN_GROUP':'{0}'.format(group.number)}
+    file_path1 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,group.number,group.central_node.split(':')[2].lower())
+    self.write_alarm_file(path=file_path1, template_name='mps_group_header.template', macros=macros)
+    include_path1 = '{0}group_{1}_include.txt'.format(self.alarm_path,group.central_node.split(':')[2].lower())
+    include_macros1 = {'PREFIX':group.central_node,
+                      'FILENAME':'group_{0}_{1}.alhConfig'.format(group.number,group.central_node.split(':')[2].lower())}
+    self.write_alarm_file(path=include_path1, template_name='group_include.template', macros=include_macros1)
+    
 
   def generate_group_display(self,group,link_nodes):
     header_height = 50
@@ -86,12 +104,16 @@ class ExportLinkNodeGroups(MpsReader):
                'TITLE':'SC Linac MPS Link Node Group {0}'.format(group) }
     filename = '{0}groups/LinkNodeGroup{1}.ui'.format(self.display_path,group)
     self.__write_group_header(path=filename,macros=macros)
-    vis = "0"
-    cn1 = last_ln.get_cn1_prefix()
-    cn2 = last_ln.get_cn2_prefix()
-    if cn1 == cn2:
-      vis = "1"
-    self.write_group_embed(last_ln,last_x,last_y,'REM',vis,'CN B005',cn1,cn2,filename)
+    cn = last_ln.get_cn_prefix()
+    if cn == 'SIOC:SYS0:MP03':
+      t = 'CN LI00-S2'
+    elif cn == 'SIOC:SYS0:MP01':
+      t = 'CN B005-S2'
+    elif cn == 'SIOC:SYS0:MP02':
+      t = 'CN B005-S3'
+    else:
+      t = ''
+    self.write_group_embed(last_ln,last_x,last_y,'REM',t,cn,filename)
     if rows > 1:
       y = header_height + embedded_height
     else:
@@ -100,10 +122,10 @@ class ExportLinkNodeGroups(MpsReader):
       test_ln = node
       pin = last_ln.get_app_prefix()
       x = last_x - embedded_width
-      self.write_group_embed(node,x,y,'LOC','0','LN Rx',pin,pin,filename)
+      self.write_group_embed(node,x,y,'LOC','LN Rx',pin,filename)
       more_lns = True
       while more_lns:
-        pin = node.get_app_prefix()
+        pin = test_ln.get_app_prefix()
         lk = [ln for ln in link_nodes if ln.group_link == test_ln.crate.id]
         if len(lk) < 1:
           more_lns = False
@@ -114,24 +136,23 @@ class ExportLinkNodeGroups(MpsReader):
           if too_long:
             x = window_width - embedded_width - extra
             y = y-embedded_height
-        self.write_group_embed(test_ln,x,y,'LOC','0','LN Rx',pin,pin,filename)
+        self.write_group_embed(test_ln,x,y,'LOC','LN Rx',pin,filename)
       y = y-embedded_height
     y = window_height-footer_height-1
     buttonx = int(window_width/2-100)
     buttony = y + 12
-    macros = { 'CN':'{0}'.format(last_ln.get_cn1_prefix()),
+    macros = { 'CN':'{0}'.format(last_ln.get_cn_prefix()),
                'BUTTON_X':'{0}'.format(int(buttonx)),
                'BUTTON_Y':'{0}'.format(int(buttony)),
                'Y':'{0}'.format(int(y)) }
     self.__write_group_end(path=filename,macros=macros)
 
-  def write_group_embed(self,ln,x,y,type,vis,text,pin1,pin2,filename):
+  def write_group_embed(self,ln,x,y,type,text,pin1,filename):
     macros = { 'P':'{0}'.format(ln.get_app_prefix()),
-               'CN':'{0}'.format(ln.get_cn1_prefix()),
+               'CN':'{0}'.format(ln.get_cn_prefix()),
                'AID':'{0}'.format(ln.get_digital_app_id()),
                'SLOT_FILE':'LinkNode{0}_slot.ui'.format(ln.lcls1_id),
                'P_IN':'{0}'.format(pin1),
-               'P_IN2':'{0}'.format(pin2),
                'X':'{0}'.format(int(x)),
                'Y':'{0}'.format(int(y)),
                'PGP':'{0}'.format(ln.group_link_destination),
@@ -140,7 +161,6 @@ class ExportLinkNodeGroups(MpsReader):
                'LOCA':'{0}'.format(ln.area),
                'IOC_UNIT':'{0}'.format(ln.location),
                'INST':'{0}'.format(ln.get_app_number()),
-               'VIS':vis,
                'TEXT':'{0}'.format(text)}
     self.__write_group_embed(path=filename,macros=macros)
 

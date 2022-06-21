@@ -1,0 +1,2 @@
+ln,crate,slot,appid,channel,type,device,z,bit_position,z_name,o_name,auto_reset,evaluation,description,ignore,dest,slope,offset,cable,ln status,cn status,cn logic,checked date,inconfig
+52,L2KA00-0608,2,383,0,BLM,PBLM:HTR:615,71.879751,,,,0,1,PBLM at CEHTR (PBLM:HTR:615),2,DUMPBSY,1,0,N/A,,,,,

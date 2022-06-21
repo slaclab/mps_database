@@ -1,0 +1,6 @@
+#!/bin/bash
+../initialize_db.py -v -n --db mps_config-bare.db -d --file BeamDestinations.csv
+../initialize_db.py -v --db mps_config-bare.db -b --file BeamClasses.csv
+../initialize_db.py -v --db mps_config-bare.db -c --file Crates.csv
+../initialize_db.py -v --db mps_config-bare.db -t --file AppTypes.csv
+../initialize_db.py -v --db mps_config-bare.db -a --file AppCards.csv

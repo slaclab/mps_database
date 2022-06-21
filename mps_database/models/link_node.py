@@ -84,20 +84,20 @@ class LinkNode(Base):
     has_analog = False
     is_slot2 = False
     for c in self.cards:
-      if c.slot_number == 2:
+      if c.slot_number < 3:
         is_slot2 = True
-        if c.type.name == 'Digital Card':
+        if c.type.name == 'MPS Digital':
           has_digital = True
-        elif c.type.name == 'Generic ADC':
+        elif c.type.name == 'MPS Analog':
           has_analog = True
 
     if not is_slot2:
       for c in self.cards:
         if c.slot_number == 2:
           is_slot2 = True
-          if c.type.name == 'Digital Card':
+          if c.type.name == 'MPS Digital':
             has_digital = True
-          elif c.type.name == 'Generic ADC':
+          elif c.type.name == 'MPS Analog':
             has_analog = True
 
     if has_digital and has_analog:
@@ -112,7 +112,9 @@ class LinkNode(Base):
   def get_app_number(self):
     is_slot2 = False
     for c in self.cards:
-      if c.slot_number == 2:
+      if c.slot_number == 1:
+        return 1
+      elif c.slot_number == 2:
         return 1
       
     ln_type = self.get_type()
@@ -162,6 +164,13 @@ class LinkNode(Base):
 #                         format(self.get_name()))
       return 1
 
+  def has_inputs(self):
+    has_inputs = False
+    for card in self.cards:
+      if len(card.digital_channels) > 0 or len(card.analog_channels) > 0:
+        has_inputs = True
+    return has_inputs
+
   def get_name(self):
     return 'sioc-' + self.area.lower() + '-' + self.location.lower()
 
@@ -195,13 +204,7 @@ class LinkNode(Base):
           return card.number
     return 0
 
-  def get_cn1_prefix(self):
+  def get_cn_prefix(self):
     session = object_session(self)
     group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
-    return group.central_node1
-
-  def get_cn2_prefix(self):
-    session = object_session(self)
-    group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
-    return group.central_node2
-
+    return group.central_node

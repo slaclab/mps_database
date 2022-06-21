@@ -8,4 +8,5 @@ record(longout, "$(P)_SCBYPD") {
   field(DESC, "$(DESC) BYP in sec")
   field(DTYP, "Soft Channel")
   field(SCAN, "Passive")
+  field(ASG,  "$(ASG2)")
 }

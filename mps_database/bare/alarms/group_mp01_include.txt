@@ -1,0 +1,12 @@
+INCLUDE SIOC:SYS0:MP01  ./group_0_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_1_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_2_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_3_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_4_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_5_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_6_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_7_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_8_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_9_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_10_mp01.alhConfig
+INCLUDE SIOC:SYS0:MP01  ./group_11_mp01.alhConfig

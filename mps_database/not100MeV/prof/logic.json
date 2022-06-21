@@ -1,0 +1,141 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description":"YAGH1 (YAGS:HTR:625) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "YAGS:HTR:625:OUT_LMTSW",
+                "YAGS:HTR:625:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,0,0,null,null,null],
+                [1, "Out","Out",null,13,13,null,null,null],
+                [2, "In","In",null,3,3,null,null,null],
+                [3, "Broken","Broken",null,0,0,null,null,null]
+            ]
+        },
+        {
+            "description":"YAGH2 (YAGS:HTR:675) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "YAGS:HTR:675:OUT_LMTSW",
+                "YAGS:HTR:675:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,0,0,null,null,null],
+                [1, "Out","Out",null,13,13,null,null,null],
+                [2, "In","In",null,3,3,null,null,null],
+                [3, "Broken","Broken",null,0,0,null,null,null]
+            ]
+        },
+        {
+            "description":"OTRDG02 (OTRS:DIAG0:420) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "OTRS:DIAG0:420:OUT_LMTSW",
+                "OTRS:DIAG0:420:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,0,null,null,null,null],
+                [1, "Out","Out",null,13,null,null,null,null],
+                [2, "In","In",null,3,null,null,null,null],
+                [3, "Broken","Broken",null,0,null,null,null,null]
+            ]
+        },
+        {
+            "description":"OTRDG04 (OTRS:DIAG0:525) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "OTRS:DIAG0:525:OUT_LMTSW",
+                "OTRS:DIAG0:525:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,0,null,null,null,null],
+                [1, "Out","Out",null,13,null,null,null,null],
+                [2, "In","In",null,3,null,null,null,null],
+                [3, "Broken","Broken",null,0,null,null,null,null]
+            ]
+        },
+        {
+            "description":"OTR11B (PROF:BC1B:470) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "PROF:BC1B:470:OUT_LMTSW",
+                "PROF:BC1B:470:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,null,0,null,null,null],
+                [1, "Out","Out",null,null,13,null,null,null],
+                [2, "In","In",null,null,3,null,null,null],
+                [3, "Broken","Broken",null,null,0,null,null,null]
+            ]
+        },
+        {
+            "description":"OTR21B (PROF:BC2B:545) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "PROF:BC2B:545:OUT_LMTSW",
+                "PROF:BC2B:545:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,null,0,null,null,null],
+                [1, "Out","Out",null,null,13,null,null,null],
+                [2, "In","In",null,null,3,null,null,null],
+                [3, "Broken","Broken",null,null,0,null,null,null]
+            ]
+        },
+        {
+            "description":"OTRDOG (PROF:DOG:195) Position",
+            "name":"POSITION",
+            "dtype":"PROF",
+            "inputs": [
+                "PROF:DOG:195:OUT_LMTSW",
+                "PROF:DOG:195:IN_LMTSW"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE",
+                "VV02_IGNORE",
+                "COL0_IGNORE"
+            ],
+            "states": [
+                [0, "Moving","Moving",null,null,0,null,null,null],
+                [1, "Out","Out",null,null,13,null,null,null],
+                [2, "In","In",null,null,3,null,null,null],
+                [3, "Broken","Broken",null,null,0,null,null,null]
+            ]
+        }
+]
+}

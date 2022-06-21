@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1848</width>
+    <height>331</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SC Linac MPS Link Node Group 0</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1848</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(200, 200, 200);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1848</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 150, 168);</string>
+    </property>
+    <property name="text">
+     <string>SC Linac MPS Link Node Group 0</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="PyDMEmbeddedDisplay" name="PyDMEmbeddedDisplay">
+    <property name="geometry">
+     <rect>
+      <x>1381</x>
+      <y>50</y>
+      <width>457</width>
+      <height>230</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="macros" stdset="0">
+     <string>{"P":"MPLN:GUNB:MP01:1","CN":"SIOC:SYS0:MP01","AID":"0","SLOT_FILE":"LinkNode50_slot.ui","P_IN":"SIOC:SYS0:MP01","PGP":"0","LN":"50","TYPE":"REM","LOCA":"GUNB","IOC_UNIT":"MP01","INST":"1","VIS":"0","P_IN2":"SIOC:SYS0:MP03","TEXT":"CN B005"}</string>
+    </property>
+    <property name="filename" stdset="0">
+     <string>$PYDM/mps/mps_crate_link.ui</string>
+    </property>
+   </widget>
+   <widget class="PyDMEmbeddedDisplay" name="PyDMEmbeddedDisplay">
+    <property name="geometry">
+     <rect>
+      <x>924</x>
+      <y>50</y>
+      <width>457</width>
+      <height>230</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="macros" stdset="0">
+     <string>{"P":"MPLN:L0B:MP01:1","CN":"SIOC:SYS0:MP01","AID":"0","SLOT_FILE":"LinkNode51_slot.ui","P_IN":"MPLN:GUNB:MP01:1","PGP":"0","LN":"51","TYPE":"LOC","LOCA":"L0B","IOC_UNIT":"MP01","INST":"1","VIS":"0","P_IN2":"MPLN:GUNB:MP01:1","TEXT":"LN Rx"}</string>
+    </property>
+    <property name="filename" stdset="0">
+     <string>$PYDM/mps/mps_crate_link.ui</string>
+    </property>
+   </widget>
+   <widget class="PyDMEmbeddedDisplay" name="PyDMEmbeddedDisplay">
+    <property name="geometry">
+     <rect>
+      <x>467</x>
+      <y>50</y>
+      <width>457</width>
+      <height>230</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="macros" stdset="0">
+     <string>{"P":"MPLN:L0B:MP02:1","CN":"SIOC:SYS0:MP01","AID":"0","SLOT_FILE":"LinkNode52_slot.ui","P_IN":"MPLN:L0B:MP01:1","PGP":"0","LN":"52","TYPE":"LOC","LOCA":"L0B","IOC_UNIT":"MP02","INST":"1","VIS":"0","P_IN2":"MPLN:L0B:MP01:1","TEXT":"LN Rx"}</string>
+    </property>
+    <property name="filename" stdset="0">
+     <string>$PYDM/mps/mps_crate_link.ui</string>
+    </property>
+   </widget>
+   <widget class="PyDMEmbeddedDisplay" name="PyDMEmbeddedDisplay">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>457</width>
+      <height>230</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="macros" stdset="0">
+     <string>{"P":"MPLN:GUNB:MP02:1","CN":"SIOC:SYS0:MP01","AID":"0","SLOT_FILE":"LinkNode49_slot.ui","P_IN":"MPLN:L0B:MP02:1","PGP":"0","LN":"49","TYPE":"LOC","LOCA":"GUNB","IOC_UNIT":"MP02","INST":"1","VIS":"0","P_IN2":"MPLN:L0B:MP02:1","TEXT":"LN Rx"}</string>
+    </property>
+    <property name="filename" stdset="0">
+     <string>$PYDM/mps/mps_crate_link.ui</string>
+    </property>
+   </widget>
+   <widget class="PyDMDrawingImage" name="PyDMDrawingImage">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>279</y>
+      <width>250</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(200, 200, 200);</string>
+    </property>
+    <property name="filename" stdset="0">
+     <string>$PYDM/mps/lcls_mps_lockup_sidebyside_digital.png</string>
+    </property>
+   </widget>
+   <widget class="PyDMPushButton" name="PyDMPushButton">
+    <property name="geometry">
+     <rect>
+      <x>824</x>
+      <y>291</y>
+      <width>200</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Clear Application Timeouts</string>
+    </property>
+    <property name="channel" stdset="0">
+     <string>ca://SIOC:SYS0:MP01:TO_ERR_CLR</string>
+    </property>
+    <property name="pressValue" stdset="0">
+     <string>1</string>
+    </property>
+    <property name="releaseValue" stdset="0">
+     <string>0</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PyDMEmbeddedDisplay</class>
+   <extends>QFrame</extends>
+   <header>pydm.widgets.embedded_display</header>
+  </customwidget>
+  <customwidget>
+   <class>PyDMPushButton</class>
+   <extends>QPushButton</extends>
+   <header>pydm.widgets.pushbutton</header>
+  </customwidget>
+  <customwidget>
+   <class>PyDMDrawingImage</class>
+   <extends>QWidget</extends>
+   <header>pydm.widgets.drawing</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

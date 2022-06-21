@@ -21,7 +21,7 @@ class AddLogic:
 #    self.session.autoflush=True
     self.verbose = verbose
     self.mps_names = MpsName(self.session)
-    self.destination_order = ['LINAC','DIAG0','HXU','SXU']
+    self.destination_order = ['LASER','SC_DIAG0','SC_BSYD','SC_HXR','SC_SXR','SC_LESA']
 
   def __del__(self):
     self.session.commit()
@@ -43,7 +43,7 @@ class AddLogic:
         bit_position = 0
         devices = []
         for input in logic['inputs']:
-          device_name = self.mps_names.makeDeviceName(input)
+          device_name = self.mps_names.makeDeviceName(input,logic['dtype'])
           if device_name not in devices:
             device = self.find_device(device_name,input)
             fault_input = models.FaultInput(bit_position=bit_position,device=device,fault=fault)
@@ -52,7 +52,7 @@ class AddLogic:
           devices.append(device_name)
         for state_info in logic['states']:
           value = state_info[0]
-          state_name = state_info[1]
+          state_name = state_info[1].upper().replace(' ','_')
           state_description = state_info[2]
           device_state = self.get_device_state(state_name,value,device,state_description)
           fault_state = models.FaultState(device_state=device_state,fault=fault)
@@ -61,8 +61,9 @@ class AddLogic:
         for ic in logic['ignore_when']:
           condition = self.find_condition(ic)
           if condition:
-            ignore_condition = models.IgnoreCondition(condition=condition,device=device)
-          
+            already_ics = self.session.query(models.IgnoreCondition).filter(models.IgnoreCondition.device == device).all()
+            if len(already_ics) < 1:
+              ignore_condition = models.IgnoreCondition(condition=condition,device=device)
       self.session.commit()
 
   def add_fault(self,logic):
@@ -75,7 +76,7 @@ class AddLogic:
       return fault
 
   def find_condition(self,ic):
-    conditions = self.session.query(models.Condition).filter(models.Condition.description == ic).all()
+    conditions = self.session.query(models.Condition).filter(models.Condition.name == ic).all()
     if len(conditions) < 1:
       print("ERROR: Ignore Condition <{0}> not found".format(ic))
       return

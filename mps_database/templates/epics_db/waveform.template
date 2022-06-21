@@ -1,0 +1,29 @@
+#================================================================================#
+# LCLS-II MPS PV template for Generic ADC channel information                    #
+# Macro description:                                                             #
+#   - P       : Device Prefix                                                    #
+#   - CH      : ADC Channel Number (0-5)                                         #
+#   - R       : Attribute.  Either MPS or FAST                                   #
+#================================================================================#
+# Buffer PV, to hold all the stream data
+# up to 10e6 points
+record(waveform, "$(P):$(R)_WF-BUF") {
+  field(DESC,    "$(DESC)")
+  field(DTYP,    "asynInt16ArrayIn")
+  field(NELM,    "10000000")
+  field(FTVL,    "SHORT")
+  field(SCAN,    "I/O Intr")
+  field(INP,     "@asyn($(PORT),5)Stream$(CH):16")
+  field(FLNK,    "$(P):$(R) PP")
+  field(ASG,     "Internal")
+}
+# Interface PV, to display only the necessary data
+# range from the data received in the buffer
+record(subArray, "$(P):$(R)_WF") {
+  field(DESC,    "$(DESC) Subarray")
+  field(INP,     "$(P):$(R)-BUF")
+  field(FTVL,    "SHORT")
+  field(MALM,    "10000000")
+  field(NELM,    "10000")
+  field(INDX,    "0")
+}

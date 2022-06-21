@@ -1,0 +1,8 @@
+        {
+            "description": "$(DESCRIPTION)",
+            "name":"$(FNAME)",
+            "dtype":"$(DTYPE)",
+            "inputs": [
+                "$(INPUT1)"
+            ],
+            "ignore_when": [

@@ -1,0 +1,542 @@
+{
+    "version": "1",
+    "truth_tables": [
+        {
+            "description": "LN49 (SIOC GUNB MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:GUNB:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL1B Temperature Interlock",
+            "name":"TEMP_STATUS",
+            "dtype":"TEMP",
+            "inputs": [
+                "SOLN:GUNB:212:TEMP_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL2B Temperature Interlock",
+            "name":"TEMP_STATUS",
+            "dtype":"TEMP",
+            "inputs": [
+                "SOLN:GUNB:823:TEMP_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL1B / SOL2B Flow Meter Interlock",
+            "name":"FLOW_STATUS",
+            "dtype":"FLOW",
+            "inputs": [
+                "SOLN:GUNB:212:FLOW_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "Buncher Temperature Interlock",
+            "name":"TEMP_STATUS",
+            "dtype":"TEMP",
+            "inputs": [
+                "ACCL:GUNB:455:TEMP_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "Buncher Flow Meter Interlock",
+            "name":"FLOW_STATUS",
+            "dtype":"FLOW",
+            "inputs": [
+                "ACCL:GUNB:455:FLOW_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "VVPG GUNB 100 Position",
+            "name":"POSITION",
+            "dtype":"VAC",
+            "inputs": [
+                "VVPG:GUNB:100:POSITION"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Not Open","Is Not Open",null,0,0,null,null,null],
+                [1, "Is Open","Is Open",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "Gun Flow Meters Interlocks",
+            "name":"FLOW_STATUS",
+            "dtype":"FLOW",
+            "inputs": [
+                "GUN:GUNB:100:FLOW_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "YAG01B / Injector Collimator Temperature Interlock",
+            "name":"TEMP_STATUS",
+            "dtype":"TEMP",
+            "inputs": [
+                "MOVR:GUNB:753:TEMP_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "Gun Waveguide Temperature Interlock",
+            "name":"TEMP_STATUS",
+            "dtype":"TEMP",
+            "inputs": [
+                "GUN:GUNB:100:WGTEMP_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "Gun Body Temperature Interlock",
+            "name":"TEMP_STATUS",
+            "dtype":"TEMP",
+            "inputs": [
+                "GUN:GUNB:100:BDYTEMP_PERMIT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN50 (SIOC GUNB MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:GUNB:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL1B B-Field (SOLN:GUNB:212) Bact Fault",
+            "name":"I0_BACT",
+            "dtype":"SOLN",
+            "inputs": [
+                "SOLN:GUNB:212:I0_BACT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "SOL2B B-Field (SOLN:GUNB:823) Bact Fault",
+            "name":"I0_BACT",
+            "dtype":"SOLN",
+            "inputs": [
+                "SOLN:GUNB:823:I0_BACT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "SBLM at Gun Window (SBLM:GUNB:753) Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "SBLM:GUNB:753:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "PBLM at Gun Window (PBLM:GUNB:622) Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "PBLM:GUNB:622:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "PBLM at Inj Coll (PBLM:GUNB:753) Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "PBLM:GUNB:753:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "SBLM at Inj Coll (SBLM:GUNB:753) Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "SBLM:GUNB:622:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "BPM1B (BPMS:GUNB:314) X Orbit",
+            "name":"X",
+            "dtype":"BPMS",
+            "inputs": [
+                "BPMS:GUNB:314:X"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [256, "X_T0","X Thr 0",null,0,4,null,null,null],
+                [512, "X_T1","X Thr 1",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "BPM1B (BPMS:GUNB:314) Y Orbit",
+            "name":"Y",
+            "dtype":"BPMS",
+            "inputs": [
+                "BPMS:GUNB:314:Y"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [65536, "Y_T0","Y Thr 0",null,0,4,null,null,null],
+                [131072, "Y_T1","Y Thr 1",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "BPM1B (BPMS:GUNB:314) Charge Difference",
+            "name":"CHRG",
+            "dtype":"BPMS",
+            "inputs": [
+                "BPMS:GUNB:314:CHRG"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "IM01 (TORO:GUNB:360) Charge Fault",
+            "name":"CHARGE",
+            "dtype":"TORO",
+            "inputs": [
+                "TORO:GUNB:360:CHARGE"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "LN51 (SIOC L0B MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L0B:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN52 (SIOC L0B MP02) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L0B:MP02:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",null,0,0,null,null,null],
+                [1, "Is Ok","Is Ok",null,13,13,null,null,null]
+            ]
+        },
+        {
+            "description": "LN53 (SIOC L0B MP03) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L0B:MP03:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,0,0,0,0,0],
+                [1, "Is Ok","Is Ok",13,13,13,13,13,13]
+            ]
+        },
+        {
+            "description": "LBLM:GUNB:212:A_WF Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "LBLM:GUNB:212:A_WF:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "LBLM:GUNB:212:B_WF Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "LBLM:GUNB:212:B_WF:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "LN54 (SIOC L0B MP04) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L0B:MP04:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,0,0,0,0,0],
+                [1, "Is Ok","Is Ok",13,13,13,13,13,13]
+            ]
+        },
+        {
+            "description": "LBLM:GUNB:212:A Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "LBLM:GUNB:212:A:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "LBLM:GUNB:212:B Loss Fault",
+            "name":"I0_LOSS",
+            "dtype":"BLM",
+            "inputs": [
+                "LBLM:GUNB:212:B:I0_LOSS"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [1, "CHRG_T0","CHRG Thr 0",null,0,0,null,null,null],
+                [2, "CHRG_T1","CHRG Thr 1",null,2,2,null,null,null],
+                [4, "CHRG_T2","CHRG Thr 2",null,6,6,null,null,null],
+                [8, "CHRG_T3","CHRG Thr 3",null,7,7,null,null,null],
+                [16, "CHRG_T4","CHRG Thr 4",null,8,8,null,null,null],
+                [32, "CHRG_T5","CHRG Thr 5",null,9,9,null,null,null],
+                [64, "CHRG_T6","CHRG Thr 6",null,10,10,null,null,null],
+                [128, "CHRG_T7","CHRG Thr 7",null,11,11,null,null,null]
+            ]
+        },
+        {
+            "description": "LN55 (SIOC L0B MP05) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:L0B:MP05:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,0,0,0,0,0],
+                [1, "Is Ok","Is Ok",13,13,13,13,13,13]
+            ]
+        },
+        {
+            "description": "LN56 (SIOC COL0 MP01) Alive",
+            "name":"WDOG",
+            "dtype":"WDOG",
+            "inputs": [
+                "SIOC:COL0:MP01:HEARTBEAT"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Is Faulted","Is Faulted",0,0,0,0,0,0],
+                [1, "Is Ok","Is Ok",13,13,13,13,13,13]
+            ]
+        },
+        {
+            "description":"Mechanical Shutter Position",
+            "name":"POSITION",
+            "dtype":"SHUT",
+            "inputs": [
+                "SHUT:GUNB:100:OPEN_LMTSW",
+                "SHUT:GUNB:100:CLOSED_LMTSW"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Moving","Moving",0,null,13,null,null,null],
+                [1, "Open","Open",0,null,13,null,null,null],
+                [2, "Closed","Closed",13,null,13,null,null,null],
+                [3, "Broken","Broken",0,null,0,null,null,null]
+            ]
+        }
+]
+}
