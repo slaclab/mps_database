@@ -50,80 +50,35 @@ class ExportFaults(MpsReader):
     card = self.mps_names.getCardFromFault(fault)
     inputs = self.mps_names.getInputsFromDevice(device,fault)
     self.linkFaultToIgnoreGroup(device,fault,inputs)
-    if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-      self.write_fault_top_db(self.cn0_path,fault,card,device,False)
-      self.write_fault_state_header(self.cn0_path,fault,card,device,False)
-      self.write_fault_state_header_dest(self.cn0_path,fault,card,device,False)
-      self.populate_logic_display(fault,card,device,False)
-      if not self.mps_names.isDeviceAnalog(device):
-        self.write_fault_bypass(self.cn0_path,fault,card,device,False)
-    elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
-      self.write_fault_top_db(self.cn1_path,fault,card,device,False)
-      self.write_fault_state_header(self.cn1_path,fault,card,device,False)
-      self.write_fault_state_header_dest(self.cn1_path,fault,card,device,False)
-      self.populate_logic_display(fault,card,device,False)
-      if not self.mps_names.isDeviceAnalog(device):
-        self.write_fault_bypass(self.cn1_path,fault,card,device,False)
-    if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-      self.write_fault_top_db(self.cn2_path,fault,card,device,True)
-      self.write_fault_state_header(self.cn2_path,fault,card,device,True)
-      self.write_fault_state_header_dest(self.cn2_path,fault,card,device,True)
-      self.populate_logic_display(fault,card,device,True)
-      if not self.mps_names.isDeviceAnalog(device):
-        self.write_fault_bypass(self.cn2_path,fault,card,device,True)
+      
+
+    self.write_fault_top_db(fault,card,device)
+    self.write_fault_state_header(fault,card,device)
+    self.write_fault_state_header_dest(fault,card,device)
+    self.populate_logic_display(fault,card,device)
+    if not self.mps_names.isDeviceAnalog(device):
+      self.write_fault_bypass(fault,card,device)
     self.state_count = 0
     if self.mps_names.isDeviceAnalog(device):
       if len(fault.states) > 0:
-        if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-          self.write_analog_special_case(self.cn0_path)
-          self.write_analog_special_case_dest(self.cn0_path)
-        elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
-          self.write_analog_special_case(self.cn1_path)
-          self.write_analog_special_case_dest(self.cn1_path)
-        if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-          self.write_analog_special_case(self.cn2_path)
-          self.write_analog_special_case_dest(self.cn2_path)
+        self.write_analog_special_case(card)
+        self.write_analog_special_case_dest(card)
         self.state_count += 1
     for state in fault.states:
-      if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-        self.write_fault_state_entry(self.cn0_path,device,state,False)
-        self.write_fault_state_entry_dest(self.cn0_path,device,state,False)
-        if not self.mps_names.isDeviceAnalog(device):
-          self.write_fault_state_entry(self.cn0_path,device,state,False,None,'fault_bypass.db')
-      elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
-        self.write_fault_state_entry(self.cn1_path,device,state,False)
-        self.write_fault_state_entry_dest(self.cn1_path,device,state,True)
-        if not self.mps_names.isDeviceAnalog(device):
-          self.write_fault_state_entry(self.cn1_path,device,state,False,None,'fault_bypass.db')
-      if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-        self.write_fault_state_entry(self.cn2_path,device,state,True) 
-        self.write_fault_state_entry_dest(self.cn2_path,device,state,True)
-        if not self.mps_names.isDeviceAnalog(device):
-          self.write_fault_state_entry(self.cn2_path,device,state,True,None,'fault_bypass.db')
+      self.write_fault_state_entry(card,device,state)
+      self.write_fault_state_entry_dest(card,device,state)
+      if not self.mps_names.isDeviceAnalog(device):
+        self.write_fault_state_entry(card,device,state,None,'fault_bypass.db')
       self.state_count += 1
-    if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-      self.write_fault_state_end(self.cn0_path)
-      self.write_fault_state_end_dest(self.cn0_path)
-      if not self.mps_names.isDeviceAnalog(device):
-        self.write_fault_state_end(self.cn0_path,'fault_bypass.db')
-        self.write_input_bypass_db(self.cn0_path,device,fault,inputs,False)
-    elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
-      self.write_fault_state_end(self.cn1_path)
-      self.write_fault_state_end_dest(self.cn1_path)
-      if not self.mps_names.isDeviceAnalog(device):
-        self.write_fault_state_end(self.cn1_path,'fault_bypass.db')   
-        self.write_input_bypass_db(self.cn1_path,device,fault,inputs,False)  
-    if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-      self.write_fault_state_end(self.cn2_path)
-      self.write_fault_state_end_dest(self.cn2_path)
-      if not self.mps_names.isDeviceAnalog(device):
-        self.write_fault_state_end(self.cn2_path,'fault_bypass.db') 
-        self.write_input_bypass_db(self.cn2_path,device,fault,inputs,True)
+    self.write_fault_state_end(self.get_cn_path(card.link_node))
+    self.write_fault_state_end_dest(self.get_cn_path(card.link_node))
+    if not self.mps_names.isDeviceAnalog(device):
+      self.write_fault_state_end(self.get_cn_path(card.link_node),'fault_bypass.db')
+      self.write_input_bypass_db(self.get_cn_path(card.link_node),device,fault,inputs)
 
-  def write_fault_top_db(self,path,fault,card,device,exchange):
-    name = '{0}:{1}'.format(self.mps_names.getDeviceName(device),fault.name)
-    if exchange:
-      name = self.exchange(name)
+  def write_fault_top_db(self,fault,card,device):
+    path = self.get_cn_path(card.link_node)
+    name = self.mps_names.getBaseFaultName(fault)
     if self.mps_names.isDeviceReallyAnalog(device):
       p = '{0}{1}'.format(name,'_SCMPSC')
     else:
@@ -135,16 +90,15 @@ class ExportFaults(MpsReader):
                'FLNK':p}
     self.write_epics_db(path=path, filename='faults.db', template_name="cn_fault.template", macros=macros)
 
-  def write_fault_state_header_dest(self,path,fault,card,device,exchange):
+  def write_fault_state_header_dest(self,fault,card,device):
     self.dest_count = 1
     for dest in self.beam_destinations:
-      self.write_fault_state_header(path,fault,card,device,exchange,dest)
+      self.write_fault_state_header(fault,card,device,dest)
       self.dest_count += 1
 
-  def write_fault_state_header(self,path,fault,card,device,exchange,dest=None):
-    name = '{0}:{1}'.format(self.mps_names.getDeviceName(device),fault.name)
-    if exchange:
-      name = self.exchange(name)
+  def write_fault_state_header(self,fault,card,device,dest=None):
+    path = self.get_cn_path(card.link_node)
+    name = self.mps_names.getBaseFaultName(fault)
     if dest is None:
       filename = "faults.db"
       flnk = '{0}{1}_{2}_STATE'.format(name,'_FLT',self.beam_destinations[0].name.upper())
@@ -180,11 +134,12 @@ class ExportFaults(MpsReader):
     if self.mps_names.isDeviceReallyAnalog(device) and dest is None:
       self.write_epics_db(path=path, filename='faults.db', template_name="cn_mbbi_alias.template", macros={'ALIAS':alias})
 
-  def write_fault_state_entry_dest(self,path,device,state,exchange):
+  def write_fault_state_entry_dest(self,card,device,state):
     for dest in self.beam_destinations:
-      self.write_fault_state_entry(path,device,state,exchange,dest)
+      self.write_fault_state_entry(card,device,state,dest)
 
-  def write_fault_state_entry(self,path,device,state,exchange,dest=None,file=None):
+  def write_fault_state_entry(self,card,device,state,dest=None,file=None):
+    path = self.get_cn_path(card.link_node)
     sevr = 'NO_ALARM'
     if self.mps_names.isDeviceAnalog(device):
       val = '{0}'.format(self.state_count)
@@ -212,11 +167,12 @@ class ExportFaults(MpsReader):
                'SEV':sevr}
     self.write_epics_db(path=path, filename=filename, template_name="cn_mbbi_entry.template", macros=macros)
 
-  def write_analog_special_case_dest(self,path):
+  def write_analog_special_case_dest(self,card):
     for dest in self.beam_destinations:
-      self.write_analog_special_case(path,dest)
+      self.write_analog_special_case(card,dest)
 
-  def write_analog_special_case(self,path,dest=None):
+  def write_analog_special_case(self,card,dest=None):
+    path = self.get_cn_path(card.link_node)
     if dest is None:
       str = '-'
       filename = 'faults.db'
@@ -243,10 +199,9 @@ class ExportFaults(MpsReader):
       filename=dest
     self.write_epics_db(path=path, filename=filename,template_name="cn_mbbi_finish.template",macros={})
 
-  def write_fault_bypass(self,path,fault,card,device,exchange):
-    name = '{0}:{1}'.format(self.mps_names.getDeviceName(device),fault.name)
-    if exchange:
-      name = self.exchange(name)
+  def write_fault_bypass(self,fault,card,device):
+    path = self.get_cn_path(card.link_node)
+    name = self.mps_names.getBaseFaultName(fault)
     macros = { 'P':"{0}{1}".format(name,'_FLT'),
                'DESC':'{0}'.format(fault.description[:15]),
                'DTYP':'Raw Soft Channel',
@@ -255,16 +210,12 @@ class ExportFaults(MpsReader):
     self.write_epics_db(path=path, filename="fault_bypass.db",template_name="cn_fault_byp_mbbiDirect.template",macros=macros)
     self.write_epics_db(path=path, filename="fault_bypass.db",template_name="cn_fault_bypass_mbbo.template",macros=macros)
 
-  def write_input_bypass_db(self,path,device,fault,inputs,exchange):
-    name = '{0}:{1}'.format(self.mps_names.getDeviceName(device),fault.name)
-    if exchange:
-      name=self.exchange(name)
+  def write_input_bypass_db(self,path,device,fault,inputs):
+    name = self.mps_names.getBaseFaultName(fault)
     macros = {'P':'{0}{1}'.format(name,'_FLT')}
     self.write_epics_db(path=path, filename="fault_bypass.db",template_name="cn_fault_bypd.template",macros=macros)
     bit = 0
     for input in inputs:
-      if exchange:
-        input = self.exchange(input)
       macros = {'P':'{0}{1}'.format(name,'_FLT'),
                 'OUTPV':input,
                 'B':'{0}'.format(bit)}
@@ -277,19 +228,14 @@ class ExportFaults(MpsReader):
       bit += 1
     self.write_epics_db(path=path, filename="fault_bypass.db",template_name="cn_mbbi_finish.template",macros={})
 
-  def populate_logic_display(self,fault,card,device,exchange):
-    name = '{0}:{1}'.format(self.mps_names.getDeviceName(device),fault.name)
-    if exchange:
-      name = self.exchange(name)
+  def populate_logic_display(self,fault,card,device):
+    name = self.mps_names.getBaseFaultName(fault)
     macros = {}
     macros['DESCRIPTION'] = fault.description
     macros['FLT'] = '{0}{1}'.format(name,'_FLT')
     macros['VIS'] = '{0}'.format(self.mps_names.isDeviceAnalog(device))
-    if exchange:
-      self.cn3_logic_display_macros.append(macros)
-    else:
-      self.all_logic_display_macros.append(macros)
-      self.ln_logic_display_macros[int(card.link_node.lcls1_id)].append(macros)
+    self.all_logic_display_macros.append(macros)
+    self.ln_logic_display_macros[int(card.link_node.lcls1_id)].append(macros)
 
   def write_logic_display(self):
     for ln in range(2,256):

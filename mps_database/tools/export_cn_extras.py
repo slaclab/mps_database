@@ -22,9 +22,9 @@ class ExportCnExtras(MpsReader):
     if self.verbose:
       print('INFO: Begin Export Conditions')
     macros = {'VERSION':'{0}'.format(self.config_version)}
-    self.write_epics_db(path=self.cn0_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
     self.write_epics_db(path=self.cn1_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
     self.write_epics_db(path=self.cn2_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
+    self.write_epics_db(path=self.cn3_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
     conditions = mps_db_session.query(models.Condition).all()
     for cond in conditions:
       condition_input = mps_db_session.query(models.ConditionInput).filter(models.ConditionInput.condition_id == cond.id).one()
@@ -34,12 +34,12 @@ class ExportCnExtras(MpsReader):
       macros = { 'NAME':'{0}'.format(cond.name.upper().replace(' ','_')),
                  'DESC':'{0}'.format(cond.description), 
                  'ID':'{0}'.format(cond.id) }
-      if device.card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-        self.write_epics_db(path=self.cn0_path,filename='conditions.db',template_name="cn_condition.template", macros=macros)
-      elif device.card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
+      if device.card.link_node.get_cn_prefix() == 'SIOC:SYS0:MP01':
         self.write_epics_db(path=self.cn1_path,filename='conditions.db',template_name="cn_condition.template", macros=macros)
-      if device.card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
+      elif device.card.link_node.get_cn_prefix() == 'SIOC:SYS0:MP02':
         self.write_epics_db(path=self.cn2_path,filename='conditions.db',template_name="cn_condition.template", macros=macros)
+      if device.card.link_node.get_cn_prefix() == 'SIOC:SYS0:MP03':
+        self.write_epics_db(path=self.cn3_path,filename='conditions.db',template_name="cn_condition.template", macros=macros)
     if self.verbose:
       print('........Done Export Conditions')
 
@@ -49,9 +49,9 @@ class ExportCnExtras(MpsReader):
     destinations = mps_db_session.query(models.BeamDestination).all()
     beamClasses = mps_db_session.query(models.BeamClass).all()
     macros = { 'NUM':'{0}'.format(len(beamClasses))}
-    self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
     self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
     self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
+    self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
     self.bc_names.append('Full')
     self.bc_sevr.append('NO_ALARM')
     for bc in beamClasses:
@@ -68,34 +68,34 @@ class ExportCnExtras(MpsReader):
                  'CHRG':'{0}'.format(bc.total_charge),
                  'SPACE':'{0}'.format(bc.min_period),
                  'TIME':'{0}'.format(bc.integration_window) }
-      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_beam_class_definition.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_beam_class_definition.template", macros=macros)
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_beam_class_definition.template", macros=macros)
+      self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_beam_class_definition.template", macros=macros)
     for dest in destinations:
       macros = { 'DEST':'{0}'.format(dest.name.upper()),
                  'ID':'{0}'.format(dest.id),
                  'SHIFT':'{0}'.format(dest.id-1),
                  'SHIFT1':'{0}'.format(16+dest.id-1) }
-      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
+      self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_beam_class_destination_header.template", macros=macros)
       for i in range(0,len(self.bc_names)):
         macros = {"STRING":self.mbbi_strings[i],
                   "VAL":self.mbbi_vals[i],
                   "BC_NAME":self.bc_names[i],
                   "BC_VAL":"{0}".format(i)}
-        self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_destination_bc_entry.template", macros=macros)
         self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_destination_bc_entry.template", macros=macros)
         self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_destination_bc_entry.template", macros=macros)
+        self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_destination_bc_entry.template", macros=macros)
       macros = { 'DEST':'{0}'.format(dest.name.upper()),
                  'ID':'{0}'.format(dest.id) }
-      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
+      self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_destination_force_bc.template", macros=macros)
       macros = { 'DEST':'{0}'.format(dest.name.upper())}
-      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
+      self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_bc_header.template", macros=macros)
       for i in range(1,len(self.bc_names)):
         macros = {"STRING":self.mbbi_strings[i-1],
                   "VAL":self.mbbi_vals[i-1],
@@ -103,12 +103,12 @@ class ExportCnExtras(MpsReader):
                   "BC_VAL":"{0}".format(i-1),
                   "SEVR":self.mbbi_sevr[i-1],
                   "BC_SEVR":self.bc_sevr[i]}
-        self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
         self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
         self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
-      self.write_epics_db(path=self.cn0_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
+        self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_bc_entry.template", macros=macros)
       self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
       self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
+      self.write_epics_db(path=self.cn3_path,filename='destinations.db',template_name="cn_mbbi_finish.template", macros={})
     if self.verbose:
       print('........Done Export Destinations')
 

@@ -71,7 +71,7 @@ class ExportDevice(MpsReader):
     is_mps = False
     json_macros = {}
     json_macros['prefix'] = card.get_pv_name()
-    json_macros['cn_prefix'] = card.link_node.get_cn1_prefix()
+    json_macros['cn_prefix'] = card.link_node.get_cn_prefix()
     json_macros['devices'] = []
     json_macros['inputs'] = []
     json_macros['states'] = []
@@ -236,21 +236,12 @@ class ExportDevice(MpsReader):
     self.inputDisplay.add_digital_ln_macros(macros)
 
   def __export_device_input_display(self,channel,card):
-    if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-      macros = self.get_device_input_display_macros(card,channel,False)
-      self.inputDisplay.add_macros(macros,False)
-    elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
-      macros = self.get_device_input_display_macros(card,channel,False)
-      self.inputDisplay.add_macros(macros,False)
-    if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-      macros = self.get_device_input_display_macros(card,channel,True)
-      self.inputDisplay.add_macros(macros,True)
+    macros = self.get_device_input_display_macros(card,channel)
+    self.inputDisplay.add_macros(macros)
 
-  def get_device_input_display_macros(self,card,channel,exchange=False):
+  def get_device_input_display_macros(self,card,channel):
     name=self.mps_names.getInputPvFromChannel(channel)
     states = self.get_alarm_state(channel.alarm_state)
-    if exchange:
-      name = self.exchange(name)
     if card.slot_number < 2:
       slot = 'RTM'
     else:
@@ -268,16 +259,10 @@ class ExportDevice(MpsReader):
     faults = self.get_faults(channel.analog_device)
     self.export_threshold_display_macros(channel,card,faults)
     for fault in faults:
-      name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name)
+      name = self.mps_names.getBaseFaultName(fault)
       if json_macros is not None:
-        json_macros['devices'].append('{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name))
-      name = self.exchange(name)
-      if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-        self.write_cn_analog_byp_macros(card,channel,fault,self.cn0_path,False)
-      elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':   
-        self.write_cn_analog_byp_macros(card,channel,fault,self.cn1_path,False)
-      if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-        self.write_cn_analog_byp_macros(card,channel,fault,self.cn2_path,True)
+        json_macros['devices'].append(name)
+      self.write_cn_analog_byp_macros(card,channel,fault)
       self.write_thr_base_db(card,channel,fault)
       self.__write_analog_input_report(channel,card,fault)
       state_data = {}
@@ -289,23 +274,14 @@ class ExportDevice(MpsReader):
           dest_data['{0}{1}_{2}_STATE'.format(name,'_FLT',dest.name.upper())] = state.get_allowed_class_string_by_dest_name(dest.name)
         state_data[state.device_state.name[-1]] = dest_data
         state_name[state.device_state.name[-1]] = state.device_state.description
-        if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-          self.export_cn_analog_states(self.cn0_path,card,channel,fault,state,False)
-          macros = self.get_analog_input_display_macros(card,channel,fault,state,False)
-          self.inputDisplay.add_macros(macros,False)
-        elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':
-          self.export_cn_analog_states(self.cn1_path,card,channel,fault,state,False)
-          macros = self.get_analog_input_display_macros(card,channel,fault,state,False)
-          self.inputDisplay.add_macros(macros,False)
-        if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-          self.export_cn_analog_states(self.cn2_path,card,channel,fault,state,True)
-          macros = self.get_analog_input_display_macros(card,channel,fault,state,True)
-          self.inputDisplay.add_macros(macros,True)
+        self.export_cn_analog_states(card,channel,fault,state)
+        macros = self.get_analog_input_display_macros(card,channel,fault,state)
+        self.inputDisplay.add_macros(macros)
         self.write_thr(channel,card,fault,state)
       if json_macros is not None:
         json_macros['destinations'].append(state_data)
         json_macros['states'].append(state_name)
-        json_macros['inputs'].append('{0}{1}{2}'.format(name,'_FLT','_SCMPSC'))
+        json_macros['inputs'].append(self.mps_names.getFaultName(fault))
     return json_macros
 
   def write_thr(self,channel,card,fault,state):
@@ -390,12 +366,9 @@ class ExportDevice(MpsReader):
     else:
       return channel.number
 
-  def get_analog_input_display_macros(self,card,channel,fault,state,exchange=False):
+  def get_analog_input_display_macros(self,card,channel,fault,state):
     byp_name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name)
     dev_name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),state.device_state.name)
-    if exchange:
-      byp_name = self.exchange(byp_name)
-      dev_name = self.exchange(dev_name)
     if card.slot_number < 2:
       slot = 'RTM'
     else:
@@ -409,19 +382,17 @@ class ExportDevice(MpsReader):
     macros['APPID'] = '{0}'.format(card.number)
     return macros
 
-  def write_cn_analog_byp_macros(self,card,channel,fault,path,exchange=False):
-    name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name)
-    if exchange:
-      name = self.exchange(name)
+  def write_cn_analog_byp_macros(self,card,channel,fault):
+    path = self.get_cn_path(card.link_node)
+    name = self.mps_names.getBaseFaultName(fault)
     macros = { 'P':"{0}".format(name),
                'ID':'{0}'.format(channel.analog_device.id),
                'INT':'{0}'.format(fault.get_integrator_index()) }
     self.write_epics_db(path=path,filename='analog_devices.db', template_name="cn_analog_device.template", macros=macros)
 
-  def export_cn_analog_states(self,path,card,channel,fault,state,exchange):
+  def export_cn_analog_states(self,card,channel,fault,state):
+    path = self.get_cn_path(card.link_node)
     P = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),state.device_state.name)
-    if exchange:
-      P = self.exchange(P)
     macros = { 'P':"{0}".format(P),
                'CR':'{0}'.format(card.link_node.crate.id),
                'CA':'{0}'.format(card.number),
@@ -431,24 +402,16 @@ class ExportDevice(MpsReader):
     self.write_epics_db(path=path,filename='analog_devices.db', template_name="cn_analog_fault.template", macros=macros)    
 
   def __export_cn_device_input(self,channel,card):
+    path = self.get_cn_path(card.link_node)
     filename = "cn_device_input.template";
     if channel.alarm_state:
       filename = "cn_device_input_fast.template";
-    if card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-      macros = self.get_cn_device_macros(channel,card,False)
-      self.write_epics_db(path=self.cn0_path,filename='device_inputs.db',template_name=filename, macros=macros)
-    elif card.link_node.get_cn1_prefix() == 'SIOC:SYS0:MP02':   
-      macros = self.get_cn_device_macros(channel,card,False)
-      self.write_epics_db(path=self.cn1_path,filename='device_inputs.db',template_name=filename, macros=macros)
-    if card.link_node.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-      macros = self.get_cn_device_macros(channel,card,True)
-      self.write_epics_db(path=self.cn2_path,filename='device_inputs.db',template_name=filename, macros=macros)
+    macros = self.get_cn_device_macros(channel,card)
+    self.write_epics_db(path=path,filename='device_inputs.db',template_name=filename, macros=macros)
 
-  def get_cn_device_macros(self,channel,card,exchange=False):
+  def get_cn_device_macros(self,channel,card):
     name=self.mps_names.getInputPvFromChannel(channel)
     states = self.get_alarm_state(channel.alarm_state)
-    if exchange:
-      name = self.exchange(name)
     macros = { 'P':'{0}'.format(name),
                'ONAM':'{0}'.format(channel.o_name),
                'ZNAM':'{0}'.format(channel.z_name),

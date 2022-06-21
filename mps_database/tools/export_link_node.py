@@ -100,9 +100,7 @@ class ExportLinkNode(MpsReader):
               self.__write_link_node_slot_info_db(path=app_path, macros=macros)
             slots.append(card.slot_number)
           input_display_filename = '{0}inputs/ln_{1}_inputs.json'.format(self.display_path,link_node.lcls1_id)
-          self.write_json_file(input_display_filename,self.inputDisplay.get_macros(False)) 
-          input_display_filename = '{0}inputs/ln_{1}_inputs_cn3.json'.format(self.display_path,link_node.lcls1_id)
-          self.write_json_file(input_display_filename,self.inputDisplay.get_macros(True))
+          self.write_json_file(input_display_filename,self.inputDisplay.get_macros()) 
           if input_report is not None:
             rows = self.inputDisplay.get_input_report_rows()
             if len(rows) > 0:
@@ -119,19 +117,12 @@ class ExportLinkNode(MpsReader):
               self.__write_link_node_slot_info_db(path=app_path, macros=macros)
 
   def app_timeout_alarms(self,card):
-    cn1 = card.link_node.get_cn1_prefix()
-    cn2 = card.link_node.get_cn2_prefix()
-    macros = {'MPS_PREFIX':cn1,
+    cn = card.link_node.get_cn_prefix()
+    macros = {'MPS_PREFIX':cn,
               'LN_GROUP':'{0}'.format(card.link_node.group),
               'ID':'{0}'.format(card.number)}
-    file_path1 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,card.link_node.group,cn1.split(':')[2].lower())
-    self.write_alarm_file(path=file_path1, template_name='mps_group.template', macros=macros)
-    if cn1 != cn2:
-      macros = {'MPS_PREFIX':cn2,
-                'LN_GROUP':'{0}'.format(card.link_node.group),
-                'ID':'{0}'.format(card.number)}
-      file_path2 = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,card.link_node.group,cn2.split(':')[2].lower())
-      self.write_alarm_file(path=file_path2, template_name='mps_group.template', macros=macros)
+    file_path = '{0}timeout/group_{1}_{2}.alhConfig'.format(self.alarm_path,card.link_node.group,cn.split(':')[2].lower())
+    self.write_alarm_file(path=file_path, template_name='mps_group.template', macros=macros)
     
 
   def write_cn_status_macros(self,cn_disp,card):
@@ -145,8 +136,7 @@ class ExportLinkNode(MpsReader):
     macros['APP'] = card.number
     macros['P'] = card.get_pv_name()
     macros['CRATE'] = card.link_node.crate.location
-    macros['CN1'] = card.link_node.get_cn1_prefix()
-    macros['CN2'] = card.link_node.get_cn2_prefix()
+    macros['CN'] = card.link_node.get_cn_prefix()
     cn_disp.add_macros(macros)
 
   def __write_lc1_info_config(self,path,link_node):
@@ -363,9 +353,7 @@ class ExportLinkNode(MpsReader):
       type = 'WIRE'
     macros = {'SLOT':'{0}'.format(slot_publish),
               'CRATE':link_node.location,
-              'CN':link_node.get_cn1_prefix(),
-              'CN1':link_node.get_cn1_prefix(),
-              'CN2':link_node.get_cn2_prefix(),
+              'CN':link_node.get_cn_prefix(),
               'AID':'{0}'.format(app.number),
               'MPS_PREFIX':'{0}'.format(app.get_pv_name()),
               'TYPE':type,

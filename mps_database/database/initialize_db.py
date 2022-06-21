@@ -25,9 +25,9 @@ class DatabaseImporter:
 #    self.session.autoflush=True
     self.verbose = verbose
     self.mps_names = MpsName(self.session)
-    self.cn0 = [2,3,4,5,6,7,8,9,10,11]
-    self.cn1 = [12,13,14,15,16,17,18,19,20,21,22,23]
-    self.cn2 = [0,1]
+    self.cn1 = [8,9,10,11,12,13,14]
+    self.cn2 = [15,16,17,18,19,20,21,22,23]
+    self.cn3 = [0,1,2,3,4,5,6,7]
 
   def __del__(self):
     self.session.commit()
@@ -147,16 +147,13 @@ class DatabaseImporter:
       return
     if len(groups) < 1:
       # Create a new group
-      if int(gn) in self.cn0:
-        cn1 = 'SIOC:SYS0:MP01'
-        cn2 = 'SIOC:SYS0:MP01'
-      elif int(gn) in self.cn1:
-        cn1 = 'SIOC:SYS0:MP02'
-        cn2 = 'SIOC:SYS0:MP02'
+      if int(gn) in self.cn1:
+        cn = 'SIOC:SYS0:MP01'
       elif int(gn) in self.cn2:
-        cn1 = 'SIOC:SYS0:MP01'
-        cn2 = 'SIOC:SYS0:MP03'
-      group = models.LinkNodeGroup(number=int(gn),central_node1=cn1,central_node2=cn2)
+        cn = 'SIOC:SYS0:MP02'
+      elif int(gn) in self.cn3:
+        cn = 'SIOC:SYS0:MP03'
+      group = models.LinkNodeGroup(number=int(gn),central_node=cn)
       self.session.add(group)
       self.session.commit()
       return group

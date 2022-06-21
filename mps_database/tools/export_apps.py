@@ -82,14 +82,7 @@ class ExportApplication(MpsReader):
     self.write_cn_app_db(card.link_node,macros=macros)
 
   def write_cn_app_db(self,ln,macros):
-    if ln.get_cn1_prefix() == 'SIOC:SYS0:MP01':
-      self.write_epics_db(path=self.cn0_path,filename='apps.db',template_name="cn_app_timeout.template", macros=macros)
-    elif ln.get_cn1_prefix() == 'SIOC:SYS0:MP02':   
-      self.write_epics_db(path=self.cn1_path,filename='apps.db',template_name="cn_app_timeout.template", macros=macros)
-    if ln.get_cn2_prefix() == 'SIOC:SYS0:MP03':
-      self.write_epics_db(path=self.cn2_path,filename='apps.db',template_name="cn_app_timeout.template", macros=macros)
-
-        
+   self.write_epics_db(path=self.get_cn_path(ln),filename='apps.db',template_name="cn_app_timeout.template", macros=macros)        
 
   def __write_prefix_env(self, path, macros):
       """

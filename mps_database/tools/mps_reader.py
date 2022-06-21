@@ -45,9 +45,9 @@ class MpsReader:
         self.report_path = '{}reports/build/'.format(self.dest_path)
         self.checkout_path = '{}checkout/'.format(self.dest_path)
         self.create_dir('{0}'.format(self.report_path))
-        self.cn0_path = '{}central_node_db/cn1/'.format(self.dest_path)
-        self.cn1_path = '{}central_node_db/cn2/'.format(self.dest_path)
-        self.cn2_path = '{}central_node_db/cn3/'.format(self.dest_path)
+        self.cn1_path = '{}central_node_db/cn1/'.format(self.dest_path)
+        self.cn2_path = '{}central_node_db/cn2/'.format(self.dest_path)
+        self.cn3_path = '{}central_node_db/cn3/'.format(self.dest_path)
         self.mps_names = None
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
         self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH","FEES","FEEH","LTU0","UND0","BSY0","DMP0","DMPH","DMPS"]
@@ -57,9 +57,9 @@ class MpsReader:
         self.nc_int1_cycles = 179
         self.sc_int0_cycles = 1023 #1023 is biggest value for this register --> 1023/910000 = 1 ms integration
         self.sc_int1_cycles = 1023
-        self.cn0 = [2,3,4,5,6,7,8,9,10,11]
-        self.cn1 = [12,13,14,15,16,17,18,19,20,21,22,23]
-        self.cn2 = [0,1]
+        self.cn1 = [8,9,10,11,12,13,14]
+        self.cn2 = [15,16,17,18,19,20,21,22,23]
+        self.cn3 = [0,1,2,3,4,5,6,7]
         self.database = db_file
         self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
         self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
@@ -264,11 +264,16 @@ class MpsReader:
         else:
             return 1
 
-    def exchange(self,string):
-      name = string.split(":")
-      name.insert(3,"3")
-      name = ":".join(name)
-      return name
+    def get_cn_path(self,link_node):
+      group = link_node.group
+      if group in self.cn1:
+        return self.cn1_path
+      elif group in self.cn2:
+        return self.cn2_path
+      elif group in self.cn3:
+        return self.cn3_path
+      else:
+        return None
 
     def format_path(self,path):
         """

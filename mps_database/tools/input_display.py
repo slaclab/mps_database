@@ -15,23 +15,16 @@ class InputDisplay:
   def __init__(self, ln):
     self.ln = ln
     self.macros = []
-    self.cn3_macros = []
     self.input_report_rows = []
     self.digital_ln_macros = []
     self.bay0_macros = []
     self.bay1_macros = []
 
-  def add_macros(self,macros,cn=False):
-    if cn:
-      self.cn3_macros.append(macros)
-    else:
-      self.macros.append(macros)
+  def add_macros(self,macros):
+    self.macros.append(macros)
 
-  def get_macros(self,cn=False):
-    if cn:
-      return self.cn3_macros
-    else:
-      return self.macros
+  def get_macros(self):
+    return self.macros
 
   def append_row(self,row):
     self.input_report_rows.append(row)

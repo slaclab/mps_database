@@ -204,13 +204,7 @@ class LinkNode(Base):
           return card.number
     return 0
 
-  def get_cn1_prefix(self):
+  def get_cn_prefix(self):
     session = object_session(self)
     group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
-    return group.central_node1
-
-  def get_cn2_prefix(self):
-    session = object_session(self)
-    group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
-    return group.central_node2
-
+    return group.central_node
