@@ -130,7 +130,7 @@ class MpsName:
         return "$(BASE):" + beamDestination.name.upper() + "_PC"
 
     def getFaultNameFromId(self, faultId):
-        fault = self.session.query(models.Fault).filter(models.Fault.id==fauldId).one()
+        fault = self.session.query(models.Fault).filter(models.Fault.id==faultId).one()
         return self.getFaultName(fault)
 
     def getBaseFaultName(self, fault):
@@ -185,6 +185,28 @@ class MpsName:
         else:
             return None        
 
+    def getBypassedPV(self, fault):
+        base = self.getBaseFaultName(fault)
+        if base != None:
+            return base + "_FLT" + "_BYPS"
+        else:
+            return None
+
+    def getFaultedDestinations(self, fault):
+        base = self.getFaultedPVName(fault)
+        beam_dest =  self.session.query(models.BeamDestination).all()
+
+        dest_list = []
+        # Order to match preferred order of MPS Displays
+        for i in [2, 1, 3, 4, 0, 5]:
+            dest_list.append("{}_{}_STATE".format(base, beam_dest[i]))
+
+        return dest_list
+
+    def getFaultObject(self, fault):
+
+        return FaultObject(fault, parent=self)
+
     def makeDeviceName(self,string,type,ch=0):
         sub = string.split(":")
         dt = []
@@ -205,3 +227,26 @@ class MpsName:
     def getFaultStateName(self, faultState):
 #        print 'name for {0} {1} {2}'.format(faultState.id, faultState.device_state.name, faultState.fault.name)
         return self.getBaseFaultName(faultState.fault) + ":" + faultState.device_state.name
+
+
+class FaultObject:
+    def __init__(self, fault: models.fault.Fault, parent: MpsName):
+        self.fault = fault
+        self.description = fault.description
+        self.name = parent.getFaultedPVName(fault)
+        self.state = parent.getFaultName(fault)
+        self.ignored = parent.getIgnoredPV(fault)
+        self.bypassed = parent.getBypassedPV(fault)
+        self.visible = parent.isDeviceAnalog(parent.getDeviceFromFault(fault))
+        self.destinations = parent.getFaultedDestinations(fault)
+
+    # Function to make the object sortable
+    def __lt__(self, other):
+        return isinstance(other, FaultObject) and self.fault.description < other.fault.description
+
+    # Functions to make the object hashable
+    def __eq__(self, other):
+        return isinstance(other, FaultObject) and self.fault.id == other.fault.id
+
+    def __hash__(self):
+        return hash(self.fault.id)
