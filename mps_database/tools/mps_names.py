@@ -188,7 +188,7 @@ class MpsName:
     def getBypassedPV(self, fault):
         base = self.getBaseFaultName(fault)
         if base != None:
-            return base + "_FLT" + "_BYPS"
+            return base + "_FLT" + "_SCBYPS"
         else:
             return None
 
