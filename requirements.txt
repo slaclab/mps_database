@@ -1,7 +1,6 @@
 sqlalchemy
 alembic
 PyYAML
-Cheetah
 pyepics
 ipaddress
-
+cheetah3
