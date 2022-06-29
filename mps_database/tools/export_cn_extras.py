@@ -284,7 +284,8 @@ class ExportCnExtras(MpsReader):
       include_path = '{0}mpln_{1}_include.txt'.format(self.alarm_path,area)
       for ln in link_nodes:
         macros = {'PREFIX':ln.get_app_prefix(),
-                  'LNID':'{0}'.format(ln.lcls1_id)}
+                  'LNID':'{0}'.format(ln.lcls1_id),
+                  'IOC':ln.get_sioc_pv_base()}
         filename = 'mpln_{0}_{1}.alhConfig'.format(ln.area.lower(),ln.location.lower())
         path = '{0}areas/{1}'.format(self.alarm_path,filename)
         self.write_alarm_file(path=path, template_name='link_node_alarm.template', macros=macros)

@@ -110,6 +110,11 @@ if ver is not None:
 export_release = ExportRelease(db_file,template_path,dest_path,clean,verbose,devices,yaml,faults,report)
 export_release.export()
 
+kludge_dest = "{0}/link_node_db/app_db/cpu-bsys-sp02/0001/03".format(dest_path)
+kludge_source = "{0}/link_node_db/app_db/cpu-bsys-sp02/0101/02".format(dest_path)
+shutil.move(kludge_source,kludge_dest)
+shutil.rmtree("{0}/link_node_db/app_db/cpu-bsys-sp02/0101/".format(dest_path))
+
 if ver is not None:
   destination = "{0}/{1}".format(dest_path,tagged_dbname)
   shutil.move(tagged_dbname,destination)

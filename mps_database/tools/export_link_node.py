@@ -36,7 +36,10 @@ class ExportLinkNode(MpsReader):
         filen = '{0}scripts/reboot_nodes.sh'.format(self.dest_path)
         tmpl = '{}scripts/reboot_nodes.template'.format(self.template_path)
         self.write_file_from_template(file=filen, template=tmpl, macros={'LN':link_node.get_name()})
-        self.__write_salt_fw(path=app_path,macros={"SLOTS":"0x3e"})
+        salt = "0x3e"
+        if link_node.lcls1_id in [98, 202]:
+          salt = "0"
+        self.__write_salt_fw(path=app_path,macros={"SLOTS":salt})
         self.__write_header_env(path=app_path, macros={"MPS_LINK_NODE":link_node.get_name()})
         idx = link_node.slot_number
         self.__write_iocinfo_env(path=app_path, macros={"AREA":link_node.area,

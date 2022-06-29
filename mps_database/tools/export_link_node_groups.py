@@ -97,6 +97,9 @@ class ExportLinkNodeGroups(MpsReader):
       too_long = True
       window_width = int((math.floor(len(link_nodes)/2)+1) * embedded_width + extra * 2)
       fudge = int(embedded_width / 2)
+      if len(link_nodes) % 2 == 0:
+        window_width = int((math.floor(len(link_nodes)/2)) * embedded_width + extra * 2)
+        fudge = 0
     window_height = header_height + footer_height + rows*embedded_height
     last_x = window_width - embedded_width - extra - fudge
     macros = { 'WIDTH':'{0}'.format(int(window_width)),
@@ -113,7 +116,7 @@ class ExportLinkNodeGroups(MpsReader):
       t = 'CN B005-S3'
     else:
       t = ''
-    self.write_group_embed(last_ln,last_x,last_y,'REM',t,cn,filename)
+    self.write_group_embed(last_ln,last_x,last_y,'LOC',t,cn,filename)
     if rows > 1:
       y = header_height + embedded_height
     else:

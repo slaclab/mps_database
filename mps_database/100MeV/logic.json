@@ -2571,21 +2571,6 @@
             ]
         },
         {
-            "description":"BKRDG0 (KICK:DIAG0:110) Power Off",
-            "name":"PWR_STATUS",
-            "dtype":"MAG1",
-            "inputs": [
-                "KICK:DIAG0:110:OFF"
-            ],
-            "ignore_when": [
-                "YAG01B_IGNORE"
-            ],
-            "states": [
-                [0, "not_off","Not Off",null,13,null,null,null,null],
-                [1, "Off","Off",null,1,null,null,null,null]
-            ]
-        },
-        {
             "description":"Mechanical Shutter Position",
             "name":"POSITION",
             "dtype":"SHUT",
