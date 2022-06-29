@@ -5,7 +5,7 @@ with open('./requirements.txt') as f:
     
 setup(
     name='mps_database',
-    version='1.0.0',
+    version='3.0.0',
     author='Jeremy Mock',
     author_email='jmock@slac.stanford.edu',
     packages=find_packages(include=['mps_database'], exclude=[]),

@@ -8,6 +8,9 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+R3.0.0: (29 June, 2022)
+  * First production tag to use new python3 environment and pip
+
 mps_database-R2-1-0: (26 Oct. 2021) J. Mock
   * Add PVs to force destinations per ESLMPS-146
   * Change auto_reset behavior to be to int rather than bool to match central_node_engine
