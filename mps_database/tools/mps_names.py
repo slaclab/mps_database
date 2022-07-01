@@ -199,7 +199,7 @@ class MpsName:
         dest_list = []
         # Order to match preferred order of MPS Displays
         for i in [2, 1, 3, 4, 0, 5]:
-            dest_list.append("{}_{}_STATE".format(base, beam_dest[i]))
+            dest_list.append("{}_{}_STATE".format(base, beam_dest[i].name))
 
         return dest_list
 
