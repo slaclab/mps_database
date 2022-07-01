@@ -8,7 +8,7 @@ setup(
     version='3.0.0',
     author='Jeremy Mock',
     author_email='jmock@slac.stanford.edu',
-    packages=find_packages(include=['mps_database'], exclude=[]),
+    packages=find_packages(),
     url='https://github.com/slaclab/mps_database',
     license='MIT',
     description='Various tools and scripts for the mps database.',
