@@ -29,6 +29,9 @@ class MpsName:
         return
       return devices[0]
 
+    def get_device_count(self):
+      return self.session.query(models.Device).count()
+
     def isDeviceAnalog(self,device):
       analog = False
       if type(device) is models.device.AnalogDevice:

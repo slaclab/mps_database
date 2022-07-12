@@ -38,7 +38,7 @@ class InputGeneration(MpsReader):
           for property in line.split(','):
             device_info[fields[field_index]]=property
             field_index = field_index + 1
-          if device_info['inconfig'].lower() == '100':
+          if device_info['inconfig'].lower() != '100':
             if device_info['type'] not in extypes:
               if intypes is not None:
                 if device_info['type'] in intypes:

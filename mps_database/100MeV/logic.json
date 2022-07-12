@@ -1681,11 +1681,11 @@
             ]
         },
         {
-            "description": "BPMDG000 (BPMS:COL0:125) X Orbit",
+            "description": "BPMDG000 (BPMS:COL0:135) X Orbit",
             "name":"X",
             "dtype":"BPMS",
             "inputs": [
-                "BPMS:COL0:125:X"
+                "BPMS:COL0:135:X"
             ],
             "ignore_when": [
                 "YAG01B_IGNORE"
@@ -1696,11 +1696,11 @@
             ]
         },
         {
-            "description": "BPMDG000 (BPMS:COL0:125) Y Orbit",
+            "description": "BPMDG000 (BPMS:COL0:135) Y Orbit",
             "name":"Y",
             "dtype":"BPMS",
             "inputs": [
-                "BPMS:COL0:125:Y"
+                "BPMS:COL0:135:Y"
             ],
             "ignore_when": [
                 "YAG01B_IGNORE"
@@ -1711,11 +1711,11 @@
             ]
         },
         {
-            "description": "BPMDG000 (BPMS:COL0:125) TMIT",
+            "description": "BPMDG000 (BPMS:COL0:135) TMIT",
             "name":"TMIT",
             "dtype":"BPMS",
             "inputs": [
-                "BPMS:COL0:125:TMIT"
+                "BPMS:COL0:135:TMIT"
             ],
             "ignore_when": [
                 "YAG01B_IGNORE"

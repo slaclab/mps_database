@@ -45,7 +45,7 @@ record(stringin, "$(P)_SCBYP_END") {
   field(SCAN, "1 second")
   field(VAL, "Invalid")
   field(PINI, "YES")
-  field(INP, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_ANALOG_DEVICE_BYPEXPDATE_STRING")
+  field(INP, "@asyn(CENTRAL_NODE $(BYPID) $(INT))MPS_ANALOG_DEVICE_BYPEXPDATE_STRING")
 }
 
 record(bi, "$(P)_SCBYPV") {

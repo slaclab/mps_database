@@ -61,7 +61,7 @@ class ExportDevice(MpsReader):
       self.__export_device_input_display(channel,card)
       self.__write_input_report(channel,card)
       self.__write_ln_input_display(channel,card)
-      if channel.monitored_pvs is not "":
+      if channel.monitored_pvs != "":
         self.__export_virtual(channel,card)
         has_virtual = True
     return has_virtual   
@@ -385,9 +385,11 @@ class ExportDevice(MpsReader):
   def write_cn_analog_byp_macros(self,card,channel,fault):
     path = self.get_cn_path(card.link_node)
     name = self.mps_names.getBaseFaultName(fault)
+    bypOffset = channel.analog_device.id + fault.get_integrator_index()*self.mps_names.get_device_count()
     macros = { 'P':"{0}".format(name),
                'ID':'{0}'.format(channel.analog_device.id),
-               'INT':'{0}'.format(fault.get_integrator_index()) }
+               'INT':'{0}'.format(fault.get_integrator_index()),
+               'BYPID':'{0}'.format(bypOffset) }
     self.write_epics_db(path=path,filename='analog_devices.db', template_name="cn_analog_device.template", macros=macros)
 
   def export_cn_analog_states(self,card,channel,fault,state):
