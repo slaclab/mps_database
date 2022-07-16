@@ -162,6 +162,7 @@ class ExportCnExtras(MpsReader):
     self.generate_area_display('SPD',link_nodes)
     self.generate_ln_alarms('SPD',link_nodes)
     self.generate_analog_display('SPD',['SPD','SLTD'])
+    self.generate_analog_display('DIAG0',['DIAG0'])
     #finish up by generating display for MPS global which has all link nodes.  It is a json file with macros
     link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     ln_macros = []
@@ -187,13 +188,14 @@ class ExportCnExtras(MpsReader):
     bcm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'TORO').all()
     blen_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BLEN').all()
     farc_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'FARC').all()
+    bact_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BACT').all()
     if len(blm_dt) > 0:
       blms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(blms,area,'BLM')
     if len(bpm_dt) > 0:
       bpms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bpm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bpms,area,'BPM')
-    if len(bpm_dt) > 0:
+    if len(bcm_dt) > 0:
       bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bcm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bcms,area,'BCM')
     if len(blen_dt) > 0:
@@ -202,6 +204,9 @@ class ExportCnExtras(MpsReader):
     if len(farc_dt) > 0:
       bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == farc_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bcms,area,'BCM')
+    if len(bact_dt) > 0:
+      bact = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bact_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_analog_display_single(bact,area,'BACT')
 
 
   def generate_analog_display_single(self,devices,area,type):

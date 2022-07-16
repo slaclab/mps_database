@@ -379,7 +379,7 @@
             ],
             "states": [
                 [256, "X_T0","X Thr 0",null,0,0,null,null,null],
-                [512, "X_T1","X Thr 1",null,4,4,null,null,null]
+                [512, "X_T1","X Thr 1",null,3,3,null,null,null]
             ]
         },
         {
@@ -394,7 +394,7 @@
             ],
             "states": [
                 [65536, "Y_T0","Y Thr 0",null,0,0,null,null,null],
-                [131072, "Y_T1","Y Thr 1",null,4,4,null,null,null]
+                [131072, "Y_T1","Y Thr 1",null,3,3,null,null,null]
             ]
         },
         {
@@ -427,7 +427,7 @@
             ],
             "states": [
                 [256, "X_T0","X Thr 0",null,0,0,null,null,null],
-                [512, "X_T1","X Thr 1",null,4,4,null,null,null]
+                [512, "X_T1","X Thr 1",null,3,3,null,null,null]
             ]
         },
         {
@@ -441,7 +441,7 @@
             ],
             "states": [
                 [65536, "Y_T0","Y Thr 0",null,0,0,null,null,null],
-                [131072, "Y_T1","Y Thr 1",null,4,4,null,null,null]
+                [131072, "Y_T1","Y Thr 1",null,3,3,null,null,null]
             ]
         },
         {
@@ -1014,7 +1014,7 @@
             ]
         },
         {
-            "description": "VVPG HTH 417 Position",
+            "description": "VVPG HTR 417 Position",
             "name":"POSITION",
             "dtype":"VAC",
             "inputs": [
@@ -1604,12 +1604,12 @@
                 "YAG01B_IGNORE"
             ],
             "states": [
-                [1, "I0_LOSS_T0","I0_LOSS Thr 0",null,null,0,null,null,null],
-                [2, "I0_LOSS_T1","I0_LOSS Thr 1",null,null,2,null,null,null],
-                [4, "I0_LOSS_T2","I0_LOSS Thr 2",null,null,3,null,null,null],
-                [8, "I0_LOSS_T3","I0_LOSS Thr 3",null,null,4,null,null,null],
-                [16, "I0_LOSS_T4","I0_LOSS Thr 4",null,null,5,null,null,null],
-                [32, "I0_LOSS_T5","I0_LOSS Thr 5",null,null,6,null,null,null]
+                [1, "I0_LOSS_T0","I0_LOSS Thr 0",null,0,0,null,null,null],
+                [2, "I0_LOSS_T1","I0_LOSS Thr 1",null,2,2,null,null,null],
+                [4, "I0_LOSS_T2","I0_LOSS Thr 2",null,3,3,null,null,null],
+                [8, "I0_LOSS_T3","I0_LOSS Thr 3",null,4,4,null,null,null],
+                [16, "I0_LOSS_T4","I0_LOSS Thr 4",null,5,5,null,null,null],
+                [32, "I0_LOSS_T5","I0_LOSS Thr 5",null,6,6,null,null,null]
             ]
         },
         {
@@ -1623,12 +1623,12 @@
                 "YAG01B_IGNORE"
             ],
             "states": [
-                [1, "I0_LOSS_T0","I0_LOSS Thr 0",null,null,0,null,null,null],
-                [2, "I0_LOSS_T1","I0_LOSS Thr 1",null,null,2,null,null,null],
-                [4, "I0_LOSS_T2","I0_LOSS Thr 2",null,null,3,null,null,null],
-                [8, "I0_LOSS_T3","I0_LOSS Thr 3",null,null,4,null,null,null],
-                [16, "I0_LOSS_T4","I0_LOSS Thr 4",null,null,5,null,null,null],
-                [32, "I0_LOSS_T5","I0_LOSS Thr 5",null,null,6,null,null,null]
+                [1, "I0_LOSS_T0","I0_LOSS Thr 0",null,0,0,null,null,null],
+                [2, "I0_LOSS_T1","I0_LOSS Thr 1",null,2,2,null,null,null],
+                [4, "I0_LOSS_T2","I0_LOSS Thr 2",null,3,3,null,null,null],
+                [8, "I0_LOSS_T3","I0_LOSS Thr 3",null,4,4,null,null,null],
+                [16, "I0_LOSS_T4","I0_LOSS Thr 4",null,5,5,null,null,null],
+                [32, "I0_LOSS_T5","I0_LOSS Thr 5",null,6,6,null,null,null]
             ]
         },
         {
@@ -1691,8 +1691,8 @@
                 "YAG01B_IGNORE"
             ],
             "states": [
-                [256, "X_T0","X Thr 0",null,null,0,null,null,null],
-                [512, "X_T1","X Thr 1",null,null,4,null,null,null]
+                [256, "X_T0","X Thr 0",null,0,0,null,null,null],
+                [512, "X_T1","X Thr 1",null,4,4,null,null,null]
             ]
         },
         {
@@ -1706,8 +1706,8 @@
                 "YAG01B_IGNORE"
             ],
             "states": [
-                [65536, "Y_T0","Y Thr 0",null,null,0,null,null,null],
-                [131072, "Y_T1","Y Thr 1",null,null,4,null,null,null]
+                [65536, "Y_T0","Y Thr 0",null,0,0,null,null,null],
+                [131072, "Y_T1","Y Thr 1",null,4,4,null,null,null]
             ]
         },
         {
@@ -1721,12 +1721,12 @@
                 "YAG01B_IGNORE"
             ],
             "states": [
-                [1, "TMIT_T0","TMIT Thr 0",null,null,0,null,null,null],
-                [2, "TMIT_T1","TMIT Thr 1",null,null,2,null,null,null],
-                [4, "TMIT_T2","TMIT Thr 2",null,null,3,null,null,null],
-                [8, "TMIT_T3","TMIT Thr 3",null,null,4,null,null,null],
-                [16, "TMIT_T4","TMIT Thr 4",null,null,5,null,null,null],
-                [32, "TMIT_T5","TMIT Thr 5",null,null,6,null,null,null]
+                [1, "TMIT_T0","TMIT Thr 0",null,0,0,null,null,null],
+                [2, "TMIT_T1","TMIT Thr 1",null,2,2,null,null,null],
+                [4, "TMIT_T2","TMIT Thr 2",null,3,3,null,null,null],
+                [8, "TMIT_T3","TMIT Thr 3",null,4,4,null,null,null],
+                [16, "TMIT_T4","TMIT Thr 4",null,5,5,null,null,null],
+                [32, "TMIT_T5","TMIT Thr 5",null,6,6,null,null,null]
             ]
         },
         {

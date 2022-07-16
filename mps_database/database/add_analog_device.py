@@ -31,13 +31,13 @@ class AddAnalogDevice:
     cable = "N/A"
     fields = device_info.keys()
     if "slope" in fields:
-      if device_info['slope'] is not '':
+      if device_info['slope'] != '':
         slope = device_info['slope']
     if "offset" in fields:
-      if device_info['offset'] is not '':
+      if device_info['offset'] != '':
         offset = device_info['offset']
     if "cable" in fields:
-      if device_info['cable'] is not '':
+      if device_info['cable'] != '':
         cable = device_info['cable']
     if channel is not None:
       device = models.AnalogDevice(name=device_name,
