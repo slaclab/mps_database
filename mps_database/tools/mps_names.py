@@ -25,6 +25,9 @@ class MpsName:
       for fi in fault.inputs:
         devices.append(fi.device)
       if len(devices) > 1:
+        print("Fault: {0}".format(fault.description))
+        for d in devices:
+          print("Device: {0}".format(d.name))
         print("ERROR: Too many devices, special cases not ready yet!")
         return
       return devices[0]
@@ -102,6 +105,8 @@ class MpsName:
     def getBlmType(self,device):
         if device.device_type.name in ['BLM','CBLM','LBLM']:
           type = device.name.split(':')[1]
+          if type not in ['BLM','CBLM','LBLM']:
+            type = device.device_type.name
         else:
           type = device.device_type.name
         return type
