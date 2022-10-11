@@ -237,19 +237,3 @@ class FaultObject:
         self.fault = fault
         self.description = fault.description
         self.name = parent.getFaultedPVName(fault)
-        self.state = parent.getFaultName(fault)
-        self.ignored = parent.getIgnoredPV(fault)
-        self.bypassed = parent.getBypassedPV(fault)
-        self.visible = parent.isDeviceAnalog(parent.getDeviceFromFault(fault))
-        self.destinations = parent.getFaultedDestinations(fault)
-
-    # Function to make the object sortable
-    def __lt__(self, other):
-        return isinstance(other, FaultObject) and self.fault.description < other.fault.description
-
-    # Functions to make the object hashable
-    def __eq__(self, other):
-        return isinstance(other, FaultObject) and self.fault.id == other.fault.id
-
-    def __hash__(self):
-        return hash(self.fault.id)
