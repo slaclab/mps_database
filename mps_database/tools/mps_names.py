@@ -224,8 +224,11 @@ class MpsName:
         more_sub = dt+sub
         ret_name = ":".join(more_sub[:len])
         return ret_name
-        
-        
+
+    def getConditionPV(self, cond):
+        prefix = (cond.condition_inputs[0].fault_state.fault
+                      .inputs[0].device.card.link_node.get_cn_prefix())
+        return f"{prefix}:{cond.name}"
 
     def getFaultStateName(self, faultState):
 #        print 'name for {0} {1} {2}'.format(faultState.id, faultState.device_state.name, faultState.fault.name)
