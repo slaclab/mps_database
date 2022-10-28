@@ -137,33 +137,8 @@ class MpsName:
         return self.getFaultName(fault)
 
     def getBaseFaultName(self, fault):
-        is_digital = False
-
-        if len(fault.inputs) <= 0:
-            print(('ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id)))
-            return None
-
-        for fault_input in fault.inputs:
-            if fault_input.bit_position == 0:
-                try:
-                    device = self.session.query(models.DigitalDevice).filter(models.DigitalDevice.id==fault_input.device_id).one()
-                    for input in device.inputs:
-                        if input.bit_position == 0:
-                            device_input = input
-                            is_digital = True
-                except:
-                    is_digital = False
-
-                if not is_digital:
-                    try:
-                        device = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.id==fault_input.device_id).one()
-                    except:
-                        print(("Bonkers, device " + str(fault_input.device_id) + " is not digital nor analog - what?!?"))
-                        
-        if is_digital:
-            base = self.getDeviceName(device)
-        else:
-            base = self.getDeviceName(device)
+        device = self.getDeviceFromFault(fault)
+        base = self.getDeviceName(device)
 
         return base + ":" + fault.name
 
