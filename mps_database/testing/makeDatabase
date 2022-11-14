@@ -1,2 +1,0 @@
-database/add_device.py --db mps_config-testing.db --file testing/testDevice.csv
-database/add_logic.py --db mps_config-testing.db --file testing/testLogic.json 
