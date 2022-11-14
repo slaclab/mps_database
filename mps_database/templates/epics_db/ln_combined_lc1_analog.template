@@ -16,6 +16,14 @@ record(ai, "$(P_DEV):$(R_DEV)") {
     field(SCAN, ".1 second")
     field(INP, "$(INPV) NPP NMS")
     field(FLNK, "$(P_DEV):$(R_DEV)NORMH")
+    info(autosaveFields, "AOFF ASLO EGU")
+}
+record(ai, "$(P_DEV):$(R_DEV)_RAW") {
+    field(DESC, "Analog input value")
+    field(DTYP, "Raw Soft Channel")
+    field(EGU,  "raw")
+    field(SCAN, ".1 second")
+    field(INP, "$(INPV) NPP NMS")
 }
 record(calc, "$(P_DEV):$(R_DEV)NORMH") {
     field(DESC, "Normalized analog value")

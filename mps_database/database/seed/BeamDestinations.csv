@@ -5,3 +5,4 @@ SC_BSYD,3,Linac to BSY,4
 SC_HXR,4,HXR beamline,8
 SC_SXR,5,SXR Beamline,16
 SC_LESA,6,A-Line,32
+LASER_HTR,13,Laser Heater Shutter,8192

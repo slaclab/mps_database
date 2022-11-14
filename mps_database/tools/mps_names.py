@@ -79,7 +79,8 @@ class MpsName:
         :type deviceInputId: int
         :rtype :string
         """
-        return "{0}:{1}".format(self.getDeviceInputBaseName(channel.device_input),channel.name.split(":")[-1])
+        #return "{0}:{1}".format(self.getDeviceInputBaseName(channel.device_input),channel.name.split(":")[-1])
+        return channel.name
 
     def getDeviceName(self, device):
         """
@@ -224,9 +225,12 @@ class MpsName:
           len = 5
         elif sub[-2] in ['A','B','AS','BS','AH','BH','A_WF','B_WF']:
           len = 5
-        elif type in ['EPICS','WDOG']:
+        elif type in ['EPICS','WDOG','XLEAP','SXRSS']:
           len = 5
         more_sub = dt+sub
+        if type in ['XLEAP']:
+          temp = sub[-1].split('_')
+          more_sub[-1] = temp[0]
         ret_name = ":".join(more_sub[:len])
         return ret_name
         

@@ -129,3 +129,5 @@ class AnalogDevice(Device):
   cable_number = Column(String, nullable=False, default='0')
   offset = Column(Float, nullable=False, default=0)
   slope = Column(Float, nullable=False, default=1)
+  gain_bay = Column(Float,nullable=True)
+  gain_channel = Column(Float,nullable=True)

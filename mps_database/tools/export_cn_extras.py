@@ -12,25 +12,26 @@ import sys
 
 class ExportCnExtras(MpsReader):
 
-  def __init__(self, db_file, template_path, dest_path,clean, verbose):
+  def __init__(self, db_file,template_path,dest_path,clean,verbose,session):
     MpsReader.__init__(self,db_file=db_file,dest_path=dest_path,template_path=template_path,clean=clean,verbose=verbose)
     self.verbose = verbose
+    self.session = session
     self.bc_names = []
     self.bc_sevr = []
 
-  def export_conditions(self,mps_db_session):
+  def export_conditions(self):
     if self.verbose:
       print('INFO: Begin Export Conditions')
     macros = {'VERSION':'{0}'.format(self.config_version)}
     self.write_epics_db(path=self.cn1_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
     self.write_epics_db(path=self.cn2_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
     self.write_epics_db(path=self.cn3_path,filename='conditions.db',template_name="cn_config_version.template", macros=macros)
-    conditions = mps_db_session.query(models.Condition).all()
+    conditions = self.session.query(models.Condition).all()
     for cond in conditions:
-      condition_input = mps_db_session.query(models.ConditionInput).filter(models.ConditionInput.condition_id == cond.id).one()
+      condition_input = self.session.query(models.ConditionInput).filter(models.ConditionInput.condition_id == cond.id).one()
       flt = condition_input.fault_state.fault
-      fault_input = mps_db_session.query(models.FaultInput).filter(models.FaultInput.fault_id == flt.id).one()
-      device = mps_db_session.query(models.Device).filter(models.Device.id == fault_input.device_id).one()
+      fault_input = self.session.query(models.FaultInput).filter(models.FaultInput.fault_id == flt.id).one()
+      device = self.session.query(models.Device).filter(models.Device.id == fault_input.device_id).one()
       macros = { 'NAME':'{0}'.format(cond.name.upper().replace(' ','_')),
                  'DESC':'{0}'.format(cond.description), 
                  'ID':'{0}'.format(cond.id) }
@@ -43,11 +44,11 @@ class ExportCnExtras(MpsReader):
     if self.verbose:
       print('........Done Export Conditions')
 
-  def export_destinations(self,mps_db_session):
+  def export_destinations(self):
     if self.verbose:
       print('INFO: Begin Export Destinations')
-    destinations = mps_db_session.query(models.BeamDestination).all()
-    beamClasses = mps_db_session.query(models.BeamClass).all()
+    destinations = self.session.query(models.BeamDestination).all()
+    beamClasses = self.session.query(models.BeamClass).all()
     macros = { 'NUM':'{0}'.format(len(beamClasses))}
     self.write_epics_db(path=self.cn1_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
     self.write_epics_db(path=self.cn2_path,filename='destinations.db',template_name="cn_num_beam_classes.template", macros=macros)
@@ -112,59 +113,59 @@ class ExportCnExtras(MpsReader):
     if self.verbose:
       print('........Done Export Destinations')
 
-  def generate_area_displays(self,mps_db_session):
-    self.initialize_mps_names(mps_db_session)
-    self.mps_db_session = mps_db_session
+  def generate_area_displays(self):
+    self.initialize_mps_names(self.session)
     if self.verbose:
       print("INFO: Generating area displays")
     areas = ['GUNB','L3B','DOG','LTUH','LTUS','UNDH','UNDS','DMPH','DMPS','FEEH','FEES','SPS','SPH']
     for area in areas:
       areas = []
       areas.append(area)
-      link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area == area).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+      link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area == area).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
       self.generate_area_display(area,link_nodes)
       self.generate_ln_alarms(area,link_nodes)
       self.generate_analog_display(area,areas)
     #now do special case areas
     #L0B includes L0B and COL0
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L0B','COL0','HTR'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L0B','COL0','HTR'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('L0B',link_nodes)
     self.generate_ln_alarms('L0B',link_nodes)
     self.generate_analog_display('L0B',['L0B','COL0','HTR'])
     #L1B includes L1B and BC1B
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L1B','BC1B'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L1B','BC1B'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('L1B',link_nodes)
     self.generate_ln_alarms('L1B',link_nodes)
-    self.generate_analog_display('L1B',['L1B','BC1B'])
+    self.generate_analog_display('L1B',['L1B','BC1B','COL1'])
     #L2B includes L2B and BC2B
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L2B','BC2B'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(['L2B','BC2B'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('L2B',link_nodes)
     self.generate_ln_alarms('L2B',link_nodes)
-    self.generate_analog_display('L2B',['L2B','BC2B'])
+    self.generate_analog_display('L2B',['L2B','BC2B','EMIT2'])
     #all BPNs
     areas = ['BPN13','BPN14','BPN15','BPN16','BPN17','BPN18','BPN19','BPN20','BPN21','BPN22','BPN23','BPN24','BPN25','BPN26','BPN27','BPN28']
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(areas)).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(areas)).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('BYP',link_nodes)
     self.generate_ln_alarms('BYP',link_nodes)
     self.generate_analog_display('BYP',areas)
     #BSYsc
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['BSYH','BSYS'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(['BSYH','BSYS'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('BSYsc',link_nodes)
     self.generate_ln_alarms('BSYsc',link_nodes)
     self.generate_analog_display('BSYsc',['BSYH','BSYS'])
     #BSYcu
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['BSYH','BSYS','CLTS'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(['BSYH','BSYS','CLTS'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('BSYcu',link_nodes)
     self.generate_ln_alarms('BSYcu',link_nodes)
     self.generate_analog_display('BSYcu',['BSYH','BSYS','CLTS'])
     #SPD
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.area.in_(['SPD','SLTD'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.area.in_(['SPD','SLTD'])).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     self.generate_area_display('SPD',link_nodes)
     self.generate_ln_alarms('SPD',link_nodes)
     self.generate_analog_display('SPD',['SPD','SLTD'])
     self.generate_analog_display('DIAG0',['DIAG0'])
+    self.generate_analog_display('EXT',['EXT'])
     #finish up by generating display for MPS global which has all link nodes.  It is a json file with macros
-    link_nodes = mps_db_session.query(models.LinkNode).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
+    link_nodes = self.session.query(models.LinkNode).filter(models.LinkNode.slot_number == 2).order_by(models.LinkNode.lcls1_id).all()
     ln_macros = []
     for ln in link_nodes:
       macros = {}
@@ -183,29 +184,29 @@ class ExportCnExtras(MpsReader):
       print("........Done Generating area displays")
 
   def generate_analog_display(self,area,areas):
-    blm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BLM').all()
-    bpm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BPMS').all()
-    bcm_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'TORO').all()
-    blen_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BLEN').all()
-    farc_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'FARC').all()
-    bact_dt = self.mps_db_session.query(models.DeviceType).filter(models.DeviceType.name == 'BACT').all()
+    blm_dt = self.session.query(models.DeviceType).filter(models.DeviceType.name == 'BLM').all()
+    bpm_dt = self.session.query(models.DeviceType).filter(models.DeviceType.name == 'BPMS').all()
+    bcm_dt = self.session.query(models.DeviceType).filter(models.DeviceType.name == 'TORO').all()
+    blen_dt = self.session.query(models.DeviceType).filter(models.DeviceType.name == 'BLEN').all()
+    farc_dt = self.session.query(models.DeviceType).filter(models.DeviceType.name == 'FARC').all()
+    bact_dt = self.session.query(models.DeviceType).filter(models.DeviceType.name == 'BACT').all()
     if len(blm_dt) > 0:
-      blms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      blms = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(blms,area,'BLM')
     if len(bpm_dt) > 0:
-      bpms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bpm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
-      self.generate_analog_display_single(bpms,area,'BPM')
+      bpms = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bpm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      self.generate_bpm_display_single(bpms,area,'BPM')
     if len(bcm_dt) > 0:
-      bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bcm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      bcms = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bcm_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bcms,area,'BCM')
     if len(blen_dt) > 0:
-      bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blen_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      bcms = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == blen_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bcms,area,'BCM')
     if len(farc_dt) > 0:
-      bcms = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == farc_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      bcms = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == farc_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bcms,area,'BCM')
     if len(bact_dt) > 0:
-      bact = self.mps_db_session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bact_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
+      bact = self.session.query(models.AnalogDevice).filter(models.AnalogDevice.device_type == bact_dt[0]).filter(models.AnalogDevice.area.in_(areas)).order_by(models.AnalogDevice.z_location)
       self.generate_analog_display_single(bact,area,'BACT')
 
 
@@ -223,17 +224,63 @@ class ExportCnExtras(MpsReader):
         if type == 'BLM':
           show_wf = True
         faults = self.get_faults(device)
-        for fault in faults:
-          specific_macros = {}
-          specific_macros['PV_PREFIX'] = self.mps_names.getDeviceName(device)
-          specific_macros['THR'] = fault.name
-          specific_macros['WF'] = wf
-          specific_macros['HAS_FAST'] = fast
-          specific_macros['SHOW_WF'] = show_wf
-          macros.append(specific_macros)
+        bay = ''
+        if type in ['BLM']:
+          bay = device.channel.get_bay()
+        if self.mps_names.getBlmType(device) in ['CBLM']:
+          self.write_cblm_display_single(device,macros)
+        else:
+          for fault in faults:
+            specific_macros = {}
+            specific_macros['PV_PREFIX'] = self.mps_names.getDeviceName(device)
+            specific_macros['THR'] = fault.name
+            specific_macros['WF'] = wf
+            specific_macros['HAS_FAST'] = fast
+            specific_macros['SHOW_WF'] = show_wf
+            specific_macros['P_APP'] = device.card.get_pv_name()
+            specific_macros['BAY'] = '{0}'.format(bay)
+            specific_macros['MPS_PREFIX'] = device.card.get_pv_name()
+            specific_macros['BPM2'] = ''
+            specific_macros['FILENAME'] = '$PYDM/mps/mps_application_threshold.ui'
+            macros.append(specific_macros)
       filename = '{0}/thresholds/{1}_{2}_thr.json'.format(self.display_path,area.upper(),type.upper())
       self.write_json_file(filename, macros)
 
+  def write_cblm_display_single(self,device,macros):
+    specific_macros = {}
+    specific_macros['FILENAME'] = '$PYDM/mps/mps_cblm_threshold.ui'
+    specific_macros['PV_PREFIX'] = self.mps_names.getDeviceName(device)
+    specific_macros['THR'] = 'I0_LOSS'
+    specific_macros['WF'] = 'FAST'
+    specific_macros['HAS_FAST'] = False
+    specific_macros['SHOW_WF'] = False
+    specific_macros['P_APP'] = device.card.get_pv_name()
+    specific_macros['MPS_PREFIX'] = device.card.get_pv_name()
+    specific_macros['BPM2'] = ''
+    specific_macros['BAY'] = '{0}'.format(0)
+    macros.append(specific_macros)
+
+  def generate_bpm_display_single(self,devices,area,type):
+    macros = []
+    for device in devices:
+      bpm2 = ''
+      if len(device.card.analog_channels) > 1:
+        for c in device.card.analog_channels:
+          d = c.analog_device
+          if self.mps_names.getDeviceName(d) != self.mps_names.getDeviceName(device):
+            bpm2 = self.mps_names.getDeviceName(d)
+      specific_macros = {}
+      specific_macros['FILENAME']='$PYDM/mps/mps_application_threshold_combined.ui'
+      specific_macros['PV_PREFIX'] = self.mps_names.getDeviceName(device)
+      specific_macros['THR'] = ''
+      specific_macros['MPS_PREFIX'] = device.card.get_pv_name()
+      specific_macros['BPM2'] = bpm2
+      specific_macros['HAS_FAST'] = False
+      specific_macros['SHOW_WF'] = False
+      macros.append(specific_macros)
+    filename = '{0}/thresholds/{1}_{2}_thr.json'.format(self.display_path,area.upper(),type.upper())
+    self.write_json_file(filename, macros)
+      
 
   def generate_area_display(self,area,link_nodes):
       header_height = 30

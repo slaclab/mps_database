@@ -34,7 +34,7 @@ class MpsReader:
 
     def __init__(self,db_file,dest_path,template_path,clean,verbose=False):
         self.db_file=db_file
-        self.config_version = os.path.basename(db_file).lstrip("mps_config-").rstrip(".db")
+        self.config_version = db_file.replace('mps_config-','').replace('.db','')
         # Check formatting of the destination path
         dest_path = self.format_path(dest_path)
         # Create a new clean output directory in the specified path
@@ -48,6 +48,10 @@ class MpsReader:
         self.cn1_path = '{}central_node_db/cn1/'.format(self.dest_path)
         self.cn2_path = '{}central_node_db/cn2/'.format(self.dest_path)
         self.cn3_path = '{}central_node_db/cn3/'.format(self.dest_path)
+        self.manager_path = '{}manager/'.format(self.dest_path)
+        self.crate_filename = '{0}/SCMPS_{1}_CrateProfiles.tex'.format(self.report_path,self.config_version)
+        self.input_filename = '{0}/SCMPS_{1}_DeviceInputs.tex'.format(self.report_path,self.config_version)
+        self.logic_filename = '{0}/SCMPS_{1}_LogicTables.tex'.format(self.report_path,self.config_version)
         self.mps_names = None
         self.non_link_node_types = ["BPMS", "BLEN", "FARC", "TORO", "WIRE"]
         self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH","FEES","FEEH","LTU0","UND0","BSY0","DMP0","DMPH","DMPS"]
@@ -58,12 +62,13 @@ class MpsReader:
         self.sc_int0_cycles = 1023 #1023 is biggest value for this register --> 1023/910000 = 1 ms integration
         self.sc_int1_cycles = 1023
         self.cn1 = [8,9,10,11,12,13,14]
-        self.cn2 = [15,16,17,18,19,20,21,22,23]
+        self.cn2 = [15,16,17,18,19,20,21,22,23,24]
         self.cn3 = [0,1,2,3,4,5,6,7]
         self.database = db_file
         self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
         self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
         self.mbbi_sevr = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
+        self.thr_vals = [1,2,4,8,16,32,64,128]
         self.lblms = []
         self.pblms = []
         self.cblms = []
@@ -112,7 +117,7 @@ class MpsReader:
         """
         if device_type_name in ["SOLN", "BEND", "KICK","BACT"]:
             return "BACT"
-        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC",'SBLM']:
+        elif device_type_name in ["PBLM", "LBLM", "CBLM", "BLM", "FADC",'SBLM','PMT']:
             return "LOSS"
         elif device_type_name in ['WF']:
             return 'WF'
@@ -141,7 +146,7 @@ class MpsReader:
         if device_type_name in ["SOLN", "BEND","BLEN","KICK","BACT"]:
             # Solenoid devices use 'uA'.
             return "GeV/c"
-        elif device_type_name in ["LBLM","PBLM","FADC","WF",'SBLM','TEST']:
+        elif device_type_name in ["LBLM","PBLM","FADC","WF",'SBLM','TEST','PMT']:
             # Beam loss monitors set threshold in Volts initially
             return "raw"
         elif device_type_name in ['BLM','CBLM']:
@@ -181,8 +186,10 @@ class MpsReader:
         """
         if device_type_name in ["SOLN", "BEND", "BLEN", "KICK","BACT"]:
             integration_channel = 0
+            if channel_number > 2:
+              channel_number = channel_number - 3
             return "{}{}".format(channel_number,integration_channel)
-        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM","FADC","WF",'TEST']:
+        elif device_type_name in ["PBLM", "CBLM", "LBLM", "BLM","FADC","WF",'TEST','PMT']:
             # For BLM devices type, the fault name is "Ix",
             # where x is the integration channel
             integration_channel = 0
@@ -213,7 +220,7 @@ class MpsReader:
           * BPMS       => BPM
           * TORO, FARC => BCM
         """
-        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK","FADC","BACT","WF",'TEST']:
+        if device_type_name in ["SOLN", "BEND", "PBLM", "CBLM", "LBLM", "BLEN", "BLM", "KICK","FADC","BACT","WF",'TEST','PMT']:
             # Solenoids uses the same HW/SW as beam loss monitors
             return "BLM"
         elif device_type_name == "BPMS":
@@ -303,6 +310,11 @@ class MpsReader:
         """
         file = "{}mps.env".format(path)
         template = "{}epics_env/{}".format(self.template_path, template_name)
+        self.write_file_from_template(file=file, template=template, macros=macros)
+
+    def write_template(self,path,filename,template,macros,type):
+        file = "{0}{1}".format(path,filename)
+        template = "{0}{1}/{2}".format(self.template_path,type,template)
         self.write_file_from_template(file=file, template=template, macros=macros)
 
     def write_epics_db(self, path,filename, template_name, macros):

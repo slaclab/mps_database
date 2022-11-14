@@ -16,8 +16,8 @@ class AddDigitalDevice:
     self.conf = conf
     self.mps_names = MpsName(self.session)
 
-  def __del__(self):
-    self.session.commit()
+  #def __del__(self):
+  #  self.session.commit()
 
   def add_digital_device(self,device_info):
     if self.verbose:
@@ -65,7 +65,7 @@ class AddDigitalDevice:
     alarm_state = 0
     if int(device_info['evaluation']) > 0:
       alarm_state = 1
-    if device_info['type'] in ['WDOG','EPICS']:
+    if int(device_info['channel']) > 31:
       digital_channel = models.DigitalChannel(number=int(device_info['channel']),
                                               name=device_info['device'],
                                               z_name=device_info['z_name'],
@@ -77,7 +77,7 @@ class AddDigitalDevice:
                                               description=device_info['description'])
     else:
       digital_channel = models.DigitalChannel(number=int(device_info['channel']),
-                                              name=device_info['device'].split(":")[-1],
+                                              name=device_info['device'],
                                               z_name=device_info['z_name'],
                                               o_name=device_info['o_name'],
                                               alarm_state=alarm_state,

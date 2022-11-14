@@ -502,6 +502,7 @@ record(ao,      "$(P):$(FAULT)_FWSLO") {
     field(PHAS, "0")
     field(PINI, "YES")
     field(VAL,  "$(SLOPE)")
+    info(autosaveFields, "VAL")
 }
 
 # Scale offset
@@ -513,4 +514,5 @@ record(ao,      "$(P):$(FAULT)_FWOFF") {
     field(PHAS, "0")
     field(PINI, "YES")
     field(VAL,  "$(OFFSET)")
+    info(autosaveFields, "VAL")
 }

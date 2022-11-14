@@ -65,7 +65,7 @@ class DigitalChannel(Base):
   alarm_state = Column(Integer, nullable=False, default=0)
   debounce = Column(Integer, nullable=False, default=10)
   card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
-  device_input = relationship("DeviceInput", uselist=False, backref="channel")
+  device_input = relationship("DeviceInput", backref="channel")
 
   def is_virtual(self):
     if (self.number >= 32):

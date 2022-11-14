@@ -136,6 +136,8 @@ class ApplicationCard(Base):
       return 1
     else:
       return self.slot_number
+  def get_ln_prefix(self):
+    return 'MPLN:{}:{}'.format(self.link_node.area, self.link_node.location)
 
   def get_pv_name(self):
     return 'MPLN:{}:{}:{}'.format(self.link_node.area, self.link_node.location, self.get_card_id())

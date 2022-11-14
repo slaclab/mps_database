@@ -6,12 +6,13 @@ from sqlalchemy.orm import sessionmaker
 
 class MPSConfig:
   #def __init__(self, filename='mps_gun_config.db', runtime_file_name='mps_gun_runtime.db', debug=False):
-  def __init__(self, filename=None, debug=False):
+  def __init__(self, filename=None, debug=False,verbose=False):
     if not filename:
       filename = self.find_dbfile()
     self.engine = create_engine("sqlite:///{filename}".format(filename=filename), echo=debug)
     self.Session = sessionmaker(bind=self.engine)
     self.session = self.Session()
+    self.verbose=verbose
  
   def clear_all(self):
     print("Clearing database...")
@@ -51,8 +52,12 @@ class MPSConfig:
       num = 0    
     dt = session.query(models.DeviceType).filter(models.DeviceType.name == typ).all()
     if len(dt) > 0:
+      if self.verbose:
+        print('Found existing device type: {0}'.format(dt[0]))
       return dt[0]
     else:
+      if self.verbose:
+        print('Adding new device type: {0}'.format(typ))
       added_type = models.DeviceType(name=typ,
                                      description=typ,
                                      num_integrators=num)
