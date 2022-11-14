@@ -1,5 +1,0 @@
-INCLUDE MPS:LTUS:1  ./mpln_ltus_mp01.alhConfig
-INCLUDE MPS:LTUS:1  ./mpln_ltus_mp02.alhConfig
-INCLUDE MPS:LTUS:1  ./mpln_ltus_mp03.alhConfig
-INCLUDE MPS:LTUS:1  ./mpln_ltus_mp04.alhConfig
-INCLUDE MPS:LTUS:1  ./mpln_ltus_mp06.alhConfig

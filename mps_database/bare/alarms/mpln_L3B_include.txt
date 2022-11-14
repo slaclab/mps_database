@@ -1,6 +1,0 @@
-INCLUDE MPS:L3B:1  ./mpln_l3b_mp01.alhConfig
-INCLUDE MPS:L3B:1  ./mpln_l3b_mp02.alhConfig
-INCLUDE MPS:L3B:1  ./mpln_l3b_mp03.alhConfig
-INCLUDE MPS:L3B:1  ./mpln_l3b_mp04.alhConfig
-INCLUDE MPS:L3B:1  ./mpln_l3b_mp05.alhConfig
-INCLUDE MPS:L3B:1  ./mpln_l3b_mp06.alhConfig

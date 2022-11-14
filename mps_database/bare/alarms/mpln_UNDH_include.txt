@@ -1,8 +1,0 @@
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp01.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp03.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp04.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp05.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp06.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp08.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp09.alhConfig
-INCLUDE MPS:UNDH:1  ./mpln_undh_mp11.alhConfig
