@@ -199,7 +199,7 @@ class LinkNode(Base):
 
   def get_digital_app_id(self):
     for card in self.cards:
-      if card.slot_number == 2:
+      if card.slot_number < 3:
         if card.type.name == 'MPS Digital':
           return card.number
     return 0

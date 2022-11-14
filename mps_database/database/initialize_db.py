@@ -26,7 +26,7 @@ class DatabaseImporter:
     self.verbose = verbose
     self.mps_names = MpsName(self.session)
     self.cn1 = [8,9,10,11,12,13,14]
-    self.cn2 = [15,16,17,18,19,20,21,22,23]
+    self.cn2 = [15,16,17,18,19,20,21,22,23,24]
     self.cn3 = [0,1,2,3,4,5,6,7]
 
   def __del__(self):
@@ -127,15 +127,15 @@ class DatabaseImporter:
         for l,s,i in zip(locations,slots,lcls1_ids):
           lcls1_id = 0
           ln_group = self.find_group(crate_info['group'])
-
-          ln = models.LinkNode(area=crate_info['ln_area'], location=l,
-                               cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
-                               group=crate_info['group'], group_link=crate_info['group_link'],
-                               group_link_destination=crate_info['group_link_destination'],
-                               group_drawing=crate_info['network_drawing'],
-                               slot_number=s, lcls1_id=i, crate=crate)
-          self.session.add(ln)
-          ln_group.link_nodes.append(ln)
+          if s == '2':
+            ln = models.LinkNode(area=crate_info['ln_area'], location=l,
+                                 cpu=crate_info['cpu_name'], ln_type=crate_info['ln_type'],
+                                 group=crate_info['group'], group_link=crate_info['group_link'],
+                                 group_link_destination=crate_info['group_link_destination'],
+                                 group_drawing=crate_info['network_drawing'],
+                                 slot_number=s, lcls1_id=i, crate=crate)
+            self.session.add(ln)
+            ln_group.link_nodes.append(ln)
           if (s == '2'):
             slot2_ln = ln
         self.session.commit()

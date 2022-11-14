@@ -20,7 +20,6 @@ class AddIgnoreDevice:
     self.session.autoflush=False
     self.verbose = verbose
     self.mps_names = MpsName(self.session)
-    self.destination_order = ['LINAC','DIAG0','HXU','SXU']
 
   def __del__(self):
     self.session.commit()

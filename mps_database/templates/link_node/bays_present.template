@@ -1,0 +1,13 @@
+#Analog Processing Settings
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsAnalogCore:
+        - MpsAnalogLcls2Reg:
+          - InputDisable: !<value> $(DIS)
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsAnalogCore:
+        - MpsAnalogLcls1Reg:
+          - InputDisable: !<value> $(DIS)

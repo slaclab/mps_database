@@ -3,7 +3,6 @@ from mps_database.mps_config import MPSConfig, models, runtime
 from sqlalchemy import MetaData
 from mps_database.tools.mps_names import MpsName
 from mps_database.tools.mps_reader import MpsReader, MpsDbReader
-from mps_database.tools.export_link_node import ExportLinkNode
 from mps_database.tools.cn_status_display import CnStatusDisplay
 from latex import Latex
 import math
@@ -15,42 +14,11 @@ import sys
 
 class ExportLinkNodeGroups(MpsReader):
 
-  def __init__(self, db_file, template_path, dest_path,clean, verbose,report=True):
+  def __init__(self, db_file,template_path,dest_path,clean,verbose,session):
     MpsReader.__init__(self,db_file=db_file,dest_path=dest_path,template_path=template_path,clean=clean,verbose=verbose)
-    self.export_ln = ExportLinkNode(db_file,template_path,dest_path,False,verbose)
     self.cn_status_display = CnStatusDisplay()
-    self.report = report
     self.verbose = verbose
-
-  def export(self,mps_db_session):
-    if self.verbose:
-      print("INFO: Begin Exporting Devices")
-    crate_filename = '{0}/SCMPS_{1}_CrateProfiles.tex'.format(self.report_path,self.config_version)
-    input_filename = '{0}/SCMPS_{1}_DeviceInputs.tex'.format(self.report_path,self.config_version)
-    appendixA_filename = '{0}/SCMPS_{1}_AppendixA.tex'.format(self.report_path,self.config_version)
-    appendixB_filename = '{0}/SCMPS_{1}_AppendixB.tex'.format(self.report_path,self.config_version)
-    self.crate_profiles = Latex(crate_filename)
-    self.crate_profiles.startDocument('SCMPS Crate Profiles',self.config_version)
-    self.input_report = Latex(input_filename)
-    self.input_report.startDocument('Appendix B: SCMPS Device Input Checkout',self.config_version)
-    self.appendixA = Latex(appendixA_filename)
-    self.appendixA.startDocument('Appendix A: SCMPS FW/SW Checkout',self.config_version)
-    groups = mps_db_session.query(models.LinkNodeGroup).order_by(models.LinkNodeGroup.number).all()
-    for group in groups:
-      self.generate_group_alarm(group)
-      self.crate_profiles.startGroup(group.number)
-      if group.has_inputs():
-        self.input_report.startGroup(group.number)
-      self.export_ln.export(mps_db_session,group.link_nodes,self.crate_profiles,self.input_report,self.cn_status_display,self.appendixA)
-      self.generate_group_display(group.number,[ln for ln in group.link_nodes if ln.slot_number == 2])
-    filename = '{0}status/cn_status.json'.format(self.display_path)
-    self.write_json_file(filename, self.cn_status_display.get_macros())
-    if self.report:
-      self.crate_profiles.endDocument(self.report_path)
-      self.input_report.endDocument(self.report_path)
-      self.appendixA.endDocument(self.report_path)
-    if self.verbose:
-      print('........Done Exporting Devices')   
+    self.session = session   
 
   def generate_group_alarm(self,group):
     macros = {'MPS_PREFIX':group.central_node,
@@ -61,7 +29,20 @@ class ExportLinkNodeGroups(MpsReader):
     include_macros1 = {'PREFIX':group.central_node,
                       'FILENAME':'group_{0}_{1}.alhConfig'.format(group.number,group.central_node.split(':')[2].lower())}
     self.write_alarm_file(path=include_path1, template_name='group_include.template', macros=include_macros1)
-    
+
+  def startReport(self,type,title):
+    if type == 'crate':
+      filename = self.crate_filename
+    elif type == 'input':
+      filename = self.input_filename
+    else:
+      return None
+    report = Latex(filename)
+    report.startDocument(title,self.config_version)
+    return report
+
+  def endReport(self,report):
+    report.endDocument(self.report_path)  
 
   def generate_group_display(self,group,link_nodes):
     header_height = 50

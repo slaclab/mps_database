@@ -1,0 +1,24 @@
+# Analog application AppID
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsLinkNodeCore:
+        - UdpBroadcastIP: !<value> 4294967295
+        - MpsLcls1Core:
+          - NodeId: !<value> $(ID)
+          - IpAddr: !<value> $(IP_ADDR)
+          - appIdRemap[0]: !<value> $(REMAP_DIG)
+          - appIdRemap[1]: !<value> $(REMAP_BPM1)
+          - appIdRemap[2]: !<value> $(REMAP_BPM2)
+          - appIdRemap[3]: !<value> $(REMAP_BPM3)
+          - appIdRemap[4]: !<value> $(REMAP_BPM4)
+          - appIdRemap[5]: !<value> $(REMAP_BPM5)
+          - appIdRemap[6]: !<value> $(REMAP_BLM1)
+          - appIdRemap[7]: !<value> $(REMAP_BLM2)
+          - appIdRemap[8]: !<value> $(REMAP_BLM3)
+          - appIdRemap[9]: !<value> $(REMAP_BLM4)
+          - appIdRemap[10]: !<value> $(REMAP_BLM5)
+          - TimeoutMask: !<value> $(REMAP_MASK)
+          - TimeoutEnable: !<value> 1
+          - TimeoutTime: !<value> 7
+

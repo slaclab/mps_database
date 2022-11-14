@@ -1,0 +1,91 @@
+#================================================================================#
+# LCLS-II MPS PV template for Software Watchdog Inputs                           #
+# Macro description:                                                             #
+#   - INPV  : Input PV to Monitor                                                #
+#   - PORT  : Asyn port name                                                     #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#   - ZSV  : "0" state severity                                                  #
+#   - OSV  : "1" state severity                                                  #
+#   - BIT  : SW Input number to asyn port driver                                 #
+#================================================================================#
+
+record(compress, "$(INPV)_BUFF") {
+  field(DESC, "Circular Bufffer")
+  field(SCAN, "$(SCAN)")
+  field(INP,  "$(INPV)")
+  field(ALG,  "Circular Buffer")
+  field(NSAM, "10")
+  field(FLNK, "$(INPV)_BUFMAX")
+  field(ASG,  "NOWRITE")
+}
+record(compress, "$(INPV)_BUFMAX") {
+  field(DESC, "Bufffer Max")
+  field(INP,  "$(INPV)_BUFF.VAL NPP MS")
+  field(ALG,  "N to 1 High Value")
+  field(N,    "10")
+  field(FLNK, "$(INPV)_BUFMIN")
+  field(ASG,  "NOWRITE")
+}
+
+record(compress, "$(INPV)_BUFMIN") {
+  field(DESC, "Bufffer Min")
+  field(INP,  "$(INPV)_BUFF.VAL NPP MS")
+  field(ALG,  "N to 1 Low Value")
+  field(N,    "10")
+  field(FLNK, "$(INPV)_WDOG_CALC")
+  field(ASG,  "NOWRITE")
+}
+record(calc, "$(INPV)_WDOG_CALC") {
+  field(DESC, "Stale data watchdog ")
+  field(CALC, "(C=3)?0:((A = B) ?0:1)")
+  field(INPA, "$(INPV)_BUFMIN.VAL")
+  field(INPB, "$(INPV)_BUFMAX.VAL")
+  field(INPC, "$(INPV)_BUFF.SEVR")
+  field(FLNK, "$(INPV)_WDOG")
+  field(ASG,  "NOWRITE")
+}
+record(bo, "$(INPV)_WDOG") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(DOL, "$(INPV)_WDOG_CALC")
+    field(DTYP, "asynUInt32Digital")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ZSV, "$(ZSV)")
+    field(OSV, "$(OSV)")
+    field(OMSL, "closed_loop")
+    field(OUT, "@asynMask($(PORT),3,0x01)SOFT_CH_VALUE_$(BIT)")
+}
+record(bi, "$(INPV)_WDOG_RBV") {
+    field(DESC, "Input CALC")
+    field(PINI, "NO")	
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynUInt32Digital")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ZSV, "$(ZSV)")
+    field(OSV, "$(OSV)")
+    field(INP, "@asynMask($(PORT),3,0x01)SOFT_CH_VALUE_$(BIT)")
+}
+record(bo, "$(INPV)_WDOGERROR") {
+    field(DESC, "Soft input error, channel 0")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),3,0x01)SOFT_CH_ERROR_$(BIT)")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(VAL,  "0")
+}
+
+record(bi, "$(INPV)_WDOGERROR_RBV") {
+    field(DESC, "Soft input error, channel 0")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),3,0x01)SOFT_CH_ERROR_$(BIT)")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+}

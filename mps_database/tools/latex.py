@@ -142,8 +142,6 @@ class Latex:
 
     def startFault(self, title):
         self.f.write('\\{0}{1}{2}\n'.format('section{',title,'}'))
-        self.f.write('Checked By:\\\\\n')
-        self.f.write('Date:\n')
 
     def appCommunicationCheckoutTable(self):
         self.f.write('\\subsubsection{Communication}\n')

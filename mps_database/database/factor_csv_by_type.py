@@ -38,7 +38,8 @@ class InputGeneration(MpsReader):
           for property in line.split(','):
             device_info[fields[field_index]]=property
             field_index = field_index + 1
-          if device_info['inconfig'].lower() != '100':
+          #if device_info['inconfig'].lower() != '100' and device_info['inconfig'].lower() != 'd':
+          if device_info['inconfig'].lower() != 'd':
             if device_info['type'] not in extypes:
               if intypes is not None:
                 if device_info['type'] in intypes:
@@ -66,7 +67,7 @@ parser.add_argument('--filepath',metavar='database',required=True,help='location
 parser.add_argument('--dest',metavar='destination',required=True,help='relative path to desired location of output csv')
 parser.add_argument('--intypes',nargs='*',metavar='types',help='device types to add to concatenated file')
 parser.add_argument('--extypes',nargs='*',metavar='types',help='device types to add to concatenated file')
-parser.add_argument('--groups',nargs='*',type=int,metavar='groups',required=False,help='Groups to export as a list',default=[0,1,2,3,4,5,6,7,8,9,10,11])
+parser.add_argument('--groups',nargs='*',type=int,metavar='groups',required=False,help='Groups to export as a list',default=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24])
 parser.add_argument('-c',action='store_true',default=False,dest='clean',help='Clean export directories; default=False')
 args = parser.parse_args()
 

@@ -1,1 +1,1 @@
-                [$(VAL), "$(FAULT)_T$(NUM)","$(TEXT) Thr $(NUM)",$(LASER0),$(DIAG0),$(DUMPBSY0),$(DUMPHXR0),$(DUMPSXR0),$(LESA0)],
+                [$(VAL),"$(PV)","$(TEXT)",$(LASER0),$(DIAG0),$(DUMPBSY0),$(DUMPHXR0),$(DUMPSXR0),$(LESA0),null],

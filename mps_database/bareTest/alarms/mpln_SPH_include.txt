@@ -1,6 +1,0 @@
-INCLUDE MPS:SPH:1  ./mpln_sph_mp01.alhConfig
-INCLUDE MPS:SPH:1  ./mpln_sph_mp02.alhConfig
-INCLUDE MPS:SPH:1  ./mpln_sph_mp03.alhConfig
-INCLUDE MPS:SPH:1  ./mpln_sph_mp04.alhConfig
-INCLUDE MPS:SPH:1  ./mpln_sph_mp05.alhConfig
-INCLUDE MPS:SPH:1  ./mpln_sph_mp06.alhConfig

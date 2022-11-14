@@ -1,0 +1,17 @@
+        {
+            "description":"Mechanical Shutter Position",
+            "name":"POSITION",
+            "dtype":"SHUT",
+            "inputs": [
+                "SHUT:GUNB:100:OPEN_LMTSW",
+                "SHUT:GUNB:100:CLOSED_LMTSW"
+            ],
+            "ignore_when": [
+            ],
+            "states": [
+                [0, "Moving","Moving",13,13,13,13,13,13,13],
+                [1, "Open","Open",13,13,13,13,13,13,13],
+                [2, "Closed","Closed",13,13,13,13,13,13,13],
+                [3, "Broken","Broken",0,0,0,0,0,0,0]
+            ]
+        },

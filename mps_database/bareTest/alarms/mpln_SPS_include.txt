@@ -1,5 +1,0 @@
-INCLUDE MPS:SPS:1  ./mpln_sps_mp01.alhConfig
-INCLUDE MPS:SPS:1  ./mpln_sps_mp02.alhConfig
-INCLUDE MPS:SPS:1  ./mpln_sps_mp03.alhConfig
-INCLUDE MPS:SPS:1  ./mpln_sps_mp04.alhConfig
-INCLUDE MPS:SPS:1  ./mpln_sps_mp05.alhConfig

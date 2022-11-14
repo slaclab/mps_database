@@ -1,2 +1,0 @@
-database/add_device.py --db mps_config-inputs.db --file inputs/devices.csv
-database/add_logic.py  --db mps_config-inputs.db --file inputs/logic.json

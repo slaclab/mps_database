@@ -1,0 +1,364 @@
+#
+#   BSSS data source (channel) control PVs
+#   per data source / per channel
+#
+
+
+record(bo, "$(DEV):$(SECN)BSSSCHNMASK")
+{
+    field(DESC, "BSSS Channel Mask for $(DESC=$(SECN))")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT),0) channelMask_$(BSAKEY)")
+    field(OMSL, "supervisory")
+    field(SCAN, "Passive")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(VAL, "1")
+    info(autosaveFields, "VAL")
+}
+
+record(mbbo, "$(DEV):$(SECN)BSSSCHNSEVR")
+{
+    field(DESC, "BSSS Channel Severity for $(DESC=$(SECN))")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT),0) channelSevr_$(BSAKEY)")
+    field(OMSL, "supervisory")
+    field(SCAN, "Passive")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(ZRST, "None")
+    field(ONST, "Minor")
+    field(TWST, "Major")
+    field(THST, "Invalid")
+    field(VAL, "3")
+    info(autosaveFields, "VAL")
+}
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCUD1, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCUD1      $(BSAKEY)_bsss_SCUD1        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCUD1   $(BSAKEY)_bsssPID_SCUD1     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCUD1")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCUD1")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_0")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCUD1")
+{
+    field(DESC, "BSSS PulseID for SCUD1")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_0")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCUD2, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCUD2      $(BSAKEY)_bsss_SCUD2        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCUD2   $(BSAKEY)_bsssPID_SCUD2     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCUD2")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCUD2")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_1")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCUD2")
+{
+    field(DESC, "BSSS PulseID for SCUD2")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_1")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCUD3, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCUD3      $(BSAKEY)_bsss_SCUD3        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCUD3   $(BSAKEY)_bsssPID_SCUD3     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCUD3")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCUD3")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_2")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCUD3")
+{
+    field(DESC, "BSSS PulseID for SCUD3")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_2")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCS1H, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCS1H      $(BSAKEY)_bsss_SCS1H        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCS1H   $(BSAKEY)_bsssPID_SCS1H     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCS1H")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCS1H")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_3")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCS1H")
+{
+    field(DESC, "BSSS PulseID for SCS1H")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_3")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCSTH, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCSTH      $(BSAKEY)_bsss_SCSTH        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCSTH   $(BSAKEY)_bsssPID_SCSTH     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCSTH")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCSTH")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_4")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCSTH")
+{
+    field(DESC, "BSSS PulseID for SCSTH")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_4")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCSHH, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCSHH      $(BSAKEY)_bsss_SCSHH        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCSHH   $(BSAKEY)_bsssPID_SCSHH     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCSHH")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCSHH")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_5")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCSHH")
+{
+    field(DESC, "BSSS PulseID for SCSHH")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_5")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCH1H, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCH1H      $(BSAKEY)_bsss_SCH1H        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCH1H   $(BSAKEY)_bsssPID_SCH1H     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCH1H")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCH1H")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_6")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCH1H")
+{
+    field(DESC, "BSSS PulseID for SCH1H")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_6")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCHTH, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCHTH      $(BSAKEY)_bsss_SCHTH        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCHTH   $(BSAKEY)_bsssPID_SCHTH     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCHTH")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCHTH")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_7")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCHTH")
+{
+    field(DESC, "BSSS PulseID for SCHTH")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_7")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+
+#
+#    BSSS Scalar PV template
+#    macros: $(DEV), $(SECN), SCHHH, $(BSAKEY)
+#
+#    PV name                    asyn param                    field type   Description
+#    $(DEV):$(SECN)SCHHH      $(BSAKEY)_bsss_SCHHH        Float64      BSSS Scalar Value
+#    $(DEV):$(SECN)PIDSCHHH   $(BSAKEY)_bsssPID_SCHHH     Int64        64 bit pulse id
+
+
+
+record(ai, "$(DEV):$(SECN)SCHHH")
+{
+    field(DESC, "BSSS Scalar $(DESC=$(SECN)) for SCHHH")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_bsss_8")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+    field(ADEL, "$(ADEL=)")
+    field(EGU,  "$(EGU=)")
+    field(PREC, "$(PREC=)")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+}
+
+record(int64in, "$(DEV):$(SECN)PIDSCHHH")
+{
+    field(DESC, "BSSS PulseID for SCHHH")
+    field(DTYP, "asynInt64")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_bsssPID_8")
+    field(SCAN, "I/O Intr")
+    field(TSE,  "-2")
+    field(MDEL, "-1")
+}
+
+

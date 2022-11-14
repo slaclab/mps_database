@@ -21,7 +21,7 @@ class AddAnalogDevice:
 
   def add_analog_device(self,device_info):
     if self.verbose:
-      print("Adding analog device {0}".format(device_info['type']))
+      print("Adding analog device {0}".format(device_info['device']))
     device_type = self.conf.find_device_type(self.session,device_info['type'],True)
     device_name = self.mps_names.makeDeviceName(device_info['device'],device_type.name,device_info['channel'])
     application_card = self.conf.find_app_card(self.session,device_info['appid'])

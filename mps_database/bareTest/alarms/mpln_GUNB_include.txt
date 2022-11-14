@@ -1,2 +1,0 @@
-INCLUDE MPS:GUNB:1  ./mpln_gunb_mp02.alhConfig
-INCLUDE MPS:GUNB:1  ./mpln_gunb_mp01.alhConfig

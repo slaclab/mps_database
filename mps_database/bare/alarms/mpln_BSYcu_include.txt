@@ -1,5 +1,0 @@
-INCLUDE MPS:BSYcu:1  ./mpln_bsyh_mp01.alhConfig
-INCLUDE MPS:BSYcu:1  ./mpln_bsyh_mp03.alhConfig
-INCLUDE MPS:BSYcu:1  ./mpln_clts_mp01.alhConfig
-INCLUDE MPS:BSYcu:1  ./mpln_bsys_mp01.alhConfig
-INCLUDE MPS:BSYcu:1  ./mpln_bsys_mp04.alhConfig

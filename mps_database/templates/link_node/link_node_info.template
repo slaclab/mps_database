@@ -1,0 +1,64 @@
+#================================================================================#
+# LCLS-II MPS PV template for MPS Link Node (slot 2) information                 #
+# Macro description:                                                             #
+#   - P                       : MPLN prefix                                      #
+#   - MPS_CONFIG_VERSION      : MPS Config Version                               #
+#   - MPS_LINK_NODE_TYPE      : Analog, Digital, or Mixed                        #
+#   - MPS_LINK_NODE_ID        : Link Node ID                                     #
+#   - MPS_LINK_NODE_SIOC      : IOC Name                                         #
+#   - MPS_CRATE_LOCATION      : Crate location                                   #
+#   - MPS_CPU_NAME            : Cpu Name                                         #
+#   - MPS_SHM_NAME            : Shelf Manager Name                               #
+#   - IS_LN                   : Boolean: True=LN, False=AN or DN                 #
+#   - GROUP                   : Link Node Group                                  #
+#================================================================================#
+
+record(stringin, "$(P):CONFIG_VERSION") {
+  field(DESC, "MPS Configuration Database Version")
+  field(VAL, "$(MPS_CONFIG_VERSION)")
+}
+
+record(stringin, "$(P):LN_GROUP") {
+  field(DESC, "Link Node Group")
+  field(VAL, "$(GROUP)")
+}
+
+record(mbbi, "$(P):LN_TYPE") {
+    field(DESC, "MPS Link Node Type")
+    field(NOBT, "2")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(VAL, "$(MPS_LINK_NODE_TYPE)")
+    field(ZRST, "Digital")
+    field(ONST, "Analog")
+    field(TWST, "Mixed")
+}
+
+record(stringin, "$(P):LN_ID") {
+  field(DESC, "MPS Link Node ID")
+  field(VAL, "$(MPS_LINK_NODE_ID)")
+}
+
+record(stringin, "$(P):LN_SIOC") {
+  field(DESC, "MPS Link Node SIOC")
+  field(VAL, "$(MPS_LINK_NODE_SIOC)")
+}
+record(stringin, "$(P):LN_LOCATION") {
+  field(DESC, "MPS Link Node Crate Location")
+  field(VAL, "$(MPS_CRATE_LOCATION)")
+}
+record(stringin, "$(P):LN_CPU_NAME") {
+  field(DESC, "MPS CPU Name")
+  field(VAL, "$(MPS_CPU_NAME)")
+}
+record(stringin, "$(P):LN_SHM_NAME") {
+  field(DESC, "MPS SHM Name")
+  field(VAL, "$(MPS_SHM_NAME)")
+}
+record(bi, "$(P):IS_LN") {
+  field(DESC, "True=LN, False=AN/DN")
+  field(VAL, "$(IS_LN)")
+  field(ONAM, "True")
+  field(ZNAM, "False")
+}

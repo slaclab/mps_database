@@ -1,0 +1,101 @@
+#================================================================================#
+# LCLS-II MPS PV template for Software Inputs                                    #
+# Macro description:                                                             #
+#   - N     : Records to process MPS                                             #
+#   - INPV  : Input PV to Monitor                                                #
+#   - PORT  : Asyn port name                                                     #
+#   - ALSTATE  : Fault State                                                     #
+#   - NALSTATE : OK State                                                        #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#   - ZSV  : "0" state severity                                                  #
+#   - OSV  : "1" state severity                                                  #
+#   - BIT  : SW Input number to asyn port driver                                 #
+#================================================================================#
+
+record(ao, "$(N)_RAW") {
+    field(DESC, "Input")
+    field(PINI, "YES")	
+    field(OMSL, "closed_loop")
+    field(SCAN, ".1 second")
+    field(OIF, "Full")
+    field(DOL, "$(INPV)")
+    field(FLNK, "$(N)_CALC_RAW")
+}
+
+record(calcout, "$(N)_CALC_RAW") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(FLNK, "$(N)_THR")
+    field(INPA, "$(N)_RAW")
+    field(CALC, "ISNAN(A)?0:A")
+}
+
+record(ao, "$(N)_THR") {
+    field(DESC, "Input")
+    field(PINI, "YES")	
+    field(OMSL, "closed_loop")
+    field(SCAN, "Passive")
+    field(OIF, "Full")
+    field(DOL, "$(N)_CALC_RAW")
+    field(FLNK, "$(N)_CALC")
+    field(LLSV, "MAJOR")
+    field(HHSV, "MAJOR")
+    info(autosaveFields, "HIHI LOLO")
+}
+
+record(calc, "$(N)_CALC") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(FLNK, "$(N)_INPUT")
+    field(INPA, "$(N)_THR.SEVR CPP MS")
+    field(INPB, "$(N)_THR.STAT CPP MS")
+    field(CALC, "(A+B)>0?$(ALSTATE):$(NALSTATE)")
+}
+
+record(bo, "$(N)_INPUT") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(DOL, "$(N)_CALC")
+    field(DTYP, "asynUInt32Digital")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ZSV, "$(ZSV)")
+    field(OSV, "$(OSV)")
+    field(OMSL, "closed_loop")
+    field(OUT, "@asynMask($(PORT),3,0x01)SOFT_CH_VALUE_$(BIT)")
+}
+record(bi, "$(N)_INPUT_RBV") {
+    field(DESC, "Input CALC")
+    field(PINI, "NO")	
+    field(SCAN, "I/O Intr")
+    field(DTYP, "asynUInt32Digital")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ZSV, "$(ZSV)")
+    field(OSV, "$(OSV)")
+    field(INP, "@asynMask($(PORT),3,0x01)SOFT_CH_VALUE_$(BIT)")
+}
+record(bo, "$(N)_ERROR") {
+    field(DESC, "Soft input error, channel 0")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),3,0x01)SOFT_CH_ERROR_$(BIT)")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(VAL,  "$(ALSTATE)")
+}
+
+record(bi, "$(N)_ERROR_RBV") {
+    field(DESC, "Soft input error, channel 0")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),3,0x01)SOFT_CH_ERROR_$(BIT)")
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+}

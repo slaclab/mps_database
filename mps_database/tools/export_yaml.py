@@ -16,16 +16,17 @@ import sys
 
 class ExportYaml(MpsReader):
 
-  def __init__(self, db_file, template_path, dest_path,clean,verbose):
+  def __init__(self, db_file, template_path,dest_path,clean,verbose,session):
     MpsReader.__init__(self,db_file=db_file,dest_path=dest_path,template_path=template_path,clean=clean,verbose=verbose)
     self.verbose = verbose
+    self.session = session
 
-  def export(self,mps_db_session):
+  def export(self):
     if self.verbose:
       print("INFO: Starting Export Yaml...")
     for cn in range(0,3):
       yaml_filename = yaml_filename = '{0}/mps_config-cn{1}-{2}.yaml'.format(self.dest_path,cn+1,self.config_version)
-      self.dump_yaml(mps_db_session,yaml_filename,cn)
+      self.dump_yaml(self.session,yaml_filename,cn)
       cmd = "whoami"
       process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
       user_name, error = process.communicate()

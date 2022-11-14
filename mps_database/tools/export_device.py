@@ -18,226 +18,160 @@ def to_bool(s):
 
 class ExportDevice(MpsReader):
 
-  def __init__(self, db_file, template_path, dest_path,clean, verbose):
+  def __init__(self, db_file, template_path, dest_path,clean,verbose,session):
     MpsReader.__init__(self,db_file=db_file,dest_path=dest_path,template_path=template_path,clean=clean,verbose=verbose)
+    self.mps_names = MpsName(session)
 
-  def export(self,mps_db_session,card,inputDisplay):
-    self.inputDisplay = inputDisplay
-    self.initialize_mps_names(mps_db_session)
-    self.beam_destinations = mps_db_session.query(models.BeamDestination).all()
-    self.app_path = self.get_app_path(card.link_node,card.slot_number)
-    if len(card.digital_channels) > 0:
-      has_virtual = self.export_digital_channels(card)
-      virt = 0
-      if has_virtual:
-        virt = 1
-      self.__write_mps_virt_db(path=self.app_path, macros={"P":card.get_pv_name(),"HAS_VIRTUAL":"{0}".format(virt)})   
-    elif len(card.analog_channels) > 0:
-      if self.export_analog_channels(card):
-        for ch in self.spare_channels:
-          if ch > -1:
-            macros = { "P": card.get_pv_name(),
-                       "CH":str(ch),
-                       "CH_NAME":"Spare",
-                       "CH_PVNAME":"None",
-                       "CH_SPARE":"1",
-                       "TYPE":"Spare"
-                     }
-            self.write_link_node_channel_info_db(path=self.app_path, macros=macros)
-            macros = {"P":'{0}:CH{1}_WF'.format(card.get_pv_name(),ch),
-                      "CH":"{0}".format(ch)}
-            self.write_epics_env(path=self.app_path, template_name='waveform.template', macros=macros)
-            macros = {"P":'{0}'.format(card.get_pv_name()),
-                      "CH":"{0}".format(ch),
-                      "ATTR0":"I0_CH{0}".format(ch),
-                      "ATTR1":"I1_CH{0}".format(ch)}
-            self.write_epics_env(path=self.app_path, template_name='bsa.template', macros=macros)
-  
-  def export_digital_channels(self,card):
-    has_virtual = False
-    channels = card.digital_channels
-    for channel in channels:
-      self.__export_cn_device_input(channel,card)
-      self.__export_device_input_display(channel,card)
-      self.__write_input_report(channel,card)
-      self.__write_ln_input_display(channel,card)
-      if channel.monitored_pvs != "":
-        self.__export_virtual(channel,card)
-        has_virtual = True
-    return has_virtual   
+  def export_digital(self,app,rows,disp_macros):
+    app_path = self.get_app_path(app.link_node,app.slot_number)
+    if app.slot_number < 2:
+      slot = 'RTM'
+    else:
+      slot = '{0}'.format(app.slot_number)
+    for channel in app.digital_channels:
+      disp_macros.append(self.get_device_input_display_macros(app,channel))
+      ch = '{0}'.format(channel.number)
+      device_name = channel.description.replace(':','_').replace('_',' ')[:30]
+      pv = self.mps_names.getInputPvFromChannel(channel)
+      r = [app.number,slot,ch,device_name,pv]
+      rows.append(r)
+      self.export_cn_device_input(channel,app,app_path)
+      if channel.is_virtual():
+        self.export_virtual(channel,app,app_path)
 
-  def export_analog_channels(self,card):
+  def export_cn_device_input(self,channel,card,app_path):
+    path = self.get_cn_path(card.link_node)
+    file = "cn_device_input.template";
+    rtm = True
+    if channel.alarm_state:
+      rtm = False
+      file = "cn_device_input_fast.template";
+    macros = self.get_cn_device_macros(channel,card)
+    self.write_template(path,filename='device_inputs.db',template=file, macros=macros,type='central_node')
+    if not channel.is_virtual():
+      if rtm:
+        name = self.mps_names.getInputPvFromChannel(channel)
+        states = self.get_alarm_state(channel.alarm_state)
+        macros = {'N':name,
+                  'P':card.get_pv_name(),
+                  'SHIFT':'{0}'.format(channel.number),
+                  'ONAM':'{0}'.format(channel.o_name),
+                  'ZNAM':'{0}'.format(channel.z_name),
+                  'ZSV':'{0}'.format(states[0]),
+                  'OSV':'{0}'.format(states[1])}
+        self.write_template(app_path,filename='mps.db',template='digital_input.template', macros=macros,type='link_node')
+
+
+  def get_cn_device_macros(self,channel,card):
+    name=self.mps_names.getInputPvFromChannel(channel)
+    states = self.get_alarm_state(channel.alarm_state)
+    macros = { 'P':'{0}'.format(name),
+               'ONAM':'{0}'.format(channel.o_name),
+               'ZNAM':'{0}'.format(channel.z_name),
+               'CR':'{0}'.format(card.crate.id),
+               'CA':'{0}'.format(card.number),
+               'CH':'{0}'.format(channel.number),
+               'ID':'{0}'.format(channel.id),
+               'ZSV':'{0}'.format(states[0]),
+               'OSV':'{0}'.format(states[1])}
+    return macros 
+
+  def export_virtual(self,channel,card,path):
+    n = channel.monitored_pvs
+    mon_pv = channel.monitored_pvs
+    if n.find('WIGG') > -1:
+      t = n.split(':')
+      del t[3:5]
+      t.append(channel.name)
+      n = ':'.join(t)
+    states = self.get_alarm_state(channel.alarm_state)
+    vmacros = {  "P":mon_pv+'_THR',
+                 "R":channel.name,
+                 "N":n,
+                 "INPV":mon_pv,
+                 "ALSTATE":str(channel.alarm_state),
+                 "NALSTATE":str(to_bool(not channel.alarm_state)),
+                 "ZSV":states[0],
+                 "OSV":states[1],
+                 "BIT":"{:02d}".format(channel.number-32).format,
+                 "ZNAM":channel.z_name,
+                 "ONAM":channel.o_name, 
+                 "GID":"{0}".format(card.number),
+                 "SCAN":".2 second"}
+    dis = channel.device_input
+    if len(dis) == 1:
+      di = channel.device_input[0]
+      if (di.digital_device.device_type.name == 'WDOG'):
+        self.write_template(path,filename='mps.db',template='watchdog.template', macros=vmacros,type='link_node')
+      else:
+          self.write_template(path,filename='mps.db',template='virtual.template', macros=vmacros,type='link_node')
+    
+
+  def export_analog(self,app,rows,disp_macros):
+    app_path = self.get_app_path(app.link_node,app.slot_number)
     self.spare_channels = list(range(0,6))
+    self.gain_channels = list(range(0,4))
+    self.gain_count = 0
     is_mps = False
-    json_macros = {}
-    json_macros['prefix'] = card.get_pv_name()
-    json_macros['cn_prefix'] = card.link_node.get_cn_prefix()
-    json_macros['devices'] = []
-    json_macros['inputs'] = []
-    json_macros['states'] = []
-    json_macros['destinations'] = []
-    json_macros['version_prefix'] = card.get_pv_name()
-    for channel in card.analog_channels:
-      json_macros = self.__export_analog_inputs(channel,card,json_macros)
+    slot = '{0}'.format(app.slot_number)
+    for channel in app.analog_channels:
+      ch = '{0}'.format(channel.number)
+      device = channel.analog_device
+      faults = self.get_faults(device)
+      dt = device.device_type.name
+      device_name = self.mps_names.getDeviceName(device)
+      for f in faults:
+        self.write_cn_analog_byp_macros(app,channel,f)
+        device_name = "{0} {1}".format(channel.analog_device.description.replace(':','_').replace('_',' '),f.name.upper())[:30]
+        pv = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),f.name.upper())
+        if rows is not None:
+          rows.append([app.number,slot,ch,device_name,pv])
+        if dt not in ['TORO','FARC']:
+          self.write_lc1(app,channel,f,dt,app_path)
+        self.write_thr_base(app,channel,f,dt,app_path)
+        for state in f.states:
+          disp_macros.append(self.get_analog_input_display_macros(app,channel,f,state))
+          self.export_cn_analog_states(app,channel,f,state)
+          self.write_thr(app,channel,f,state,app_path)
+          if state.device_state.name == 'NO_BEAM':
+            self.write_no_beam(app,channel,f,dt,app_path)
+      device_name = self.mps_names.getDeviceName(device)
+      if device_name.find('CBLM') > -1:
+        self.write_cblm_i1(app,channel,'I1_LOSS',dt,app_path)
+        self.write_rearm_template(app,channel,app_path)
+        self.write_time_windows(app,channel)
+      if device_name.find('CLTS') > -1:
+        self.write_cblm_i1(app,channel,'I0_BACT',dt,app_path)
+      if dt in ['WF']:
+        self.write_rearm_template(app,channel,app_path)
       if channel.analog_device.device_type.name not in self.non_link_node_types:
-        self.export_ln_analog_db(card,channel)
+        self.export_ln_analog_db(app,channel,app_path)
         is_mps = True
-    filename = '{0}/App{1}_checkout.json'.format(self.checkout_path,card.number)
-    self.write_json_file(filename, json_macros)
-    return is_mps        
-
-  def export_ln_analog_db(self,card,channel):
-    macros = { "P": card.get_pv_name(),
-               "CH":str(channel.number),
-               "CH_NAME":channel.analog_device.description,
-               "CH_PVNAME":self.mps_names.getDeviceName(channel.analog_device),
-               "CH_SPARE":"0",
-               "TYPE":self.get_analog_type_name(channel.analog_device.device_type.name)
-             }
-    self.write_link_node_channel_info_db(path=self.app_path, macros=macros)
-    int0 = (channel.number * 4)
-    int1 = (channel.number * 4) + 1
-    macros = {"CH":"{0}".format(channel.number),
-              "PROC":"1",
-              "INT0":"{0}".format(int0),
-              "INT1":"{0}".format(int1),
-              "NC0":"{0}".format(self.__get_int_cycles(channel.analog_device,0,True)),
-              "NC1":"{0}".format(self.__get_int_cycles(channel.analog_device,1,True)),
-              "SC0":"{0}".format(self.__get_int_cycles(channel.analog_device,0,False)),
-              "SC1":"{0}".format(self.__get_int_cycles(channel.analog_device,1,False))}
-    self.__write_ana_config(path=self.app_path, macros=macros)
-    self.spare_channels[channel.number] = -1
-    self.__write_integrator_db(card,channel)
-    if channel.analog_device.device_type.name not in ['WF']:
-      self.__write_proc_timing_db(card,channel)
-    self.__write_waveform_db(card,channel)
-
-  def __write_waveform_db(self,card,channel):
-    attribute = self.get_attr(channel)
-    macros = {"P":'{0}:{1}_WF'.format(self.mps_names.getDeviceName(channel.analog_device),attribute),
-              "CH":"{0}".format(channel.number)}
-    self.write_epics_env(path=self.app_path, template_name='waveform.template', macros=macros)
-    attribute = self.get_analog_type_name(channel.analog_device.device_type.name)
-    macros = {"P":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
-              "CH":"{0}".format(channel.number),
-              "ATTR0":"I0_{0}".format(attribute),
-              "ATTR1":"I1_{0}".format(attribute)}
-    self.write_epics_env(path=self.app_path, template_name='bsa.template', macros=macros)
-
-  def get_attr(self,channel):
-    attr = 'MPS'
-    if channel.analog_device.device_type.name == 'WF':
-      attr = 'FAST'
-    if self.mps_names.getBlmType(channel.analog_device) == 'CBLM':
-      attr = 'FAST'
-    return attr
-
-  def __write_proc_timing_db(self,card,channel):
-      macros = { "P_DEV":self.mps_names.getDeviceName(channel.analog_device),
-                 "P":"{0}".format(card.get_pv_name()),
-                 "BAY":"{0}".format(channel.get_bay()),
-                 "CH":"{0}".format(channel.number),
-                 "TRG":"{0}".format(channel.number+10),
-                 "AREA":card.area,
-                 "LOCA":card.location,
-                 "INST":"{0}".format(card.get_card_id())
-                }
-      self.__write_analog_proc_db(path=self.app_path, macros=macros)
-
-  def __write_integrator_db(self,card,channel):
-    for integrator in range(4):
-      bsa_slot = integrator*6 + channel.number
-      chan = channel.number
-      inpv = "{0}:ANA_BSA_DATA_{1}.RVAL".format(card.get_pv_name(),bsa_slot)
-      offset = channel.analog_device.offset
-      slope = channel.analog_device.slope
-      if offset == 0:
-        offset = 1
-      lowerLimit = (-32768 - offset) * slope
-      upperLimit = (32768 - offset) * slope
-      rang = upperLimit - lowerLimit
-      egul = (0-offset)*slope
-      eguf = rang + egul
-      macros = { "P_DEV":self.mps_names.getDeviceName(channel.analog_device),
-                 "R_DEV":'I{0}_{1}'.format(integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
-                 "INT":'I{0}'.format(integrator),
-                 "EGU":self.get_app_units(self.mps_names.getBlmType(channel.analog_device),''),
-                 "INPV":inpv,
-                 "SLOPE":'{0}'.format(slope),
-                 "OFFSET":'{0}'.format(channel.analog_device.offset),
-                 "EGUF":'{0}'.format(eguf),
-                 "EGUL":"{0}".format(egul),
-                 "CH":"{0}".format(chan),
-                 "P":"{0}".format(card.get_pv_name()),
-                 "BAY":"{0}".format(channel.get_bay())
-                }
-      self.__write_analog_db(path=self.app_path, macros=macros)
-      if chan > 2:
-        chan = chan - 3
-      macros_bsa = { "P":"{0}:I{1}_{2}".format(self.mps_names.getDeviceName(channel.analog_device),integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
-                     "ATTR":"I{0}_{1}".format(integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
-                     "INP":"{0}:LC1_BSA_B{1}_C{2}_I{3}".format(card.get_pv_name(),self.get_bay_number(channel.number),chan,integrator),
-                     "EG":"raw",
-                     "HO":"0",
-                     "LO":"0",
-                     "PR":"0",
-                     "AD":"0"}
-      if channel.analog_device.area in self.lc1_areas:
-        self.__write_bsa_db(path=app_path, macros=macros_bsa)    
-
-  def get_alarm_state(self,state):
-    if int(state) == 0:
-      return ['MAJOR','NO_ALARM']
-    else:
-      return ['NO_ALARM','MAJOR']
-
-  def __write_input_report(self,channel,card):
-    if card.slot_number < 2:
-      slot = 'RTM'
-    else:
-      slot = '{0}'.format(card.slot_number)
-    ch = '{0}'.format(channel.number)
-    device_name = channel.description.replace(':','_').replace('_',' ')[:30]
-    pv = self.mps_names.getInputPvFromChannel(channel)
-    appid = card.number
-    self.inputDisplay.append_row([appid,slot,ch,device_name,pv])
-
-  def __write_analog_input_report(self,channel,card,fault):
-    if card.slot_number < 2:
-      slot = 'RTM'
-    else:
-      slot = '{0}'.format(card.slot_number)
-    ch = '{0}'.format(channel.number)
-    device_name = "{0} {1}".format(channel.analog_device.description.replace(':','_').replace('_',' '),fault.name.upper())[:30]
-    pv = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name.upper())
-    appid = card.number
-    self.inputDisplay.append_row([appid,slot,ch,device_name,pv])  
-
-  def __write_ln_input_display(self,channel,card):
-    shift = 0
-    visible = False
-    byte_pv = '{0}:RTM_DI'.format(card.get_pv_name())
-    thr_pv = ''
-    if channel.number < 32:
-      shift = channel.number
-    if channel.device_input.digital_device.device_type.name == 'EPICS':
-      byte_pv = '{0}_INPUT_RBV'.format(channel.monitored_pvs)
-      thr_pv = '{0}_THR'.format(channel.monitored_pvs)
-      visible = True
-    if channel.device_input.digital_device.device_type.name == 'WDOG':
-      byte_pv = '{0}_WDOG_RBV'.format(channel.monitored_pvs)
-    macros = {}
-    macros['CH'] = '{0}'.format(channel.number)
-    macros['PV'] = '{0}'.format(self.mps_names.getInputPvFromChannel(channel))
-    macros['DISP_PV'] = '{0}'.format(byte_pv)
-    macros['THR_PV'] = '{0}'.format(thr_pv)
-    macros['SHIFT'] = '{0}'.format(shift)
-    macros['VISIBLE'] = '{0}'.format(visible)
-    self.inputDisplay.add_digital_ln_macros(macros)
-
-  def __export_device_input_display(self,channel,card):
-    macros = self.get_device_input_display_macros(card,channel)
-    self.inputDisplay.add_macros(macros)
+    if is_mps:
+      for ch in self.spare_channels:
+        if ch > -1:
+          macros = { "P": app.get_pv_name(),
+                     "CH":str(ch),
+                     "CH_NAME":"Spare",
+                     "CH_PVNAME":"None",
+                     "CH_SPARE":"1",
+                     "TYPE":"Spare"
+                   }
+          macros = { "P": app.get_pv_name(),
+                     "CH":str(ch),
+                     "CH_NAME":'Spare',
+                     "CH_PVNAME":'None'}
+          self.write_template(path=self.manager_path,filename='link_nodes.db',template="channel_info.template", macros=macros,type='link_node')
+          macros = {"P":'{0}'.format(app.get_pv_name()),
+                    "ATTR":"CH{0}".format(ch),
+                    "CH":"{0}".format(ch)}
+          self.write_template(app_path,filename='mps.env',template='waveform.template',macros=macros,type='link_node')
+      for ch in self.gain_channels:
+        if ch > -1:
+          macros = {"P":'{0}'.format(app.get_pv_name()),
+                    "ATTR":"CH{0}".format(ch),
+                    "CH":"{0}".format(ch)}
+          self.write_template(app_path,filename='mps.env',template='gain.template',macros=macros,type='link_node')         
 
   def get_device_input_display_macros(self,card,channel):
     name=self.mps_names.getInputPvFromChannel(channel)
@@ -255,117 +189,6 @@ class ExportDevice(MpsReader):
     macros['APPID'] = '{0}'.format(card.number)
     return macros
 
-  def __export_analog_inputs(self,channel,card,json_macros=None):
-    faults = self.get_faults(channel.analog_device)
-    self.export_threshold_display_macros(channel,card,faults)
-    for fault in faults:
-      name = self.mps_names.getBaseFaultName(fault)
-      if json_macros is not None:
-        json_macros['devices'].append(name)
-      self.write_cn_analog_byp_macros(card,channel,fault)
-      self.write_thr_base_db(card,channel,fault)
-      self.__write_analog_input_report(channel,card,fault)
-      state_data = {}
-      state_name = {}
-      input_name = {}
-      for state in fault.states:
-        dest_data = {}
-        for dest in self.beam_destinations:
-          dest_data['{0}{1}_{2}_STATE'.format(name,'_FLT',dest.name.upper())] = state.get_allowed_class_string_by_dest_name(dest.name)
-        state_data[state.device_state.name[-1]] = dest_data
-        state_name[state.device_state.name[-1]] = state.device_state.description
-        self.export_cn_analog_states(card,channel,fault,state)
-        macros = self.get_analog_input_display_macros(card,channel,fault,state)
-        self.inputDisplay.add_macros(macros)
-        self.write_thr(channel,card,fault,state)
-      if json_macros is not None:
-        json_macros['destinations'].append(state_data)
-        json_macros['states'].append(state_name)
-        json_macros['inputs'].append(self.mps_names.getFaultName(fault))
-    return json_macros
-
-  def write_thr(self,channel,card,fault,state):
-    bay = self.get_bay(card,channel)
-    #if state.device_state.get_bit_position() > 0:
-    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
-                "BAY":format(bay),
-                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
-                "FAULT":'{0}'.format(fault.name),
-                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault.name, channel.number),
-                "DESC":fault.description[:15],
-                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault.name),
-                "SLOPE":'{0}'.format(channel.analog_device.slope),
-                "OFFSET":'{0}'.format(channel.analog_device.offset),
-                "BIT_POSITION":"{0}".format(state.device_state.get_bit_position())}
-    self.__write_thr_db(path=self.app_path, macros=macros)
-        
-  def write_thr_base_db(self,card,channel,fault):
-    inpv = None
-    if channel.analog_device.area in self.hard_areas:
-      inpv = 'BEND:DMPH:400:BACT'
-      bpm = 'BPMS:LTUH:960:TMITCUH1H'
-      name = 'DUMP:LTUH:970:MPSPOWER'
-      rate = "IOC:BSY0:MP01:BYKIK_RATEC"
-    if channel.analog_device.area in self.soft_areas:
-      inpv = 'BEND:DMPS:400:BACT'
-      bpm = 'BPMS:LTUS:880:TMITCUH1H'
-      name = 'DUMP:LTUS:972:MPSPOWER'
-      rate = "IOC:BSY0:MP01:BYKIKS_RATEC"
-    if inpv is not None:
-      if channel.analog_device.device_type.name in ['BEND']:
-        macros = {"P":self.mps_names.getDeviceName(channel.analog_device),
-                  "DESC":channel.analog_device.description,
-                  "INPV":inpv}
-        self.__write_lc1_db_db(path=self.app_path,macros=macros)
-      if channel.analog_device.device_type.name in ['KICK'] and channel.analog_device.area not in ['CLTS']:
-        macros_temp = { "P":self.mps_names.getDeviceName(channel.analog_device),
-                        "DESC":channel.analog_device.description,
-                        "INPV":inpv,
-                        "BPM":bpm,
-                        "NAME":name,
-                        "RATE":rate} 
-        self.__write_lc1_kick_db(path=self.app_path, macros=macros)
-    bay = self.get_bay(card,channel)
-    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
-                "BAY":format(bay),
-                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
-                "FAULT":'{0}'.format(fault.name),
-                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault.name, channel.number),
-                "DESC":fault.description[:15],
-                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault.name),
-                "SLOPE":'{0}'.format(channel.analog_device.slope),
-                "OFFSET":'{0}'.format(channel.analog_device.offset)}
-    self.__write_thr_base_db(path=self.app_path, macros=macros)
-        
-
-  def export_threshold_display_macros(self,channel,card,faults):
-    macros = {}
-    macros['P'] = '{0}'.format(card.get_pv_name())
-    macros['CH'] = '{0}'.format(channel.number)
-    macros['DEVICE_NAME'] = '{0}'.format(self.mps_names.getDeviceName(channel.analog_device))
-    macros['PV_PREFIX'] = '{0}'.format(self.mps_names.getDeviceName(channel.analog_device))
-    macros['THR0_P'] = False
-    macros['THR1_P'] = False
-    macros['THR2_P'] = False
-    idx = 0
-    for fault in faults:
-      new_key = 'THR{0}'.format(int(idx))
-      new_vis_key = 'THR{0}_P'.format(int(idx))
-      macros[new_key] = fault.name
-      macros[new_vis_key] = True
-      idx += 1
-    bay = self.get_bay(card,channel)
-    self.inputDisplay.add_analog_macros(macros,bay)
-
-  def get_bay(self,card,channel):
-    if card.type.name == "MPS Analog":
-      if channel.number < 3:
-        return 0
-      else:
-        return 1
-    else:
-      return channel.number
-
   def get_analog_input_display_macros(self,card,channel,fault,state):
     byp_name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),fault.name)
     dev_name = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),state.device_state.name)
@@ -382,16 +205,6 @@ class ExportDevice(MpsReader):
     macros['APPID'] = '{0}'.format(card.number)
     return macros
 
-  def write_cn_analog_byp_macros(self,card,channel,fault):
-    path = self.get_cn_path(card.link_node)
-    name = self.mps_names.getBaseFaultName(fault)
-    bypOffset = channel.analog_device.id + fault.get_integrator_index()*self.mps_names.get_device_count()
-    macros = { 'P':"{0}".format(name),
-               'ID':'{0}'.format(channel.analog_device.id),
-               'INT':'{0}'.format(fault.get_integrator_index()),
-               'BYPID':'{0}'.format(bypOffset) }
-    self.write_epics_db(path=path,filename='analog_devices.db', template_name="cn_analog_device.template", macros=macros)
-
   def export_cn_analog_states(self,card,channel,fault,state):
     path = self.get_cn_path(card.link_node)
     P = '{0}:{1}'.format(self.mps_names.getDeviceName(channel.analog_device),state.device_state.name)
@@ -401,57 +214,96 @@ class ExportDevice(MpsReader):
                'CH':'{0}'.format(channel.number),
                'ID':'{0}'.format(channel.analog_device.id),
                'MASK':'{0}'.format(state.device_state.mask) }
-    self.write_epics_db(path=path,filename='analog_devices.db', template_name="cn_analog_fault.template", macros=macros)    
+    self.write_template(path,filename='analog_devices.db',template='cn_analog_fault.template',macros=macros,type='central_node')
 
-  def __export_cn_device_input(self,channel,card):
+  def write_cn_analog_byp_macros(self,card,channel,fault):
     path = self.get_cn_path(card.link_node)
-    filename = "cn_device_input.template";
-    if channel.alarm_state:
-      filename = "cn_device_input_fast.template";
-    macros = self.get_cn_device_macros(channel,card)
-    self.write_epics_db(path=path,filename='device_inputs.db',template_name=filename, macros=macros)
+    name = self.mps_names.getBaseFaultName(fault)
+    bypOffset = channel.analog_device.id + fault.get_integrator_index()*self.mps_names.get_device_count()
+    macros = { 'P':"{0}".format(name),
+               'ID':'{0}'.format(channel.analog_device.id),
+               'INT':'{0}'.format(fault.get_integrator_index()),
+               'BYPID':'{0}'.format(bypOffset) }
+    self.write_template(path,filename='analog_devices.db',template='cn_analog_device.template',macros=macros,type='central_node')
 
-  def get_cn_device_macros(self,channel,card):
-    name=self.mps_names.getInputPvFromChannel(channel)
-    states = self.get_alarm_state(channel.alarm_state)
-    macros = { 'P':'{0}'.format(name),
-               'ONAM':'{0}'.format(channel.o_name),
-               'ZNAM':'{0}'.format(channel.z_name),
-               'CR':'{0}'.format(card.crate.id),
-               'CA':'{0}'.format(card.number),
-               'CH':'{0}'.format(channel.number),
-               'ID':'{0}'.format(channel.id),
-               'ZSV':'{0}'.format(states[0]),
-               'OSV':'{0}'.format(states[1])}
-    return macros  
+  def write_rearm_template(self,card,channel,path):
+    macros = { "P": card.get_pv_name(),
+               "DEV":self.mps_names.getDeviceName(channel.analog_device),
+               "BAY":'{0}'.format(self.get_bay(card,channel))
+             }
+    self.write_template(path,filename='mps.db',template='stream_enable.template',macros=macros,type='link_node')
 
-  def __export_virtual(self,channel,card):
-    n = channel.monitored_pvs
-    if "WIGG" in n:
-      ex = "_IN"
-      if channel.number%2 !=0:
-        ex="_OUT"
-      n = "{0}{1}".format(channel.monitored_pvs[:-8], ex)
-    states = self.get_alarm_state(channel.alarm_state)
-    vmacros = {  "P":channel.monitored_pvs+'_THR',
-                 "R":channel.name,
-                 "N":n,
-                 "INPV":channel.monitored_pvs,
-                 "ALSTATE":str(channel.alarm_state),
-                 "NALSTATE":str(to_bool(not channel.alarm_state)),
-                 "ZSV":states[0],
-                 "OSV":states[1],
-                 "BIT":"{:02d}".format(channel.number-32).format,
-                 "ZNAM":channel.z_name,
-                 "ONAM":channel.o_name, 
-                 "GID":"{0}".format(card.number),
-                 "SCAN":".2 second"}
-    if (channel.device_input.digital_device.device_type.name == 'WDOG'):
-      self.__write_virtual_wdog_db(path=self.app_path, macros=vmacros)
-      cha = '{0}_WDOG_RBV'.format(n)
-    elif (channel.device_input.digital_device.device_type.name == 'EPICS'):
-      self.__write_virtual_db(path=self.app_path, macros=vmacros)
-      cha = '{0}_INPUT_RBV'.format(n)
+  def write_time_windows(self,card,channel):
+    macros = {"P":card.get_pv_name(),
+              "DEV":self.mps_names.getDeviceName(channel.analog_device),
+              "CH":"{0}".format(channel.number),
+              "TPR":"TPR:{0}:{1}:1".format(card.area,card.location),
+              "TRG":"{0}".format(channel.number+10)}
+    self.write_template(path=self.manager_path,filename='link_nodes.db',template="analog_window_time.template", macros=macros,type='link_node')
+
+  def export_ln_analog_db(self,card,channel,path):
+    macros = { "P": card.get_pv_name(),
+               "CH":str(channel.number),
+               "CH_NAME":channel.analog_device.description,
+               "CH_PVNAME":self.mps_names.getDeviceName(channel.analog_device),
+               "CH_SPARE":"0",
+               "TYPE":self.get_analog_type_name(channel.analog_device.device_type.name)
+             }
+    #self.write_template(path,filename='mps.db',template='link_node_channel_info.template',macros=macros,type='link_node')
+    int0 = (channel.number * 4)
+    int1 = (channel.number * 4) + 1
+    macros = {"CH":"{0}".format(channel.number),
+              "PROC":"1",
+              "INT0":"{0}".format(int0),
+              "INT1":"{0}".format(int1),
+              "NC0":"{0}".format(self.__get_int_cycles(channel.analog_device,0,True)),
+              "NC1":"{0}".format(self.__get_int_cycles(channel.analog_device,1,True)),
+              "SC0":"{0}".format(self.__get_int_cycles(channel.analog_device,0,False)),
+              "SC1":"{0}".format(self.__get_int_cycles(channel.analog_device,1,False))}
+    self.write_template(path,filename='config.yaml',template='analog_settings.template',macros=macros,type='link_node')
+    self.spare_channels[channel.number] = -1
+    self.write_integrator_db(card,channel,path)
+    self.write_waveform_db(card,channel,path)
+
+  def write_waveform_db(self,card,channel,path):
+    attribute = self.get_attr(channel)
+    macros = {"P":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
+              "ATTR":attribute,
+              "CH":"{0}".format(channel.number)}
+    self.write_template(path,filename='mps.env',template='waveform.template',macros=macros,type='link_node')
+    if channel.analog_device.device_type.name == 'WF':
+      bay = channel.analog_device.gain_bay
+      cha = channel.analog_device.gain_channel
+      macros = {"P":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
+                "ATTR":attribute,
+                "CH":"{0}".format(self.get_gain_number(bay,cha))}
+      self.write_template(path,filename='mps.env',template='gain.template',macros=macros,type='link_node')
+      self.gain_channels[self.get_gain_number(bay,cha)] = -1
+    attribute = self.get_analog_type_name(channel.analog_device.device_type.name)
+    macros = {"DEV":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
+              "PORT":"bsaPort",
+              "BSAKEY":"C{0}_I0".format(channel.number),
+              "SECN":"I0_{0}".format(attribute)}
+    self.write_template(path,filename='mps.db',template='lc2-bsa.template',macros=macros,type='link_node')
+    macros = {"DEV":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
+              "PORT":"bsssPort",
+              "BSAKEY":"C{0}_I0".format(channel.number),
+              "SECN":"I0_{0}".format(attribute)}
+    self.write_template(path,filename='mps.db',template='bsss.template',macros=macros,type='link_node')
+
+  def get_gain_number(self,bay,ch):
+    if bay == 0:
+      if ch == 0:
+        return 0
+      else:
+        return 1
+    elif bay == 1:
+      if ch == 0:
+        return 2
+      else:
+        return 3
+    else:
+      return None
 
   def __get_int_cycles(self,device,num=0,nc=False):
     if device.device_type.name not in ['BLM']:
@@ -471,79 +323,171 @@ class ExportDevice(MpsReader):
           else:
             return self.sc_int1_cycles
 
-  def __write_virtual_wdog_db(self, path, macros):
-      """
-      Write records for digital virtual watchdog inputs
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="watchdog.template", macros=macros)
+  def write_ln_input_display(self,app):
+    if app.slot_number < 2:
+      disp_macros = []
+      for channel in app.digital_channels:
+        name=self.mps_names.getInputPvFromChannel(channel)
+        thr_pv = ''
+        vis = True
+        if channel.number < 32:
+          vis = False
+        pv = '{0}_INPUT_RBV'.format(name)
+        dis = channel.device_input
+        if len(dis) == 1:
+          di = channel.device_input[0]
+          if di.digital_device.device_type.name == 'WDOG':
+            pv = '{0}_WDOG_RBV'.format(name)
+            vis = False
+          else:
+            pv = '{0}_INPUT_RBV'.format(name)
+            if channel.number > 31:
+              if name.find('WIGG') > -1:
+                pv = '{0}_INPUT_RBV'.format(name)
+                thr_pv = '{0}_THR'.format(name)
+              else:
+                pv = '{0}_INPUT_RBV'.format(channel.monitored_pvs)
+                thr_pv = '{0}_THR'.format(channel.monitored_pvs)
+        else:
+          pv = '{0}_INPUT_RBV'.format(name)
+          if channel.number > 31:
+            if name.find('WIGG') > -1:
+              pv = '{0}_INPUT_RBV'.format(name)
+              thr_pv = '{0}_THR'.format(name)
+            else:
+              pv = '{0}_INPUT_RBV'.format(channel.monitored_pvs)
+              thr_pv = '{0}_THR'.format(channel.monitored_pvs)
+        macros = {}
+        macros['CH'] = '{0}'.format(channel.number)
+        macros['NAME'] = name
+        macros['PV'] = pv
+        macros['VIS'] = '{0}'.format(vis)
+        macros['THR_PV'] = thr_pv
+        disp_macros.append(macros)
+      filename = '{0}thresholds/app{1}_rtm.json'.format(self.display_path,app.number)
+      self.write_json_file(filename, disp_macros)
 
-  def __write_virtual_db(self, path, macros):
-      """
-      Write records for digital virtual inputs
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="virtual.template", macros=macros)
 
-  def __write_mps_virt_db(self, path, macros):
-      """
-      Write the base mps records to the application EPICS database file.
-      These records will be loaded once per each device.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="has_virtual.template", macros=macros)
+  def get_attr(self,channel):
+    attr = 'MPS'
+    if channel.analog_device.device_type.name == 'WF':
+      attr = 'FAST'
+    if self.mps_names.getBlmType(channel.analog_device) == 'CBLM':
+      attr = 'FAST'
+    return attr
 
-  def __write_ana_config(self, path, macros):
-      """
-      Write the analog configuration section to the application configuration file.
-      This configuration will be load by all applications.
-      """
-      self.write_fw_config(path=path, template_name="analog_settings.template", macros=macros)
-
-  def __write_analog_proc_db(self, path, macros):
-      """
-      Write the records for analog inputs to the application EPICS database file.
-
-      These records will be loaded once per each device.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="ln_ana_proc.template", macros=macros)
-
-  def __write_analog_db(self, path, macros):
-      """
-      Write the records for analog inputs to the application EPICS database file.
-
-      These records will be loaded once per each device.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="ln_combined_lc1_analog.template", macros=macros)
-
-  def __write_bsa_db(self, path, macros):
-      """
-      Write the base threshold record to the application EPICS database file.
-      These records will be loaded once per each fault.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="bsa.template", macros=macros)
+  def write_integrator_db(self,card,channel,path):
+    for integrator in range(4):
+      bsa_slot = integrator*6 + channel.number
+      chan = channel.number
+      inpv = "{0}:ANA_BSA_DATA_{1}.RVAL".format(card.get_pv_name(),bsa_slot)
+      offset = channel.analog_device.offset
+      slope = channel.analog_device.slope
+      if offset == 0:
+        offset = 1
+      macros = { "P_DEV":self.mps_names.getDeviceName(channel.analog_device),
+                 "R_DEV":'I{0}_{1}'.format(integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
+                 "INT":'I{0}'.format(integrator),
+                 "EGU":self.get_app_units(self.mps_names.getBlmType(channel.analog_device),''),
+                 "INPV":inpv,
+                 "SLOPE":'{0}'.format(slope),
+                 "OFFSET":'{0}'.format(channel.analog_device.offset),
+                }
+      self.write_template(path,filename='mps.db',template='ln_analog.template',macros=macros,type='link_node')
+      if chan > 2:
+        chan = chan - 3
+      macros_bsa = { "P":"{0}:I{1}_{2}".format(self.mps_names.getDeviceName(channel.analog_device),integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
+                     "ATTR":"I{0}_{1}".format(integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
+                     "INP":"{0}:LC1_BSA_B{1}_C{2}_I{3}".format(card.get_pv_name(),self.get_bay_number(channel.number),chan,integrator),
+                     "EG":"raw",
+                     "HO":"0",
+                     "LO":"0",
+                     "PR":"0",
+                     "AD":"0"}
+      #if channel.analog_device.area in self.lc1_areas:
+      if card.link_node.area in self.lc1_areas:
+        self.write_template(path,filename='mps.db',template='bsa.template',macros=macros_bsa,type='link_node')
         
-  def __write_lc1_dc_db(self, path, macros):
-      """
-      Write lcls1 kicker threshold records to the application EPICS database file.
-      These records will be loaded once per each fault.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="lc1_bend.template", macros=macros)
-  
-  def __write_lc1_kick_db(self, path, macros):
-      """
-      Write lcls1 kicker threshold records to the application EPICS database file.
-      These records will be loaded once per each fault.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="lc1_kick.template", macros=macros)
+  def write_thr(self,card,channel,fault,state,path):
+    bay = self.get_bay(card,channel)
+    #if state.device_state.get_bit_position() > 0:
+    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
+                "BAY":format(bay),
+                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
+                "FAULT":'{0}'.format(fault.name),
+                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault.name, channel.number),
+                "DESC":fault.description[:15],
+                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault.name),
+                "SLOPE":'{0}'.format(channel.analog_device.slope),
+                "OFFSET":'{0}'.format(channel.analog_device.offset),
+                "BIT_POSITION":"{0}".format(state.device_state.get_bit_position())}
+    self.write_template(path,filename='mps.db',template='thr.template',macros=macros,type='link_node')
 
-  def __write_thr_base_db(self, path, macros):
-      """
-      Write the base threshold record to the application EPICS database file.
-      These records will be loaded once per each fault.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="thr_base_no_alt.template", macros=macros)
-    
-  def __write_thr_db(self, path, macros):
-      """
-      Write the threshold records to the application EPICS database file.
-      These records will be load once per each bit in each fault.
-      """
-      self.write_epics_db(path=path,filename='mps.db', template_name="thr_no_alt.template", macros=macros)
+  def write_thr_base(self,card,channel,fault,device_type,path):
+    bay = self.get_bay(card,channel)
+    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
+                "BAY":format(bay),
+                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
+                "FAULT":fault.name,
+                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault.name, channel.number),
+                "DESC":fault.description[:15],
+                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault.name),
+                "SLOPE":'{0}'.format(channel.analog_device.slope),
+                "OFFSET":'{0}'.format(channel.analog_device.offset)}
+    self.write_template(path,filename='mps.db',template='thr_base.template',macros=macros,type='link_node')
+
+  def write_no_beam(self,card,channel,fault,device_type,path):
+    bay = self.get_bay(card,channel)
+    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
+                "BAY":format(bay),
+                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
+                "FAULT":fault.name,
+                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault.name, channel.number),
+                "DESC":fault.description[:15],
+                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault.name),
+                "SLOPE":'{0}'.format(channel.analog_device.slope),
+                "OFFSET":'{0}'.format(channel.analog_device.offset)}
+    self.write_template(path,filename='mps.db',template='idl_thr.template',macros=macros,type='link_node')
+
+  def write_lc1(self,card,channel,fault,device_type,path):
+    bay = self.get_bay(card,channel)
+    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
+                "BAY":format(bay),
+                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
+                "FAULT":fault.name,
+                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault.name, channel.number),
+                "DESC":fault.description[:15],
+                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault.name),
+                "SLOPE":'{0}'.format(channel.analog_device.slope),
+                "OFFSET":'{0}'.format(channel.analog_device.offset)}
+    self.write_template(path,filename='mps.db',template='lc1_thr.template',macros=macros,type='link_node')
+
+  def write_cblm_i1(self,card,channel,fault,device_type,path):
+    bay = self.get_bay(card,channel)
+    macros = {  "P":self.mps_names.getDeviceName(channel.analog_device),
+                "BAY":format(bay),
+                "APP":self.get_app_type_name(channel.analog_device.device_type.name),
+                "FAULT":fault,
+                "FAULT_INDEX":self.get_fault_index(channel.analog_device.device_type.name, fault, channel.number),
+                "DESC":fault,
+                "EGU":self.get_app_units(channel.analog_device.device_type.name,fault),
+                "SLOPE":'{0}'.format(channel.analog_device.slope),
+                "OFFSET":'{0}'.format(channel.analog_device.offset)}
+    self.write_template(path,filename='mps.db',template='lc1_thr.template',macros=macros,type='link_node')
+
+  def get_bay(self,card,channel):
+    if card.type.name == "MPS Analog":
+      if channel.number < 3:
+        return 0
+      else:
+        return 1
+    else:
+      return channel.number
+
+  def get_alarm_state(self,state):
+    if int(state) == 0:
+      return ['MAJOR','NO_ALARM']
+    else:
+      return ['NO_ALARM','MAJOR']
+      
+

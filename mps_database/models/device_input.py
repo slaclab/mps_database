@@ -28,4 +28,4 @@ class DeviceInput(Base):
   bit_position = Column(Integer, nullable=False)
   auto_reset = Column(Integer, nullable=False, default=0)
   fault_value = Column(Integer, nullable=False)
-  channel_id = Column(Integer, ForeignKey('digital_channels.id'), nullable=False, unique=True)
+  channel_id = Column(Integer, ForeignKey('digital_channels.id'), nullable=False, unique=False)

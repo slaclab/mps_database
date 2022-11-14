@@ -1,9 +1,0 @@
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-sps-sp05 -s shm-sps-sp05-1 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-sps-sp05 -s shm-sps-sp05-2 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-sps-sp05 -s shm-sps-sp05-2 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-sps-sp05 -s shm-sps-sp05-2 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-bsys-sp01 -s shm-bsys-sp01-1 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-bsys-sp01 -s shm-bsys-sp01-1 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-bsys-sp01 -s shm-bsys-sp01-1 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-bsys-sp02 -s shm-bsys-sp02-1 -m $1
-$PACKAGE_TOP/cpsw/utils/ProgramFPGA/current/ProgramFPGA.bash -n 2 -c cpu-ltus-sp01 -s shm-ltus-sp01-1 -m $1

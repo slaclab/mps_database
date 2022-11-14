@@ -1,7 +1,0 @@
-INCLUDE MPS:L2B:1  ./mpln_l2b_mp01.alhConfig
-INCLUDE MPS:L2B:1  ./mpln_l2b_mp02.alhConfig
-INCLUDE MPS:L2B:1  ./mpln_bc2b_mp01.alhConfig
-INCLUDE MPS:L2B:1  ./mpln_l2b_mp03.alhConfig
-INCLUDE MPS:L2B:1  ./mpln_l2b_mp04.alhConfig
-INCLUDE MPS:L2B:1  ./mpln_bc2b_mp02.alhConfig
-INCLUDE MPS:L2B:1  ./mpln_bc2b_mp03.alhConfig

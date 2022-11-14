@@ -1,5 +1,0 @@
-INCLUDE MPS:DOG:1  ./mpln_dog_mp01.alhConfig
-INCLUDE MPS:DOG:1  ./mpln_dog_mp02.alhConfig
-INCLUDE MPS:DOG:1  ./mpln_dog_mp03.alhConfig
-INCLUDE MPS:DOG:1  ./mpln_dog_mp04.alhConfig
-INCLUDE MPS:DOG:1  ./mpln_dog_mp05.alhConfig

@@ -1,5 +1,0 @@
-#!/bin/bash
-database/add_device.py --db mps_config-100MeV.db --file 100MeV/100MeVDevices.csv
-database/add_logic.py --db mps_config-100MeV.db --file 100MeV/yag_gun_logic.json 
-database/add_ignore_device.py -v --db mps_config-100MeV.db --file 100MeV/ignore_devices.csv
-database/add_logic.py -v --db mps_config-100MeV.db --file 100MeV/logic.json

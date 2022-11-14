@@ -1,0 +1,8 @@
+# Analog application AppID
+- mmio:
+  - AmcCarrierCore: 
+    - AppMps:
+      - AppMpsRegBase:
+        - mpsAppId: !<value> $(ID)
+
+

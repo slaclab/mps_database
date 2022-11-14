@@ -1,0 +1,17 @@
+record(calc, "$(N)_MPSCALC") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "1 second")
+    field(FLNK, "$(N)_INPUT_RBV")
+    field(INPA, "$(P):RTM_DI")
+    field(CALC, "((A>>$(SHIFT))&1)")
+}
+record(bi, "$(N)_INPUT_RBV") {
+    field(DESC, "Input CALC")
+    field(PINI, "NO")	
+    field(ZNAM, "$(ZNAM)")
+    field(ONAM, "$(ONAM)")
+    field(ZSV, "$(ZSV)")
+    field(OSV, "$(OSV)")
+    field(INP, "$(N)_MPSCALC")
+}

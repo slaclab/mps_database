@@ -1,0 +1,2461 @@
+#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):APP_ID") {
+    field(DESC, "Application ID")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)APP_ID")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):BYTE_COUNT") {
+    field(DESC, "Number of bytes in MPS message")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)BYTE_COUNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):ROLL_OVER_EN") {
+    field(DESC, "Status Counter Roll Over Enable")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)ROLL_OVER_EN")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):TX_LINK_UP_CNT") {
+    field(DESC, "MPS TX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)TX_LINK_UP_CNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_0") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_1") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_2") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_3") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_4") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_5") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_6") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_6")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_7") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_7")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_8") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_8")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_9") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_9")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_10") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_10")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_11") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_11")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_12") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_12")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_LINK_UP_CNT_13") {
+    field(DESC, "MPS RX LinkUp Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_LINK_UP_CNT_13")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):TX_PKT_SENT_CNT") {
+    field(DESC, "MPS TX Packet Sent Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)TX_PKT_SENT_CNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_0") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_1") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_2") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_3") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_4") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_5") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_6") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_6")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_7") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_7")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_8") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_8")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_9") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_9")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_10") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_10")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_11") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_11")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_12") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_12")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_RCV_CNT_13") {
+    field(DESC, "MPS RX Packet Received Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_RCV_CNT_13")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):MSG_CNT") {
+    field(DESC, "Mps message counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)MSG_CNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_APP_ID") {
+    field(DESC, "Mps last message App ID")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_APPID")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_TMSTMP") {
+    field(DESC, "Mps last message timestamp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_TMSTMP")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_BYTE_0") {
+    field(DESC, "Mps last message byte 0")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_BYTE_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_BYTE_1") {
+    field(DESC, "Mps last message byte 1")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_BYTE_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_BYTE_2") {
+    field(DESC, "Mps last message byte 2")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_BYTE_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_BYTE_3") {
+    field(DESC, "Mps last message byte 3")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_BYTE_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_BYTE_4") {
+    field(DESC, "Mps last message byte 4")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_BYTE_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):LAST_MSG_BYTE_5") {
+    field(DESC, "Mps last message byte 5")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)LAST_MSG_BYTE_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):TX_PKT_PERIOD") {
+    field(DESC, "Tx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)TX_PKT_PERIOD")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):TX_PKT_PERIOD_MIN") {
+    field(DESC, "Min Tx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)TX_PKT_PERIOD_MIN")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):TX_PKT_PERIOD_MAX") {
+    field(DESC, "Max Tx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)TX_PKT_PERIOD_MAX")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):DIAG_STRB_CNT") {
+    field(DESC, "Counts the diagnostic strobes")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)DIAG_STRB_CNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):PLL_LOCK_CNT") {
+    field(DESC, "Counts the PLL Lock events")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)PLL_LOCK_CNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):TX_EOFE_SENT_CNT") {
+    field(DESC, "Tx EOFE Sent Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)TX_EOFE_SENT_CNT")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_0") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_1") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_2") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_3") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_4") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_5") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_6") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_6")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_7") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_7")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_8") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_8")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_9") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_9")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_10") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_10")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_11") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_11")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_12") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_12")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_13") {
+    field(DESC, "Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_13")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_0") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_1") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_2") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_3") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_4") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_5") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_6") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_6")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_7") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_7")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_8") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_8")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_9") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_9")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_10") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_10")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_11") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_11")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_12") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_12")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MIN_13") {
+    field(DESC, "Min Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MIN_13")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_0") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_1") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_2") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_3") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_4") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_5") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_6") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_6")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_7") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_7")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_8") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_8")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_9") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_9")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_10") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_10")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_11") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_11")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_12") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_12")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_PKT_PERIOD_MAX_13") {
+    field(DESC, "Max Rx Period between packets")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_PKT_PERIOD_MAX_13")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_0") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_0")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_1") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_1")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_2") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_2")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_3") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_3")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_4") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_4")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_5") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_5")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_6") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_6")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_7") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_7")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_8") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_8")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_9") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_9")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_10") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_10")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_11") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_11")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_12") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_12")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):RX_ERR_DET_CNT_13") {
+    field(DESC, "Rx Error Detected Counter")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)RX_ERR_DET_CNT_13")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):CH_ENABLE") {
+    field(DESC, "Rx Channel enable bitmask")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)CH_ENABLE")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):DIG_SWBITERR_RBV") {
+    field(DESC, "SW Bit Error")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),3)SOFT_CH_ERROR_WORD")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):DIG_SWBIT_RBV") {
+    field(DESC, "SW Bit")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),3)SOFT_CH_VALUE_WORD")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):DIGITAL_EN") {
+    field(DESC, "Application generates digital messages")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)DIGITAL_EN")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):MPS_SLOT") {
+    field(DESC, "MPS_SLOT_G")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)MPS_SLOT")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):PLL_LOCKED") {
+    field(DESC, "MPS PLL Lock Status")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)PLL_LOCKED")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):TX_LINK_UP") {
+    field(DESC, "MPS TX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)TX_LINK_UP")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_0") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_0")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_1") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_1")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_2") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_2")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_3") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_3")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_4") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_4")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_5") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_5")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_6") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_6")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_7") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_7")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_8") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_8")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_9") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_9")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_10") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_10")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_11") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_11")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_12") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_12")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):RX_LINK_UP_13") {
+    field(DESC, "MPS RX LinkUp")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)RX_LINK_UP_13")
+    field(ZNAM, "Down")
+    field(ONAM, "Up")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-only registers                          #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bi, "$(P):LAST_MSG_LC1_EN") {
+    field(DESC, "LCLS flag in the last message")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)LAST_MSG_LCLS")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}#================================================================================#
+# LCLS-II MPS PV template for 1-bit write-only registers                         #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bo, "$(P):SALT_RST_CNT") {
+    field(DESC, "Reset all the SALT status counters")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),2,0x01)SALT_RST_CNT")
+    field(ZNAM, "")
+    field(ONAM, "")
+}
+#================================================================================#
+# LCLS-II MPS PV template for 1-bit write-only registers                         #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#   - ZNAM  : Label for the "0" state                                            #
+#   - ONAM  : Label for the "1" state                                            #
+#================================================================================#
+
+record(bo, "$(P):SALT_RST_PLL") {
+    field(DESC, "Reset the PLL")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),2,0x01)SALT_RST_PLL")
+    field(ZNAM, "")
+    field(ONAM, "")
+}
+#================================================================================#
+# LCLS-II MPS PV template for read-write registers                               #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longout, "$(P):BEAM_DEST_MASK") {
+    field(DESC, "One bit per dest for BPM or kicker")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),2)BEAM_DEST_MASK")
+}
+
+record(longin, "$(P):BEAM_DEST_MASK_RBV") {
+    field(DESC, "One bit per dest for BPM or kicker")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)BEAM_DEST_MASK")
+}
+#================================================================================#
+# LCLS-II MPS PV template for read-write registers                               #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longout, "$(P):ALT_DEST_MASK") {
+    field(DESC, "One bit per dest for alt table")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),2)ALT_DEST_MASK")
+}
+
+record(longin, "$(P):ALT_DEST_MASK_RBV") {
+    field(DESC, "One bit per dest for alt table")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)ALT_DEST_MASK")
+}
+#================================================================================#
+# LCLS-II MPS PV template for read-write registers                               #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longout, "$(P):MPS_VER") {
+    field(DESC, "MPS version")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),2)MPS_VER")
+}
+
+record(longin, "$(P):MPS_VER_RBV") {
+    field(DESC, "MPS version")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),2)MPS_VER")
+}
+#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-write registers                         #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - R       : Record name                                                      #
+#   - DESC    : Description                                                      #
+#   - PORT    : Asyn port name                                                   #
+#   - ADDR    : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)  #
+#   - PARAM   : Asyn parameter name                                              #
+#   - ZNAM    : Label for the "0" state                                          #
+#   - ONAM    : Label for the "1" state                                          #
+#   - ASG     : Access security group                                            #
+#   - ZSV     : Alarm for zero state                                             #
+#   - RBV_ZSV : Alarm for zero state                                             #
+#   - DISV    : Disable value (if SDIS has this value record is disabled)        #
+#   - SDIS    : Source of disable value                                          #
+#================================================================================#
+
+record(bo, "$(P):MPS_EN") {
+    field(DESC, "MPS Enabled")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),2,0x01)MPS_EN")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(ASG,  "DEFAULT")
+    field(ZSV,  "MAJOR")
+    field(DISV, "0")
+    field(SDIS, "$(P):THR_LOADED")
+}
+
+record(bi, "$(P):MPS_EN_RBV") {
+    field(DESC, "MPS Enabled")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)MPS_EN")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(ASG,  "DEFAULT")
+    field(ZSV,  "MAJOR")
+}
+#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-write registers                         #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - R       : Record name                                                      #
+#   - DESC    : Description                                                      #
+#   - PORT    : Asyn port name                                                   #
+#   - ADDR    : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)  #
+#   - PARAM   : Asyn parameter name                                              #
+#   - ZNAM    : Label for the "0" state                                          #
+#   - ONAM    : Label for the "1" state                                          #
+#   - ASG     : Access security group                                            #
+#   - ZSV     : Alarm for zero state                                             #
+#   - RBV_ZSV : Alarm for zero state                                             #
+#   - DISV    : Disable value (if SDIS has this value record is disabled)        #
+#   - SDIS    : Source of disable value                                          #
+#================================================================================#
+
+record(bo, "$(P):LC1_MODE") {
+    field(DESC, "LCLS operation mode")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),2,0x01)LCLS1_MODE")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(ASG,  "DEFAULT")
+    field(ZSV,  "NO_ALARM")
+    field(DISV, "1")
+    field(SDIS, "")
+}
+
+record(bi, "$(P):LC1_MODE_RBV") {
+    field(DESC, "LCLS operation mode")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),2,0x01)LCLS1_MODE")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(ASG,  "DEFAULT")
+    field(ZSV,  "NO_ALARM")
+}
+#================================================================================#
+# LCLS-II MPS PV template for read-only registers holding strings                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(waveform, "$(P):APP_TYPE") {
+    field(DESC,    "Application type")
+    field(PINI,    "NO")
+    field(SCAN,    "I/O Intr")
+    field(DTYP,    "asynOctetRead")
+    field(NELM,    "40")
+    field(FTVL,    "CHAR")
+    field(INP,     "@asyn($(PORT),2)APP_TYPE")
+}#================================================================================#
+# LCLS-II MPS PV template for MpsManager threshold control                       #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - ASG     : Access security group                                            #
+#================================================================================#
+record(bo, "$(P):THR_LOADED") {
+    field(DESC, "Set by MpsManager after IOC reboots")
+    field(PINI, "YES")
+    field(VAL,  "$(THR_LOADED)")
+    field(ZNAM, "Not loaded")
+    field(ONAM, "Loaded")
+    field(ASG,  "DEFAULT")
+    field(ZSV,  "MAJOR")
+}
+

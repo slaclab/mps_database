@@ -1,2 +1,0 @@
-database/add_device.py --db mps_config-prof.db --file prof/prof.csv
-database/add_logic.py  --db mps_config-prof.db --file prof/logic.json

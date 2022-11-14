@@ -1,0 +1,184 @@
+#================================================================================#
+# LCLS-II MPS PV template for 1-bit read-write registers                         #
+# Macro description:                                                             #
+#   - P       : Record name prefix                                               #
+#   - R       : Record name                                                      #
+#   - DESC    : Description                                                      #
+#   - PORT    : Asyn port name                                                   #
+#   - ADDR    : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)  #
+#   - PARAM   : Asyn parameter name                                              #
+#   - ZNAM    : Label for the "0" state                                          #
+#   - ONAM    : Label for the "1" state                                          #
+#   - ASG     : Access security group                                            #
+#   - ZSV     : Alarm for zero state                                             #
+#   - RBV_ZSV : Alarm for zero state                                             #
+#   - DISV    : Disable value (if SDIS has this value record is disabled)        #
+#   - SDIS    : Source of disable value                                          #
+#================================================================================#
+
+record(bo, "$(P):$(FAULT)_NO_BEAM_EN") {
+    field(DESC, "IDLE table enabled")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_IDLEEN_$(FAULT_INDEX)")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(ASG,  "MCC")
+    field(ZSV,  "NO_ALARM")
+    field(DISV, "1")
+    field(SDIS, "")
+    info(autosaveFields, "VAL")
+}
+
+record(bi, "$(P):$(FAULT)_NO_BEAM_EN_RBV") {
+    field(DESC, "IDLE table enabled")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_IDLEEN_$(FAULT_INDEX)")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(ASG,  "MCC")
+    field(ZSV,  "NO_ALARM")
+}
+#================================================================================#
+# LCLS-II MPS Threshold PV template                                              #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - EGU   : Engineering units                                                  #
+#   - PREC  : Precision                                                          #
+#   - PORT  : Asyn port name                                                     #
+#   - BAY   : Bay number (0 or 1)                                                #
+#   - APP   : Application name (BLM, BPM, BCM, BLEN)                             #
+#   - TABLE : Threhold table (0: LCLS1, 1: No-beam, 2: Standard, 3: Alternative) #
+#   - THR   : Threshold index (0-7)                                              #
+#   - CH    : Threhold channel (application specific)                            #
+#     * BLM  => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)        #
+#     * BPM  => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)                           #
+#     * BCM  => (X),    X=Channel (0:Charge, 1:Difference)                       #
+#     * BLEN => 0                                                                #
+#================================================================================#
+
+#### VALUES ####
+
+# MINIMUM (Set and RBV)
+
+record(ao, "$(P):$(FAULT)_NO_BEAM_L") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(PHAS, "2")
+    field(DTYP, "asynFloat64")
+    field(EGU,  "$(EGU)")
+    field(PREC, "2")
+    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(FAULT_INDEX)10")
+    info(autosaveFields, "VAL")
+}
+
+record(ai,  "$(P):$(FAULT)_NO_BEAM_L_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynFloat64")
+    field(EGU,  "$(EGU)")
+    field(PREC, "2")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMIN_$(FAULT_INDEX)10")
+}
+
+# MAXIMUM (Set and RBV)
+
+record(ao, "$(P):$(FAULT)_NO_BEAM_H") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(PHAS, "2")
+    field(DTYP, "asynFloat64")
+    field(EGU,  "$(EGU)")
+    field(PREC, "2")
+    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(FAULT_INDEX)10")
+    info(autosaveFields, "VAL")
+}
+
+record(ai,  "$(P):$(FAULT)_NO_BEAM_H_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynFloat64")
+    field(EGU,  "$(EGU)")
+    field(PREC, "2")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMAX_$(FAULT_INDEX)10")
+}
+
+#### RAW VALUES ####
+
+# Minimum
+
+record(longin,  "$(P):$(FAULT)_NO_BEAM_L_RAW") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMINR_$(FAULT_INDEX)10")
+}
+
+# Maximum
+
+record(longin,  "$(P):$(FAULT)_NO_BEAM_H_RAW") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRMAXR_$(FAULT_INDEX)10")
+}
+
+#### ENABLES ####
+
+# MINIMUM (Set and RBV)
+
+record(bo, "$(P):$(FAULT)_NO_BEAM_L_EN") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(FAULT_INDEX)10")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    info(autosaveFields, "VAL")
+}
+
+record(bi, "$(P):$(FAULT)_NO_BEAM_L_EN_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMINEN_$(FAULT_INDEX)10")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}
+
+
+# MAXIMUM (Set and RBV)
+
+record(bo,      "$(P):$(FAULT)_NO_BEAM_H_EN") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "Passive")
+    field(PINI, "YES")
+    field(DTYP, "asynUInt32Digital")
+    field(OUT,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(FAULT_INDEX)10")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    info(autosaveFields, "VAL")
+}
+
+record(bi,      "$(P):$(FAULT)_NO_BEAM_H_EN_RBV") {
+    field(DESC, "$(DESC)")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),$(BAY),0x01)$(APP)_THRMAXEN_$(FAULT_INDEX)10")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+}

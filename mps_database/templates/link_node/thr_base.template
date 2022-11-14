@@ -1,0 +1,154 @@
+#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):$(FAULT)_THR_CH") {
+    field(DESC, "Threshold channel")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRNUM_$(FAULT_INDEX)")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):$(FAULT)_THR_CNT") {
+    field(DESC, "Threshold count")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_THRCNT_$(FAULT_INDEX)")
+}#================================================================================#
+# LCLS-II MPS PV template for read-only registers                                #
+# Macro description:                                                             #
+#   - P     : Record name prefix                                                 #
+#   - R     : Record name                                                        #
+#   - DESC  : Description                                                        #
+#   - PORT  : Asyn port name                                                     #
+#   - ADDR  : Asyn parameter list number (0: AppBay0, 1: AppBay1, 2: MpsBase)    #
+#   - PARAM : Asyn parameter name                                                #
+#================================================================================#
+
+record(longin, "$(P):$(FAULT)_THR_BYTEMAP") {
+    field(DESC, "Threshold byte map")
+    field(SCAN, "I/O Intr")
+    field(PINI, "NO")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_BYTEMAP_$(FAULT_INDEX)")
+}
+#================================================================================#
+# LCLS-II MPS Threshold scale factor and offset PV template                      #
+# Macro description:                                                             #
+#   - P               : Record name prefix                                       #
+#   - R               : Channel name.                                            #
+#   - DESC            : Description                                              #
+#   - SCAN            : Scan period                                              #
+#   - SCALE_SLOPE_PV  : Name of the PV with the scale slope value                #
+#   - SCALE_OFFSET_PV : Name of the PV with the scale offset value               #
+#   - EGU             : Engineering units                                        #
+#   - PREC            : Precision                                                #
+#   - PORT            : Asyn port name                                           #
+#   - BAY             : Bay number (0 or 1)                                      #
+#   - APP             : Application name (BLM, BPM, BCM, BLEN)                   #
+#   - CH              : Threhold channel (application specific)                  #
+#     * BLM  => (X)(Y), X=input channel(0-2), Y=Integration channel (0-3)        #
+#     * BPM  => (X),    X=Channel (0:X, 1:Y, 2, TIMIT)                           #
+#     * BCM  => (X),    X=Channel (0:Charge, 1:Difference)                       #
+#     * BLEN => 0                                                                #
+#================================================================================#
+
+# Scale Factor PVs
+record(ao,      "$(P):$(FAULT)_SS") {
+    field(DESC, "Scale factor slope")
+    field(SCAN, "1 second")
+    field(PHAS, "1")
+    field(PINI, "YES")
+    field(EGU,  "$(EGU)/raw")
+    field(PREC, "4")
+    field(OMSL, "closed_loop")
+    field(OIF,  "Full")
+    field(DOL,  "$(P):$(FAULT)_FWSLO")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALESLOPE_$(FAULT_INDEX)")    
+}
+
+record(ai,      "$(P):$(FAULT)_SS_RBV") {
+    field(DESC, "Scale factor slope")
+    field(SCAN, "I/O Intr")
+    field(EGU,  "$(EGU)/raw")
+    field(PREC, "4")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALESLOPE_$(FAULT_INDEX)")
+}
+
+# Scale Offset PVs
+record(ao,      "$(P):$(FAULT)_SO") {
+    field(DESC, "Scale factor offset")
+    field(SCAN, "1 second")
+    field(PHAS, "1")
+    field(PINI, "YES")
+    field(EGU,  "raw")
+    field(PREC, "0")
+    field(OMSL, "closed_loop")
+    field(OIF,  "Full")
+    field(DOL,  "$(P):$(FAULT)_FWOFF")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT),$(BAY))$(APP)_SCALEOFFSET_$(FAULT_INDEX)")
+}
+
+record(ai,      "$(P):$(FAULT)_SO_RBV") {
+    field(DESC, "Scale factor")
+    field(SCAN, "I/O Intr")
+    field(EGU,  "raw")
+    field(PREC, "0")
+    field(DTYP, "asynFloat64")
+    field(INP,  "@asyn($(PORT),$(BAY))$(APP)_SCALEOFFSET_$(FAULT_INDEX)")
+}
+#===============================================#
+# LCLS-II MPS Scale factor and offset PVs.      #
+# Macro description:                            #
+#   - P        : Application's PV name prefix   #
+#   - PROPERTY : Property name                  #
+#   - EGU      : Property's Engineering units   #
+#   - PREC     : Precision                      #
+#   - SLOPE    : Scale factor value             #
+#   - OFFSET   : Scale offset value             #
+#===============================================#
+
+# Scale factor
+record(ao,      "$(P):$(FAULT)_FWSLO") {
+    field(DESC, "Scale factor")
+    field(EGU,  "$(EGU)/raw")
+    field(PREC, "5")
+    field(SCAN, "Passive")
+    field(PHAS, "0")
+    field(PINI, "YES")
+    field(VAL,  "$(SLOPE)")
+    info(autosaveFields, "VAL")
+}
+
+# Scale offset
+record(ao,      "$(P):$(FAULT)_FWOFF") {
+    field(DESC, "Scale factor")
+    field(EGU,  "raw")
+    field(PREC, "5")
+    field(SCAN, "Passive")
+    field(PHAS, "0")
+    field(PINI, "YES")
+    field(VAL,  "$(OFFSET)")
+    info(autosaveFields, "VAL")
+}

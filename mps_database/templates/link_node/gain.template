@@ -1,0 +1,2 @@
+epicsEnvSet("GC$(CH)", "$(P)")
+epicsEnvSet("GCA$(CH)","$(ATTR)")
