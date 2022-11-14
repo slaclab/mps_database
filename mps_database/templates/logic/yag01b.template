@@ -1,0 +1,23 @@
+        {
+            "description":"VVPG GUNB 941 Position",
+            "name":"POSITION",
+            "dtype":"VV02",
+            "inputs": [
+                "VVPG:GUNB:941:CLOSED",
+                "VVPG:GUNB:941:POSITION",
+                "VVPG:GUNB:941:LSS_OK"
+            ],
+            "ignore_when": [
+                "YAG01B_IGNORE"
+            ],
+            "states": [
+                [0, "Broken","Broken",null,0,0,0,0,0,null],
+                [1, "Closed","Closed",null,0,0,0,0,0,null],
+                [2, "Valve Open","Valve Open",null,13,13,13,13,13,13],
+                [3, "Broken","Broken",null,0,0,0,0,0,null],
+                [4, "Broken","Broken",null,0,0,0,0,0,null],
+                [5, "LSS Mode","LSS Mode",null,3,3,3,3,3,null],
+                [6, "Broken","Broken",null,0,0,0,0,0,null],
+                [7, "Broken","Broken",null,0,0,0,0,0,null]
+            ]
+        },

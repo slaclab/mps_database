@@ -1,0 +1,14 @@
+#Analog Processing Settings
+- mmio:
+  - AppTop:
+    - AppCore:
+      - MpsAnalogCore:
+        - MpsAnalogLcls1Reg:
+          - ProcessingSelect[$(CH)]: !<value> $(PROC)
+          - IntegrationCounts[$(INT0)]: !<value> $(NC0)
+          - IntegrationCounts[$(INT1)]: !<value> $(NC1)
+        - MpsAnalogLcls2Reg:
+          - ProcessingSelect[$(CH)]: !<value> $(PROC)
+          - IntegrationCounts[$(INT0)]: !<value> $(SC0)
+          - IntegrationCounts[$(INT1)]: !<value> $(SC1)
+

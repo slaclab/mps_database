@@ -1,0 +1,5 @@
+record(dfanout, "$(P)_SCBYPD_PROC") {
+  field(SCAN, "Passive")
+  field(DOL,  "$(P)_SCBYPD CPP")
+  field(OMSL, "closed_loop")
+  field(SELM, "All")

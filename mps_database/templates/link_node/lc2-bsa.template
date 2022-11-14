@@ -1,0 +1,3053 @@
+#
+#  BSA linear conversion relate database template
+#  macro: $(DEV), $(SECN): $(BSAKEY)
+#
+#  PV name                 asyn param name          field type    Description
+#  $(DEV):$(SECN)_SLOPE    $(BSAKEY)_slope    DOUBLE        linear conversion, slope
+#  $(DEV):$(SECN)_OFFSET   $(BSAKEY)_offset   DOUBLE        linear conversion, offset
+
+
+record(ao, "$(DEV):$(SECN)_SLOPE_BSA")
+{
+  field(DESC, "Slope for linear conv")
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(PORT),0) $(BSAKEY)_slope")
+  field(PINI, "YES")
+  field(VAL, "1.")
+  info(autosaveFields, "VAL")
+}
+
+record(ao, "$(DEV):$(SECN)_OFFSET_BSA")
+{
+  field(DESC, "Offset for linear conv")
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(PORT),0) $(BSAKEY)_offset")
+  field(PINI, "YES")
+  field(VAL, "0.")
+  info(autosaveFields, "VAL")
+}
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 21, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST21      $(BSAKEY)_BSAMEAN_21    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST21   $(BSAKEY)_BSANUM_21     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST21   $(BSAKEY)_BSARMS2_21    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST21   BSAPID_21               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST21")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_21")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST21")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_21")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST21")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_21")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST21")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_21")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 22, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST22      $(BSAKEY)_BSAMEAN_22    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST22   $(BSAKEY)_BSANUM_22     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST22   $(BSAKEY)_BSARMS2_22    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST22   BSAPID_22               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST22")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_22")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST22")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_22")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST22")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_22")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST22")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_22")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 23, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST23      $(BSAKEY)_BSAMEAN_23    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST23   $(BSAKEY)_BSANUM_23     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST23   $(BSAKEY)_BSARMS2_23    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST23   BSAPID_23               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST23")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_23")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST23")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_23")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST23")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_23")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST23")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_23")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 24, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST24      $(BSAKEY)_BSAMEAN_24    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST24   $(BSAKEY)_BSANUM_24     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST24   $(BSAKEY)_BSARMS2_24    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST24   BSAPID_24               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST24")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_24")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST24")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_24")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST24")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_24")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST24")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_24")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 25, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST25      $(BSAKEY)_BSAMEAN_25    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST25   $(BSAKEY)_BSANUM_25     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST25   $(BSAKEY)_BSARMS2_25    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST25   BSAPID_25               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST25")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_25")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST25")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_25")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST25")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_25")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST25")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_25")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 26, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST26      $(BSAKEY)_BSAMEAN_26    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST26   $(BSAKEY)_BSANUM_26     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST26   $(BSAKEY)_BSARMS2_26    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST26   BSAPID_26               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST26")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_26")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST26")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_26")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST26")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_26")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST26")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_26")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 27, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST27      $(BSAKEY)_BSAMEAN_27    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST27   $(BSAKEY)_BSANUM_27     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST27   $(BSAKEY)_BSARMS2_27    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST27   BSAPID_27               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST27")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_27")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST27")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_27")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST27")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_27")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST27")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_27")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 28, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST28      $(BSAKEY)_BSAMEAN_28    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST28   $(BSAKEY)_BSANUM_28     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST28   $(BSAKEY)_BSARMS2_28    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST28   BSAPID_28               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST28")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_28")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST28")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_28")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST28")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_28")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST28")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_28")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 29, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST29      $(BSAKEY)_BSAMEAN_29    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST29   $(BSAKEY)_BSANUM_29     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST29   $(BSAKEY)_BSARMS2_29    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST29   BSAPID_29               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST29")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_29")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST29")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_29")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST29")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_29")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST29")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_29")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 30, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST30      $(BSAKEY)_BSAMEAN_30    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST30   $(BSAKEY)_BSANUM_30     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST30   $(BSAKEY)_BSARMS2_30    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST30   BSAPID_30               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST30")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_30")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST30")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_30")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST30")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_30")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST30")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_30")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 31, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST31      $(BSAKEY)_BSAMEAN_31    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST31   $(BSAKEY)_BSANUM_31     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST31   $(BSAKEY)_BSARMS2_31    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST31   BSAPID_31               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST31")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_31")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST31")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_31")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST31")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_31")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST31")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_31")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 32, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST32      $(BSAKEY)_BSAMEAN_32    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST32   $(BSAKEY)_BSANUM_32     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST32   $(BSAKEY)_BSARMS2_32    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST32   BSAPID_32               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST32")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_32")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST32")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_32")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST32")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_32")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST32")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_32")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 33, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST33      $(BSAKEY)_BSAMEAN_33    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST33   $(BSAKEY)_BSANUM_33     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST33   $(BSAKEY)_BSARMS2_33    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST33   BSAPID_33               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST33")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_33")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST33")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_33")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST33")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_33")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST33")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_33")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 34, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST34      $(BSAKEY)_BSAMEAN_34    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST34   $(BSAKEY)_BSANUM_34     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST34   $(BSAKEY)_BSARMS2_34    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST34   BSAPID_34               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST34")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_34")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST34")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_34")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST34")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_34")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST34")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_34")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 35, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST35      $(BSAKEY)_BSAMEAN_35    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST35   $(BSAKEY)_BSANUM_35     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST35   $(BSAKEY)_BSARMS2_35    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST35   BSAPID_35               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST35")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_35")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST35")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_35")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST35")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_35")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST35")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_35")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 36, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST36      $(BSAKEY)_BSAMEAN_36    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST36   $(BSAKEY)_BSANUM_36     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST36   $(BSAKEY)_BSARMS2_36    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST36   BSAPID_36               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST36")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_36")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST36")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_36")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST36")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_36")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST36")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_36")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 37, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST37      $(BSAKEY)_BSAMEAN_37    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST37   $(BSAKEY)_BSANUM_37     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST37   $(BSAKEY)_BSARMS2_37    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST37   BSAPID_37               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST37")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_37")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST37")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_37")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST37")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_37")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST37")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_37")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 38, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST38      $(BSAKEY)_BSAMEAN_38    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST38   $(BSAKEY)_BSANUM_38     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST38   $(BSAKEY)_BSARMS2_38    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST38   BSAPID_38               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST38")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_38")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST38")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_38")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST38")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_38")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST38")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_38")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 39, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST39      $(BSAKEY)_BSAMEAN_39    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST39   $(BSAKEY)_BSANUM_39     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST39   $(BSAKEY)_BSARMS2_39    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST39   BSAPID_39               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST39")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_39")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST39")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_39")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST39")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_39")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST39")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_39")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 40, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST40      $(BSAKEY)_BSAMEAN_40    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST40   $(BSAKEY)_BSANUM_40     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST40   $(BSAKEY)_BSARMS2_40    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST40   BSAPID_40               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST40")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_40")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST40")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_40")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST40")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_40")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST40")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_40")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 41, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST41      $(BSAKEY)_BSAMEAN_41    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST41   $(BSAKEY)_BSANUM_41     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST41   $(BSAKEY)_BSARMS2_41    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST41   BSAPID_41               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST41")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_41")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST41")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_41")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST41")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_41")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST41")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_41")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 42, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST42      $(BSAKEY)_BSAMEAN_42    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST42   $(BSAKEY)_BSANUM_42     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST42   $(BSAKEY)_BSARMS2_42    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST42   BSAPID_42               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST42")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_42")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST42")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_42")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST42")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_42")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST42")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_42")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 43, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST43      $(BSAKEY)_BSAMEAN_43    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST43   $(BSAKEY)_BSANUM_43     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST43   $(BSAKEY)_BSARMS2_43    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST43   BSAPID_43               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST43")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_43")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST43")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_43")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST43")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_43")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST43")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_43")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 44, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST44      $(BSAKEY)_BSAMEAN_44    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST44   $(BSAKEY)_BSANUM_44     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST44   $(BSAKEY)_BSARMS2_44    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST44   BSAPID_44               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST44")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_44")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST44")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_44")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST44")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_44")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST44")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_44")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 45, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST45      $(BSAKEY)_BSAMEAN_45    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST45   $(BSAKEY)_BSANUM_45     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST45   $(BSAKEY)_BSARMS2_45    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST45   BSAPID_45               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST45")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_45")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST45")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_45")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST45")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_45")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST45")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_45")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 46, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST46      $(BSAKEY)_BSAMEAN_46    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST46   $(BSAKEY)_BSANUM_46     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST46   $(BSAKEY)_BSARMS2_46    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST46   BSAPID_46               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST46")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_46")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST46")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_46")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST46")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_46")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST46")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_46")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 47, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST47      $(BSAKEY)_BSAMEAN_47    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST47   $(BSAKEY)_BSANUM_47     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST47   $(BSAKEY)_BSARMS2_47    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST47   BSAPID_47               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST47")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_47")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST47")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_47")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST47")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_47")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST47")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_47")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 48, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST48      $(BSAKEY)_BSAMEAN_48    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST48   $(BSAKEY)_BSANUM_48     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST48   $(BSAKEY)_BSARMS2_48    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST48   BSAPID_48               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST48")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_48")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST48")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_48")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST48")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_48")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST48")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_48")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 49, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST49      $(BSAKEY)_BSAMEAN_49    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST49   $(BSAKEY)_BSANUM_49     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST49   $(BSAKEY)_BSARMS2_49    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST49   BSAPID_49               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST49")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_49")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST49")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_49")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST49")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_49")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST49")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_49")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 50, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST50      $(BSAKEY)_BSAMEAN_50    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST50   $(BSAKEY)_BSANUM_50     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST50   $(BSAKEY)_BSARMS2_50    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST50   BSAPID_50               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST50")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_50")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST50")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_50")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST50")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_50")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST50")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_50")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 51, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST51      $(BSAKEY)_BSAMEAN_51    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST51   $(BSAKEY)_BSANUM_51     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST51   $(BSAKEY)_BSARMS2_51    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST51   BSAPID_51               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST51")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_51")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST51")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_51")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST51")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_51")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST51")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_51")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 52, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST52      $(BSAKEY)_BSAMEAN_52    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST52   $(BSAKEY)_BSANUM_52     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST52   $(BSAKEY)_BSARMS2_52    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST52   BSAPID_52               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST52")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_52")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST52")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_52")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST52")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_52")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST52")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_52")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 53, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST53      $(BSAKEY)_BSAMEAN_53    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST53   $(BSAKEY)_BSANUM_53     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST53   $(BSAKEY)_BSARMS2_53    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST53   BSAPID_53               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST53")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_53")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST53")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_53")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST53")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_53")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST53")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_53")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 54, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST54      $(BSAKEY)_BSAMEAN_54    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST54   $(BSAKEY)_BSANUM_54     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST54   $(BSAKEY)_BSARMS2_54    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST54   BSAPID_54               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST54")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_54")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST54")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_54")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST54")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_54")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST54")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_54")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 55, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST55      $(BSAKEY)_BSAMEAN_55    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST55   $(BSAKEY)_BSANUM_55     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST55   $(BSAKEY)_BSARMS2_55    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST55   BSAPID_55               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST55")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_55")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST55")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_55")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST55")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_55")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST55")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_55")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 56, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST56      $(BSAKEY)_BSAMEAN_56    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST56   $(BSAKEY)_BSANUM_56     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST56   $(BSAKEY)_BSARMS2_56    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST56   BSAPID_56               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST56")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_56")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST56")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_56")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST56")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_56")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST56")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_56")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 57, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST57      $(BSAKEY)_BSAMEAN_57    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST57   $(BSAKEY)_BSANUM_57     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST57   $(BSAKEY)_BSARMS2_57    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST57   BSAPID_57               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST57")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_57")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST57")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_57")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST57")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_57")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST57")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_57")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 58, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST58      $(BSAKEY)_BSAMEAN_58    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST58   $(BSAKEY)_BSANUM_58     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST58   $(BSAKEY)_BSARMS2_58    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST58   BSAPID_58               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST58")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_58")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST58")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_58")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST58")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_58")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST58")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_58")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 59, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST59      $(BSAKEY)_BSAMEAN_59    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST59   $(BSAKEY)_BSANUM_59     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST59   $(BSAKEY)_BSARMS2_59    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST59   BSAPID_59               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST59")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_59")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST59")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_59")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST59")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_59")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST59")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_59")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 60, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST60      $(BSAKEY)_BSAMEAN_60    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST60   $(BSAKEY)_BSANUM_60     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST60   $(BSAKEY)_BSARMS2_60    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST60   BSAPID_60               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST60")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_60")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST60")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_60")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST60")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_60")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST60")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_60")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 61, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST61      $(BSAKEY)_BSAMEAN_61    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST61   $(BSAKEY)_BSANUM_61     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST61   $(BSAKEY)_BSARMS2_61    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST61   BSAPID_61               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST61")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_61")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST61")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_61")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST61")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_61")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST61")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_61")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 62, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST62      $(BSAKEY)_BSAMEAN_62    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST62   $(BSAKEY)_BSANUM_62     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST62   $(BSAKEY)_BSARMS2_62    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST62   BSAPID_62               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST62")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_62")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST62")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_62")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST62")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_62")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST62")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_62")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 63, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST63      $(BSAKEY)_BSAMEAN_63    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST63   $(BSAKEY)_BSANUM_63     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST63   $(BSAKEY)_BSARMS2_63    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST63   BSAPID_63               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST63")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_63")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST63")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_63")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST63")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_63")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST63")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_63")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), 64, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HST64      $(BSAKEY)_BSAMEAN_64    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHST64   $(BSAKEY)_BSANUM_64     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHST64   $(BSAKEY)_BSARMS2_64    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHST64   BSAPID_64               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HST64")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_64")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHST64")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_64")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHST64")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_64")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHST64")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_64")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), SCH1H, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTSCH1H      $(BSAKEY)_BSAMEAN_SCH1H    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCH1H   $(BSAKEY)_BSANUM_SCH1H     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCH1H   $(BSAKEY)_BSARMS2_SCH1H    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCH1H   BSAPID_SCH1H               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTSCH1H")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_65")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTSCH1H")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_65")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTSCH1H")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_65")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTSCH1H")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_65")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), SCHTH, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTSCHTH      $(BSAKEY)_BSAMEAN_SCHTH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCHTH   $(BSAKEY)_BSANUM_SCHTH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCHTH   $(BSAKEY)_BSARMS2_SCHTH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCHTH   BSAPID_SCHTH               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTSCHTH")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_66")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTSCHTH")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_66")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTSCHTH")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_66")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTSCHTH")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_66")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), SCHHH, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTSCHHH      $(BSAKEY)_BSAMEAN_SCHHH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCHHH   $(BSAKEY)_BSANUM_SCHHH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCHHH   $(BSAKEY)_BSARMS2_SCHHH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCHHH   BSAPID_SCHHH               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTSCHHH")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_67")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTSCHHH")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_67")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTSCHHH")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_67")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTSCHHH")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_67")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), SCS1H, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTSCS1H      $(BSAKEY)_BSAMEAN_SCS1H    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCS1H   $(BSAKEY)_BSANUM_SCS1H     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCS1H   $(BSAKEY)_BSARMS2_SCS1H    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCS1H   BSAPID_SCS1H               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTSCS1H")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_68")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTSCS1H")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_68")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTSCS1H")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_68")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTSCS1H")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_68")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), SCSTH, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTSCSTH      $(BSAKEY)_BSAMEAN_SCSTH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCSTH   $(BSAKEY)_BSANUM_SCSTH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCSTH   $(BSAKEY)_BSARMS2_SCSTH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCSTH   BSAPID_SCSTH               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTSCSTH")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_69")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTSCSTH")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_69")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTSCSTH")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_69")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTSCSTH")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_69")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), SCSHH, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTSCSHH      $(BSAKEY)_BSAMEAN_SCSHH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCSHH   $(BSAKEY)_BSANUM_SCSHH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCSHH   $(BSAKEY)_BSARMS2_SCSHH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCSHH   BSAPID_SCSHH               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTSCSHH")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_70")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTSCSHH")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_70")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTSCSHH")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_70")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTSCSHH")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_70")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(BSA_LENGTH=20000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), FLTB0, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTFLTB0      $(BSAKEY)_BSAMEAN_FLTB0    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTFLTB0   $(BSAKEY)_BSANUM_FLTB0     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTFLTB0   $(BSAKEY)_BSARMS2_FLTB0    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTFLTB0   BSAPID_FLTB0               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTFLTB0")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_81")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTFLTB0")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_81")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTFLTB0")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_81")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTFLTB0")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_81")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), FLTB1, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTFLTB1      $(BSAKEY)_BSAMEAN_FLTB1    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTFLTB1   $(BSAKEY)_BSANUM_FLTB1     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTFLTB1   $(BSAKEY)_BSARMS2_FLTB1    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTFLTB1   BSAPID_FLTB1               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTFLTB1")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_82")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTFLTB1")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_82")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTFLTB1")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_82")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTFLTB1")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_82")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), FLTB2, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTFLTB2      $(BSAKEY)_BSAMEAN_FLTB2    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTFLTB2   $(BSAKEY)_BSANUM_FLTB2     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTFLTB2   $(BSAKEY)_BSARMS2_FLTB2    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTFLTB2   BSAPID_FLTB2               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTFLTB2")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_83")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTFLTB2")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_83")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTFLTB2")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_83")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTFLTB2")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_83")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+
+#
+#    BSA History buffer database template
+#    macros: $(DEV), $(SECN), FLTB3, $(BSAKEY)
+#
+#    PV name                       asyn param                   field type  Description
+#    $(DEV):$(SECN)HSTFLTB3      $(BSAKEY)_BSAMEAN_FLTB3    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTFLTB3   $(BSAKEY)_BSANUM_FLTB3     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTFLTB3   $(BSAKEY)_BSARMS2_FLTB3    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTFLTB3   BSAPID_FLTB3               UINT64      PulseId 64bits word
+
+
+record(waveform, "$(DEV):$(SECN)HSTFLTB3")
+{
+    field(DESC, "Hostory buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_84")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)CNTHSTFLTB3")
+{
+    field(DESC, "Number of Sample for Average")
+    field(DTYP, "asynInt32ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_84")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "ULONG")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)RMSHSTFLTB3")
+{
+    field(DESC, "RMS History Buffer")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_84")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "DOUBLE")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+record(waveform, "$(DEV):$(SECN)PIDHSTFLTB3")
+{
+    field(DESC, "64bits PulseId")
+    field(DTYP, "asynInt64ArrayIn")
+    field(INP,  "@asyn($(PORT),0) BSAPID_84")
+    field(SCAN, "I/O Intr")
+    field(FTVL, "UINT64")
+    field(NELM, "$(FLTB_LENGTH=1000000)")
+    field(TSE,  "-2")
+}
+
+

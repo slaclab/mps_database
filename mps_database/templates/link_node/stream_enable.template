@@ -1,0 +1,23 @@
+#================================================================================#
+# LCLS-II MPS PV template for Stream Enable/Disable aliasing                     #
+# Macro description:                                                             #
+#   - P       : MPLN prefix                                                      #
+#   - CH      : ADC Channel Number (0-5)                                         #
+#   - CH_NAME : Device MAD Name                                                  #
+#   - CH_SPARE: Boolean to signify if channel is used or not                     #
+#   - TYPE    : Fault type name                                                  #
+#================================================================================#
+record(bo, "$(DEV):AutoRearm") {
+  field(DESC,  "Waveform Stream On/Off")
+  field(OUT,   "$(P):DM$(BAY)_HW_ARM")
+  field(FLNK,  "$(P):DM$(BAY)_HW_ARM")
+  field(ZNAM,  "Disabled")
+  field(ONAM,  "Enabled")
+}
+record(bi, "$(DEV):AutoRearm_RBV") {
+  field(DESC,  "Waveform Stream On/Off")
+  field(INP,   "$(P):DM$(BAY)_HW_ARM_RBV")
+  field(ZNAM,  "Disabled")
+  field(ONAM,  "Enabled")
+  field(SCAN,  "1 second")
+}

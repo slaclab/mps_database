@@ -1,0 +1,27 @@
+#================================================================================#
+# LCLS-II MPS PV template for LCLS-I operator displays                           #
+# Macro description:                                                             #
+#   - P_DEV       : Record name prefix i.e. CBLM:UNDH:1375                       #
+#   - FAULT       : Fault name from database (I0)                                #
+#   - R_DEV       : fault descriptor name (LOSS or CURRENT, etc.                 #
+#   - EGU         : Engineering units                                            #
+#================================================================================#
+
+record(ai, "$(P_DEV):$(R_DEV)") {
+    field(DESC, "Analog input value")
+    field(DTYP, "Raw Soft Channel")
+    field(EGU,  "$(EGU)")
+    field(ASLO, "$(SLOPE)")
+    field(AOFF, "$(OFFSET)")
+    field(SCAN, ".1 second")
+    field(INP, "$(INPV) NPP NMS")
+    info(autosaveFields, "AOFF ASLO EGU")
+}
+record(ai, "$(P_DEV):$(R_DEV)_RAW") {
+    field(DESC, "Analog input value")
+    field(DTYP, "Raw Soft Channel")
+    field(EGU,  "raw")
+    field(SCAN, ".1 second")
+    field(INP, "$(INPV) NPP NMS")
+}
+

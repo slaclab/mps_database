@@ -1,0 +1,6 @@
+#
+# Link Node $(LOC) Slot $(SLOT)
+# File generated automatically on $(DATE) from
+# MPS Database version: $(VER)
+#
+epicsEnvSet("L2MPS_PREFIX", "$(P)")
