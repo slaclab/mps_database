@@ -68,7 +68,7 @@ class DigitalChannel(Base):
   device_input = relationship("DeviceInput", backref="channel")
 
   def is_virtual(self):
-    if (self.number >= 32):
+    if (self.number >= 32) and self.card.crate.location not in ['B940-009-R2','B940-009-R7']:
       return True
     else:
       return False

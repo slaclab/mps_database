@@ -77,13 +77,10 @@ class ExportDevice(MpsReader):
     return macros 
 
   def export_virtual(self,channel,card,path):
-    n = channel.monitored_pvs
+    n = channel.name
     mon_pv = channel.monitored_pvs
     if n.find('WIGG') > -1:
-      t = n.split(':')
-      del t[3:5]
-      t.append(channel.name)
-      n = ':'.join(t)
+      n = channel.name
     states = self.get_alarm_state(channel.alarm_state)
     vmacros = {  "P":mon_pv+'_THR',
                  "R":channel.name,
@@ -474,6 +471,7 @@ class ExportDevice(MpsReader):
                 "SLOPE":'{0}'.format(channel.analog_device.slope),
                 "OFFSET":'{0}'.format(channel.analog_device.offset)}
     self.write_template(path,filename='mps.db',template='lc1_thr.template',macros=macros,type='link_node')
+    self.write_template(path,filename='mps.db',template='thr_base.template',macros=macros,type='link_node')
 
   def get_bay(self,card,channel):
     if card.type.name == "MPS Analog":

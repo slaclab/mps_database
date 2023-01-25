@@ -30,7 +30,6 @@ class ExportLinkNode(MpsReader):
     prefix = ln.get_app_prefix()
     # Write generic PVs for what is installed where
     macros = {"P":prefix,
-              "MPS_CONFIG_VERSION":self.config_version,
               "MPS_LINK_NODE_TYPE":'{0}'.format(self.link_node_type_to_number(ln.get_type())),
               "MPS_LINK_NODE_ID":'{0}'.format(ln.lcls1_id),
               "MPS_LINK_NODE_SIOC":'{0}'.format(ln.get_name()),
@@ -40,6 +39,9 @@ class ExportLinkNode(MpsReader):
               "GROUP":'{0}'.format(ln.group),
               "IS_LN":'{0}'.format(1)}
     self.write_template(path=self.manager_path,filename='link_nodes.db',template="link_node_info.template", macros=macros,type='link_node')
+    macros = {"P":prefix,
+              "MPS_CONFIG_VERSION":self.config_version}
+    self.write_template(path=app_path,filename='mps.db',template="config_version.template", macros=macros,type='link_node')
     self.__write_lc1_info_config(app_path,ln)
     #If no alalog cards in slot 2, write all channels are not available
     if ln.get_type() == 'Digital':

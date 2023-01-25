@@ -117,7 +117,7 @@ class ExportCnExtras(MpsReader):
     self.initialize_mps_names(self.session)
     if self.verbose:
       print("INFO: Generating area displays")
-    areas = ['GUNB','L3B','DOG','LTUH','LTUS','UNDH','UNDS','DMPH','DMPS','FEEH','FEES','SPS','SPH']
+    areas = ['GUNB','L3B','DOG','LTUH','LTUS','UNDH','UNDS','DMPH','DMPS','FEEH','FEES','SPS','SPH','BSY0','LTU0','UND0','DPM0']
     for area in areas:
       areas = []
       areas.append(area)

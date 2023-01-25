@@ -65,7 +65,7 @@ class AddDigitalDevice:
     alarm_state = 0
     if int(device_info['evaluation']) > 0:
       alarm_state = 1
-    if int(device_info['channel']) > 31:
+    if int(device_info['channel']) > 31 and device_info['crate'] not in ['B940-009-R2','B940-009-R7']:
       digital_channel = models.DigitalChannel(number=int(device_info['channel']),
                                               name=device_info['device'],
                                               z_name=device_info['z_name'],

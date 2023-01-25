@@ -217,25 +217,25 @@ record(ai,      "$(DEV):SC_ANA_PD_WDT_TRG_RBV") {
     field(PREC, "3")
     field(INP,  "$(P):LC2_ANA_PD_WDT_TRG_$(CH)_RBV CA")
 }
-record(ao       "$(DEV):NC_COARSE_DEL")
+record(ao,      "$(DEV):NC_COARSE_DEL") {
     field(DTYP, "Soft Channel")
     field(DESC, "NC Coarse Start Time")
     field(EGU,  "ns")
     field(OUT,  "$(TPR):TRG$(TRG)_SYS0_TDES CA")
-    field(FLNK  "$(TPR):TRG$(TRG)_SYS0_TDES.PROC")
+    field(FLNK, "$(TPR):TRG$(TRG)_SYS0_TDES.PROC")
     field(PREC, "2")
     info(autosaveFields, "VAL")
 }
-record(ao       "$(DEV):SC_COARSE_DEL")
+record(ao,      "$(DEV):SC_COARSE_DEL") {
     field(DTYP, "Soft Channel")
     field(DESC, "SC Coarse Start Time")
     field(EGU,  "ns")
     field(OUT,  "$(TPR):TRG$(TRG)_SYS2_TDES CA")
-    field(FLNK  "$(TPR):TRG$(TRG)_SYS2_TDES.PROC")
+    field(FLNK, "$(TPR):TRG$(TRG)_SYS2_TDES.PROC")
     field(PREC, "2")
     info(autosaveFields, "VAL")
 }
-record(ai       "$(DEV):SC_COARSE_DEL_RBV")
+record(ai,      "$(DEV):SC_COARSE_DEL_RBV") {
     field(DTYP, "Soft Channel")
     field(DESC, "SC Coarse Start Time")
     field(EGU,  "ns")
@@ -243,7 +243,7 @@ record(ai       "$(DEV):SC_COARSE_DEL_RBV")
     field(PREC, "2")
     field(SCAN, "1 second")
 }
-record(ai       "$(DEV):NC_COARSE_DEL_RBV")
+record(ai,      "$(DEV):NC_COARSE_DEL_RBV") {
     field(DTYP, "Soft Channel")
     field(DESC, "SC Coarse Start Time")
     field(EGU,  "ns")

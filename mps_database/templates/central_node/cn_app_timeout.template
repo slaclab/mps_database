@@ -17,52 +17,6 @@ record(bi, "$(BASE):APP$(APP_ID)_STATUS") {
   field(OSV, "NO_ALARM")
   field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_APP_STATUS")
 }
-record(mbbi, "$(BASE):APP$(APP_ID)_MODE") {
-  field(DESC, "$(TYPE) Mode [$(LOCA) S$(SLOT) ID$(APP_ID)]")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(FLNK, "$(BASE):APP$(APP_ID)_PROC")
-  field(ZRVL, "0")
-  field(ZRST, "Timeout Off; Logic Off")
-  field(ZRSV, "NO_ALARM")
-  field(ONVL, "1")
-  field(ONST, "Timeout On; Logic Off")
-  field(ONSV, "MINOR")
-  field(TWST, "Timeout Off; Logic On")
-  field(TWSV, "MAJOR")
-  field(TWVL, "2")
-  field(THST, "Normal Operation")
-  field(THSV, "NO_ALARM")
-  field(THVL, "3")
-  field(VAL,  "3")
-  field(PINI, "YES")
-  field(ASG,  "$(ASG1)")
-}
-record(fanout, "$(BASE):APP$(APP_ID)_PROC") {
-  field(DESC, "Fanout to process calc records")
-  field(LNK1, "$(BASE):APP$(APP_ID)_ENABLE_PROC")
-  field(LNK2, "$(BASE):APP$(APP_ID)_IGNORE_PROC")
-}
-record(calcout, "$(BASE):APP$(APP_ID)_ENABLE_PROC") {
-  field(DESC, "Enable Proc [$(LOCA) S$(SLOT) ID$(APP_ID)]")
-  field(DTYP, "Soft Channel")
-  field(INPA, "$(BASE):APP$(APP_ID)_MODE")
-  field(CALC, "A&1")
-  field(OUT,  "$(BASE):APP$(APP_ID)_ENABLE")
-  field(FLNK, "$(BASE):APP$(APP_ID)_ENABLE")
-  field(OOPT, "On Change")
-  field(ASG,  "Internal")
-}
-record(calcout, "$(BASE):APP$(APP_ID)_IGNORE_PROC") {
-  field(DESC, "Logic Proc [$(LOCA) S$(SLOT) ID$(APP_ID)]")
-  field(DTYP, "Soft Channel")
-  field(INPA, "$(BASE):APP$(APP_ID)_MODE")
-  field(CALC, "(A>>1)&1")
-  field(OUT,  "$(BASE):APP$(APP_ID)_LOGIC")
-  field(FLNK, "$(BASE):APP$(APP_ID)_LOGIC")
-  field(OOPT, "On Change")
-  field(ASG,  "Internal")
-}
 record(bo, "$(BASE):APP$(APP_ID)_ENABLE") {
   field(DESC, "Timeout enable bit for app $(APP_ID)")
   field(DTYP, "asynUInt32Digital")
@@ -81,23 +35,4 @@ record(bi, "$(BASE):APP$(APP_ID)_ENABLE_RBV") {
   field(ZSV, "MINOR")
   field(OSV, "NO_ALARM")
   field(INP, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
-}
-record(bo, "$(BASE):APP$(APP_ID)_LOGIC") {
-  field(DESC, "Timeout enable bit for app $(APP_ID)")
-  field(DTYP, "asynUInt32Digital")
-  field(SCAN, "Passive")
-  field(ZNAM, "Disable")
-  field(ONAM, "Enabled")
-  field(OUT, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_LOGIC_ENABLE")
-  field(ASG,  "Internal")
-}
-record(bi, "$(BASE):APP$(APP_ID)_LOGIC_RBV") {
-  field(DESC, "Timeout enable bit for app $(APP_ID)")
-  field(DTYP, "asynUInt32Digital")
-  field(SCAN, "1 second")
-  field(ZNAM, "Disabled")
-  field(ONAM, "Enabled")
-  field(ZSV, "MINOR")
-  field(OSV, "NO_ALARM")
-  field(INP, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_LOGIC_ENABLE")
 }
