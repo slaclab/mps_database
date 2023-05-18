@@ -56,8 +56,8 @@ class ExportFaults(MpsReader):
     ignore_group = []
     if len(device.ignore_conditions) > 0:
       for ic in device.ignore_conditions:
-        ignore_group.append(ic.condition.id)
-        flt_data['ignore_condition'].append(ic.condition.id)
+        ignore_group.append(ic.condition.description)
+        flt_data['ignore_condition'].append(ic.condition.description)
       ignore_group.sort()
       if ignore_group not in ignore_groups:
         ignore_groups.append(ignore_group)
@@ -71,7 +71,8 @@ class ExportFaults(MpsReader):
     for g in ignore_groups:
       title = 'Ignored when '
       for element in g:
-        title += self.mps_names.getConditionNameFromID(element)
+        #title += self.mps_names.getConditionNameFromID(element)
+        title += element
         if element != g[-1]:
           title += ', '
       report.startIgnoreGroup(title)
@@ -140,7 +141,7 @@ class ExportFaults(MpsReader):
     self.write_template(path=path,filename='fault_bypass.db',template="cn_mbbi_entry.template", macros=macros,type='central_node')
     
   def __build_fault_table(self, fault):
-    number_of_columns = 8 + len(fault['inputs'])
+    number_of_columns = 9 + len(fault['inputs'])
     format = '\\begin{tabular}{@{}l'
     for i in range(1,number_of_columns):
       format += 'c'
@@ -152,7 +153,7 @@ class ExportFaults(MpsReader):
       header += ' & '
       in_str = '${0} = {1}{2}{3}'.format(self.letters[inp],'\\texttt{',fault['inputs'][inp].replace('_','\_').replace('&','\&'),'}$\\newline\n')
       inputs.append(in_str)
-    header += 'LASER & SC\_DIAG0 & SC\_BSYD & SC\_HXR & SC\_SXR & SC\_LESA & LASER\_HTR \\\\\n'
+    header += 'Laser & MS & AOM & SC\_DIAG0 & SC\_HXR & SC\_SXR & SC\_LESA & LH Shut \\\\\n'
     rows = []
     for state in fault['fault'].states:
       row = '{0} & '.format(state.device_state.description.replace('_','\_').replace('&','\&'))
@@ -167,8 +168,9 @@ class ExportFaults(MpsReader):
       else:
         row += 'T & '
       row += state.get_allowed_class_string_by_dest_name('LASER').replace('%','\%') + ' & '
-      row += state.get_allowed_class_string_by_dest_name('SC_DIAG0').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('MECH_SHUTTER').replace('%','\%') + ' & '
       row += state.get_allowed_class_string_by_dest_name('SC_BSYD').replace('%','\%') + ' & '
+      row += state.get_allowed_class_string_by_dest_name('SC_DIAG0').replace('%','\%') + ' & '
       row += state.get_allowed_class_string_by_dest_name('SC_HXR').replace('%','\%') + ' & '
       row += state.get_allowed_class_string_by_dest_name('SC_SXR').replace('%','\%') + ' & '
       row += state.get_allowed_class_string_by_dest_name('SC_LESA').replace('%','\%') + ' &'

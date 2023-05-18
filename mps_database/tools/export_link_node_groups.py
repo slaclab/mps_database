@@ -42,7 +42,21 @@ class ExportLinkNodeGroups(MpsReader):
     return report
 
   def endReport(self,report):
-    report.endDocument(self.report_path)  
+    report.endDocument(self.report_path)
+
+  def generate_group_displays(self,group,link_nodes):
+    last_ln = [ln for ln in link_nodes if ln.group_link == 0]
+    if len(last_ln) > 1:
+      for ln in last_ln:
+        print(ln.get_name())
+      print("ERROR: Too many last link nodes in group {0}".format(group))
+      return
+    if len(last_ln) < 1:
+      print("ERROR: Not enough last link nodes in group {0}".format(group))
+      return
+    last_ln = last_ln[0]
+    next_to_last_ln = [ln for ln in link_nodes if ln.group_link == last_ln.crate.id]
+     
 
   def generate_group_display(self,group,link_nodes):
     header_height = 50
@@ -156,3 +170,12 @@ class ExportLinkNodeGroups(MpsReader):
 
   def __write_group_end(self, path, macros):
       self.write_ui_file(path=path, template_name="ln_group_end.tmpl",macros=macros)
+
+  def get_dest_path(self):
+      return self.dest_path
+
+  def get_template_path(self):
+      return self.template_path
+
+  def write_file(self,file,template,macros):
+    self.write_file_from_template(file=file, template=template, macros=macros)

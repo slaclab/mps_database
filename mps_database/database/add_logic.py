@@ -11,7 +11,7 @@ import json
 
 class AddLogic:
 
-  def __init__(self, file_name, verbose, clear_all=False):
+  def __init__(self, file_name, verbose,cheat, clear_all=False):
     self.database_file_name = file_name
     self.conf = MPSConfig(file_name)
     if (clear_all):
@@ -21,7 +21,8 @@ class AddLogic:
 #    self.session.autoflush=True
     self.verbose = verbose
     self.mps_names = MpsName(self.session)
-    self.destination_order = ['LASER','SC_DIAG0','SC_BSYD','SC_HXR','SC_SXR','SC_LESA','LASER_HTR']
+    self.cheat = cheat
+    self.destination_order = ['LASER','MECH_SHUTTER','SC_DIAG0','SC_BSYD','SC_HXR','SC_SXR','SC_LESA','LASER_HTR']
 
   def __del__(self):
     self.session.commit()
@@ -58,12 +59,30 @@ class AddLogic:
           fault_state = models.FaultState(device_state=device_state,fault=fault)
           self.session.add(fault_state)
           self.add_allowed_classes(state_info,fault_state)
+        yag1 = False
+        yag2 = False
         for ic in logic['ignore_when']:
+          if 'IGNORE1' in ic:
+            yag1 = True
+          if 'IGNORE2' in ic:
+            yag2 = True
           condition = self.find_condition(ic)
           if condition:
             already_ics = self.session.query(models.IgnoreCondition).filter(models.IgnoreCondition.device == device).all()
             if len(already_ics) < 1:
               ignore_condition = models.IgnoreCondition(condition=condition,device=device)
+        if self.cheat:
+          if fault.description != 'Mechanical Shutter Position':
+            extra = 'TEST_MODE'
+            if yag1:
+              extra = 'TEST_MODE1'
+            if yag2:
+              extra = 'TEST_MODE2'
+            condition = self.find_condition(extra)
+            if condition:
+              already_ics = self.session.query(models.IgnoreCondition).filter(models.IgnoreCondition.device == device).all()
+              if len(already_ics) < 1:
+                ignore_condition = models.IgnoreCondition(condition=condition,device=device)
       self.session.commit()
 
   def add_fault(self,logic):
@@ -119,15 +138,20 @@ class AddLogic:
   def add_allowed_classes(self,state_info,fault_state):
     index = 3 #beam classes start as third element of state_info list
     for dest in self.destination_order:
-      if state_info[index] is not None:
-        beam_class = self.session.query(models.BeamClass).filter(models.BeamClass.number == state_info[index]).one()
+      state_index = index
+      if self.cheat:
+        if dest == 'MECH_SHUTTER':
+          state_index = 5
+          index = 3
+      if state_info[state_index] is not None:
+        beam_class = self.session.query(models.BeamClass).filter(models.BeamClass.number == state_info[state_index]).one()
         beam_dest = self.session.query(models.BeamDestination).filter(models.BeamDestination.name==dest).one()
         fault_state.add_allowed_class(beam_class=beam_class,beam_destination=beam_dest)
       index = index + 1
-    
 
 parser = argparse.ArgumentParser(description='Create MPS database')
 parser.add_argument('-v',action='store_true',default=False,dest='verbose',help='Verbose output')
+parser.add_argument('-c',action='store_true',default=False,dest='cheat',help='Add MS by hand')
 parser.add_argument('--db',metavar='database',required=True,help='MPS sqlite database file')
 parser.add_argument('--file',metavar='jsonFile',required=True,help='relative path to json file of new logic')
 args = parser.parse_args()
@@ -136,9 +160,13 @@ verbose=False
 if args.verbose:
   verbose=True
 
+cheat = False
+if args.cheat:
+  cheat=True
+
 db_file=args.db
 
 json_file = args.file
 
-add_logic = AddLogic(db_file,verbose,False)
+add_logic = AddLogic(db_file,verbose,cheat,False)
 add_logic.add_logic(json_file)

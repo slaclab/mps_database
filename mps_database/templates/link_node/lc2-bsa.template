@@ -28,6 +28,50 @@ record(ao, "$(DEV):$(SECN)_OFFSET_BSA")
 }
 
 #
+#   epics 7 will be merge duplicated PVs in a single instance
+#
+
+record(bo, "$(TPR):SC_BSA_ENABLE")
+{
+    field(DESC, "Bsa Enable")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),0) bsa_enable")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(OMSL, "supervisory")
+    field(VAL,  "1")
+}
+
+#
+#   epics 7 will merge these duplicatd PVs are in one instance
+#
+
+
+record(bi, "$(TPR):SC_BSA_STATUS")
+{
+    field(DESC, "BSA Status")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT), 0) status")
+    field(SCAN, "I/O Intr")
+    field(ZNAM, "NORMAL")
+    field(ONAM, "FAULT")
+    field(ZSV,  "NO_ALARM")
+    field(OSV,  "MAJOR")
+    field(PINI, "YES")
+}
+
+
+
+record(longin, "$(TPR):SC_BSA_FLTCNT")
+{
+    field(DESC, "BSA Fault Count")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT), 0) fault_cnt")
+    field(SCAN, "I/O Intr")
+    field(PINI, "YES")
+}
+
+#
 #    BSA History buffer database template
 #    macros: $(DEV), $(SECN), 21, $(BSAKEY)
 #
@@ -41,8 +85,8 @@ record(ao, "$(DEV):$(SECN)_OFFSET_BSA")
 record(waveform, "$(DEV):$(SECN)HST21")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_21")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 21")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -52,8 +96,8 @@ record(waveform, "$(DEV):$(SECN)HST21")
 record(waveform, "$(DEV):$(SECN)CNTHST21")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_21")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 21")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -63,25 +107,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST21")
 record(waveform, "$(DEV):$(SECN)RMSHST21")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_21")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 21")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST21")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST21")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_21")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 21")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST21", "$(DEV):$(SECN)PIDHST21")
 
 #
 #    BSA History buffer database template
@@ -97,8 +149,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST21")
 record(waveform, "$(DEV):$(SECN)HST22")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_22")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 22")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -108,8 +160,8 @@ record(waveform, "$(DEV):$(SECN)HST22")
 record(waveform, "$(DEV):$(SECN)CNTHST22")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_22")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 22")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -119,25 +171,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST22")
 record(waveform, "$(DEV):$(SECN)RMSHST22")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_22")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 22")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST22")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST22")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_22")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 22")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST22", "$(DEV):$(SECN)PIDHST22")
 
 #
 #    BSA History buffer database template
@@ -153,8 +213,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST22")
 record(waveform, "$(DEV):$(SECN)HST23")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_23")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 23")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -164,8 +224,8 @@ record(waveform, "$(DEV):$(SECN)HST23")
 record(waveform, "$(DEV):$(SECN)CNTHST23")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_23")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 23")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -175,25 +235,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST23")
 record(waveform, "$(DEV):$(SECN)RMSHST23")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_23")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 23")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST23")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST23")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_23")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 23")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST23", "$(DEV):$(SECN)PIDHST23")
 
 #
 #    BSA History buffer database template
@@ -209,8 +277,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST23")
 record(waveform, "$(DEV):$(SECN)HST24")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_24")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 24")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -220,8 +288,8 @@ record(waveform, "$(DEV):$(SECN)HST24")
 record(waveform, "$(DEV):$(SECN)CNTHST24")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_24")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 24")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -231,25 +299,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST24")
 record(waveform, "$(DEV):$(SECN)RMSHST24")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_24")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 24")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST24")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST24")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_24")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 24")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST24", "$(DEV):$(SECN)PIDHST24")
 
 #
 #    BSA History buffer database template
@@ -265,8 +341,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST24")
 record(waveform, "$(DEV):$(SECN)HST25")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_25")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 25")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -276,8 +352,8 @@ record(waveform, "$(DEV):$(SECN)HST25")
 record(waveform, "$(DEV):$(SECN)CNTHST25")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_25")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 25")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -287,25 +363,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST25")
 record(waveform, "$(DEV):$(SECN)RMSHST25")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_25")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 25")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST25")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST25")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_25")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 25")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST25", "$(DEV):$(SECN)PIDHST25")
 
 #
 #    BSA History buffer database template
@@ -321,8 +405,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST25")
 record(waveform, "$(DEV):$(SECN)HST26")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_26")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 26")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -332,8 +416,8 @@ record(waveform, "$(DEV):$(SECN)HST26")
 record(waveform, "$(DEV):$(SECN)CNTHST26")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_26")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 26")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -343,25 +427,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST26")
 record(waveform, "$(DEV):$(SECN)RMSHST26")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_26")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 26")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST26")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST26")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_26")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 26")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST26", "$(DEV):$(SECN)PIDHST26")
 
 #
 #    BSA History buffer database template
@@ -377,8 +469,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST26")
 record(waveform, "$(DEV):$(SECN)HST27")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_27")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 27")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -388,8 +480,8 @@ record(waveform, "$(DEV):$(SECN)HST27")
 record(waveform, "$(DEV):$(SECN)CNTHST27")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_27")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 27")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -399,25 +491,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST27")
 record(waveform, "$(DEV):$(SECN)RMSHST27")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_27")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 27")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST27")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST27")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_27")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 27")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST27", "$(DEV):$(SECN)PIDHST27")
 
 #
 #    BSA History buffer database template
@@ -433,8 +533,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST27")
 record(waveform, "$(DEV):$(SECN)HST28")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_28")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 28")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -444,8 +544,8 @@ record(waveform, "$(DEV):$(SECN)HST28")
 record(waveform, "$(DEV):$(SECN)CNTHST28")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_28")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 28")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -455,25 +555,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST28")
 record(waveform, "$(DEV):$(SECN)RMSHST28")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_28")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 28")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST28")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST28")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_28")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 28")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST28", "$(DEV):$(SECN)PIDHST28")
 
 #
 #    BSA History buffer database template
@@ -489,8 +597,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST28")
 record(waveform, "$(DEV):$(SECN)HST29")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_29")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 29")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -500,8 +608,8 @@ record(waveform, "$(DEV):$(SECN)HST29")
 record(waveform, "$(DEV):$(SECN)CNTHST29")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_29")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 29")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -511,25 +619,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST29")
 record(waveform, "$(DEV):$(SECN)RMSHST29")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_29")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 29")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST29")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST29")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_29")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 29")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST29", "$(DEV):$(SECN)PIDHST29")
 
 #
 #    BSA History buffer database template
@@ -545,8 +661,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST29")
 record(waveform, "$(DEV):$(SECN)HST30")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_30")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 30")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -556,8 +672,8 @@ record(waveform, "$(DEV):$(SECN)HST30")
 record(waveform, "$(DEV):$(SECN)CNTHST30")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_30")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 30")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -567,25 +683,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST30")
 record(waveform, "$(DEV):$(SECN)RMSHST30")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_30")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 30")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST30")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST30")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_30")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 30")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST30", "$(DEV):$(SECN)PIDHST30")
 
 #
 #    BSA History buffer database template
@@ -601,8 +725,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST30")
 record(waveform, "$(DEV):$(SECN)HST31")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_31")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 31")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -612,8 +736,8 @@ record(waveform, "$(DEV):$(SECN)HST31")
 record(waveform, "$(DEV):$(SECN)CNTHST31")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_31")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 31")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -623,25 +747,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST31")
 record(waveform, "$(DEV):$(SECN)RMSHST31")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_31")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 31")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST31")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST31")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_31")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 31")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST31", "$(DEV):$(SECN)PIDHST31")
 
 #
 #    BSA History buffer database template
@@ -657,8 +789,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST31")
 record(waveform, "$(DEV):$(SECN)HST32")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_32")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 32")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -668,8 +800,8 @@ record(waveform, "$(DEV):$(SECN)HST32")
 record(waveform, "$(DEV):$(SECN)CNTHST32")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_32")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 32")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -679,25 +811,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST32")
 record(waveform, "$(DEV):$(SECN)RMSHST32")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_32")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 32")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST32")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST32")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_32")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 32")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST32", "$(DEV):$(SECN)PIDHST32")
 
 #
 #    BSA History buffer database template
@@ -713,8 +853,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST32")
 record(waveform, "$(DEV):$(SECN)HST33")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_33")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 33")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -724,8 +864,8 @@ record(waveform, "$(DEV):$(SECN)HST33")
 record(waveform, "$(DEV):$(SECN)CNTHST33")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_33")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 33")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -735,25 +875,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST33")
 record(waveform, "$(DEV):$(SECN)RMSHST33")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_33")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 33")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST33")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST33")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_33")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 33")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST33", "$(DEV):$(SECN)PIDHST33")
 
 #
 #    BSA History buffer database template
@@ -769,8 +917,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST33")
 record(waveform, "$(DEV):$(SECN)HST34")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_34")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 34")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -780,8 +928,8 @@ record(waveform, "$(DEV):$(SECN)HST34")
 record(waveform, "$(DEV):$(SECN)CNTHST34")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_34")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 34")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -791,25 +939,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST34")
 record(waveform, "$(DEV):$(SECN)RMSHST34")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_34")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 34")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST34")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST34")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_34")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 34")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST34", "$(DEV):$(SECN)PIDHST34")
 
 #
 #    BSA History buffer database template
@@ -825,8 +981,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST34")
 record(waveform, "$(DEV):$(SECN)HST35")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_35")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 35")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -836,8 +992,8 @@ record(waveform, "$(DEV):$(SECN)HST35")
 record(waveform, "$(DEV):$(SECN)CNTHST35")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_35")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 35")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -847,25 +1003,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST35")
 record(waveform, "$(DEV):$(SECN)RMSHST35")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_35")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 35")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST35")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST35")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_35")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 35")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST35", "$(DEV):$(SECN)PIDHST35")
 
 #
 #    BSA History buffer database template
@@ -881,8 +1045,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST35")
 record(waveform, "$(DEV):$(SECN)HST36")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_36")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 36")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -892,8 +1056,8 @@ record(waveform, "$(DEV):$(SECN)HST36")
 record(waveform, "$(DEV):$(SECN)CNTHST36")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_36")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 36")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -903,25 +1067,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST36")
 record(waveform, "$(DEV):$(SECN)RMSHST36")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_36")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 36")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST36")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST36")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_36")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 36")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST36", "$(DEV):$(SECN)PIDHST36")
 
 #
 #    BSA History buffer database template
@@ -937,8 +1109,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST36")
 record(waveform, "$(DEV):$(SECN)HST37")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_37")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 37")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -948,8 +1120,8 @@ record(waveform, "$(DEV):$(SECN)HST37")
 record(waveform, "$(DEV):$(SECN)CNTHST37")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_37")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 37")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -959,25 +1131,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST37")
 record(waveform, "$(DEV):$(SECN)RMSHST37")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_37")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 37")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST37")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST37")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_37")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 37")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST37", "$(DEV):$(SECN)PIDHST37")
 
 #
 #    BSA History buffer database template
@@ -993,8 +1173,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST37")
 record(waveform, "$(DEV):$(SECN)HST38")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_38")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 38")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1004,8 +1184,8 @@ record(waveform, "$(DEV):$(SECN)HST38")
 record(waveform, "$(DEV):$(SECN)CNTHST38")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_38")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 38")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1015,25 +1195,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST38")
 record(waveform, "$(DEV):$(SECN)RMSHST38")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_38")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 38")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST38")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST38")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_38")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 38")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST38", "$(DEV):$(SECN)PIDHST38")
 
 #
 #    BSA History buffer database template
@@ -1049,8 +1237,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST38")
 record(waveform, "$(DEV):$(SECN)HST39")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_39")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 39")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1060,8 +1248,8 @@ record(waveform, "$(DEV):$(SECN)HST39")
 record(waveform, "$(DEV):$(SECN)CNTHST39")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_39")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 39")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1071,25 +1259,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST39")
 record(waveform, "$(DEV):$(SECN)RMSHST39")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_39")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 39")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST39")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST39")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_39")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 39")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST39", "$(DEV):$(SECN)PIDHST39")
 
 #
 #    BSA History buffer database template
@@ -1105,8 +1301,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST39")
 record(waveform, "$(DEV):$(SECN)HST40")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_40")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 40")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1116,8 +1312,8 @@ record(waveform, "$(DEV):$(SECN)HST40")
 record(waveform, "$(DEV):$(SECN)CNTHST40")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_40")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 40")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1127,25 +1323,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST40")
 record(waveform, "$(DEV):$(SECN)RMSHST40")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_40")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 40")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST40")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST40")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_40")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 40")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST40", "$(DEV):$(SECN)PIDHST40")
 
 #
 #    BSA History buffer database template
@@ -1161,8 +1365,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST40")
 record(waveform, "$(DEV):$(SECN)HST41")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_41")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 41")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1172,8 +1376,8 @@ record(waveform, "$(DEV):$(SECN)HST41")
 record(waveform, "$(DEV):$(SECN)CNTHST41")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_41")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 41")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1183,25 +1387,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST41")
 record(waveform, "$(DEV):$(SECN)RMSHST41")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_41")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 41")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST41")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST41")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_41")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 41")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST41", "$(DEV):$(SECN)PIDHST41")
 
 #
 #    BSA History buffer database template
@@ -1217,8 +1429,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST41")
 record(waveform, "$(DEV):$(SECN)HST42")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_42")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 42")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1228,8 +1440,8 @@ record(waveform, "$(DEV):$(SECN)HST42")
 record(waveform, "$(DEV):$(SECN)CNTHST42")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_42")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 42")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1239,25 +1451,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST42")
 record(waveform, "$(DEV):$(SECN)RMSHST42")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_42")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 42")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST42")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST42")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_42")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 42")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST42", "$(DEV):$(SECN)PIDHST42")
 
 #
 #    BSA History buffer database template
@@ -1273,8 +1493,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST42")
 record(waveform, "$(DEV):$(SECN)HST43")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_43")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 43")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1284,8 +1504,8 @@ record(waveform, "$(DEV):$(SECN)HST43")
 record(waveform, "$(DEV):$(SECN)CNTHST43")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_43")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 43")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1295,25 +1515,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST43")
 record(waveform, "$(DEV):$(SECN)RMSHST43")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_43")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 43")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST43")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST43")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_43")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 43")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST43", "$(DEV):$(SECN)PIDHST43")
 
 #
 #    BSA History buffer database template
@@ -1329,8 +1557,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST43")
 record(waveform, "$(DEV):$(SECN)HST44")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_44")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 44")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1340,8 +1568,8 @@ record(waveform, "$(DEV):$(SECN)HST44")
 record(waveform, "$(DEV):$(SECN)CNTHST44")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_44")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 44")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1351,25 +1579,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST44")
 record(waveform, "$(DEV):$(SECN)RMSHST44")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_44")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 44")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST44")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST44")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_44")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 44")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST44", "$(DEV):$(SECN)PIDHST44")
 
 #
 #    BSA History buffer database template
@@ -1385,8 +1621,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST44")
 record(waveform, "$(DEV):$(SECN)HST45")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_45")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 45")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1396,8 +1632,8 @@ record(waveform, "$(DEV):$(SECN)HST45")
 record(waveform, "$(DEV):$(SECN)CNTHST45")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_45")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 45")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1407,25 +1643,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST45")
 record(waveform, "$(DEV):$(SECN)RMSHST45")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_45")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 45")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST45")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST45")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_45")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 45")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST45", "$(DEV):$(SECN)PIDHST45")
 
 #
 #    BSA History buffer database template
@@ -1441,8 +1685,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST45")
 record(waveform, "$(DEV):$(SECN)HST46")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_46")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 46")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1452,8 +1696,8 @@ record(waveform, "$(DEV):$(SECN)HST46")
 record(waveform, "$(DEV):$(SECN)CNTHST46")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_46")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 46")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1463,25 +1707,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST46")
 record(waveform, "$(DEV):$(SECN)RMSHST46")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_46")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 46")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST46")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST46")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_46")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 46")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST46", "$(DEV):$(SECN)PIDHST46")
 
 #
 #    BSA History buffer database template
@@ -1497,8 +1749,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST46")
 record(waveform, "$(DEV):$(SECN)HST47")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_47")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 47")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1508,8 +1760,8 @@ record(waveform, "$(DEV):$(SECN)HST47")
 record(waveform, "$(DEV):$(SECN)CNTHST47")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_47")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 47")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1519,25 +1771,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST47")
 record(waveform, "$(DEV):$(SECN)RMSHST47")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_47")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 47")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST47")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST47")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_47")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 47")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST47", "$(DEV):$(SECN)PIDHST47")
 
 #
 #    BSA History buffer database template
@@ -1553,8 +1813,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST47")
 record(waveform, "$(DEV):$(SECN)HST48")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_48")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 48")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1564,8 +1824,8 @@ record(waveform, "$(DEV):$(SECN)HST48")
 record(waveform, "$(DEV):$(SECN)CNTHST48")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_48")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 48")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1575,25 +1835,33 @@ record(waveform, "$(DEV):$(SECN)CNTHST48")
 record(waveform, "$(DEV):$(SECN)RMSHST48")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_48")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 48")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST48")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST48")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_48")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 48")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHST48", "$(DEV):$(SECN)PIDHST48")
 
 #
 #    BSA History buffer database template
@@ -1609,8 +1877,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST48")
 record(waveform, "$(DEV):$(SECN)HST49")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_49")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 49")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1620,8 +1888,8 @@ record(waveform, "$(DEV):$(SECN)HST49")
 record(waveform, "$(DEV):$(SECN)CNTHST49")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_49")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 49")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1631,19 +1899,25 @@ record(waveform, "$(DEV):$(SECN)CNTHST49")
 record(waveform, "$(DEV):$(SECN)RMSHST49")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_49")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 49")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST49")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHST49")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_49")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 49")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1651,55 +1925,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST49")
 }
 
 
+alias("$(TPR):PIDHST49", "$(DEV):$(SECN)PIDHST49")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 50, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCD1H, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST50      $(BSAKEY)_BSAMEAN_50    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST50   $(BSAKEY)_BSANUM_50     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST50   $(BSAKEY)_BSARMS2_50    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST50   BSAPID_50               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCD1H      $(BSAKEY)_BSAMEAN_SCD1H    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCD1H   $(BSAKEY)_BSANUM_SCD1H     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCD1H   $(BSAKEY)_BSARMS2_SCD1H    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCD1H   BSAPID_SCD1H               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST50")
+record(waveform, "$(DEV):$(SECN)HSTSCD1H")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_50")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 50")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST50")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCD1H")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_50")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 50")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST50")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCD1H")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_50")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 50")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST50")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCD1H")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_50")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 50")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1707,55 +1989,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST50")
 }
 
 
+alias("$(TPR):PIDHSTSCD1H", "$(DEV):$(SECN)PIDHSTSCD1H")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 51, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCDTH, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST51      $(BSAKEY)_BSAMEAN_51    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST51   $(BSAKEY)_BSANUM_51     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST51   $(BSAKEY)_BSARMS2_51    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST51   BSAPID_51               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCDTH      $(BSAKEY)_BSAMEAN_SCDTH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCDTH   $(BSAKEY)_BSANUM_SCDTH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCDTH   $(BSAKEY)_BSARMS2_SCDTH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCDTH   BSAPID_SCDTH               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST51")
+record(waveform, "$(DEV):$(SECN)HSTSCDTH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_51")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 51")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST51")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCDTH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_51")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 51")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST51")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCDTH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_51")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 51")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST51")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCDTH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_51")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 51")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1763,55 +2053,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST51")
 }
 
 
+alias("$(TPR):PIDHSTSCDTH", "$(DEV):$(SECN)PIDHSTSCDTH")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 52, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCDHH, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST52      $(BSAKEY)_BSAMEAN_52    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST52   $(BSAKEY)_BSANUM_52     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST52   $(BSAKEY)_BSARMS2_52    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST52   BSAPID_52               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCDHH      $(BSAKEY)_BSAMEAN_SCDHH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCDHH   $(BSAKEY)_BSANUM_SCDHH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCDHH   $(BSAKEY)_BSARMS2_SCDHH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCDHH   BSAPID_SCDHH               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST52")
+record(waveform, "$(DEV):$(SECN)HSTSCDHH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_52")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 52")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST52")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCDHH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_52")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 52")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST52")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCDHH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_52")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 52")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST52")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCDHH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_52")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 52")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1819,55 +2117,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST52")
 }
 
 
+alias("$(TPR):PIDHSTSCDHH", "$(DEV):$(SECN)PIDHSTSCDHH")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 53, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCL1H, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST53      $(BSAKEY)_BSAMEAN_53    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST53   $(BSAKEY)_BSANUM_53     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST53   $(BSAKEY)_BSARMS2_53    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST53   BSAPID_53               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCL1H      $(BSAKEY)_BSAMEAN_SCL1H    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCL1H   $(BSAKEY)_BSANUM_SCL1H     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCL1H   $(BSAKEY)_BSARMS2_SCL1H    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCL1H   BSAPID_SCL1H               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST53")
+record(waveform, "$(DEV):$(SECN)HSTSCL1H")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_53")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 53")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST53")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCL1H")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_53")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 53")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST53")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCL1H")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_53")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 53")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST53")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCL1H")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_53")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 53")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1875,55 +2181,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST53")
 }
 
 
+alias("$(TPR):PIDHSTSCL1H", "$(DEV):$(SECN)PIDHSTSCL1H")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 54, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCLTH, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST54      $(BSAKEY)_BSAMEAN_54    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST54   $(BSAKEY)_BSANUM_54     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST54   $(BSAKEY)_BSARMS2_54    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST54   BSAPID_54               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCLTH      $(BSAKEY)_BSAMEAN_SCLTH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCLTH   $(BSAKEY)_BSANUM_SCLTH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCLTH   $(BSAKEY)_BSARMS2_SCLTH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCLTH   BSAPID_SCLTH               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST54")
+record(waveform, "$(DEV):$(SECN)HSTSCLTH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_54")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 54")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST54")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCLTH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_54")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 54")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST54")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCLTH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_54")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 54")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST54")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCLTH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_54")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 54")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1931,55 +2245,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST54")
 }
 
 
+alias("$(TPR):PIDHSTSCLTH", "$(DEV):$(SECN)PIDHSTSCLTH")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 55, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCLHH, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST55      $(BSAKEY)_BSAMEAN_55    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST55   $(BSAKEY)_BSANUM_55     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST55   $(BSAKEY)_BSARMS2_55    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST55   BSAPID_55               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCLHH      $(BSAKEY)_BSAMEAN_SCLHH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCLHH   $(BSAKEY)_BSANUM_SCLHH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCLHH   $(BSAKEY)_BSARMS2_SCLHH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCLHH   BSAPID_SCLHH               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST55")
+record(waveform, "$(DEV):$(SECN)HSTSCLHH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_55")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 55")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST55")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCLHH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_55")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 55")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST55")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCLHH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_55")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 55")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST55")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCLHH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_55")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 55")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -1987,55 +2309,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST55")
 }
 
 
+alias("$(TPR):PIDHSTSCLHH", "$(DEV):$(SECN)PIDHSTSCLHH")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 56, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCB1H, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST56      $(BSAKEY)_BSAMEAN_56    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST56   $(BSAKEY)_BSANUM_56     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST56   $(BSAKEY)_BSARMS2_56    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST56   BSAPID_56               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCB1H      $(BSAKEY)_BSAMEAN_SCB1H    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCB1H   $(BSAKEY)_BSANUM_SCB1H     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCB1H   $(BSAKEY)_BSARMS2_SCB1H    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCB1H   BSAPID_SCB1H               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST56")
+record(waveform, "$(DEV):$(SECN)HSTSCB1H")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_56")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 56")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST56")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCB1H")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_56")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 56")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST56")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCB1H")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_56")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 56")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST56")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCB1H")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_56")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 56")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2043,55 +2373,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST56")
 }
 
 
+alias("$(TPR):PIDHSTSCB1H", "$(DEV):$(SECN)PIDHSTSCB1H")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 57, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCBTH, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST57      $(BSAKEY)_BSAMEAN_57    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST57   $(BSAKEY)_BSANUM_57     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST57   $(BSAKEY)_BSARMS2_57    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST57   BSAPID_57               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCBTH      $(BSAKEY)_BSAMEAN_SCBTH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCBTH   $(BSAKEY)_BSANUM_SCBTH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCBTH   $(BSAKEY)_BSARMS2_SCBTH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCBTH   BSAPID_SCBTH               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST57")
+record(waveform, "$(DEV):$(SECN)HSTSCBTH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_57")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 57")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST57")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCBTH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_57")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 57")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST57")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCBTH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_57")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 57")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST57")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCBTH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_57")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 57")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2099,55 +2437,63 @@ record(waveform, "$(DEV):$(SECN)PIDHST57")
 }
 
 
+alias("$(TPR):PIDHSTSCBTH", "$(DEV):$(SECN)PIDHSTSCBTH")
+
 #
 #    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 58, $(BSAKEY)
+#    macros: $(DEV), $(SECN), SCBHH, $(BSAKEY)
 #
 #    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST58      $(BSAKEY)_BSAMEAN_58    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST58   $(BSAKEY)_BSANUM_58     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST58   $(BSAKEY)_BSARMS2_58    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST58   BSAPID_58               UINT64      PulseId 64bits word
+#    $(DEV):$(SECN)HSTSCBHH      $(BSAKEY)_BSAMEAN_SCBHH    DOUBLE      History buffer for BSA data (average)
+#    $(DEV):$(SECN)CNTHSTSCBHH   $(BSAKEY)_BSANUM_SCBHH     ULONG       Number of samples for average
+#    $(DEV):$(SECN)RMSHSTSCBHH   $(BSAKEY)_BSARMS2_SCBHH    DOUBLE      RMS
+#    $(DEV):$(SECN)PIDHSTSCBHH   BSAPID_SCBHH               UINT64      PulseId 64bits word
 
 
-record(waveform, "$(DEV):$(SECN)HST58")
+record(waveform, "$(DEV):$(SECN)HSTSCBHH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_58")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 58")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)CNTHST58")
+record(waveform, "$(DEV):$(SECN)CNTHSTSCBHH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_58")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 58")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)RMSHST58")
+record(waveform, "$(DEV):$(SECN)RMSHSTSCBHH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_58")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 58")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHST58")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCBHH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_58")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 58")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2155,341 +2501,7 @@ record(waveform, "$(DEV):$(SECN)PIDHST58")
 }
 
 
-#
-#    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 59, $(BSAKEY)
-#
-#    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST59      $(BSAKEY)_BSAMEAN_59    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST59   $(BSAKEY)_BSANUM_59     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST59   $(BSAKEY)_BSARMS2_59    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST59   BSAPID_59               UINT64      PulseId 64bits word
-
-
-record(waveform, "$(DEV):$(SECN)HST59")
-{
-    field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_59")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)CNTHST59")
-{
-    field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_59")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "ULONG")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)RMSHST59")
-{
-    field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_59")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)PIDHST59")
-{
-    field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_59")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "UINT64")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-
-#
-#    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 60, $(BSAKEY)
-#
-#    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST60      $(BSAKEY)_BSAMEAN_60    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST60   $(BSAKEY)_BSANUM_60     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST60   $(BSAKEY)_BSARMS2_60    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST60   BSAPID_60               UINT64      PulseId 64bits word
-
-
-record(waveform, "$(DEV):$(SECN)HST60")
-{
-    field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_60")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)CNTHST60")
-{
-    field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_60")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "ULONG")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)RMSHST60")
-{
-    field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_60")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)PIDHST60")
-{
-    field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_60")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "UINT64")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-
-#
-#    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 61, $(BSAKEY)
-#
-#    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST61      $(BSAKEY)_BSAMEAN_61    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST61   $(BSAKEY)_BSANUM_61     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST61   $(BSAKEY)_BSARMS2_61    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST61   BSAPID_61               UINT64      PulseId 64bits word
-
-
-record(waveform, "$(DEV):$(SECN)HST61")
-{
-    field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_61")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)CNTHST61")
-{
-    field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_61")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "ULONG")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)RMSHST61")
-{
-    field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_61")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)PIDHST61")
-{
-    field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_61")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "UINT64")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-
-#
-#    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 62, $(BSAKEY)
-#
-#    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST62      $(BSAKEY)_BSAMEAN_62    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST62   $(BSAKEY)_BSANUM_62     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST62   $(BSAKEY)_BSARMS2_62    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST62   BSAPID_62               UINT64      PulseId 64bits word
-
-
-record(waveform, "$(DEV):$(SECN)HST62")
-{
-    field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_62")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)CNTHST62")
-{
-    field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_62")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "ULONG")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)RMSHST62")
-{
-    field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_62")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)PIDHST62")
-{
-    field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_62")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "UINT64")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-
-#
-#    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 63, $(BSAKEY)
-#
-#    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST63      $(BSAKEY)_BSAMEAN_63    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST63   $(BSAKEY)_BSANUM_63     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST63   $(BSAKEY)_BSARMS2_63    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST63   BSAPID_63               UINT64      PulseId 64bits word
-
-
-record(waveform, "$(DEV):$(SECN)HST63")
-{
-    field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_63")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)CNTHST63")
-{
-    field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_63")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "ULONG")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)RMSHST63")
-{
-    field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_63")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)PIDHST63")
-{
-    field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_63")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "UINT64")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-
-#
-#    BSA History buffer database template
-#    macros: $(DEV), $(SECN), 64, $(BSAKEY)
-#
-#    PV name                       asyn param                   field type  Description
-#    $(DEV):$(SECN)HST64      $(BSAKEY)_BSAMEAN_64    DOUBLE      History buffer for BSA data (average)
-#    $(DEV):$(SECN)CNTHST64   $(BSAKEY)_BSANUM_64     ULONG       Number of samples for average
-#    $(DEV):$(SECN)RMSHST64   $(BSAKEY)_BSARMS2_64    DOUBLE      RMS
-#    $(DEV):$(SECN)PIDHST64   BSAPID_64               UINT64      PulseId 64bits word
-
-
-record(waveform, "$(DEV):$(SECN)HST64")
-{
-    field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_64")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)CNTHST64")
-{
-    field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_64")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "ULONG")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)RMSHST64")
-{
-    field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_64")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "DOUBLE")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
-record(waveform, "$(DEV):$(SECN)PIDHST64")
-{
-    field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_64")
-    field(SCAN, "I/O Intr")
-    field(FTVL, "UINT64")
-    field(NELM, "$(BSA_LENGTH=20000)")
-    field(TSE,  "-2")
-}
-
+alias("$(TPR):PIDHSTSCBHH", "$(DEV):$(SECN)PIDHSTSCBHH")
 
 #
 #    BSA History buffer database template
@@ -2505,8 +2517,8 @@ record(waveform, "$(DEV):$(SECN)PIDHST64")
 record(waveform, "$(DEV):$(SECN)HSTSCH1H")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_65")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 59")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2516,8 +2528,8 @@ record(waveform, "$(DEV):$(SECN)HSTSCH1H")
 record(waveform, "$(DEV):$(SECN)CNTHSTSCH1H")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_65")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 59")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2527,25 +2539,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTSCH1H")
 record(waveform, "$(DEV):$(SECN)RMSHSTSCH1H")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_65")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 59")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTSCH1H")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCH1H")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_65")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 59")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTSCH1H", "$(DEV):$(SECN)PIDHSTSCH1H")
 
 #
 #    BSA History buffer database template
@@ -2561,8 +2581,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTSCH1H")
 record(waveform, "$(DEV):$(SECN)HSTSCHTH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_66")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 60")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2572,8 +2592,8 @@ record(waveform, "$(DEV):$(SECN)HSTSCHTH")
 record(waveform, "$(DEV):$(SECN)CNTHSTSCHTH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_66")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 60")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2583,25 +2603,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTSCHTH")
 record(waveform, "$(DEV):$(SECN)RMSHSTSCHTH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_66")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 60")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTSCHTH")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCHTH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_66")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 60")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTSCHTH", "$(DEV):$(SECN)PIDHSTSCHTH")
 
 #
 #    BSA History buffer database template
@@ -2617,8 +2645,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTSCHTH")
 record(waveform, "$(DEV):$(SECN)HSTSCHHH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_67")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 61")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2628,8 +2656,8 @@ record(waveform, "$(DEV):$(SECN)HSTSCHHH")
 record(waveform, "$(DEV):$(SECN)CNTHSTSCHHH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_67")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 61")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2639,25 +2667,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTSCHHH")
 record(waveform, "$(DEV):$(SECN)RMSHSTSCHHH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_67")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 61")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTSCHHH")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCHHH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_67")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 61")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTSCHHH", "$(DEV):$(SECN)PIDHSTSCHHH")
 
 #
 #    BSA History buffer database template
@@ -2673,8 +2709,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTSCHHH")
 record(waveform, "$(DEV):$(SECN)HSTSCS1H")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_68")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 62")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2684,8 +2720,8 @@ record(waveform, "$(DEV):$(SECN)HSTSCS1H")
 record(waveform, "$(DEV):$(SECN)CNTHSTSCS1H")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_68")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 62")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2695,25 +2731,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTSCS1H")
 record(waveform, "$(DEV):$(SECN)RMSHSTSCS1H")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_68")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 62")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTSCS1H")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCS1H")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_68")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 62")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTSCS1H", "$(DEV):$(SECN)PIDHSTSCS1H")
 
 #
 #    BSA History buffer database template
@@ -2729,8 +2773,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTSCS1H")
 record(waveform, "$(DEV):$(SECN)HSTSCSTH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_69")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 63")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2740,8 +2784,8 @@ record(waveform, "$(DEV):$(SECN)HSTSCSTH")
 record(waveform, "$(DEV):$(SECN)CNTHSTSCSTH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_69")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 63")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2751,25 +2795,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTSCSTH")
 record(waveform, "$(DEV):$(SECN)RMSHSTSCSTH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_69")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 63")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTSCSTH")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCSTH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_69")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 63")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTSCSTH", "$(DEV):$(SECN)PIDHSTSCSTH")
 
 #
 #    BSA History buffer database template
@@ -2785,8 +2837,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTSCSTH")
 record(waveform, "$(DEV):$(SECN)HSTSCSHH")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_70")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 64")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2796,8 +2848,8 @@ record(waveform, "$(DEV):$(SECN)HSTSCSHH")
 record(waveform, "$(DEV):$(SECN)CNTHSTSCSHH")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_70")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 64")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(BSA_LENGTH=20000)")
@@ -2807,25 +2859,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTSCSHH")
 record(waveform, "$(DEV):$(SECN)RMSHSTSCSHH")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_70")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 64")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTSCSHH")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTSCSHH")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_70")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 64")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(BSA_LENGTH=20000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTSCSHH", "$(DEV):$(SECN)PIDHSTSCSHH")
 
 #
 #    BSA History buffer database template
@@ -2841,8 +2901,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTSCSHH")
 record(waveform, "$(DEV):$(SECN)HSTFLTB0")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_81")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 65")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -2852,8 +2912,8 @@ record(waveform, "$(DEV):$(SECN)HSTFLTB0")
 record(waveform, "$(DEV):$(SECN)CNTHSTFLTB0")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_81")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 65")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -2863,25 +2923,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTFLTB0")
 record(waveform, "$(DEV):$(SECN)RMSHSTFLTB0")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_81")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 65")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTFLTB0")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTFLTB0")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_81")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 65")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTFLTB0", "$(DEV):$(SECN)PIDHSTFLTB0")
 
 #
 #    BSA History buffer database template
@@ -2897,8 +2965,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTFLTB0")
 record(waveform, "$(DEV):$(SECN)HSTFLTB1")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_82")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 66")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -2908,8 +2976,8 @@ record(waveform, "$(DEV):$(SECN)HSTFLTB1")
 record(waveform, "$(DEV):$(SECN)CNTHSTFLTB1")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_82")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 66")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -2919,25 +2987,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTFLTB1")
 record(waveform, "$(DEV):$(SECN)RMSHSTFLTB1")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_82")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 66")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTFLTB1")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTFLTB1")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_82")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 66")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTFLTB1", "$(DEV):$(SECN)PIDHSTFLTB1")
 
 #
 #    BSA History buffer database template
@@ -2953,8 +3029,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTFLTB1")
 record(waveform, "$(DEV):$(SECN)HSTFLTB2")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_83")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 67")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -2964,8 +3040,8 @@ record(waveform, "$(DEV):$(SECN)HSTFLTB2")
 record(waveform, "$(DEV):$(SECN)CNTHSTFLTB2")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_83")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 67")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -2975,25 +3051,33 @@ record(waveform, "$(DEV):$(SECN)CNTHSTFLTB2")
 record(waveform, "$(DEV):$(SECN)RMSHSTFLTB2")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_83")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 67")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTFLTB2")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTFLTB2")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_83")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 67")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTFLTB2", "$(DEV):$(SECN)PIDHSTFLTB2")
 
 #
 #    BSA History buffer database template
@@ -3009,8 +3093,8 @@ record(waveform, "$(DEV):$(SECN)PIDHSTFLTB2")
 record(waveform, "$(DEV):$(SECN)HSTFLTB3")
 {
     field(DESC, "Hostory buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT), 0) $(BSAKEY)_BSAMEAN_84")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSAMEAN 68")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -3020,8 +3104,8 @@ record(waveform, "$(DEV):$(SECN)HSTFLTB3")
 record(waveform, "$(DEV):$(SECN)CNTHSTFLTB3")
 {
     field(DESC, "Number of Sample for Average")
-    field(DTYP, "asynInt32ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSANUM_84")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSANUM 68")
     field(SCAN, "I/O Intr")
     field(FTVL, "ULONG")
     field(NELM, "$(FLTB_LENGTH=1000000)")
@@ -3031,23 +3115,31 @@ record(waveform, "$(DEV):$(SECN)CNTHSTFLTB3")
 record(waveform, "$(DEV):$(SECN)RMSHSTFLTB3")
 {
     field(DESC, "RMS History Buffer")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) $(BSAKEY)_BSARMS2_84")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) $(BSAKEY) BSARMS2 68")
     field(SCAN, "I/O Intr")
     field(FTVL, "DOUBLE")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
-record(waveform, "$(DEV):$(SECN)PIDHSTFLTB3")
+
+#
+#  epics 7 allows duplicated record, all of duplicated record merged into a single instance
+#  thus, the PID history buffer will be per Edef
+#  and will provide the aliased name for per data source
+
+record(waveform, "$(TPR):PIDHSTFLTB3")
 {
     field(DESC, "64bits PulseId")
-    field(DTYP, "asynInt64ArrayIn")
-    field(INP,  "@asyn($(PORT),0) BSAPID_84")
+    field(DTYP, "SCBSA")
+    field(INP,  "@$(PORT) Common BSAPID 68")
     field(SCAN, "I/O Intr")
     field(FTVL, "UINT64")
     field(NELM, "$(FLTB_LENGTH=1000000)")
     field(TSE,  "-2")
 }
 
+
+alias("$(TPR):PIDHSTFLTB3", "$(DEV):$(SECN)PIDHSTFLTB3")
 

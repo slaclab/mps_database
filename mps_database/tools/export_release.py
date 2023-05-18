@@ -10,6 +10,7 @@ from mps_database.tools.export_device import ExportDevice
 from mps_database.tools.export_faults import ExportFaults
 from mps_database.tools.export_cn_extras import ExportCnExtras
 from mps_database.tools.export_yaml import ExportYaml
+from mps_database.tools.export_alarms import ExportAlarms
 from latex import Latex
 import math
 import argparse
@@ -81,11 +82,16 @@ with MpsDbReader(db_file) as session:
   export_fault = ExportFaults(db_file,template_path,dest_path,False,verbose,session)
   export_extra = ExportCnExtras(db_file,template_path,dest_path,False,verbose,session)
   export_yaml = ExportYaml(db_file,template_path,dest_path,False,verbose,session)
+  export_alarms = ExportAlarms(db_file,template_path,dest_path,False,verbose,session)
+  export_group.create_dir('{0}'.format(export_group.get_report_path()))
   if link_node:
     crate_profiles = export_group.startReport('crate','Appendix A: SCMPS Crate Profiles')
     input_report = export_group.startReport('input','Appendix B: SCMPS Input Display')
     groups = session.query(models.LinkNodeGroup).order_by(models.LinkNodeGroup.number).all()
     global_macros = []
+    an_fn = '{0}scripts/program_an_fw.sh'.format(export_group.get_dest_path())
+    tmpl = '{}scripts/bash_header.template'.format(export_group.get_template_path())
+    export_group.write_file(file=an_fn, template=tmpl, macros={})
     for group in groups:
       export_group.generate_group_alarm(group)
       crate_profiles.startGroup(group.number)
@@ -93,6 +99,8 @@ with MpsDbReader(db_file) as session:
         input_report.startGroup(group.number)
       lns = group.link_nodes
       export_group.generate_group_display(group.number,lns)
+      scr_fn = '{0}scripts/program_ln_fw_group{1}.sh'.format(export_group.get_dest_path(),group.number)
+      export_group.write_file(file=scr_fn, template=tmpl, macros={})
       for ln in lns:
         rows = []
         disp_macros = []
@@ -100,6 +108,8 @@ with MpsDbReader(db_file) as session:
         crate_profiles.startLinkNode(ln.lcls1_id,ln.crate.location)
         export_ln.writeCrateProfile(ln,crate_profiles)
         export_ln.generate_crate_display(ln)
+        export_alarms.generate_ln_alarms(ln)
+        export_ln.write_fw_script(ln,scr_fn)
         apps = session.query(models.ApplicationCard).filter(models.ApplicationCard.link_node==ln).order_by(models.ApplicationCard.slot_number).all()
         for a in apps:
           export_app.export_epics(a)
@@ -108,6 +118,7 @@ with MpsDbReader(db_file) as session:
           export_app.write_cn_status_macros(a,global_macros)
           if len(a.analog_channels) > 0:
             export_device.export_analog(a,rows,disp_macros)
+            export_alarms.export_analog_core(a)
           if len(a.digital_channels) > 0:
             export_device.export_digital(a,rows,disp_macros)
             export_device.write_ln_input_display(a)
@@ -140,14 +151,16 @@ with MpsDbReader(db_file) as session:
     export_extra.generate_area_displays()
     export_yaml.export()
 
+if ver is not None:
+  destination = "{0}/{1}".format(dest_path,tagged_dbname)
+  shutil.move(tagged_dbname,destination)
+
 kludge_dest = "{0}/link_node_db/app_db/cpu-bsys-sp02/0001/03".format(dest_path)
 kludge_source = "{0}/link_node_db/app_db/cpu-bsys-sp02/0101/02".format(dest_path)
 shutil.move(kludge_source,kludge_dest)
 shutil.rmtree("{0}/link_node_db/app_db/cpu-bsys-sp02/0101/".format(dest_path))
 
-if ver is not None:
-  destination = "{0}/{1}".format(dest_path,tagged_dbname)
-  shutil.move(tagged_dbname,destination)
+
     
 
     

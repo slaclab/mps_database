@@ -10,8 +10,49 @@
 #   - LO      : LOPR Field                                                       #
 #   - PR      : Precision                                                        #
 #   - AD      : ADEL field                                                       #
+#   - CH      : BSA channel (0-23)                                               #
 #================================================================================#
+record (ao, "$(P)_SLOPE_NCBSA") {
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn(L2MPS_L1BSA $(CH))SLOPE")
+  field(EGU,  "$(EG)/raw")
+  field(PINI, "YES")
+  field(PREC, "$(PR)")
+  info(autosaveFields, "VAL")
+  field(FLNK, "$(P)_SLOPE_NCBSA_RBV")
+  field(DOL,  "$(P)_SLOPE CP")
+  field(OMSL, "closed_loop")
+}
 
+record (ai, "$(P)_SLOPE_NCBSA_RBV") {
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn(L2MPS_L1BSA $(CH))SLOPE")
+  field(EGU,  "$(EG)/raw")
+  field(PINI, "YES")
+  field(PREC, "$(PR)")
+  field(SCAN, "1 second")
+}
+
+record (ao, "$(P)_OFFSET_NCBSA") {
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn(L2MPS_L1BSA $(CH))OFFSET")
+  field(EGU,  "$(EG)/raw")
+  field(PINI, "YES")
+  field(PREC, "$(PR)")
+  info(autosaveFields, "VAL")
+  field(FLNK, "$(P)_OFFSET_NCBSA_RBV")
+  field(DOL,  "$(P)_OFFSET_EGU CP")
+  field(OMSL, "closed_loop")
+}
+
+record (ai, "$(P)_OFFSET_NCBSA_RBV") {
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn(L2MPS_L1BSA $(CH))OFFSET")
+  field(EGU,  "$(EG)/raw")
+  field(PINI, "YES")
+  field(PREC, "$(PR)")
+  field(SCAN, "1 second")
+}
 
 record(bsa, "$(P)1") {
   field(DESC, "$(ATTR) Avg for EDEF 1")

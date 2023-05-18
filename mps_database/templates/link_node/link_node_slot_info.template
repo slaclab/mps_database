@@ -7,6 +7,10 @@
 #   - SLOT_SPARE              : Boolean: True=Spare, False=Used                  #
 #   - SLOT_PREFIX             : MPLN Prefix for payload                          #
 #   - SLOT_DESC               : Description of what is in slot                   #
+#   - MPS_LINK_NODE_SIOC      : IOC Name                                         #
+#   - MPS_CRATE_LOCATION      : Crate location                                   #
+#   - MPS_CPU_NAME            : Cpu Name                                         #
+#   - MPS_SHM_NAME            : Shelf Manager Name                               #
 #================================================================================#
 record(stringin, "$(P):SLOT$(SLOT)_NAME") {
   field(DESC, "Application card in slot $(SLOT)")
@@ -22,4 +26,23 @@ record(stringin, "$(P):SLOT$(SLOT)_DESC") {
   field(DESC, "Description of MPS in slot $(SLOT)")
   field(VAL, "$(SLOT_DESC)")
 }
-
+record(ao, "$(P):SLOT") {
+  field(DESC, "Slot number")
+  field(VAL,  "$(SLOT)")
+}
+record(stringin, "$(P):LN_SIOC") {
+  field(DESC, "MPS Link Node SIOC")
+  field(VAL, "$(MPS_LINK_NODE_SIOC)")
+}
+record(stringin, "$(P):LN_LOCATION") {
+  field(DESC, "MPS Link Node Crate Location")
+  field(VAL, "$(MPS_CRATE_LOCATION)")
+}
+record(stringin, "$(P):LN_CPU_NAME") {
+  field(DESC, "MPS CPU Name")
+  field(VAL, "$(MPS_CPU_NAME)")
+}
+record(stringin, "$(P):LN_SHM_NAME") {
+  field(DESC, "MPS SHM Name")
+  field(VAL, "$(MPS_SHM_NAME)")
+}

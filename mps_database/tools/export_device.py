@@ -234,19 +234,25 @@ class ExportDevice(MpsReader):
     macros = {"P":card.get_pv_name(),
               "DEV":self.mps_names.getDeviceName(channel.analog_device),
               "CH":"{0}".format(channel.number),
-              "TPR":"TPR:{0}:{1}:1".format(card.area,card.location),
+              "TPR":"TPR:{0}:{1}:0".format(card.area,card.location),
               "TRG":"{0}".format(channel.number+10)}
-    self.write_template(path=self.manager_path,filename='link_nodes.db',template="analog_window_time.template", macros=macros,type='link_node')
+    self.write_template(path=self.manager_path,filename='analog_time.db',template="analog_window_time.template", macros=macros,type='link_node')
 
   def export_ln_analog_db(self,card,channel,path):
+    lc1 = 0
+    if card.link_node.area in self.lc1_areas:
+      lc1 = 1
     macros = { "P": card.get_pv_name(),
-               "CH":str(channel.number),
-               "CH_NAME":channel.analog_device.description,
-               "CH_PVNAME":self.mps_names.getDeviceName(channel.analog_device),
-               "CH_SPARE":"0",
-               "TYPE":self.get_analog_type_name(channel.analog_device.device_type.name)
+               "DEV":self.mps_names.getDeviceName(channel.analog_device),
+               "TPR":'TPR:{0}:{1}:0'.format(card.area,card.location),
+               "IOC":'SIOC:{0}:{1}'.format(card.area,card.location),
+               "LN":'{0}'.format(card.link_node.lcls1_id),
+               "SLOT":'{0}'.format(card.slot_number),
+               "CH":'{0}'.format(channel.number),
+               "APPID":'{0}'.format(card.number),
+               "LC1":'{0}'.format(lc1)
              }
-    #self.write_template(path,filename='mps.db',template='link_node_channel_info.template',macros=macros,type='link_node')
+    self.write_template(self.manager_path,filename='link_nodes.db',template='device_map.template',macros=macros,type='link_node')
     int0 = (channel.number * 4)
     int1 = (channel.number * 4) + 1
     macros = {"CH":"{0}".format(channel.number),
@@ -280,13 +286,19 @@ class ExportDevice(MpsReader):
     macros = {"DEV":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
               "PORT":"bsaPort",
               "BSAKEY":"C{0}_I0".format(channel.number),
-              "SECN":"I0_{0}".format(attribute)}
+              "SECN":"I0_{0}".format(attribute),
+              "TPR":"TPR:{0}:{1}:0".format(card.area,card.location)}
     self.write_template(path,filename='mps.db',template='lc2-bsa.template',macros=macros,type='link_node')
     macros = {"DEV":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
               "PORT":"bsssPort",
               "BSAKEY":"C{0}_I0".format(channel.number),
               "SECN":"I0_{0}".format(attribute)}
     self.write_template(path,filename='mps.db',template='bsss.template',macros=macros,type='link_node')
+    macros = {"DEV":'{0}'.format(self.mps_names.getDeviceName(channel.analog_device)),
+              "PORT":"bsasPort",
+              "BSAKEY":"C{0}_I0".format(channel.number),
+              "SECN":"I0_{0}".format(attribute)}
+    self.write_template(path,filename='mps.db',template='bsas.template',macros=macros,type='link_node')
 
   def get_gain_number(self,bay,ch):
     if bay == 0:
@@ -391,6 +403,10 @@ class ExportDevice(MpsReader):
                  "OFFSET":'{0}'.format(channel.analog_device.offset),
                 }
       self.write_template(path,filename='mps.db',template='ln_analog.template',macros=macros,type='link_node')
+      macros = {"P":"{0}:I{1}_{2}".format(self.mps_names.getDeviceName(channel.analog_device),integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
+                "EGU":self.get_app_units(self.mps_names.getBlmType(channel.analog_device),''),
+                "PR":"5"}
+      self.write_template(path,filename='mps.db',template='slope.template',macros=macros,type='link_node')
       if chan > 2:
         chan = chan - 3
       macros_bsa = { "P":"{0}:I{1}_{2}".format(self.mps_names.getDeviceName(channel.analog_device),integrator,self.get_analog_type_name(channel.analog_device.device_type.name)),
@@ -400,7 +416,8 @@ class ExportDevice(MpsReader):
                      "HO":"0",
                      "LO":"0",
                      "PR":"0",
-                     "AD":"0"}
+                     "AD":"0",
+                     "CH":"{0}".format(bsa_slot)}
       #if channel.analog_device.area in self.lc1_areas:
       if card.link_node.area in self.lc1_areas:
         self.write_template(path,filename='mps.db',template='bsa.template',macros=macros_bsa,type='link_node')

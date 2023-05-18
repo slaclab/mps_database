@@ -15,9 +15,11 @@ record(ao,      "$(DEV):NC_ANA_PK_DEL_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC1_ANA_PK_DEL_TRG_$(CH) CA")
     field(FLNK, "$(P):LC1_ANA_PK_DEL_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -29,10 +31,25 @@ record(ai,      "$(DEV):NC_ANA_PK_DEL_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC1_ANA_PK_DEL_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):NC_ANA_PK_DEL_CALC")
+}
+record(calc,    "$(DEV):NC_ANA_PK_DEL_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):NC_ANA_PK_DEL_TRG_RBV")
+    field(INPB, "$(DEV):NC_ANA_PK_DEL_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):NC_ANA_PK_DEL_SEQ")
+}
+record(seq,     "$(DEV):NC_ANA_PK_DEL_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):NC_ANA_PK_DEL_CALC")
+    field(DOL1, "$(DEV):NC_ANA_PK_DEL_TRG")
+    field(LNK1, "$(DEV):NC_ANA_PK_DEL_TRG PP")
 }
 record(ao,      "$(DEV):NC_ANA_PK_WDT_TRG") {
     field(DTYP, "Raw Soft Channel")
@@ -41,9 +58,11 @@ record(ao,      "$(DEV):NC_ANA_PK_WDT_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC1_ANA_PK_WDT_TRG_$(CH) CA")
     field(FLNK, "$(P):LC1_ANA_PK_WDT_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -55,10 +74,25 @@ record(ai,      "$(DEV):NC_ANA_PK_WDT_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC1_ANA_PK_WDT_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):NC_ANA_PK_WDT_CALC")
+}
+record(calc,    "$(DEV):NC_ANA_PK_WDT_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):NC_ANA_PK_WDT_TRG_RBV")
+    field(INPB, "$(DEV):NC_ANA_PK_WDT_TRG")
+    field(CALC, "((ABS(A-B))>5?1:0)>5?1:0")
+    field(FLNK, "$(DEV):NC_ANA_PK_WDT_SEQ")
+}
+record(seq,     "$(DEV):NC_ANA_PK_WDT_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):NC_ANA_PK_WDT_CALC")
+    field(DOL1, "$(DEV):NC_ANA_PK_WDT_TRG")
+    field(LNK1, "$(DEV):NC_ANA_PK_WDT_TRG PP")
 }
 record(ao,      "$(DEV):NC_ANA_PD_DEL_TRG") {
     field(DTYP, "Raw Soft Channel")
@@ -67,9 +101,11 @@ record(ao,      "$(DEV):NC_ANA_PD_DEL_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC1_ANA_PD_DEL_TRG_$(CH) CA")
     field(FLNK, "$(P):LC1_ANA_PD_DEL_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -81,10 +117,25 @@ record(ai,      "$(DEV):NC_ANA_PD_DEL_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC1_ANA_PD_DEL_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):NC_ANA_PD_DEL_CALC")
+}
+record(calc,    "$(DEV):NC_ANA_PD_DEL_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):NC_ANA_PD_DEL_TRG_RBV")
+    field(INPB, "$(DEV):NC_ANA_PD_DEL_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):NC_ANA_PD_DEL_SEQ")
+}
+record(seq,     "$(DEV):NC_ANA_PD_DEL_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):NC_ANA_PD_DEL_CALC")
+    field(DOL1, "$(DEV):NC_ANA_PD_DEL_TRG")
+    field(LNK1, "$(DEV):NC_ANA_PD_DEL_TRG PP")
 }
 record(ao,      "$(DEV):NC_ANA_PD_WDT_TRG") {
     field(DTYP, "Raw Soft Channel")
@@ -93,9 +144,11 @@ record(ao,      "$(DEV):NC_ANA_PD_WDT_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC1_ANA_PD_WDT_TRG_$(CH) CA")
     field(FLNK, "$(P):LC1_ANA_PK_WDT_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -107,12 +160,26 @@ record(ai,      "$(DEV):NC_ANA_PD_WDT_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC1_ANA_PD_WDT_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):NC_ANA_PD_WDT_CALC")
 }
-
+record(calc,    "$(DEV):NC_ANA_PD_WDT_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):NC_ANA_PD_WDT_TRG_RBV")
+    field(INPB, "$(DEV):NC_ANA_PD_WDT_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):NC_ANA_PD_WDT_SEQ")
+}
+record(seq,     "$(DEV):NC_ANA_PD_WDT_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):NC_ANA_PD_WDT_CALC")
+    field(DOL1, "$(DEV):NC_ANA_PD_WDT_TRG")
+    field(LNK1, "$(DEV):NC_ANA_PD_WDT_TRG PP")
+}
 record(ao,      "$(DEV):SC_ANA_PK_DEL_TRG") {
     field(DTYP, "Raw Soft Channel")
     field(DESC, "Peak window start")
@@ -120,9 +187,11 @@ record(ao,      "$(DEV):SC_ANA_PK_DEL_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC2_ANA_PK_DEL_TRG_$(CH) CA")
     field(FLNK, "$(P):LC2_ANA_PK_DEL_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -134,10 +203,25 @@ record(ai,      "$(DEV):SC_ANA_PK_DEL_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC2_ANA_PK_DEL_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):SC_ANA_PK_DEL_CALC")
+}
+record(calc,    "$(DEV):SC_ANA_PK_DEL_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):SC_ANA_PK_DEL_TRG_RBV")
+    field(INPB, "$(DEV):SC_ANA_PK_DEL_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):SC_ANA_PK_DEL_SEQ")
+}
+record(seq,     "$(DEV):SC_ANA_PK_DEL_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):SC_ANA_PK_DEL_CALC")
+    field(DOL1, "$(DEV):SC_ANA_PK_DEL_TRG")
+    field(LNK1, "$(DEV):SC_ANA_PK_DEL_TRG PP")
 }
 record(ao,      "$(DEV):SC_ANA_PK_WDT_TRG") {
     field(DTYP, "Raw Soft Channel")
@@ -146,9 +230,11 @@ record(ao,      "$(DEV):SC_ANA_PK_WDT_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC2_ANA_PK_WDT_TRG_$(CH) CA")
     field(FLNK, "$(P):LC2_ANA_PK_WDT_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -160,10 +246,25 @@ record(ai,      "$(DEV):SC_ANA_PK_WDT_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC2_ANA_PK_WDT_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):SC_ANA_PK_WDT_CALC")
+}
+record(calc,    "$(DEV):SC_ANA_PK_WDT_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):SC_ANA_PK_WDT_TRG_RBV")
+    field(INPB, "$(DEV):SC_ANA_PK_WDT_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):SC_ANA_PK_WDT_SEQ")
+}
+record(seq,     "$(DEV):SC_ANA_PK_WDT_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):SC_ANA_PK_WDT_CALC")
+    field(DOL1, "$(DEV):SC_ANA_PK_WDT_TRG")
+    field(LNK1, "$(DEV):SC_ANA_PK_WDT_TRG PP")
 }
 record(ao,      "$(DEV):SC_ANA_PD_DEL_TRG") {
     field(DTYP, "Raw Soft Channel")
@@ -172,9 +273,11 @@ record(ao,      "$(DEV):SC_ANA_PD_DEL_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC2_ANA_PD_DEL_TRG_$(CH) CA")
     field(FLNK, "$(P):LC2_ANA_PD_DEL_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -186,10 +289,25 @@ record(ai,      "$(DEV):SC_ANA_PD_DEL_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC2_ANA_PD_DEL_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):SC_ANA_PD_DEL_CALC")
+}
+record(calc,    "$(DEV):SC_ANA_PD_DEL_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):SC_ANA_PD_DEL_TRG_RBV")
+    field(INPB, "$(DEV):SC_ANA_PD_DEL_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):SC_ANA_PD_DEL_SEQ")
+}
+record(seq,     "$(DEV):SC_ANA_PD_DEL_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):SC_ANA_PD_DEL_CALC")
+    field(DOL1, "$(DEV):SC_ANA_PD_DEL_TRG")
+    field(LNK1, "$(DEV):SC_ANA_PD_DEL_TRG PP")
 }
 record(ao,      "$(DEV):SC_ANA_PD_WDT_TRG") {
     field(DTYP, "Raw Soft Channel")
@@ -198,9 +316,11 @@ record(ao,      "$(DEV):SC_ANA_PD_WDT_TRG") {
     field(PINI, "YES")
     field(SCAN, "Passive")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
+    field(DRVL, "0")
+    field(DRVH, "373631")
     field(OUT,  "$(P):LC2_ANA_PD_WDT_TRG_$(CH) CA")
     field(FLNK, "$(P):LC2_ANA_PK_WDT_TRG_$(CH).PROC")
     info(autosaveFields, "VAL")
@@ -212,10 +332,25 @@ record(ai,      "$(DEV):SC_ANA_PD_WDT_TRG_RBV") {
     field(PINI, "YES")
     field(SCAN, "1 second")
     field(LINR, "LINEAR")
-    field(EGUL, "0")
-    field(EGUF, "373631.698974")
-    field(PREC, "3")
+    field(AOFF, "0")
+    field(ASLO, "5.701254275944152")
+    field(PREC, "1")
     field(INP,  "$(P):LC2_ANA_PD_WDT_TRG_$(CH)_RBV CA")
+    field(FLNK, "$(DEV):SC_ANA_PD_WDT_CALC")
+}
+record(calc,    "$(DEV):SC_ANA_PD_WDT_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):SC_ANA_PD_WDT_TRG_RBV")
+    field(INPB, "$(DEV):SC_ANA_PD_WDT_TRG")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):SC_ANA_PD_WDT_SEQ")
+}
+record(seq,     "$(DEV):SC_ANA_PD_WDT_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):SC_ANA_PD_WDT_CALC")
+    field(DOL1, "$(DEV):SC_ANA_PD_WDT_TRG")
+    field(LNK1, "$(DEV):SC_ANA_PD_WDT_TRG PP")
 }
 record(ao,      "$(DEV):NC_COARSE_DEL") {
     field(DTYP, "Soft Channel")
@@ -233,6 +368,8 @@ record(ao,      "$(DEV):SC_COARSE_DEL") {
     field(OUT,  "$(TPR):TRG$(TRG)_SYS2_TDES CA")
     field(FLNK, "$(TPR):TRG$(TRG)_SYS2_TDES.PROC")
     field(PREC, "2")
+    field(DRVL, "0")
+    field(DRVH, "999")
     info(autosaveFields, "VAL")
 }
 record(ai,      "$(DEV):SC_COARSE_DEL_RBV") {
@@ -242,6 +379,21 @@ record(ai,      "$(DEV):SC_COARSE_DEL_RBV") {
     field(INP,  "$(TPR):TRG$(TRG)_SYS2_TDES CA")
     field(PREC, "2")
     field(SCAN, "1 second")
+    field(FLNK, "$(DEV):SC_COARSE_DEL_CALC")
+}
+record(calc,    "$(DEV):NC_COARSE_DEL_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):NC_COARSE_DEL_RBV")
+    field(INPB, "$(DEV):NC_COARSE_DEL")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):NC_COARSE_DEL_SEQ")
+}
+record(seq,     "$(DEV):NC_COARSE_DEL_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):NC_COARSE_DEL_CALC")
+    field(DOL1, "$(DEV):NC_COARSE_DEL")
+    field(LNK1, "$(DEV):NC_COARSE_DEL PP")
 }
 record(ai,      "$(DEV):NC_COARSE_DEL_RBV") {
     field(DTYP, "Soft Channel")
@@ -250,4 +402,19 @@ record(ai,      "$(DEV):NC_COARSE_DEL_RBV") {
     field(INP,  "$(TPR):TRG$(TRG)_SYS0_TDES CA")
     field(PREC, "2")
     field(SCAN, "1 second")
+    field(FLNK, "$(DEV):NC_COARSE_DEL_CALC")
+}
+record(calc,    "$(DEV):SC_COARSE_DEL_CALC"){
+    field(DESC, "Window calc")
+    field(INPA, "$(DEV):SC_COARSE_DEL_RBV")
+    field(INPB, "$(DEV):SC_COARSE_DEL")
+    field(CALC, "(ABS(A-B))>5?1:0")
+    field(FLNK, "$(DEV):SC_COARSE_DEL_SEQ")
+}
+record(seq,     "$(DEV):SC_COARSE_DEL_SEQ") {
+    field(DESC, "Window calc")
+    field(SELM, "Mask")
+    field(SELL, "$(DEV):SC_COARSE_DEL_CALC")
+    field(DOL1, "$(DEV):SC_COARSE_DEL")
+    field(LNK1, "$(DEV):SC_COARSE_DEL PP")
 }

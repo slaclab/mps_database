@@ -148,3 +148,5 @@ record(mbbo, "$(BASE):$(DEST)_FORCE_BC") {
     field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 0)MPS_FORCE_DEST")
     field(PINI, "YES")
     field(ASG,  "$(ASG1)")
+    field(DOL,  "$(GLOBAL):$(DEST)_FORCE_BC CPP MSI")
+    field(OMSL, "closed_loop")

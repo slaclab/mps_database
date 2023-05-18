@@ -34,6 +34,8 @@ class DatabaseImporter:
 
 # linac = models.BeamDestination(name="LINAC", description="Linac destination", destination_mask=0x01)
   def add_beam_destinations(self, file_name):
+    if self.verbose:
+      print(("Adding BeamDestinations... {0}".format(file_name)))
     f = open(file_name)
     line = f.readline().strip()
     fields=[]
@@ -58,6 +60,8 @@ class DatabaseImporter:
     f.close()
 
   def add_beam_classes(self, file_name):
+    if self.verbose:
+      print(("Adding BeamClasses... {0}".format(file_name)))
     f = open(file_name)
     line = f.readline().strip()
     fields=[]

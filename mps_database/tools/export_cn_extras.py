@@ -117,7 +117,7 @@ class ExportCnExtras(MpsReader):
     self.initialize_mps_names(self.session)
     if self.verbose:
       print("INFO: Generating area displays")
-    areas = ['GUNB','L3B','DOG','LTUH','LTUS','UNDH','UNDS','DMPH','DMPS','FEEH','FEES','SPS','SPH','BSY0','LTU0','UND0','DPM0']
+    areas = ['B34','GUNB','L3B','DOG','LTUH','LTUS','UNDH','UNDS','DMPH','DMPS','FEEH','FEES','SPS','SPH','BSY0','LTU0','UND0','DPM0']
     for area in areas:
       areas = []
       areas.append(area)
@@ -289,11 +289,7 @@ class ExportCnExtras(MpsReader):
       macros = { 'HEIGHT':'{0}'.format(int(height))}
       filename = '{0}areas/mps_{1}_link_nodes.ui'.format(self.display_path,area.lower())
       self.__write_area_header(path=filename,macros=macros)
-      macros = { 'HEIGHT':'{0}'.format(int(edl_height))}
-      filename_edl = '{0}edl/mps_{1}_link_nodes.edl'.format(self.display_path,area.lower())
-      self.__write_area_edl_header(path=filename_edl,macros=macros)
       y = header_height
-      edl_y = header_height+5
       groups = []
       for ln in link_nodes:
         macros = {"Y":"{0}".format(int(y)),
@@ -304,25 +300,9 @@ class ExportCnExtras(MpsReader):
                   'IOC_UNIT':'{0}'.format(ln.location),
                   'INST':'{0}'.format(ln.get_app_number())}
         self.__write_area_embed(path=filename, macros=macros)
-        macros = {"Y":"{0}".format(int(edl_y)),
-                  "PREFIX":"{0}".format(ln.get_app_prefix()),
-                  "LN_ID":"{0}".format(ln.lcls1_id),
-                  'SLOT_FILE':'LinkNode{0}_slot.ui'.format(ln.lcls1_id),
-                  'LOCA':'{0}'.format(ln.area),
-                  'IOC_UNIT':'{0}'.format(ln.location),
-                  'INST':'{0}'.format(ln.get_app_number())}
-        self.__write_area_edl_embed(path=filename_edl, macros=macros)
         if ln.group not in groups:
           groups.append(ln.group)
-        y += 35
-        edl_y += 30
-      edl_x = 14
-      for group in groups:
-        macros = {"GROUP":"{0}".format(group),
-                  "X":"{0}".format(int(edl_x)),
-                  "Y":"{0}".format(int(edl_y))}
-        self.__write_area_edl_group(path=filename_edl,macros=macros)
-        edl_x += 110
+        y += 30
       self.__write_area_footer(path=filename,macros={"P":"P"})
       ln_macros = []
       for ln in link_nodes:
@@ -340,7 +320,7 @@ class ExportCnExtras(MpsReader):
                   'IOC':ln.get_sioc_pv_base()}
         filename = 'mpln_{0}_{1}.alhConfig'.format(ln.area.lower(),ln.location.lower())
         path = '{0}areas/{1}'.format(self.alarm_path,filename)
-        self.write_alarm_file(path=path, template_name='link_node_alarm.template', macros=macros)
+        #self.write_alarm_file(path=path, template_name='link_node_alarm.template', macros=macros)
         include_macros = {'AREA':area,
                           'FILENAME':filename}
         self.write_alarm_file(path=include_path, template_name='mps_include.template', macros=include_macros)

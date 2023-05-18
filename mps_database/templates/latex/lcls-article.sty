@@ -44,7 +44,7 @@
 % Some packages
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage{geometry}
+\usepackage[margin=0.5in]{geometry}
 \geometry{letterpaper}
 
 \usepackage{caption}
@@ -278,7 +278,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagestyle{fancy}
-\headheight 52pt
+\headheight 50pt
+\marginparwidth 5pt
+\headsep 20pt
 
 % Nothing on empty pages
 \clearpage{\pagestyle{empty}\cleardoublepage}
@@ -297,8 +299,9 @@
 \if@twocolumn\hbox{}\newpage\fi\fi\fi} 
 \makeatother
 
-\fancyheadoffset[LE,RO]{\marginparsep+\marginparwidth}
-\fancyheadoffset[LO]{\marginparsep+\marginparwidth}
+%\fancyheadoffset[LE,RO]{\marginparsep+\marginparwidth}
+%\fancyheadoffset[LO]{\marginparsep+\marginparwidth}
+\fancyheadoffset[lh,rh]{0mm}
 
 
 
@@ -306,22 +309,20 @@
 \makeatletter 
 \newcommand{\LCLSHeader}{
 \fancyhead{}
-
-\ifthenelse{\boolean{@twoside}}{
-    \fancyhead[LO, RE]{\includegraphics[width=\paperwidth]{lcls}}
-}{
-    \fancyhead[LO]{\includegraphics[width=\paperwidth]{lcls}}
-}
+\fancyhead[L]{\includegraphics[width=3in]{lockup}}
+\fancyhead[R]{\includegraphics[height=.35in]{SLAC-simple-lowres}}
+%\ifthenelse{\boolean{@twoside}}{
+%    \fancyhead[LO, RE]{\includegraphics[width=3in]{lockup}}
+%}{
+%    \fancyhead[LO]{\includegraphics[width=3in]{lockup}}
+%}
 
 \renewcommand{\headrulewidth}{0pt}
 }
 
 \newcommand{\LCLSFooter}{
 \fancyfoot{}
-
-\ifthenelse{\boolean{@twoside}}
-{\fancyfoot[LE, RO]{\it{Revision~\revnum\linebreak Page \thepage~of~\pageref{LastPage}}}}
-{\fancyfoot[RO]{\it{Revision~\revnum\linebreak Page \thepage~of~\pageref{LastPage}}}}
+\fancyfoot[LE,RO]{\it{Revision~\revnum\linebreak Page \thepage~of~\pageref{LastPage}}}
 
 \renewcommand{\footrulewidth}{0.4pt}
 }
@@ -339,8 +340,9 @@
 \LCLSHeaderAndFooter
 }
 
-\textheight=540pt
-\footskip=50pt
+\textheight=600pt
+\footskip=20pt
+\footnotesep=0pt
 
 \fancypagestyle{empty}{}
 
@@ -354,10 +356,10 @@
 
 
 \titleformat{\chapter}
-	{\bfseries\fontsize{18}{18.36}}
+	{\bfseries\fontsize{14}{14.28}}
 	{\bfseries\thechapter\enspace} 
 	{8pt} 
-	{\bfseries\fontsize{18}{18.36}\filright} 
+	{\bfseries\fontsize{14}{14.28}\filright} 
 
 \titlespacing{\chapter} 
 	{0pt}
@@ -366,26 +368,26 @@
 
 
 \titleformat{\section}
-	{\bfseries\fontsize{18}{18.36}}
+	{\bfseries\fontsize{12}{12.24}}
 	{\bfseries\thesection\enspace} 
 	{8pt} 
-	{\bfseries\fontsize{18}{18.36}\filright} 
+	{\bfseries\fontsize{12}{12.24}\filright} 
 
 \titlespacing{\section} 
 	{0pt}
-	{*4}
+	{*.1}
 	{*0.1}
 
 
 \titleformat{\subsection}
-	{\bfseries\fontsize{14}{14.28}}
+	{\bfseries\fontsize{12}{12.24}}
 	{\bfseries\thesubsection\enspace} 
 	{8pt} 
-	{\bfseries\fontsize{14}{14.28}\filright} 
+	{\bfseries\fontsize{12}{12.24}\filright} 
 
 \titlespacing{\subsection} 
 	{0pt}
-	{*4}
+	{*.1}
 	{*0.1}
 
 

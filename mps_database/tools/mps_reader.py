@@ -44,7 +44,6 @@ class MpsReader:
         self.alarm_path = '{}alarms/'.format(self.dest_path)
         self.report_path = '{}reports/build/'.format(self.dest_path)
         self.checkout_path = '{}checkout/'.format(self.dest_path)
-        self.create_dir('{0}'.format(self.report_path))
         self.cn1_path = '{}central_node_db/cn1/'.format(self.dest_path)
         self.cn2_path = '{}central_node_db/cn2/'.format(self.dest_path)
         self.cn3_path = '{}central_node_db/cn3/'.format(self.dest_path)
@@ -57,6 +56,8 @@ class MpsReader:
         self.lc1_areas = ["CLTS","BSYS","BSYH","LTUS","LTUH","UNDS","UNDH","FEES","FEEH","LTU0","UND0","BSY0","DMP0","DMPH","DMPS"]
         self.hard_areas = ['BSYH','LTUH','UNDH','DMPH','FEEH']
         self.soft_areas = ['CLTS','BSYS','LTUS','UNDS','FEES','DMPS']
+        self.sc_areas = ['GUNB','L0B','COL0','BC1B','L2B','L3B','DOG','BPN13','BPN14','BPN15','BPN16','BPN17','BPN18','BPN19','BPN20',
+                         'BPN21','BPN22','BPN23','BPN24','BPN25','BPN26','BPN27','BPN28','SPH','SPS','SPD','SLTD']
         self.nc_int0_cycles = 2
         self.nc_int1_cycles = 179
         self.sc_int0_cycles = 1023 #1023 is biggest value for this register --> 1023/910000 = 1 ms integration
@@ -91,6 +92,9 @@ class MpsReader:
       if slot == 1:
         slot = 2
       return '{}link_node_db/app_db/{}/{:04}/{:02}/'.format(self.dest_path,link_node.cpu, link_node.crate.crate_id, slot)
+
+    def get_report_path(self):
+      return self.report_path
 
     def get_bay_number(self,channel):
       if channel < 3:

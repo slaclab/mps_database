@@ -6,3 +6,4 @@ SC_HXR,4,HXR beamline,8
 SC_SXR,5,SXR Beamline,16
 SC_LESA,6,A-Line,32
 LASER_HTR,13,Laser Heater Shutter,8192
+MECH_SHUTTER,14,Mechanical Shutter,16384

@@ -6,6 +6,7 @@
 #   - LOCA       : link node crate location                                      #
 #   - SLOT       : crate slot number                                             #
 #   - ID         : ASYN driver (database) ID                                     #
+#   - INPV       : Mode Input PV Example "MPS:UNDH:1:FACMODE CPP MSI"            #
 #================================================================================#
 record(bi, "$(BASE):APP$(APP_ID)_STATUS") {
   field(DESC, "$(TYPE) [$(LOCA) S$(SLOT) ID$(APP_ID)]")
@@ -21,18 +22,164 @@ record(bo, "$(BASE):APP$(APP_ID)_ENABLE") {
   field(DESC, "Timeout enable bit for app $(APP_ID)")
   field(DTYP, "asynUInt32Digital")
   field(SCAN, "Passive")
-  field(ZNAM, "Disable")
-  field(ONAM, "Enable")
+  field(ZNAM, "NC (Disable)")
+  field(ONAM, "SC (Enable)")
+  field(OMSL, "closed_loop")
+  field(DOL, "$(BASE):APP$(APP_ID)_FACMODE_CALC MSI")
   field(OUT, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
-  field(ASG,  "Internal")
 }
 record(bi, "$(BASE):APP$(APP_ID)_ENABLE_RBV") {
   field(DESC, "Timeout enable bit for app $(APP_ID)")
   field(DTYP, "asynUInt32Digital")
   field(SCAN, "1 second")
-  field(ZNAM, "Disabled")
-  field(ONAM, "Enabled")
+  field(ZNAM, "NC (Disabled)")
+  field(ONAM, "SC (Enabled)")
   field(ZSV, "MINOR")
   field(OSV, "NO_ALARM")
   field(INP, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_TIMEOUT_ENABLE")
+}
+record(bo, "$(BASE):APP$(APP_ID)_ACTIVE") {
+  field(DESC, "Timeout enable bit for app $(APP_ID)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "Passive")
+  field(ZNAM, "NC (Disable)")
+  field(ONAM, "SC (Enable)")
+  field(OMSL, "closed_loop")
+  field(DOL, "$(BASE):APP$(APP_ID)_ACTIVE_CALC MSI")
+  field(OUT, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_ACTIVE_ENABLE")
+}
+record(bi, "$(BASE):APP$(APP_ID)_ACTIVE_RBV") {
+  field(DESC, "Timeout enable bit for app $(APP_ID)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "NC (Disabled)")
+  field(ONAM, "SC (Enabled)")
+  field(ZSV, "MINOR")
+  field(OSV, "NO_ALARM")
+  field(INP, "@asynMask(CENTRAL_NODE $(APP_ID) 1 0)MPS_APP_ACTIVE_ENABLE")
+}
+record(mbbo, "$(BASE):APP$(APP_ID)_FACMODE_INP") {
+    field(DESC, "Bring in Facility mode to IOC")
+    field(PINI, "YES")
+    field(OMSL, "closed_loop")
+    field(DOL,  "$(INPV)")
+    field(ZRST, "NC")
+    field(ZRVL, "0")
+    field(ZRSV, "NO_ALARM")
+    field(ONST, "SC")
+    field(ONVL, "1")
+    field(ONSV, "NO_ALARM")
+    field(FLNK, "$(BASE):APP$(APP_ID)_FACMODE_CALC")
+}
+record(bo, "$(BASE):APP$(APP_ID)_FACMODE_AUTO") {
+    field(DESC, "IOC Mode will follow FACMODE_INP")
+    field(PINI, "YES")
+    field(ZNAM, "Override")
+    field(ONAM, "Global")
+    field(ZSV,  "MINOR")
+    field(OSV,  "NO_ALARM")
+    field(VAL,  "1")
+    field(FLNK, "$(BASE):APP$(APP_ID)_FACMODE_CALC")
+    info(autosaveFields, "VAL")
+    field(ASG,  "$(ASG1)")
+}
+record(mbbo, "$(BASE):APP$(APP_ID)_FACMODE_USER") {
+    field(DESC, "Bring in Facility mode to IOC")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(ZRST, "NC (Disable)")
+    field(ZRVL, "0")
+    field(ZRSV, "NO_ALARM")
+    field(ONST, "SC (Enable)")
+    field(ONVL, "1")
+    field(ONSV, "NO_ALARM")
+    field(FLNK, "$(BASE):APP$(APP_ID)_FACMODE_CALC")
+    info(autosaveFields, "VAL")
+}
+record(calc,    "$(BASE):APP$(APP_ID)_FACMODE_CALC") {
+    field(DESC, "Calc the Facility Mode")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(INPA, "$(BASE):APP$(APP_ID)_FACMODE_INP MSI")
+    field(INPB, "$(BASE):APP$(APP_ID)_FACMODE_AUTO MSI")
+    field(INPC, "$(BASE):APP$(APP_ID)_FACMODE_USER MSI")
+    field(CALC, "B?A:C")
+    field(FLNK, "$(BASE):APP$(APP_ID)_ENABLE")
+}
+record(calc,    "$(BASE):APP$(APP_ID)_FACMODE_STAT_CALC") {
+    field(DESC, "NC/SC Mode Status")
+    field(SCAN, "1 second")
+    field(INPA, "$(BASE):APP$(APP_ID)_ENABLE_RBV MSI")
+    field(INPB, "$(INPV)")
+    field(INPC, "$(BASE):APP$(APP_ID)_FACMODE_AUTO MSI")
+    field(CALC, "(A#B)?0:(C=0)?1:2")
+    field(FLNK, "$(BASE):APP$(APP_ID)_FACMODE_STAT")
+}
+record(mbbi,  "$(BASE):APP$(APP_ID)_FACMODE_STAT") {
+    field(DESC, "NC/SC Mode Status")
+    field(INP,  "$(BASE):APP$(APP_ID)_FACMODE_STAT_CALC MSI")
+    field(ZRST, "Mismatch")
+    field(ZRVL, "0")
+    field(ZRSV, "MAJOR")
+    field(ONVL, "1")
+    field(ONST, "Override")
+    field(ONSV, "MINOR")
+    field(TWVL, "2")
+    field(TWST, "OK")
+    field(TWSV, "NO_ALARM")
+}
+record(bo, "$(BASE):APP$(APP_ID)_ACTIVE_AUTO") {
+    field(DESC, "IOC Mode will follow FACMODE_INP")
+    field(PINI, "YES")
+    field(ZNAM, "Override")
+    field(ONAM, "Global")
+    field(ZSV,  "MINOR")
+    field(OSV,  "NO_ALARM")
+    field(VAL,  "1")
+    field(FLNK, "$(BASE):APP$(APP_ID)_ACTIVE_CALC")
+    info(autosaveFields, "VAL")
+    field(ASG,  "$(ASG1)")
+}
+record(mbbo, "$(BASE):APP$(APP_ID)_ACTIVE_USER") {
+    field(DESC, "Bring in Facility mode to IOC")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(ZRST, "Not Active")
+    field(ZRVL, "0")
+    field(ZRSV, "NO_ALARM")
+    field(ONST, "Active")
+    field(ONVL, "1")
+    field(ONSV, "NO_ALARM")
+    field(FLNK, "$(BASE):APP$(APP_ID)_ACTIVE_CALC")
+    field(VAL,  "1")
+    info(autosaveFields, "VAL")
+}
+record(calc,    "$(BASE):APP$(APP_ID)_ACTIVE_CALC") {
+    field(DESC, "Calc the Facility Mode")
+    field(PINI, "YES")
+    field(SCAN, "Passive")
+    field(INPA, "$(BASE):APP$(APP_ID)_FACMODE_INP MSI")
+    field(INPB, "$(BASE):APP$(APP_ID)_ACTIVE_AUTO MSI")
+    field(INPC, "$(BASE):APP$(APP_ID)_ACTIVE_USER MSI")
+    field(CALC, "B?A:C")
+    field(FLNK, "$(BASE):APP$(APP_ID)_ACTIVE")
+}
+record(calc, "$(BASE):APP$(APP_ID)_FACMODE_RBV_CALC"){
+    field(DESC, "Mode Cacluation")
+    field(SCAN, "1 second")
+    field(INPA, "$(BASE):APP$(APP_ID)_ENABLE_RBV") #0 lcls1 1 lcls 2
+    field(INPB, "$(BASE):APP$(APP_ID)_ACTIVE_RBV")# 0 down 1 up
+    field(CALC, "((!A)&(!B)?0:A&B?1:2)")
+}
+record(mbbi, "$(BASE):APP$(APP_ID)_FACMODE_RBV"){
+    field(DESC, "Node Timing Mode Readback")
+    field(INP, "$(BASE):APP$(APP_ID)_FACMODE_RBV_CALC")
+    field(SCAN, "1 second")
+    field(ZRVL, "0")
+    field(ZRST, "NC")
+    field(ONVL, "1")
+    field(ONST, "SC")
+    field(TWST, "Unknown")
+    field(TWVL, "2")
+    field(TWSV, "MAJOR")
 }

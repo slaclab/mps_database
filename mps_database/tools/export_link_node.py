@@ -32,10 +32,6 @@ class ExportLinkNode(MpsReader):
     macros = {"P":prefix,
               "MPS_LINK_NODE_TYPE":'{0}'.format(self.link_node_type_to_number(ln.get_type())),
               "MPS_LINK_NODE_ID":'{0}'.format(ln.lcls1_id),
-              "MPS_LINK_NODE_SIOC":'{0}'.format(ln.get_name()),
-              "MPS_CRATE_LOCATION":'{0}'.format(ln.crate.location),
-              "MPS_CPU_NAME":'{0}'.format(ln.cpu),
-              "MPS_SHM_NAME":'{0}'.format(ln.get_shelf_manager()),
               "GROUP":'{0}'.format(ln.group),
               "IS_LN":'{0}'.format(1)}
     self.write_template(path=self.manager_path,filename='link_nodes.db',template="link_node_info.template", macros=macros,type='link_node')
@@ -46,6 +42,9 @@ class ExportLinkNode(MpsReader):
     #If no alalog cards in slot 2, write all channels are not available
     if ln.get_type() == 'Digital':
       self.write_template(app_path,filename='config.yaml',template='app_id.template',macros={"ID":"0"},type='link_node')
+      self.write_template(app_path,filename='config.yaml',template='bays_present.template',macros={"DIS":"{0}".format(3)},type='link_node')
+      self.write_template(app_path,filename='mps.db',template='analog_no_bays.template',macros={'P':prefix},type='link_node')
+      self.write_template(app_path,filename='mps.db',template='num_trig.template',macros={"P":prefix,"NUM":"{0}".format(0)},type='link_node')
       for ch in range(0,6):
           macros = {"P":'{0}'.format(ln.get_app_prefix()),
                     "ATTR":"CH{0}".format(ch),
@@ -65,6 +64,10 @@ class ExportLinkNode(MpsReader):
                   "SLOT_NAME":'{0}'.format(card.type.name),
                   "SLOT_SPARE":'{0}'.format(0),
                   "SLOT_PREFIX":card.get_pv_name(),
+                  "MPS_LINK_NODE_SIOC":'{0}'.format(card.link_node.get_name()),
+                  "MPS_CRATE_LOCATION":'{0}'.format(card.link_node.crate.location),
+                  "MPS_CPU_NAME":'{0}'.format(card.link_node.cpu),
+                  "MPS_SHM_NAME":'{0}'.format(card.link_node.get_shelf_manager()),
                   "SLOT_DESC":'{0}'.format(card.description)}
         self.write_template(path=self.manager_path,filename='link_nodes.db',template="link_node_slot_info.template", macros=macros,type='link_node')
         if len(card.analog_channels) > 0:
@@ -78,7 +81,11 @@ class ExportLinkNode(MpsReader):
                   "SLOT_NAME":'Spare',
                   "SLOT_SPARE":'{0}'.format(1),
                   "SLOT_PREFIX":'Spare',
-                  "SLOT_DESC":'Spare'}
+                  "SLOT_DESC":'Spare',
+                  "MPS_LINK_NODE_SIOC":'{0}'.format(card.link_node.get_name()),
+                  "MPS_CRATE_LOCATION":'{0}'.format(card.link_node.crate.location),
+                  "MPS_CPU_NAME":'{0}'.format(card.link_node.cpu),
+                  "MPS_SHM_NAME":'{0}'.format(card.link_node.get_shelf_manager())}
         self.write_template(path=self.manager_path,filename='link_nodes.db',template="link_node_slot_info.template", macros=macros,type='link_node')
 
   def export_cn_input_display(self,link_node,macros):
@@ -265,41 +272,72 @@ class ExportLinkNode(MpsReader):
       self.write_ui_file(path=path, template_name="ln_crate_empty.tmpl", macros=macros)
 
   def __write_slot_into(self,slot,link_node,app,x,y,filename,digital=False):
-    fn = 'mps_ln_application.ui'
+    fn = 'mps_analog_core.ui'
     slot_publish = slot
     postfix = 'APP_ID'
+    ioc = ''
+    alarm = ''
     inst = 1
     if inst == 2:
       inst = 1
+    if slot > 2:
+      inst = slot
     if digital:
       slot_publish = 'RTM'
       postfix = 'DIG_APPID_RBV'
-      fn = 'mps_ln_digital.ui'
+      fn = 'mps_digital_core.ui'
     type = 'MPS'
     if app.type.name == 'BPM':
       type = 'BPM'
+      fn = 'mps_bpm_core.ui'
+      ioc = ''
+      alarm = ''
     if app.type.name == 'BCM/BLEN':
-      type = 'BCM/BLEN'  
+      type = 'BCM/BLEN'
+      fn = 'mps_bpm_core.ui'
+      ioc = ''  
+      alarm = ''
     if app.type.name == 'MPS Analog':
       type = 'MPS_AI'
+      fn = 'mps_analog_core.ui'
+      ioc = 'SIOC:{0}:{1}'.format(app.area,app.location)
+      alarm = 'ca://MPLN_AN:{0}:{1}:{2}:STATSUMY'.format(app.area,link_node.location,inst)
     if app.type.name == 'MPS Digital':
       type = 'MPS_DI'
+      fn = 'mps_rtm_digital_core.ui'
+      ioc = 'SIOC:{0}:{1}'.format(app.area,app.location)
+      alarm = 'ca://MPLN_DIG:{0}:{1}:{2}:STATSUMY'.format(app.area,link_node.location,inst)
     if app.type.name == 'LLRF':
       type = 'LLRF'
+      fn = 'mps_digital_core.ui'
+      ioc = ''
+      alarm = ''
     if app.type.name == 'Wire Scanner':
       type = 'WIRE'
+      fn = 'mps_digital_core.ui'
+      ioc = ''
+      alarm = ''
     macros = {'SLOT':'{0}'.format(slot_publish),
-              'CRATE':link_node.location,
               'CN':link_node.get_cn_prefix(),
               'AID':'{0}'.format(app.number),
               'MPS_PREFIX':'{0}'.format(app.get_pv_name()),
               'TYPE':type,
-              'DESC':'{0}'.format(app.description),
               'X':'{0}'.format(int(x)),
               'Y':'{0}'.format(int(y)),
               'POSTFIX':postfix,
               'FILENAME':fn,
-              'LOCA':'{0}'.format(app.area),
-              'IOC_UNIT':app.location,
+              'IOC':ioc,
+              'ALARM':alarm,
+              'LOCA':link_node.area,
+              'IOC_UNIT':link_node.location,
               'INST':'{0}'.format(inst)}
     self.__write_crate_embed(path=filename,macros=macros)
+
+  def write_fw_script(self,ln,fname):
+    macros = {'CPU':ln.cpu,
+              'SHELF':ln.get_shelf_manager(),
+              'SLOT':'2',
+              'FILE':'ln{0}.out'.format(ln.lcls1_id)}
+    tmpl = '{}scripts/program_fw.template'.format(self.template_path)
+    self.write_file_from_template(file=fname, template=tmpl, macros=macros)
+  
