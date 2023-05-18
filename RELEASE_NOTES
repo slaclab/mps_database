@@ -8,6 +8,10 @@
 #  Auth: xx-Dec-2012, XXX         (xxx)
 #  Rev:  dd-mmm-yyyy, Reviewer's Name    (USERNAME)
 #--------------------------------------------------------------
+R3.1.0: (18-May-2023)
+  * Updates to alarm and epics scripts.
+  * remove report requirement from MpsReader
+
 R3.0.0: (29 June, 2022)
   * First production tag to use new python3 environment and pip
 
