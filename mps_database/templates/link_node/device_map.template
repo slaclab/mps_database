@@ -1,0 +1,47 @@
+#================================================================================#
+# LCLS-II MPS PV template for Generic ADC channel information                    #
+# Macro description:                                                             #
+#   - P       : MPLN prefix                                                      #
+#   - DEV     : Device PV (e.g.CBLM:UNDH:1375)                                   #
+#   - TPR     : TPR prefix for device                                            #
+#   - IOC     : IOC prefix for device                                            #
+#   - LN      : Link Node number                                                 #
+#   - SLOT    : Slot number                                                      #
+#   - CH      : Channel number                                                   #
+#   - APPID   : Mps Application ID                                               #
+#   - LC1     : Does device have NC BSA                                          #
+#================================================================================#
+record(stringin, "$(DEV):TPR") {
+  field(DESC, "TPR Prefix")
+  field(VAL, "$(TPR)")
+}
+record(stringin, "$(DEV):IOC") {
+  field(DESC, "TPR Prefix")
+  field(VAL, "$(IOC)")
+}
+record(stringin, "$(DEV):MPS_PREFIX") {
+  field(DESC, "TPR Prefix")
+  field(VAL, "$(P)")
+}
+record(stringin, "$(DEV):MPS_LN") {
+  field(DESC, "Link Node")
+  field(VAL, "$(LN)")
+}
+record(stringin, "$(DEV):MPS_SLOT") {
+  field(DESC, "Slot Number")
+  field(VAL, "$(SLOT)")
+}
+record(stringin, "$(DEV):MPS_CH") {
+  field(DESC, "Channel Number")
+  field(VAL, "$(CH)")
+}
+record(stringin, "$(DEV):MPS_APPID") {
+  field(DESC, "Application ID")
+  field(VAL, "$(APPID)")
+}
+record(bi, "$(DEV):IS_NC") {
+  field(DESC, "Is device NC")
+  field(VAL, "$(LC1)")
+  field(ZNAM, "SC Only")
+  field(ONAM, "SC and NC")
+}

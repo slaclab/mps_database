@@ -1,0 +1,40 @@
+#
+#   BSAS data source (channel) control PVs
+#   per data source / per channel
+#
+
+
+record(bo, "$(DEV):$(SECN)BSASCHNMASK")
+{
+    field(DESC, "BSAS Chn Mask for $(DESC=$(SECN))")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT),0) channelMask_$(BSAKEY)")
+    field(OMSL, "supervisory")
+    field(SCAN, "Passive")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(VAL, "1")
+    info(autosaveFields, "VAL")
+}
+
+record(mbbo, "$(DEV):$(SECN)BSASCHNSEVR")
+{
+    field(DESC, "BSAS Chn Sevr for $(DESC=$(SECN))")
+    field(PINI, "YES")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT),0) channelSevr_$(BSAKEY)")
+    field(OMSL, "supervisory")
+    field(SCAN, "Passive")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(ZRST, "None")
+    field(ONST, "Minor")
+    field(TWST, "Major")
+    field(THST, "Invalid")
+    field(VAL, "3")
+    info(autosaveFields, "VAL")
+}
+

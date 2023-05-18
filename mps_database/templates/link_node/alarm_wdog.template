@@ -1,0 +1,51 @@
+#================================================================================#
+# LCLS-II MPS PV template for Software Watchdog Inputs                           #
+# Macro description:                                                             #
+#   - P  : MPS Prefix                                                            #
+#================================================================================#
+record(compress, "$(P):FPGA_UPTIMECNT_BUFF") {
+  field(DESC, "Circular Bufffer")
+  field(SCAN, "1 second")
+  field(INP,  "$(P):FPGA_UPTIMECNT")
+  field(ALG,  "Circular Buffer")
+  field(NSAM, "10")
+  field(FLNK, "$(P):FPGA_UPTIMECNT_BUFMAX")
+  field(ASG,  "NOWRITE")
+}
+record(compress, "$(P):FPGA_UPTIMECNT_BUFMAX") {
+  field(DESC, "Bufffer Max")
+  field(INP,  "$(P):FPGA_UPTIMECNT_BUFF.VAL NPP MS")
+  field(ALG,  "N to 1 High Value")
+  field(N,    "10")
+  field(FLNK, "$(P):FPGA_UPTIMECNT_BUFMIN")
+  field(ASG,  "NOWRITE")
+}
+
+record(compress, "$(P):FPGA_UPTIMECNT_BUFMIN") {
+  field(DESC, "Bufffer Min")
+  field(INP,  "$(P):FPGA_UPTIMECNT_BUFF.VAL NPP MS")
+  field(ALG,  "N to 1 Low Value")
+  field(N,    "10")
+  field(FLNK, "$(P):FPGA_UPTIMECNT_WDOG_CALC")
+  field(ASG,  "NOWRITE")
+}
+record(calc, "$(P):FPGA_UPTIMECNT_WDOG_CALC") {
+  field(DESC, "Stale data watchdog ")
+  field(CALC, "(C=3)?0:((A = B) ?0:1)")
+  field(INPA, "$(P):FPGA_UPTIMECNT_BUFMIN.VAL")
+  field(INPB, "$(P):FPGA_UPTIMECNT_BUFMAX.VAL")
+  field(INPC, "$(P):FPGA_UPTIMECNT_BUFF.SEVR")
+  field(FLNK, "$(P):FPGA_UPTIMECNT_WDOG")
+  field(ASG,  "NOWRITE")
+}
+record(bo, "$(P):FPGA_UPTIMECNT_WDOG") {
+    field(DESC, "Input CALC")
+    field(PINI, "YES")	
+    field(SCAN, "Passive")
+    field(DOL, "$(P):FPGA_UPTIMECNT_WDOG_CALC")
+    field(ZNAM, "ERROR")
+    field(ONAM, "OK")
+    field(ZSV, "MAJOR")
+    field(OSV, "NO_ALARM")
+    field(OMSL, "closed_loop")
+}

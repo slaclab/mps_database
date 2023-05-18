@@ -1,0 +1,8 @@
+record(stringin, "$(P):LN_ID") {
+  field(DESC, "MPS Link Node ID")
+  field(VAL, "$(ID)")
+}
+record(stringin, "$(P):APP_LOCATION") {
+  field(DESC, "Application location")
+  field(VAL, "$(LOCA)")
+}

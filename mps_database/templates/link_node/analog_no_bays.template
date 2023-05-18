@@ -1,0 +1,20 @@
+record(mbbi, "$(P):LC1_ANA_AMCEN_RBV") {
+  field(ZRSV, "MAJOR")
+  field(ONSV, "MAJOR")
+  field(TWSV, "MAJOR")
+  field(THSV, "NO_ALARM")
+}
+record(mbbi, "$(P):LC2_ANA_AMCEN_RBV") {
+  field(ZRSV, "MAJOR")
+  field(ONSV, "MAJOR")
+  field(TWSV, "MAJOR")
+  field(THSV, "NO_ALARM")
+}
+record(longin, "$(P):ADC_VALID_0") {
+  field(LOLO, "0")
+  field(LLSV, "NO_ALARM")
+}
+record(longin, "$(P):ADC_VALID_1") {
+  field(LOLO, "0")
+  field(LLSV, "NO_ALARM")
+}

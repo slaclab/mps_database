@@ -1,0 +1,56 @@
+record (ao, "$(P)_SLOPE") {
+  field(EGU,  "$(EGU)/raw")
+  field(PINI, "YES")
+  field(PREC, "$(PR)")
+  info(autosaveFields, "VAL")
+  field(FLNK, "$(P)_SLOPE_SEQ")
+  field(DESC, "Slope")
+}
+record(dfanout,  "$(P)_SLOPE_SEQ") {
+  field(DESC, "Slope")
+  field(OMSL, "closed_loop")
+  field(SELM, "All")
+  field(DOL,  "$(P)_SLOPE")
+  field(FLNK, "$(P)_OFFSET_CALC.PROC")
+  field(OUTA, "$(P).ASLO")
+  field(OUTB, "$(P)_SLOPE_BSA PP NMS")
+  field(OUTC, "$(P)_FWSLO PP NMS")
+}
+record (ao, "$(P)_OFFSET"){
+  field(EGU,  "raw")
+  field(PINI, "YES")
+  field(PREC, "0")
+  info(autosaveFields, "VAL")
+  field(FLNK, "$(P)_OFFSET_SEQ")
+  field(DESC, "Offset")
+}
+record(seq,  "$(P)_OFFSET_SEQ") {
+  field(DESC, "Offset")
+  field(DOL1, "1")
+  field(LNK1, "$(P)_OFFSET_CALC.PROC")
+  field(DOL2, "$(P)_OFFSET")
+  field(LNK2, "$(P)_FWOFF PP NMS")
+}
+record(calcout, "$(P)_OFFSET_CALC") {
+  field(DESC, "Offset")
+  field(INPA, "$(P)_OFFSET")
+  field(INPB, "$(P)_SLOPE")
+  field(CALC, "-1*A*B")
+  field(EGU,  "$(EGU)")
+  field(PREC, "$(PR)")
+  field(OUT,  "$(P)_OFFSET_EGU")
+  field(FLNK, "$(P)_OFFSET_EGU")
+}
+record(ao, "$(P)_OFFSET_EGU") {
+  field(DESC, "Offset")
+  field(EGU,  "$(EGU)")
+  field(PREC, "$(PR)")
+  field(FLNK, "$(P)_OFFSET_EGU_SEQ")
+}
+record(seq, "$(P)_OFFSET_EGU_SEQ") {
+  field(DESC, "Offset")
+  field(DOL1, "$(P)_OFFSET_EGU")
+  field(LNK1, "$(P).AOFF")
+  field(DOL2, "$(P)_OFFSET_EGU PP NMS")
+  field(LNK2, "$(P)_OFFSET_BSA PP NMS")
+}

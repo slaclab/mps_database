@@ -1,0 +1,7 @@
+GROUP NULL MPLN:$(AREA):$(UNIT):1
+$ALIAS MPS Link Node $(LN)
+$GUIDANCE
+$(AREA) MPS
+   Group Name: MPLN:$(AREA):$(UNIT):1
+   Summary PV:  MPLN:$(AREA):$(UNIT):1:STATSUMY
+$END

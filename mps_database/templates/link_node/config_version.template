@@ -1,0 +1,11 @@
+#================================================================================#
+# LCLS-II MPS PV template for MPS Link Node (slot 2) information                 #
+# Macro description:                                                             #
+#   - P                       : MPLN prefix                                      #
+#   - MPS_CONFIG_VERSION      : MPS Config Version                               #
+#================================================================================#
+
+record(stringin, "$(P):CONFIG_VERSION") {
+  field(DESC, "MPS Configuration Database Version")
+  field(VAL, "$(MPS_CONFIG_VERSION)")
+}

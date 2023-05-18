@@ -1,0 +1,1 @@
+epicsEnvSet("MODE_INPV", "$(INPV)")

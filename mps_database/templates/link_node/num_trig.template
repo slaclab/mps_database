@@ -1,0 +1,4 @@
+record(stringin, "$(P):NUMBAYS") {
+  field(DESC, "Number of external triggers")
+  field(VAL, "$(NUM)")
+}
