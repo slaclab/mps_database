@@ -1,18 +1,20 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class FaultInput(Base):
   """
-  DigitalFaultInput class (device_input table)
+  FaultInput class
+
+  A fault input is a building block of a fault.  Each fault input links a channel
+  to a fault.  It also contains the bit position so the final fault value can be calculated
 
   Properties:
     bit_position: specifies which bit this input should be used when
-                 calculating the Fault value/state
-    mask: For analog faults, the bitmask of that integrator/fault
-                 
+                 calculating the Fault value/state                 
   References:
-    channel_id: the DigitalChannel connected to this DigitalFaultInput
+    channel: the Channel connected to this FaultInput
+    fault: the Fault connected to this FaultInput
   """
   __tablename__ = 'fault_inputs'
   id = Column(Integer, primary_key=True)

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class BeamDestination(Base):
@@ -8,10 +8,10 @@ class BeamDestination(Base):
 
   properties:
     name: linac, sxu, hxu, diag0
-    description: main linac, soft x-ray undulator, hard x-ray undulator
+    mask: destination mask (i.e. 0x1 is Laser, 0x2 is DIAG0, 0x4 is SC_BSYD, etc.)
     
   relationships:
-    allowed_classes: list of allowedclasses for this beam destination
+    mitigations: list of Mitigation for this beam destination
   """
   __tablename__ = 'beam_destinations'
   id = Column(Integer, primary_key=True)

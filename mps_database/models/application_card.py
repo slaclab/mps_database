@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, validates
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class ApplicationCard(Base):
@@ -18,13 +18,7 @@ class ApplicationCard(Base):
    type_id: specifies the type of this card (e.g. Mixed Mode Link Node type)
 
   Relationships:
-   digital_channels: there are zero or more entries in the
-                     digital_channels table pointing to an application_card
-                     entry.
-   digital_out_channels: 
-   analog_channels: there are zero or more entries in the
-                    digital_channels table pointing to an application_card
-                    entry.
+   channels: collection of channels assigned to this card
   """
   __tablename__ = 'application_cards'
   id = Column(Integer, primary_key=True)

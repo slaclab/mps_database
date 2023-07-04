@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship, validates
-from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class ApplicationType(Base):
@@ -19,8 +18,6 @@ class ApplicationType(Base):
    name: Currently, support 'MPS Analog','BCM','BLEN','Wire Scanner','LLRF','RTM Digital','MPS Digital'
    analog_channel_count: number of analog channels
    digital_channel_count: number of digital channels
-   double_slot: indicates if this application card type uses two slots
-   i.e. it really is composed of two cards (FIXME: not implemented yet, only added to comments)
 
   Relationships:
    cards: which ApplicationCards (application_cards table) are of this type
@@ -49,16 +46,3 @@ class ApplicationType(Base):
           return 2
         else:
           return 0
-  
-  #@validates('cards')
-  #def validate_cards(self, key, card):
-  #  if self.digital_channel_count < len(card.channels.digital_channels):
-  #    raise ValueError("Card cannot have a type with digital_channel_count < the number of digital_channels connected to the card.")
-    
-  #  if self.digital_out_channel_count < len(card.channels.digital_out_channels):
-  #    raise ValueError("Card cannot have a type with digital_out_channel_count < the number of digital_out_channels connected to the card.")
-  #  
-  #  if self.analog_channel_count < len(card.channels.analog_channels):
-  #    raise ValueError("Card cannot have a type with analog_channel_count < the number of analog_channels connected to the card.")
-  #  return card
-

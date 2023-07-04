@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float,Boolean, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class Channel(Base):
@@ -19,7 +19,7 @@ class Channel(Base):
             default value is slow(0)
 
   References:
-    card_id: specifies the card that contains this channel
+    card: specifies the card that contains this channel
 
   The discriminator field is used to define whether the device is digital (digital_channel)
   or analog (analog_channel)
@@ -56,8 +56,8 @@ class DigitalChannel(Channel):
    card_id: specifies the card that contains this channel
 
   Relationships:
-   device_input: a DigitalChannel can be referenced by one or more
-                 DeviceInputs (used by DigitalDevices)
+   ignore_condition: Links to an ignore condition that uses to channel to define if it should
+                     be active
   """
   __tablename__ = 'digital_channels'
   __mapper_args__ = {'polymorphic_identity': 'digital_channel'}
@@ -92,8 +92,9 @@ class AnalogChannel(Channel):
   __tablename__ = 'analog_channels'
   __mapper_args__ = {'polymorphic_identity': 'analog_channel'}
   id = Column(Integer,ForeignKey('channels.id'), primary_key=True)
-  offset = Column(Float,nullable=True)
-  slope = Column(Float,nullable=True)
+  offset = Column(Float,nullable=False,default=0)
+  slope = Column(Float,nullable=False,default=1)
+  egu = Column(String,nullable=False,default='raw')
   integrator = Column(Integer, nullable=False,default=0)
   gain_bay = Column(Integer, nullable=True)
   gain_channel = Column(Integer,nullable=True)

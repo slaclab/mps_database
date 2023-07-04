@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class BeamClass(Base):
@@ -13,13 +13,12 @@ class BeamClass(Base):
             power and increasing according to the power. This number is
             used to define which BeamClass to use in case of a fault.
     name: beam class name identifier
-    description: short explanation for this beam class
     integration_window: time window used by MPS to verify beam power
     min_period: minimum period between bunches
     total_charge: maximum charge within the integration window
 
   Relationships:
-    allowed_classes: list of AllowedClasses that have this BeamClass
+    mitigations: list of Mitigation that have this BeamClass
                      as the maximum allowed beam power
   """
   __tablename__ = 'beam_classes'

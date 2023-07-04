@@ -1,8 +1,8 @@
-from sqlalchemy import Table,Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, func
-from sqlalchemy.orm import relationship, backref, object_session
+from sqlalchemy import Table,Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
-from .beam_class import BeamClass
 
+# This association table provides a many-to-many link between fault states and mitigations
 association_table = Table('association_mitigations',Base.metadata,
                           Column('id',Integer,primary_key=True),
                           Column('fault_state_id',ForeignKey('fault_states.id')),
@@ -25,34 +25,18 @@ class FaultState(Base):
   beam power is higher that supported. For the IN status MPS must assert a beam class
   that is safe for the screen (e.g. 10Hz at 100pC).
 
-  The FaultState does not distinguish between analog vs digital devices, it only knows
-  about DeviceStates, which are used for both types of devices.
-
   Properties:
     default: defines if this state is the default for the fault, i.e. if other digital
              states are not faulted, it defaults to this one
     name: Fault state name, used to build GUI states
     value: The value a state should be in to have this state
+    mask: The bitmask for this fault state
 
   Relationships:
-    allowed_classes: list of beam allowed classes for this fault
-    ignore_conditions: list the ignore conditions that reference this fault_state. When
-                       ignore contition is true (e.g. Profile monitor is inserted), then
-                       this fault_state is ignored. The only know case so far (Jan 2019)
-                       is the insertion of YAG01B screen causing the IM01B/BPM2B charge
-                       comparison to be ignored while keeping the IM01B charge threshold
-                       active.
-
-  References:
-    fault_id: reference to the fault set by this fault_state.
-    device_state_id: reference to the device_state that describes in which state the device
-                     must be in order to generate the fault.
-    beam_destination_id: beam destination for this allowed beam class
-    beam_class_id: the BeamClass allowed
-
+    mitigation: list of beam mitigations for this fault state
+    fault: the fault that contains this fault state
   """
   __tablename__ = 'fault_states'
-#  __table_args__ = tuple(UniqueConstraint('fault_id', 'device_state_id', sqlite_on_conflict='IGNORE'))
   id = Column(Integer, primary_key=True)
   default = Column(Boolean, nullable=False, default=False)
   name = Column(String, nullable=False)
@@ -64,14 +48,15 @@ class FaultState(Base):
 
 class Mitigation(Base):
   """
-  AllowedClass class (allowed_classes table)
+  Mitigation
 
-  List of AllowedClasses for a given Fault (via fault_state_id)
+  List of Mitigation for a given Fault (via fault_state)
+  Links a fault state to a destination and beam class
 
   References:
-    fault_state_id: the FaultState (Digital or Analog) for this AllowedClass
-    beam_destination_id: beam destination for this allowed beam class
-    beam_class_id: the BeamClass allowed
+    fault_state: the FaultState (Digital or Analog) for this AllowedClass
+    beam_destination: beam destination for this allowed beam class
+    beam_class: the BeamClass allowed
   """
   __tablename__ = 'mitigations'
   id = Column(Integer, primary_key=True)

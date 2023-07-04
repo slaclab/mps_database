@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, validates
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm import object_session
 from .crate import Crate
 from mps_database.models import Base
@@ -21,8 +21,8 @@ class LinkNode(Base):
    lnid: link node id. This is used to build the link node IP address,
    
   References:
-   crate_id: specifies the crate that contains this link node
-   group_id: specifies the group this link node is a member of
+   crate: specifies the crate that contains this link node
+   group: specifies the group this link node is a member of
   """
   __tablename__ = 'link_nodes'
   id = Column(Integer, primary_key=True)

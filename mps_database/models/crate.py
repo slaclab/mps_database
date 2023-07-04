@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class Crate(Base):
@@ -19,8 +19,8 @@ class Crate(Base):
     cards: each ApplicationCard has a reference to a crate 
 
   References:
-    link_node_id: points to the link node (in slot 2) for this crate. There may be more
-                  link nodes connected to other cards in the same crate (non-slot 2)
+    link_node: points to the link node (in slot 2) within this crate. 
+    central_node: points to the central nodes within this crate. 
   """
   __tablename__ = 'crates'
   id = Column(Integer, primary_key=True)

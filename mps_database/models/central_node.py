@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, validates
-from sqlalchemy.orm import object_session
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class CentralNode(Base):
@@ -16,7 +15,7 @@ class CentralNode(Base):
    slot: what slot in the crate is it in
    
   References:
-   crate_id: specifies the crate that contains this central node
+   crate: specifies the crate that contains this central node
    groups: specifies the groups that link to this central node
   """
 

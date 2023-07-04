@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean,Table
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
+# This is used to map many-to-many between faults and ignore conditions
 association_ignore = Table('association_ignore',Base.metadata,
                           Column('id',Integer,primary_key=True),
                           Column('fault_id',ForeignKey('faults.id')),
@@ -15,10 +16,13 @@ class Fault(Base):
   This is a class that contains properties common to faults (truth tables)
 
   Properties:
-    name: Fault name (e.g. STATE), used in Fault PV name
-    description: Text that ends up in the documentation and GUI
+    name: Fault name which will be in the gui
+    pv: String that will be used to build fault PV (e.g. POSITION)
 
-
+  Relationships:
+    fault_inputs: channels that feed into this fault (truth table)
+    fault_states: states this fault can be in depending on fault_inputs
+    ignore_condition: Conditions which will cause this fault to be ignored.
   """
   __tablename__ = 'faults'
   id = Column(Integer, primary_key=True)
@@ -31,14 +35,11 @@ class Fault(Base):
 
 class IgnoreCondition(Base):
   """
-  Condition class (conditions table)
+  IgnoreCondition class (conditions table)
 
-  Describe a condition that is composed of current values of one or more 
-  digital and/or analog device faults (via FaultStates). Each fault input 
-  is represented by a bit (starting at zero). When the combined state of
-  the input faults match the condition value it becomes valid.
-
-  A condition is used to ignore one ore more faults (digital and/or analog)
+  Describe a condition that is composed of current values of one digital channel.
+  When that channel is active, the condition will be true and the collection
+  of faults will be ignored.
 
   Properties:
     name: condition identifier (PV attribute)
@@ -46,8 +47,8 @@ class IgnoreCondition(Base):
     value: bit mask used to verify if condition is met or not. 
 
   Relationships:
-    ignore_conditions: list of fault states that compose this condition
-    condition_inputs: list of fault states that are ignored when condition is true
+    faults: list of fault that are ignored by this condition
+    digital_channel: The channel that when active will cause this condition to be true
   """
   __tablename__ = 'ignore_conditions'
   id = Column(Integer, primary_key=True)

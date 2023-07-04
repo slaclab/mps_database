@@ -1,14 +1,13 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, validates
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class LinkNodeGroup(Base):
   """
   LinkNodeGroup class (link_node_groups table)
 
-  Defines a Link Node (SIOC), which has a one-to-one mapping with crates. 
-  Every crate has one LN. The LN also contains information about all
-  the application cards configured within the crate.
+  Defines a Link Node group which contains a collection of link nodes for
+  data transmission
 
   Properties:
    number: group number
