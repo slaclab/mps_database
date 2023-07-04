@@ -1,50 +1,56 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Float,Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from mps_database.models import Base
 
-class DigitalOutChannel(Base):
+class Channel(Base):
   """
-  DigitalOutChannnel class (digital_out_channels table)
-  
-  Properties:
-   number: position of this channel in the card - starts at 0. The
-           ApplicationCard checks if there are duplicate numbers and
-           if the number does not exceed the maximum number of channels
-   name: string identification for channel, this is used to compose PVs
-         (e.g. PROF:GUNB:855:IN_LMTSW, where IN_LMTSW is the channel name)
-  References:
-   card_id: specifies the card that contains this channel
-  """
-  __tablename__ = 'digital_out_channels'
-  id = Column(Integer, primary_key=True)
-  number = Column(Integer, nullable=False) #NOTE: Channel numbers need to start at 0, not 1.
-  name = Column(String, nullable=False)
-  card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
-  mitigation_devices = relationship("MitigationDevice", backref='digital_out_channel')
+  Channel class (channels table)
 
-class DigitalChannel(Base):
+  Properties:
+    number: The channel number
+    name: PV name of this channel
+    z_location: z location in ft along the linac (linac_z)
+    auto_reset: defines whether the faulted device input value should be
+            cleared once a good value is received. The auto-reset does
+            not work if the input is used by a device with fast evaluation.
+            Default value is False - i.e. a faulted input is held until
+            it is reset by operators.
+    evaluation: define if device state is evaluated by fast(1) or slow(0) logic.
+            default value is slow(0)
+
+  References:
+    card_id: specifies the card that contains this channel
+
+  The discriminator field is used to define whether the device is digital (digital_channel)
+  or analog (analog_channel)
+  """
+  __tablename__ = 'channels'
+  id = Column(Integer, primary_key=True)
+  discriminator = Column('type',String(50))
+  number = Column(Integer,nullable=False)
+  name = Column(String, nullable=False)
+  z_location = Column(Integer,nullable=False)
+  auto_reset = Column(Integer, nullable=False, default=0)
+  evaluation = Column(Integer, nullable=False, default=0)
+  card_id = Column(Integer,ForeignKey('application_cards.id'),nullable=False)
+  card = relationship("ApplicationCard",back_populates='channels')
+  fault_input = relationship("FaultInput",back_populates='channel')
+  __mapper_args__ = {'polymorphic_on': discriminator}
+
+
+
+class DigitalChannel(Channel):
   """
   DigitalChannnel class (digital_channels table)
   
   Properties:
-   number: position of this channel in the card - starts at 0. The
-           ApplicationCard checks if there are duplicate numbers and
-           if the number does not exceed the maximum number of channels.
-           Channels number 32 to 47 are reserved for virtual inputs - i.e.
-           inputs settable by software
-   name: string identification for channel, this is used to compose PVs
-         (e.g. PROF:GUNB:855:IN_LMTSW, where IN_LMTSW is the channel name)
    z_name: named state when value is zero (e.g. OUT or OFF) 
    o_name: named state when value is one (e.g. IN or ON)
-   num_inputs: number of monitored PVs (default=0). If the digital channel is 
-               the result of calculations based on soft inputs (CA) then
-               this has the number of PVs listed in 'monitored_pvs'
-   monitored_pvs: string containing one or more PV names that should be
+   monitored_pv:  string containing one PV name that should be
                   used by the link node to calculate the value of the soft channel.
-                  The number of PVs listed on this string is given by the num_inputs.
-                  PVs must be separated by commas. (default="")
    debounce: configurable channel debounce time
    alarm_state: define whether zero or one value is the fault state
+
 
   References:
    card_id: specifies the card that contains this channel
@@ -54,35 +60,28 @@ class DigitalChannel(Base):
                  DeviceInputs (used by DigitalDevices)
   """
   __tablename__ = 'digital_channels'
-  id = Column(Integer, primary_key=True)
-  number = Column(Integer, nullable=False) #NOTE: Channel numbers need to start at 0, not 1.
-  name = Column(String, nullable=False)
+  __mapper_args__ = {'polymorphic_identity': 'digital_channel'}
+  id = Column(Integer,ForeignKey('channels.id'), primary_key=True)
   z_name = Column(String, nullable=False)
   o_name = Column(String, nullable=False)
-  description = Column(String,nullable=False,default="")
-  num_inputs = Column(Integer, nullable=False, default=0) # for SoftChannels only
-  monitored_pvs = Column(String, nullable=False, default="") # for SoftChannels only
-  alarm_state = Column(Integer, nullable=False, default=0)
+  monitored_pv = Column(String, nullable=False, default="") # for SoftChannels only
   debounce = Column(Integer, nullable=False, default=10)
-  card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
-  device_input = relationship("DeviceInput", backref="channel")
+  alarm_state = Column(Integer,nullable=False,default=0)
+  ignore_condition = relationship("IgnoreCondition", back_populates='digital_channel')
 
-  def is_virtual(self):
-    if (self.number >= 32) and self.card.crate.location not in ['B940-009-R2','B940-009-R7']:
-      return True
-    else:
-      return False
   
-class AnalogChannel(Base):
+class AnalogChannel(Channel):
   """
   AnalogChannel class (analog_channels table)
 
   Properties:
-   number: position of this channel in the card - starts at 0. The
-           ApplicationCard checks if there are duplicate numbers and
-           if the number does not exceed the maximum number of channels
-   name: string identification for channel, this is used to compose PVs
-         (e.g. PROF:GUNB:855:IN_LMTSW, where IN_LMTSW is the channel name)
+    offset: The unit conversion offset in raw
+    slope: The unit conversion slope in egu/raw
+    egu: The engineering units to display
+    gain_bay: the gain control chassis bay
+    gain_channel: the gain control chassis channel
+    integrator: integrator this input corresponds to:
+                BPM: TMIT, X, Y
 
   References:
    card_id: specifies the card that contains this channel
@@ -91,14 +90,10 @@ class AnalogChannel(Base):
    analog_device: the AnalogDevice that uses this channel
   """
   __tablename__ = 'analog_channels'
-  id = Column(Integer, primary_key=True)
-  number = Column(Integer, nullable=False)
-  name = Column(String, nullable=False)
-  card_id = Column(Integer, ForeignKey('application_cards.id'), nullable=False)
-  analog_device = relationship("AnalogDevice", uselist=False, backref="channel")
-
-  def get_bay(self):
-    if self.number > 2:
-      return 1
-    else:
-      return 0
+  __mapper_args__ = {'polymorphic_identity': 'analog_channel'}
+  id = Column(Integer,ForeignKey('channels.id'), primary_key=True)
+  offset = Column(Float,nullable=True)
+  slope = Column(Float,nullable=True)
+  integrator = Column(Integer, nullable=False,default=0)
+  gain_bay = Column(Integer, nullable=True)
+  gain_channel = Column(Integer,nullable=True)

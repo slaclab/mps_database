@@ -26,10 +26,7 @@ class BeamClass(Base):
   id = Column(Integer, primary_key=True)
   number = Column(Integer, nullable=False, unique=True)
   name = Column(String, nullable=False)
-  description = Column(String, nullable=True)
   integration_window = Column(Integer, nullable=False)
   min_period = Column(Integer, nullable=False)
   total_charge = Column(Integer, nullable=False)
-  allowed_classes = relationship("AllowedClass", backref='beam_class')
-    
-    
+  mitigations = relationship("Mitigation",back_populates="beam_class")

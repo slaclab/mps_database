@@ -1,8 +1,13 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, func
+from sqlalchemy import Table,Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import relationship, backref, object_session
 from mps_database.models import Base
-from .allowed_class import AllowedClass
 from .beam_class import BeamClass
+
+association_table = Table('association_mitigations',Base.metadata,
+                          Column('id',Integer,primary_key=True),
+                          Column('fault_state_id',ForeignKey('fault_states.id')),
+                          Column('mitigation_id',ForeignKey('mitigations.id')),
+                          )
 
 class FaultState(Base):
   """
@@ -26,6 +31,8 @@ class FaultState(Base):
   Properties:
     default: defines if this state is the default for the fault, i.e. if other digital
              states are not faulted, it defaults to this one
+    name: Fault state name, used to build GUI states
+    value: The value a state should be in to have this state
 
   Relationships:
     allowed_classes: list of beam allowed classes for this fault
@@ -35,67 +42,41 @@ class FaultState(Base):
                        is the insertion of YAG01B screen causing the IM01B/BPM2B charge
                        comparison to be ignored while keeping the IM01B charge threshold
                        active.
-    contition_inputs: this fault_state is used as input to conditions, e.g. the IN state
-                      of profile monitor screens are used as condition_inpus to ignore
-                      faults from downstream devices (e.g. BPMs).
 
   References:
     fault_id: reference to the fault set by this fault_state.
     device_state_id: reference to the device_state that describes in which state the device
                      must be in order to generate the fault.
+    beam_destination_id: beam destination for this allowed beam class
+    beam_class_id: the BeamClass allowed
 
   """
   __tablename__ = 'fault_states'
 #  __table_args__ = tuple(UniqueConstraint('fault_id', 'device_state_id', sqlite_on_conflict='IGNORE'))
   id = Column(Integer, primary_key=True)
-  allowed_classes = relationship("AllowedClass", backref='fault_state')
-  ignore_conditions = relationship("IgnoreCondition", backref='fault_state')
-  condition_inputs = relationship("ConditionInput", backref='fault_state')
   default = Column(Boolean, nullable=False, default=False)
+  name = Column(String, nullable=False)
+  value = Column(Integer, nullable=False)
+  mask = Column(Integer, nullable=False)
   fault_id = Column(Integer, ForeignKey('faults.id'), nullable=False)
-  device_state_id = Column(Integer, ForeignKey('device_states.id'), nullable=False)
-  
+  fault = relationship("Fault",back_populates='fault_states')
+  mitigations = relationship("Mitigation",secondary=association_table,back_populates="fault_states")
 
-  def add_allowed_class(self, beam_class, beam_destination):
-    ac = AllowedClass()
-    ac.beam_class = beam_class
-    ac.beam_destination = beam_destination
-    self.allowed_classes.append(ac)
-    return ac
-  
-  def add_allowed_classes(self, beam_classes, beam_destination):
-    acs = []
-    for c in beam_classes:
-      acs.append(self.add_allowed_class(c, beam_destination))
-    return acs
+class Mitigation(Base):
+  """
+  AllowedClass class (allowed_classes table)
 
-  def get_allowed_class_string_by_dest_name(self,dest_name):
-    session = object_session(self)
-    max_beam_class = session.query(func.max(BeamClass.number)).one()[0]
-    acs = [ac for ac in self.allowed_classes if ac.beam_destination.name.upper() == dest_name.upper()]
-    if len(acs) > 1:
-      print("ERROR: Too many allowed classes for one destination")
-      return
-    if len(acs) == 1:
-      if acs[0].beam_class.number == max_beam_class:
-        return '-'
-      else:
-        return acs[0].beam_class.name
-    else:
-      return '-'
+  List of AllowedClasses for a given Fault (via fault_state_id)
 
-  def get_allowed_class(self,destination):
-    session = object_session(self)
-    max_beam_class = session.query(func.max(BeamClass.number)).one()[0]
-    acs = [ac for ac in self.allowed_classes if ac.beam_destination == destination]
-    if len(acs) > 1:
-      print("ERROR: Too many allowed classes for one destination")
-      return
-    if len(acs) == 1:
-      if acs[0].beam_class.number == max_beam_class:
-        return '-'
-      else:
-        return acs[0]
-    else:
-      return '-'      
-
+  References:
+    fault_state_id: the FaultState (Digital or Analog) for this AllowedClass
+    beam_destination_id: beam destination for this allowed beam class
+    beam_class_id: the BeamClass allowed
+  """
+  __tablename__ = 'mitigations'
+  id = Column(Integer, primary_key=True)
+  fault_states = relationship("FaultState",secondary=association_table, back_populates='mitigations')
+  beam_destination_id = Column(Integer,ForeignKey('beam_destinations.id'), nullable=False)
+  beam_destination = relationship("BeamDestination",back_populates="mitigations")
+  beam_class_id = Column(Integer,ForeignKey('beam_classes.id'), nullable=False)
+  beam_class = relationship("BeamClass",back_populates="mitigations")

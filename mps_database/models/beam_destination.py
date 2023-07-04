@@ -16,7 +16,5 @@ class BeamDestination(Base):
   __tablename__ = 'beam_destinations'
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False, unique=True)
-  description = Column(String, nullable=False)
-  destination_mask = Column(Integer, nullable=False, unique=True)
-  allowed_classes = relationship("AllowedClass", backref='beam_destination')
-  mitigation_devices = relationship("MitigationDevice", backref='beam_destination')
+  mask = Column(Integer, nullable=False, unique=True)
+  mitigations = relationship("Mitigation",back_populates="beam_destination")

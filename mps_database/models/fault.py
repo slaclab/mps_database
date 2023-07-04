@@ -1,79 +1,59 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean,Table
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.orm import object_session
 from mps_database.models import Base
-from .fault_input import FaultInput
-from .fault_state import FaultState
-from .device import Device
+
+association_ignore = Table('association_ignore',Base.metadata,
+                          Column('id',Integer,primary_key=True),
+                          Column('fault_id',ForeignKey('faults.id')),
+                          Column('ignore_condition_id',ForeignKey('ignore_conditions.id')),
+                          )
 
 class Fault(Base):
   """
   Fault class (faults table)
 
-  Describe a digital Fault, which is composed of one or more FaultInputs
-  that make up the Fault value. 
+  This is a class that contains properties common to faults (truth tables)
 
   Properties:
-    name: short fault identifier
-    description: short explanation of the fault
+    name: Fault name (e.g. STATE), used in Fault PV name
+    description: Text that ends up in the documentation and GUI
 
-  Relationships:
-    states: list of FaultStates that belong to this fault
-    inputs: list of FaultInputs for this fault
+
   """
   __tablename__ = 'faults'
   id = Column(Integer, primary_key=True)
-  name = Column(String, nullable=False)
-  description = Column(String, nullable=True)
-  states = relationship("FaultState", backref='fault')
-  inputs = relationship("FaultInput", backref='fault')
-  
-  def fault_value(self, device_states):
-    fault_value = 0
-    for fault_input in self.inputs:
-      bit_length = len(fault_input.device.inputs)
-      input_value = device_states[fault_input.device_id]
-      fault_value = fault_value | (input_value << (bit_length*fault_input.bit_position))
-    return fault_value
+  pv = Column(String, nullable=False)
+  name = Column(String,unique=True, nullable=False)
+  fault_inputs = relationship("FaultInput", back_populates='fault')
+  fault_states = relationship("FaultState",back_populates='fault')
+  ignore_conditions = relationship("IgnoreCondition",secondary=association_ignore,back_populates='faults')
 
-  def get_integrator_index(self):
-    session = object_session(self)
-    fault_states = session.query(FaultState).filter(FaultState.fault_id==self.id).all()
-    for state in fault_states:
-      bit_index=0
-      bitFound=False
-      while not bitFound:
-        b=(state.device_state.mask>>bit_index) & 1
-        if b==1:
-          bitFound=True
-        else:
-          bit_index=bit_index+1
-          if bit_index==32:
-            done=True
-            bit_index=-1
-        if bit_index==-1:
-          print(("ERROR: invalid threshold mask (" + hex(state.device_state.mask)))
-          return None
-        # Convert bit_index to integrator index
-        # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> CHRG
-        # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
-        int_index=0
-        if (bit_index >= 8 and bit_index <= 15):
-          int_index = 1
-        elif (bit_index >= 16 and bit_index <= 23):
-          int_index = 2
-        elif (bit_index >= 24 and bit_index <= 31):
-          int_index = 3
-      return int_index
 
-  def get_shift(self):
-    states = self.states
-    min_value = 1e12
-    for state in states:
-      if state.device_state.value < min_value:
-        min_value = state.device_state.value
-    shift = min_value.bit_length() - 1
-    if shift < 0:
-      shift = 0
-    return shift
+class IgnoreCondition(Base):
+  """
+  Condition class (conditions table)
 
+  Describe a condition that is composed of current values of one or more 
+  digital and/or analog device faults (via FaultStates). Each fault input 
+  is represented by a bit (starting at zero). When the combined state of
+  the input faults match the condition value it becomes valid.
+
+  A condition is used to ignore one ore more faults (digital and/or analog)
+
+  Properties:
+    name: condition identifier (PV attribute)
+    description: short description (text in the gui and the document)
+    value: bit mask used to verify if condition is met or not. 
+
+  Relationships:
+    ignore_conditions: list of fault states that compose this condition
+    condition_inputs: list of fault states that are ignored when condition is true
+  """
+  __tablename__ = 'ignore_conditions'
+  id = Column(Integer, primary_key=True)
+  name = Column(String, unique=True, nullable=False)
+  description = Column(String, nullable=False)
+  value = Column(Integer, nullable=False)
+  faults = relationship("Fault",secondary=association_ignore, back_populates='ignore_conditions')
+  digital_channel_id = Column(Integer, ForeignKey('digital_channels.id'), nullable=False)
+  digital_channel = relationship("DigitalChannel",back_populates="ignore_condition")
