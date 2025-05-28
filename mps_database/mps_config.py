@@ -22,5 +22,8 @@ class MPSConfig:
   def get_max_bc(self):
     return self.session.query(func.max(models.BeamClass.number)).one()[0]
 
+  def get_session(self):
+    return self.session
+
   
 
