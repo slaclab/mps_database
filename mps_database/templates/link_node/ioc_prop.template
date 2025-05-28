@@ -1,0 +1,7 @@
+epicsEnvSet("MPS_CONFIG_VERSION","$(VER)")
+epicsEnvSet("L2MPS_PREFIX","$(PREFIX)")
+epicsEnvSet("CRATE","$(CRATE)")
+epicsEnvSet("SLOT_ID","$(SLOT)")
+epicsEnvSet("LOCATION","$(LOC)")
+epicsEnvSet("LOCATION_INDEX","$(LOC_IDX)")
+epicsEnvSet("SHM","$(SHM)")

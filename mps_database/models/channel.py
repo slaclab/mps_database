@@ -29,7 +29,7 @@ class Channel(Base):
   discriminator = Column('type',String(50))
   number = Column(Integer,nullable=False)
   name = Column(String, nullable=False)
-  z_location = Column(Integer,nullable=False)
+  z_location = Column(Float,nullable=False)
   auto_reset = Column(Integer, nullable=False, default=0)
   evaluation = Column(Integer, nullable=False, default=0)
   card_id = Column(Integer,ForeignKey('application_cards.id'),nullable=False)
@@ -65,6 +65,7 @@ class DigitalChannel(Channel):
   z_name = Column(String, nullable=False)
   o_name = Column(String, nullable=False)
   monitored_pv = Column(String, nullable=False, default="") # for SoftChannels only
+  wdog = Column(Boolean, nullable=False, default=False) # for SoftChannels only
   debounce = Column(Integer, nullable=False, default=10)
   alarm_state = Column(Integer,nullable=False,default=0)
   ignore_condition = relationship("IgnoreCondition", back_populates='digital_channel')
@@ -96,5 +97,15 @@ class AnalogChannel(Channel):
   slope = Column(Float,nullable=False,default=1)
   egu = Column(String,nullable=False,default='raw')
   integrator = Column(Integer, nullable=False,default=0)
+  wf_only = Column(Boolean, nullable=False, default=False) # for channels to be used for WF diagnostics only
   gain_bay = Column(Integer, nullable=True)
   gain_channel = Column(Integer,nullable=True)
+
+  def get_device_prefix(self):
+    split_name = self.name.split(":")[:-1 or None]
+    return ':'.join(split_name)
+
+  def get_device_attribute(self):
+    attr = self.name.split(":")[-1 or None]
+    return attr
+

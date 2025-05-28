@@ -66,5 +66,17 @@ class Crate(Base):
   # the "parent" object.  Crate is the "parent" and link_node is the "child"
   def get_ln(self):
     return self.link_node[0]
+
+  def get_ip_num(self):
+    # Crate 1 is 10.0.1.1
+    # Crate 101 is 10.1.1.1
+    # Return 0 or 1 based on crate ID
+    if self.crate_id == 1:
+      return 0
+    elif self.crate_id == 101:
+      return 1
+    else:
+      return None
+
     
     

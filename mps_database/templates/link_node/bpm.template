@@ -1,0 +1,1 @@
+dbLoadRecords("${TOP}/db/lc2_bpm_sw.db","P=$(P),CH=$(CH),INPV=$(INPV)")

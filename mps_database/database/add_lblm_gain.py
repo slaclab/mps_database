@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from mps_database.mps_config import MPSConfig, models
 from sqlalchemy import MetaData
-from mps_database.tools.mps_reader import MpsDbReader
+from mps_database.tools.mps_db_reader import MpsDbReader
 import argparse
 
 """

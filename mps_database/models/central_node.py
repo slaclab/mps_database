@@ -21,12 +21,14 @@ class CentralNode(Base):
 
   __tablename__ = 'central_nodes'
   id = Column(Integer, primary_key=True)
+  lnid = Column(Integer,nullable=False)
   area = Column(String, nullable=False)
   location = Column(String, nullable=False)
   slot = Column(Integer, nullable=False)
   groups = relationship("LinkNodeGroup",back_populates='central_node')
   crate = relationship("Crate",back_populates='central_nodes')
   crate_id = Column(Integer,ForeignKey("crates.id"))
+  ignore_conditions = relationship("IgnoreCondition",back_populates='central_node')
 
   def get_full_location(self):
     return '{0}-S{1}'.format(self.crate.get_full_location(),self.slot)
@@ -37,3 +39,15 @@ class CentralNode(Base):
   def get_cn_prefix(self):
     return 'SIOC:{0}:{1}'.format(self.area.upper(),self.location.upper())
 
+  def get_cn_properties(self):
+    """
+    Return a dictionary of properties about central node
+    """
+    macros = {}
+    macros['cnid'] = "{0}".format(self.get_cn_number())
+    macros['crate'] = "{0}".format(self.get_full_location())
+    macros['shm'] = self.crate.get_nodename()
+    macros['cpu'] = self.crate.get_cpu_nodename()
+    slots = range(2,4)
+    crate = self.crate
+    return macros

@@ -17,16 +17,16 @@ arguments:
 """
 
 class AddDbData:
-"""
-class AddDbData:
+  """
+  class AddDbData:
 
-Adds data to the mps_database, depending on what is in the json file
+  Adds data to the mps_database, depending on what is in the json file
 
-inputs:
-  file_name: filename of the mps_database
-  verbose: verbose output
-  clear_all: erase all data in the mps_database and start over
-"""
+  inputs:
+    file_name: filename of the mps_database
+    verbose: verbose output
+    clear_all: erase all data in the mps_database and start over
+  """
   def __init__(self, file_name, verbose,clear_all=False):
     self.verbose = verbose
     self.database_file_name = file_name
@@ -38,29 +38,29 @@ inputs:
       self.conf.clear_all()
 
   def _load_json_file(self,json_file):
-  """
-  _load_json_file:
-    return object to data from json file
-  inputs:
-    json_file: relative path to json file
-  """
+    """
+    _load_json_file:
+      return object to data from json file
+    inputs:
+      json_file: relative path to json file
+    """
     with open(json_file,'r') as session_file:
       return json.load(session_file)
 
   def find_crate(self,node,dont_add=False):
-  """
-  find_crate:
-   search in mps_database for the crate defined in node['crate'] e.g. L2KA00-1521
-    If found, return mps_database object.  If not found:
-      if dont_add is True, return None
-      if dont_add is False, add a new crate with properties in node
-  inputs:
-    node: datastructure with information about this crate:
-      node['crate'] = crate location e.g. L2KA00-1521
-      node['crate_id] = crate ID, in current design this is 1 or 101
-      node['area'] = control system area where this crate is
-      node['node'] = control system device e.g. SP01
-  """
+    """
+    find_crate:
+     search in mps_database for the crate defined in node['crate'] e.g. L2KA00-1521
+      If found, return mps_database object.  If not found:
+        if dont_add is True, return None
+        if dont_add is False, add a new crate with properties in node
+    inputs:
+      node: datastructure with information about this crate:
+        node['crate'] = crate location e.g. L2KA00-1521
+        node['crate_id] = crate ID, in current design this is 1 or 101
+        node['area'] = control system area where this crate is
+        node['node'] = control system device e.g. SP01
+    """
     elevation = int(node['crate'].split('-')[1][-2::])
     rack = node['crate'].split('-')[1][0:-2]
     crates = self.session.query(models.Crate).filter(models.Crate.location == node['crate']).all()
@@ -85,15 +85,15 @@ inputs:
       return new_crate
 
   def find_card(self,num):
-  """
-  find_card:
-   search in mps_database for the card defined with appid (global id) of num
-    If found, return mps_database object.  
-    If more than one card found, print error and return None
-    If no cards found, print error and return None
-  inputs:
-    card: int with card number (appid or global id)
-  """
+    """
+    find_card:
+     search in mps_database for the card defined with appid (global id) of num
+      If found, return mps_database object.  
+      If more than one card found, print error and return None
+      If no cards found, print error and return None
+    inputs:
+      card: int with card number (appid or global id)
+    """
     num = int(num)
     cards = self.session.query(models.ApplicationCard).filter(models.ApplicationCard.number == num).all()
     if len(cards) < 1:
@@ -105,15 +105,15 @@ inputs:
     return cards[0]
 
   def find_group(self,group):
-  """
-  find_group:
-   search in mps_database for the group defined with number group
-    If found, return mps_database object.  
-    If more than one group found, print error and return None
-    If no group found, add it to the database and attach it to a central node
-  inputs:
-    group: int with group number
-  """
+    """
+    find_group:
+     search in mps_database for the group defined with number group
+      If found, return mps_database object.  
+      If more than one group found, print error and return None
+      If no group found, add it to the database and attach it to a central node
+    inputs:
+      group: int with group number
+    """
     group = int(group)
     groups = self.session.query(models.LinkNodeGroup).filter(models.LinkNodeGroup.number == group).all()
     if len(groups) > 1:
@@ -124,8 +124,8 @@ inputs:
     else:
       if self.verbose:
         print("INFO: Adding new Link Node Group {0}".format(group))
-      cn1 = [8,9,10,11,12,13,14]
-      cn2 = [15,16,17,18,19,20,21,22,23,24]
+      cn1 = [8,9,10,11,12,13,14,25]
+      cn2 = [15,16,17,18,19,20,21,22,23,24,26]
       cn3 = [0,1,2,3,4,5,6,7]
       if group in cn1:
         cn = self.session.query(models.CentralNode).filter(models.CentralNode.location=='MP01').one()
@@ -142,12 +142,12 @@ inputs:
       return new_group
 
   def add_link_node(self,json_file):
-  """
-  add_link_node:
-   Add a link node to the mps_database.  Link it to correct crate and correct group
-  inputs:
-    json_file: json file defined in main.
-  """
+    """
+    add_link_node:
+     Add a link node to the mps_database.  Link it to correct crate and correct group
+    inputs:
+      json_file: json file defined in main.
+    """
     properties = self._load_json_file(json_file)
     if 'link_nodes' in properties:
       for ln in properties['link_nodes']:
@@ -172,12 +172,12 @@ inputs:
           self.session.commit()
 
   def add_central_node(self,json_file):
-  """
-  add_central_node:
-   Add a central node to the mps_database.  Link it to correct crate and correct groups
-  inputs:
-    json_file: json file defined in main.
-  """
+    """
+    add_central_node:
+     Add a central node to the mps_database.  Link it to correct crate and correct groups
+    inputs:
+      json_file: json file defined in main.
+    """
     properties = self._load_json_file(json_file)
     if 'central_nodes' in properties:
       for cn in properties['central_nodes']:
@@ -190,22 +190,24 @@ inputs:
           area = cn['area']
           location = cn['location']
           slot = int(cn['slot'])
+          number = int(cn['number'])
           crate = self.find_crate(cn)
           central_node = models.CentralNode(area=area,
                                             location=location,
-                                            slot=slot)
+                                            slot=slot,
+                                            lnid=number)
           central_node.crate = crate
           self.session.add(central_node)
           crate.central_nodes.append(central_node)
           self.session.commit()
 
   def add_application_type(self,json_file):
-  """
-  add_application_type:
-   Add an application type to mps_database.  Not done very often.
-  inputs:
-    json_file: json file defined in main.
-  """
+    """
+    add_application_type:
+     Add an application type to mps_database.  Not done very often.
+    inputs:
+      json_file: json file defined in main.
+    """
     properties = self._load_json_file(json_file)
     if 'app_types' in properties:
       for at in properties['app_types']:
@@ -220,14 +222,14 @@ inputs:
         self.session.commit()
 
   def check_slots(self,slot,crate):
-  """
-  check_slots:
-   Make sure slot to add is not in use and contained within a crate
-   return True if slot is ok and False if it is in use or out of range
-  inputs:
-    slot: number of slot to add
-    crate: mps_database object of a crate to verify new slot
-  """
+    """
+    check_slots:
+     Make sure slot to add is not in use and contained within a crate
+     return True if slot is ok and False if it is in use or out of range
+    inputs:
+      slot: number of slot to add
+      crate: mps_database object of a crate to verify new slot
+    """
     slot_ok = True
     slots_in_use = [c.slot for c in crate.cards]
     max_slots = crate.num_slots
@@ -238,12 +240,12 @@ inputs:
     return slot_ok
 
   def add_card(self,json_file):
-  """
-  add_card_node:
-   Add an application card to the mps_database
-  inputs:
-    json_file: json file defined in main.
-  """
+    """
+    add_card_node:
+     Add an application card to the mps_database
+    inputs:
+      json_file: json file defined in main.
+    """
     properties = self._load_json_file(json_file)
     if 'cards' in properties:
       for c in properties['cards']:
@@ -256,13 +258,18 @@ inputs:
           type = types[0]
           crate = self.find_crate(c,True)
           slot = int(c['slot'])
+          if 'location' in c.keys():
+            location = c['location']
+          else:
+            location = ""
           if self.check_slots(slot,crate):
             if self.verbose:
               print("INFO: Adding application card {0} in crate {1}-{2}".format(c['number'],crate.location,c['slot']))
             card = models.ApplicationCard(number=c['number'],
                                               slot=c['slot'],
                                               crate=crate,
-                                              type=type)
+                                              type=type,
+                                              location=location)
             self.session.add(card)
             crate.cards.append(card)
             type.cards.append(card)
@@ -271,12 +278,12 @@ inputs:
             print("ERROR: Slot {0} in crate {1} (App {2}) is not available".format(slot,crate.location,c['number']))
 
   def add_beam_class(self,json_file):
-  """
-  add_beam_class:
-   Add a beam class to the mps_database.
-  inputs:
-    json_file: json file defined in main.
-  """
+    """
+    add_beam_class:
+     Add a beam class to the mps_database.
+    inputs:
+      json_file: json file defined in main.
+    """
     added = False
     properties = self._load_json_file(json_file)
     if 'beam_classes' in properties:
@@ -294,12 +301,12 @@ inputs:
     return added
 
   def add_beam_destination(self,json_file):
-  """
-  add_beam_destination:
-   Add a beam destination to the mps_database.
-  inputs:
-    json_file: json file defined in main.
-  """
+    """
+    add_beam_destination:
+     Add a beam destination to the mps_database.
+    inputs:
+      json_file: json file defined in main.
+    """
     added = False
     properties = self._load_json_file(json_file)
     if 'beam_destinations' in properties:
@@ -307,18 +314,19 @@ inputs:
         if self.verbose:
           print("INFO: Adding Beam Destination {0}".format(bd['name']))
         beam_destination = models.BeamDestination(name=bd['name'],
-                                                  mask=bd['mask'])
+                                                  mask=bd['mask'],
+                                                  display_order=bd['display_order'])
         self.session.add(beam_destination)
         self.session.commit()
         added = True
     return added
 
   def add_mitigation(self):
-  """
-  add_mitigation:
-   Add a mitigation to the mps_database for each combination of beam class and beam destination.
-   Called if a new beam class or beam destination is added
-  """
+    """
+    add_mitigation:
+     Add a mitigation to the mps_database for each combination of beam class and beam destination.
+     Called if a new beam class or beam destination is added
+    """
     for bc in self.session.query(models.BeamClass).all():
       for bd in self.session.query(models.BeamDestination).all():
         existing_mits = self.session.query(models.Mitigation).filter(models.Mitigation.beam_destination==bd).filter(models.Mitigation.beam_class==bc).all()
@@ -335,27 +343,33 @@ inputs:
             print("INFO: mitigation exists for Class {0} and Dest {1}".format(bc.name,bd.name))
 
   def add_analog_channel(self,ch):
-  """
-  add_analog_channel:
-   Add an analog_channel to the mps_database.
-  inputs:
-    ch: datastructure with information about the channel.
-  """
+    """
+    add_analog_channel:
+     Add an analog_channel to the mps_database.
+    inputs:
+      ch: datastructure with information about the channel.
+    """
     card = self.find_card(ch['appid'])
     integrator = card.type.get_integrator(ch['name'])
     evaluation = 1
     offset = 0
-    if offset in ch:
+    units = 'raw'
+    wf = False
+    if 'offset' in ch:
       offset = ch['offset']
     slope = 1
-    if slope in ch:
+    if 'slope' in ch:
       slope = ch['slope']
     gain_bay = 0
-    if gain_bay in ch:
+    if 'gain_bay' in ch:
       gain_bay = ch['gain_bay']
     gain_channel = 0
-    if gain_channel in ch:
+    if 'gain_channel' in ch:
       gain_channel = ch['gain_channel']
+    if 'wf_only' in ch:
+      wf = ch['wf_only']
+    if 'egu' in ch:
+      units = ch['egu']
     channel = models.AnalogChannel(number=ch['number'],
                                    name=ch['name'],
                                    z_location=ch['z_location'],
@@ -366,20 +380,23 @@ inputs:
                                    integrator=integrator,
                                    gain_bay=gain_bay,
                                    gain_channel=gain_channel,
-                                   card=card)
+                                   card=card,
+                                   wf_only=wf,
+                                   egu=units)
     self.session.add(channel)
     card.channels.append(channel)
     self.session.commit()
 
   def add_digital_channel(self,ch):
-  """
-  add_digital_channel:
-   Add an analog_channel to the mps_database.
-  inputs:
-    ch: datastructure with information about the channel.
-  """
+    """
+    add_digital_channel:
+     Add a digital_channel to the mps_database.
+    inputs:
+      ch: datastructure with information about the channel.
+    """
     card = self.find_card(ch['appid'])
     mon = ''
+    wdog = False
     evaluation = 0
     alarm_state = 0
     if 'monitored_pv' in ch:
@@ -389,6 +406,8 @@ inputs:
         else:
           print("ERROR: Trying to put SW channel into app that cannot have SW channels")
           return None
+      if 'wdog' in ch and ch['wdog'] != '':
+        wdog = ch['wdog']
     if card.type.name == 'Wire Scanner':
       evaluation = 1
       alarm_state = 1
@@ -401,19 +420,20 @@ inputs:
                                     o_name=ch['o_name'],
                                     alarm_state=alarm_state,
                                     monitored_pv=mon,
-                                    card=card)
+                                    card=card,
+                                    wdog=wdog)
     self.session.add(channel)
     card.channels.append(channel)
     self.session.commit()
 
   def add_channel(self,json_file):
-  """
-  add_channel:
-   Decide if new channel is analog or digital and then call appropriate
-   child function
-  inputs:
-    json_file: path to json file from main.
-  """
+    """
+    add_channel:
+     Decide if new channel is analog or digital and then call appropriate
+     child function
+    inputs:
+      json_file: path to json file from main.
+    """
     properties = self._load_json_file(json_file)
     if 'channels' in properties:
       for ch in properties['channels']:
@@ -431,12 +451,12 @@ inputs:
           print("ERROR: Channel {0} in app {1} already used (Type: {2})".format(ch['number'],ch['appid'],card.type.name))
 
   def add_fault(self,tt):
-  """
-  add_fault:
-   Add a fault to the mps_database.
-  inputs:
-    tt: datastructure with truth table information.
-  """
+    """
+    add_fault:
+     Add a fault to the mps_database.
+    inputs:
+      tt: datastructure with truth table information.
+    """
     existing_fault = self.session.query(models.Fault).filter(models.Fault.name == tt['name']).all()
     if len(existing_fault) > 0:
       print("ERROR: Fault {0} already exists".format(tt['name']))
@@ -445,27 +465,30 @@ inputs:
     return fault
 
   def get_analog_value(self,state,channel):
-  """
-  get_analog_value:
-   Return proper fault state value for analog fault based on channel integrator
-  inputs:
-    channel: mps_database object of the channel associated with particular fault
-    state: List of items related to this device state.  state[0] is the value if counting
-           starting with 0
-  """
+    """
+    get_analog_value:
+     Return proper fault state value for analog fault based on channel integrator
+    inputs:
+      channel: mps_database object of the channel associated with particular fault
+      state: List of items related to this device state.  state[0] is the value if counting
+             starting with 0
+    """
     integrator = channel.integrator
-    return 1 << ((integrator*8)+state[0])
+    if state[0] > 0:
+      return state[0]
+    else:
+      return 1 << ((integrator*8)+state[0])
 
   def find_mitigation(self,dest_name,bc_num):
-  """
-  find_mitigation:
-   Link an mps_database mitigation object with this particular combination of destination and beam class.
-  inputs:
-    dest_name: string that contains the destination name
-    bc_num: integer that contains the beam class number
-  return:
-    mps_database object mitigation that points to the row of interest.  Will be linked to a fault state
-  """
+    """
+    find_mitigation:
+     Link an mps_database mitigation object with this particular combination of destination and beam class.
+    inputs:
+      dest_name: string that contains the destination name
+      bc_num: integer that contains the beam class number
+    return:
+      mps_database object mitigation that points to the row of interest.  Will be linked to a fault state
+    """
     bc = self.session.query(models.BeamClass).filter(models.BeamClass.number==bc_num).one()
     bd = self.session.query(models.BeamDestination).filter(models.BeamDestination.name==dest_name).one()
 
@@ -478,13 +501,31 @@ inputs:
       return
     return mitigation[0]
 
+  def find_ignore_condition(self,ic,cn):
+    """
+    find_ignore_condition:
+     Return ignore condition for given central node based on description
+    inputs:
+      ic: ignore condition dictionary
+      cn: central node sqlite object
+    """
+    ics = self.session.query(models.IgnoreCondition).filter(models.IgnoreCondition.description==ic).filter(models.IgnoreCondition.central_node==cn).all()
+    if len(ics) > 1:
+      print("ERROR: Too many ignore conditions found")
+      return None
+    if len(ics) < 1:
+      print("ERROR: No ignore condition was found when one was expected")
+      return None
+    if len(ics) == 1:
+      return ics[0]
+
   def add_logic(self,json_file):
-  """
-  add_logic:
-   Add a truth table to the mps_database
-  inputs:
-    json_file: path to json file from main
-  """
+    """
+    add_logic:
+     Add a truth table to the mps_database
+    inputs:
+      json_file: path to json file from main
+    """
     properties = self._load_json_file(json_file)
     if "truth_tables" in properties:
       for tt in properties['truth_tables']:
@@ -496,6 +537,7 @@ inputs:
           # Link each channel to the fault by creating a fault_input with correct bit position (bp)
           for input in tt['inputs']:
             channel = self.session.query(models.Channel).filter(models.Channel.name==input).one()
+            cn = channel.card.get_central_node() #Take advantage of the fact that faults cannot currently span more than 1 central node
             fi = models.FaultInput(bit_position=bp,fault=fault,channel=channel)
             channel.fault_input.append(fi)
             self.session.add(fi)
@@ -508,7 +550,8 @@ inputs:
             return
           # If there are ignore conditions, link them
           for ic in tt['ignore_when']:
-            ignore_condition = self.session.query(models.IgnoreCondition).filter(models.IgnoreCondition.name==ic).one()
+            #ignore_condition = self.session.query(models.IgnoreCondition).filter(models.IgnoreCondition.description==ic).one()
+            ignore_condition = self.find_ignore_condition(ic,cn)
             fault.ignore_conditions.append(ignore_condition)
             ignore_condition.faults.append(fault)
           # Now add the fault_states.  The format of each line in the json file is a list of:
@@ -518,7 +561,7 @@ inputs:
             name = s[1]
             mask = 4294967295
             if is_analog:
-              value = self.get_analog_value(s,channel)
+              value = self.get_analog_value(s,channel) 
               mask = value
             # for beam class values, the first destination is defined at index 2 in the state information list
             index = 2
@@ -534,17 +577,17 @@ inputs:
               fault_state.mitigations.append(mitigation)
               mitigation.fault_states.append(fault_state)
               index = index + 1
-        if self.verbose:
-          print("INFO: Adding logic: {0}".format(fault.name))
-        self.session.commit()
+          if self.verbose:
+            print("INFO: Adding logic: {0}".format(fault.name))
+          self.session.commit()
 
   def add_ignore_condition(self,json_file):
-  """
-  add_ignore_condition:
-   Add ignore conditions to the mps_database
-  inputs:
-    json_file: path to json file from main
-  """
+    """
+    add_ignore_condition:
+     Add ignore conditions to the mps_database
+    inputs:
+      json_file: path to json file from main
+    """
     properties = self._load_json_file(json_file)
     if "ignore_conditions" in properties:
       for ic in properties['ignore_conditions']:
@@ -553,12 +596,15 @@ inputs:
           print("ERROR: Ignore Condition {0} already exists!".format(ic['name']))
           return
         channel = self.session.query(models.Channel).filter(models.Channel.name==ic['channel']).one()
+        cn = self.session.query(models.CentralNode).filter(models.CentralNode.id==ic['cn']).one()
         if self.verbose:
           print("INFO: Adding Ignore Condition: {0}".format(ic['description']))
         ignore_condition = models.IgnoreCondition(name=ic['name'],
                                                   description=ic['description'],
                                                   value=1,
-                                                  digital_channel=channel)
+                                                  digital_channel=channel,
+                                                  central_node=cn)
+        self.session.add(ignore_condition)
         self.session.commit()
 
 
@@ -597,5 +643,5 @@ if new_bc or new_dest:
 add_data.add_application_type(json_file)
 add_data.add_card(json_file)
 add_data.add_channel(json_file)
-add_data.add_logic(json_file)
 add_data.add_ignore_condition(json_file)
+add_data.add_logic(json_file)

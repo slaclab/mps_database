@@ -17,4 +17,5 @@ class BeamDestination(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False, unique=True)
   mask = Column(Integer, nullable=False, unique=True)
+  display_order = Column(Integer,nullable=False,unique=True)
   mitigations = relationship("Mitigation",back_populates="beam_destination")

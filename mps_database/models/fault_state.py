@@ -46,6 +46,17 @@ class FaultState(Base):
   fault = relationship("Fault",back_populates='fault_states')
   mitigations = relationship("Mitigation",secondary=association_table,back_populates="fault_states")
 
+  def get_beam_classes(self):
+    """
+    Query the mitigations for this beam class and return a dictionary of "dest_name":"beam_class" pairs 
+    """
+    ans = {}
+    for mit in self.mitigations:
+      dest = mit.beam_destination.name
+      ans[dest] = mit.beam_class
+    return ans
+
+
 class Mitigation(Base):
   """
   Mitigation

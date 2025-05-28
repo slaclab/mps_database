@@ -1,0 +1,276 @@
+{
+  "beam_destinations":[
+    {
+      "name":"LASER",
+      "mask":"1",
+      "display_order":"7"
+    },
+    {
+      "name":"SC_DIAG0",
+      "mask":"2",
+      "display_order":"2"
+    },
+    {
+      "name":"SC_BSYD",
+      "mask":"4",
+      "display_order":"1"
+    },
+    {
+      "name":"SC_HXR",
+      "mask":"8",
+      "display_order":"3"
+    },
+    {
+      "name":"SC_SXR",
+      "mask":"16",
+      "display_order":"4"
+    },
+    {
+      "name":"SC_LESA",
+      "mask":"32",
+      "display_order":"5"
+    },
+    {
+      "name":"LASER_HTR",
+      "mask":"8192",
+      "display_order":"6"
+    },
+    {
+      "name":"MECH_SHUTTER",
+      "mask":"16384",
+      "display_order":"8"
+    }
+  ],
+  "beam_classes":[
+    {
+      "name":"Beam Off",
+      "number":"0",
+      "integration_window":"455000",
+      "min_period":"0",
+      "total_charge":"0"
+    },
+    {
+      "name":"Kicker STDBY",
+      "number":"1",
+      "integration_window":"455000",
+      "min_period":"0",
+      "total_charge":"0"
+    },
+    {
+      "name":"BC1Hz",
+      "number":"2",
+      "integration_window":"910000",
+      "min_period":"909999",
+      "total_charge":"350"
+    },
+    {
+      "name":"BC10Hz",
+      "number":"3",
+      "integration_window":"910000",
+      "min_period":"90999",
+      "total_charge":"3500"
+    },
+    {
+      "name":"Diagnostic",
+      "number":"4",
+      "integration_window":"455000",
+      "min_period":"0",
+      "total_charge":"5000"
+    },
+    {
+      "name":"BC120Hz",
+      "number":"5",
+      "integration_window":"182000",
+      "min_period":"7582",
+      "total_charge":"8400"
+    },
+    {
+      "name":"Tuning",
+      "number":"6",
+      "integration_window":"182000",
+      "min_period":"0",
+      "total_charge":"7000"
+    },
+    {
+      "name":"1% MAP",
+      "number":"7",
+      "integration_window":"9100",
+      "min_period":"0",
+      "total_charge":"3000"
+    },
+    {
+      "name":"5% MAP",
+      "number":"8",
+      "integration_window":"2730",
+      "min_period":"0",
+      "total_charge":"4500"
+    },
+    {
+      "name":"10% MAP",
+      "number":"9",
+      "integration_window":"910",
+      "min_period":"0",
+      "total_charge":"3000"
+    },
+    {
+      "name":"25% MAP",
+      "number":"10",
+      "integration_window":"364",
+      "min_period":"0",
+      "total_charge":"3000"
+    },
+    {
+      "name":"50% MAP",
+      "number":"11",
+      "integration_window":"182",
+      "min_period":"0",
+      "total_charge":"3000"
+    },
+    {
+      "name":"100% MAP",
+      "number":"12",
+      "integration_window":"182",
+      "min_period":"0",
+      "total_charge":"6000"
+    },
+    {
+      "name":"Full",
+      "number":"13",
+      "integration_window":"182",
+      "min_period":"0",
+      "total_charge":"100000"
+    }
+  ],
+  "app_types":[
+    {
+      "name":"MPS Analog",
+      "num_integrators":"2",
+      "analog_channel_count":"6",
+      "digital_channel_count":"0",
+      "software_channel_count":"0"
+    },
+    {
+      "name":"BPM",
+      "num_integrators":"3",
+      "analog_channel_count":"2",
+      "digital_channel_count":"0",
+      "software_channel_count":"0"
+    },
+    {
+      "name":"BCM",
+      "num_integrators":"1",
+      "analog_channel_count":"1",
+      "digital_channel_count":"0",
+      "software_channel_count":"0"
+    },
+    {
+      "name":"BLEN",
+      "num_integrators":"1",
+      "analog_channel_count":"1",
+      "digital_channel_count":"0",
+      "software_channel_count":"0"
+    },
+    {
+      "name":"Wire Scanner",
+      "num_integrators":"0",
+      "analog_channel_count":"0",
+      "digital_channel_count":"4",
+      "software_channel_count":"0"
+    },
+    {
+      "name":"LLRF",
+      "num_integrators":"0",
+      "analog_channel_count":"0",
+      "digital_channel_count":"32",
+      "software_channel_count":"0"
+    },
+    {
+      "name":"RTM Digital",
+      "num_integrators":"0",
+      "analog_channel_count":"0",
+      "digital_channel_count":"32",
+      "software_channel_count":"16"
+    },
+    {
+      "name":"MPS Digital",
+      "num_integrators":"0",
+      "analog_channel_count":"0",
+      "digital_channel_count":"48",
+      "software_channel_count":"0"
+    }
+  ],
+  "central_nodes":[
+    {
+      "area":"SYS0",
+      "location":"MP03",
+      "slot":"2",
+      "crate":"B34-MP01",
+      "crate_id":"1",
+      "node":"MP03"
+    }
+  ],
+  "link_nodes": [
+    {
+      "area": "B34",
+      "crate": "B34-SP08",
+      "crate_id": "1",
+      "group": "0",
+      "group_link": "B34-MP01",
+      "ln_type": "2",
+      "lnid": "50",
+      "location": "MP01",
+      "node": "SP08",
+      "rx_pgp": "0"
+    }
+  ],
+  "cards": [
+    {
+      "crate": "B34-SP08",
+      "number": "1",
+      "slot": "1",
+      "type": "RTM Digital"
+    },
+    {
+      "crate": "B34-SP08",
+      "number": "2",
+      "slot": "2",
+      "type": "MPS Analog"
+    }
+  ],
+  "channels": [
+    {
+      "appid": "1",
+      "auto_reset": "1",
+      "monitored_pv": "",
+      "name": "MPS:B34:1:TEST_DI0",
+      "number": "0",
+      "o_name": "IS_OK",
+      "z_location": "-32.115049",
+      "z_name": "IS_FAULTED"
+    },
+    {
+      "appid": "1",
+      "auto_reset": "1",
+      "monitored_pv": "",
+      "name": "MPS:B34:1:TEST_DI1",
+      "number": "1",
+      "o_name": "IS_OK",
+      "z_location": "-32.115049",
+      "z_name": "IS_FAULTED"
+    },
+    {
+      "appid": "2",
+      "auto_reset": "0",
+      "name": "MPS:B34:0:I0_LOSS",
+      "number": "0",
+      "z_location": "-32.115049"
+    },
+    {
+      "appid": "2",
+      "auto_reset": "0",
+      "name": "MPS:B34:1:I0_LOSS",
+      "number": "1",
+      "z_location": "-32.115049"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+dbLoadRecords("${TOP}/db/ln_information.db","P=$(P),GROUP=$(GROUP),CPU=$(CPU),SHM=$(SHM),CRATE=$(CRATE),SIOC=$(SIOC),S1A=$(S1A),S2U=$(S2U),S2T=$(S2T),S2A=$(S2A),S3U=$(S3U),S3T=$(S3T),S3A=$(S3A),S4U=$(S4U),S4T=$(S4T),S4A=$(S4A),S5U=$(S5U),S5T=$(S5T),S5A=$(S5A),S6U=$(S6U),S6T=$(S6T),S6A=$(S6A),S7U=$(S7U),S7T=$(S7T),S7A=$(S7A)")

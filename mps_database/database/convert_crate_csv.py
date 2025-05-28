@@ -11,7 +11,7 @@ json format.
 arguments:
   -v: verbose output
   --csv: relative path to csv file to convert
-  --file: relative path to destination .json file
+  --dest: relative path to destination .json file
   "link_nodes": [
     {
       "area": "GUNB",
@@ -36,8 +36,8 @@ args = parser.parse_args()
 csv_file = args.csv
 dest_file = args.dest
 
-cn1 = [8,9,10,11,12,13,14]
-cn2 = [15,16,17,18,19,20,21,22,23,24]
+cn1 = [8,9,10,11,12,13,14,25]
+cn2 = [15,16,17,18,19,20,21,22,23,24,26]
 cn3 = [0,1,2,3,4,5,6,7]
 
 f = open(csv_file)

@@ -1,0 +1,1 @@
+dbLoadRecords("${TOP}/db/analog_window_time.db","DEV=$(DEV),P=$(P),CH=$(CH),TPR=$(TPR),TRG=$(TRG)")

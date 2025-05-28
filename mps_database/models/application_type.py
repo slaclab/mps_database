@@ -46,3 +46,15 @@ class ApplicationType(Base):
           return 2
         else:
           return 0
+
+  def get_short_name(self):
+    if self.name == "MPS Analog":
+      return "MPS_AI"
+    elif self.name == "RTM Digital":
+      return "MPS_DI"
+    elif self.name == "MPS Digital":
+      return "MPS_DI"
+    elif self.name == "Wire Scanner":
+      return "WIRE"
+    else:
+      return self.name

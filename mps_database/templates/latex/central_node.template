@@ -1,0 +1,9 @@
+\node($(ID))$(INST){
+\begin{tabularx}{\dimexpr\cratewidth-2\fboxsep-2\fboxrule}{|X  l|}
+\multicolumn{2}{c}{Central Node $(CNID)}\\
+\hline
+\rowcolor{light-gray}
+$(LOCATION) & $(SHM)\\
+\hline
+\end{tabularx}
+};

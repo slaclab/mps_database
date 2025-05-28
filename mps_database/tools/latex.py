@@ -8,27 +8,6 @@ class Latex:
         self.file_name = file_name
         self.f = open(file_name,'w')
 
-    def getAuthor(self):
-        proc = subprocess.Popen('whoami', stdout=subprocess.PIPE)
-        user = proc.stdout.readline().rstrip().decode('UTF-8')
-        email = ""
-        name = ""
-        first_name = "unknown"
-        last_name = "unknown"
-        proc = subprocess.Popen(['person', '-tag', '-match', 'email', user], stdout=subprocess.PIPE)
-        while True:
-          line = proc.stdout.readline().decode('UTF-8')
-          if line != '':
-            if line.startswith("email") and email == "":
-              email = line.split(':')[1].rstrip().lower()
-            elif line.startswith("name") and name == "":
-              name = line.split(':')[1].rstrip()
-              first_name = name.split(', ')[1]
-              last_name = name.split(', ')[0]
-          else:
-            break
-        return [user, email, first_name, last_name]
-
     def exportPdf(self, report_path):
         fname = self.file_name.rsplit('/',1)[-1]
         cwd = os.getcwd()
@@ -44,17 +23,16 @@ class Latex:
         os.chdir(cwd)        
 
     def startDocument(self, title, version):
-        self.f.write('\\documentclass[10pt, oneside]{book}\n')
+        self.f.write('\\documentclass[10pt, twoside]{article}\n')
         self.f.write('\\usepackage{lcls-article}\n')
-        self.f.write('\\usepackage{longtable}\n')
-        self.f.write('\\usepackage{tabularx}\n')
         self.f.write('\\newcommand\code{\\begingroup \\urlstyle{tt}\\Url}\n')
         self.f.write('\\renewcommand\\revnum{0}{1}{2}'.format('{',version,'}\n'))
-        self.f.write('\\title{0}{1}{2}{3}{4}'.format('{',title,':\\\\',version,'}\n'))
-        self.f.write('\\date{}\n')
+        self.f.write('\\title{0}{1}{2}'.format('{',title,'}\n'))
+        self.f.write('\\author{\\revnum}\n')
         self.f.write('\\begin{document}\n')
         self.f.write('\\maketitle\n')
-        self.f.write('\\addtocounter{page}{1}\n')
+        self.f.write('\\tableofcontents\n')
+        self.f.write('\\newpage\n')
 
     def endDocument(self, report_path):
         self.f.write('\\end{document}\n')
@@ -65,30 +43,15 @@ class Latex:
         self.f.write('\\begin{table}[H]\n')
         self.f.write('\\centering\n')
         self.f.write('\\makegapedcells\n')
-        self.f.write('\\begin{tabularx}{\\textwidth}{|c c c Y<{\\rule[0em]{0pt}{1.1em}}|}\n')
-        self.f.write('{0}{1}{2}\n'.format('\\multicolumn{4}{l}{',shm,'}\\\\'))
+        self.f.write('\\begin{tabular}{|c c c|}\n')
+        self.f.write('{0}{1}{2}\n'.format('\\multicolumn{3}{l}{',shm,'}\\\\'))
         self.f.write('\\hline\n')
-        self.f.write('Slot & App ID & Type & Description\\\\\n')
-        self.f.write('\\hline\n')
-        for slot in slots:
-          self.f.write('{0} & {1} & {2} & {3} \\\\\n'.format(slot[0],slot[1],slot[2],slot[3]))
-          self.f.write('\\hline\n')
-        self.f.write('\\end{tabularx}\n')
-        self.f.write('\\end{table}\n')
-
-    def appendixA(self,lc1_id,shm,rack,slots):
-        self.f.write('\\begin{table}[H]\n')
-        self.f.write('\\centering\n')
-        self.f.write('\\makegapedcells\n')
-        self.f.write('\\begin{tabularx}{\\textwidth}{c c l | c c c c c}\n')
-        self.f.write('{0}{1}{2}\n'.format('\\multicolumn{4}{l}{',shm,'}\\\\'))
-        self.f.write('\\hline\n')
-        self.f.write('Slot & App ID & PV Prefix & SW Version & FW Version & Enable & Initials & Date\\\\\n')
+        self.f.write('Slot & App ID & Type\\\\\n')
         self.f.write('\\hline\n')
         for slot in slots:
-          self.f.write('{0} & {1} & {2}{3}{4} & & & & & \\\\\n'.format(slot[0],slot[1],'\\texttt{',slot[2],'}'))
+          self.f.write('{0} & {1} & {2} \\\\\n'.format(slot[0],slot[1],slot[2]))
           self.f.write('\\hline\n')
-        self.f.write('\\end{tabularx}\n')
+        self.f.write('\\end{tabular}\n')
         self.f.write('\\end{table}\n')
 
     def writeAppInputs(self, inputs):
@@ -127,29 +90,14 @@ class Latex:
           self.f.write(input)
 
     def startGroup(self, group):
-        self.f.write('\\{0}{1}{2}\n'.format('chapter{Link Node Group ',group,'}'))
-
-    def startLinkNode(self, id, location):
-        self.f.write('\\{0}{1}{2}{3}{4}\n'.format('section{Link Node  ',id,': ',location,'}'))
-
-    def startApplication(self, id, ln):
-        self.f.write('\\newpage\n')
-        self.f.write('\\{0}{1}{2}{3}{4}\n'.format('section{Link Node ',ln,': Application Card ',id,'}'))
+        self.f.write('\\{0}{1}{2}\n'.format('section{Link Node Group ',group,'}'))
 
     def startIgnoreGroup(self, title):
         self.f.write('\\newpage\n')
         self.f.write('\\{0}{1}{2}\n'.format('chapter{',title,'}'))
 
     def startFault(self, title):
-        self.f.write('\\{0}{1}{2}\n'.format('section{',title,'}'))
-
-    def appCommunicationCheckoutTable(self):
-        self.f.write('\\subsubsection{Communication}\n')
-        self.f.write('\\begin{table}[H]\n')
-        self.f.write('\\begin{tabular}{ l  c }\n')
-        self.f.write('$\\Box$ & Toggle Application Enable \\\\\n')
-        self.f.write('\\end{tabular}\n')
-        self.f.write('\\end{table}\n')           
+        self.f.write('\\{0}{1}{2}\n'.format('section{',title,'}'))       
 
     def appCheckoutTable(self, crate, slot):
         self.f.write('\\begin{table}[H]\n')

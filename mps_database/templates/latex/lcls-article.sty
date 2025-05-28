@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Header Stufff
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newcommand\cratewidth{200pt}
 \def\fileversion{1.0}
 \def\filedate{2006/10/23}
 \@ifundefined{ProvidesPackage}{}{%
@@ -12,6 +12,20 @@
 \RequirePackage{graphicx}
 
 \PassOptionsToPackage{pdftex,backref}{hyperref}
+
+\usepackage{supertabular}
+\usepackage{paracol}
+\usepackage{tabularx}
+\usepackage[margin=0.5in]{geometry}
+\geometry{letterpaper}
+\usepackage{float}
+\usepackage{array, makecell}
+\usepackage[table]{xcolor}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{booktabs}
+\definecolor{light-gray}{gray}{0.70}
+\definecolor{very-light-gray}{gray}{0.9}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % URL Line Breaking Setup
@@ -38,53 +52,6 @@
 % copy of the command before loading hyperref
 \let\noHyperUrl\Url
 % More on this later...
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Some packages
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\usepackage[margin=0.5in]{geometry}
-\geometry{letterpaper}
-
-\usepackage{caption}
-\captionsetup{labelfont=bf, labelsep=period}
-
-\usepackage{ifthen}
-\usepackage{titlesec}
-\usepackage{rotating}
-\usepackage[parfill]{parskip}
-\usepackage{lastpage}
-\usepackage{graphicx}
-\usepackage[squaren]{SIunits}
-\usepackage{binary}
-\usepackage{booktabs}
-\usepackage{multirow}
-\usepackage{tabularx}
-\usepackage{amssymb}
-\usepackage{epstopdf}
-\usepackage{fmtcount}
-\usepackage{appendix}
-\usepackage{comment}
-\usepackage{relsize}
-\usepackage[printonlyused]{acronym}
-\usepackage[latin1, applemac]{inputenc}
-\usepackage{calc}
-\usepackage{fancyhdr}
-\usepackage{pxfonts}
-\usepackage{tabularx}
-\usepackage{float}
-\usepackage{array, makecell}
-%\usepackage{courier}
-%\usepackage{pslatex}
-\usepackage{microtype} % load after fonts
-\usepackage[table]{xcolor}
-\definecolor{light-gray}{gray}{0.75}
-\setcellgapes{1pt}
-
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Continued URL and Hyperref Setup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,47 +73,6 @@
         colorlinks=false
     }
 }
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Custom Graphics Commands
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand\defaultgraphicwidth{0.8}
-
-\newcommand\insertgraphicw[3]{
-	\begin{figure}[htbp]
-	\begin{center}
-	\includegraphics[width=#1\textwidth]{graphics/#2} 
-	\caption{#3}
-	\label{#2}
-	\end{center}
-	\end{figure}
-}
-
-\newcommand\insertgraphic[2]{
-	\insertgraphicw{\defaultgraphicwidth}{#1}{#2}
-}
-
-\newcommand\insertgraphicwr[4]{
-	\begin{figure}[htbp]
-	\begin{center}
-	\includegraphics[width=#1\textwidth,angle=#2]{graphics/#3} 
-	\caption{#4}
-	\label{#3}
-	\end{center}
-	\end{figure}
-}
-\newcolumntype{Y}{>{\centering\arraybackslash}X}
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% URL usage continued...
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Here's where we use the Url{} command...
 \newcommand{\programname}{\begingroup \urlstyle{tt}\noHyperUrl}
 % this \texttt allows hyphenation at `discretionary hyphens' (\-)
@@ -155,123 +81,58 @@
   \texttt{\spaceskip .5em plus .3em minus .3em
     \hyphenchar\font=`\-\relax #1}}
 
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title Page and PDF Info
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand\revnum{--}
-\newcommand\LCLSDocumentTypeShortName{ESD}
-\newcommand\LCLSDocumentTypeFullName{Engineering Specifications Document}
-
-\newcommand{\lclsdocumenttype}[1]{
-    \ifthenelse{\equal{#1}{ICD}}{%
-        \renewcommand\LCLSDocumentTypeShortName{ICD}
-        \renewcommand\LCLSDocumentTypeFullName{Interface Control Document}
-    }{
-        \ifthenelse{\equal{#1}{PRD}}{%
-            \renewcommand\LCLSDocumentTypeShortName{PRD}
-            \renewcommand\LCLSDocumentTypeFullName{Physics Requirements Document}
-        }{}
-    }
-}
-
-\newcommand\lclsdocumentnumber[1]{\def\@LCLSDocumentNumber{#1}}
-\def\@LCLSDocumentNumber{1.x-xxx}
-
-\newcommand\keywords[1]{\def\@keywords{#1}}
-\def\@keywords{\@title~\LCLSDocumentTypeFullName~LCLS~\LCLSDocumentTypeShortName}
-
-\newcommand\summary[1]{\def\@summary{#1}}
-\def\@summary{\@title~\LCLSDocumentTypeFullName.}
-
-\newcommand\currentrevision[1]{\def\@lclsCurrentRevision{#1}}
-\def\@lclsCurrentRevision{0}
-
-\newcommand\systemname[1]{\def\@LCLSSystemName{#1}}
-\def\@LCLSSystemName{System Name}
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Reviewer File (.rev)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand\printreviewer[2]{%
-    &&\\
-    \multicolumn{1}{|l}{#1}&&\\\cline{2-3}
-    \multicolumn{1}{|l}{\begin{minipage}{14em}\raggedright#2\end{minipage}}&
-    \multicolumn{1}{c}{Signature}&
-    \multicolumn{1}{c|}{Date}\\
-}
-
-\newwrite\reviewersfile						% File handle
-\openout\reviewersfile = \jobname.rev		% Open the file
-
-\newcommand{\addreviewer}[2]{%
-	\begingroup
-		\let\protect\noexpand
-		\write\reviewersfile{\string\printreviewer{#1}{#2}}
-	\endgroup
-}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Change History Log File (.chl)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand\printchangehistory[4]{%
-    #1&#2&#3&
-    \begin{minipage}{12em}
-    #4
-    \end{minipage}\\
-}
-
-\newwrite\changehistoryfile						% File handle
-\openout\changehistoryfile = \jobname.chl		% Open the file
-
-\newcommand{\addchangehistory}[4]{%
-	\begingroup
-		\let\protect\noexpand
-		\write\changehistoryfile{\string\printchangehistory{#1}{#2}{#3}{#4}}
-	\endgroup
-}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Title Page
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand{\defaulttitlefont}{\fontsize{10.95}{13.6}\selectfont}
-\newcommand{\titlefont}{\bfseries \fontsize{18}{18.36pt}\selectfont}
-\newcommand{\largetitlefont}{\bfseries \fontsize{29.88}{35.88pt}\selectfont}
-\newcommand{\othertitlefont}{\fontsize{14.4}{17.28}\selectfont}
-\newcommand{\authorfont}{\bfseries \fontsize{14.4}{17.28}\selectfont}
-\newcommand{\informationfont}{\fontsize{10}{12}\selectfont}
-\newcommand{\dedicationfont}{\slshape \fontsize{14.4}{17.28}\selectfont}
-
-\newcommand{\thisyear}{\number\year}
-\def\thismonth{\ifcase\month\or January\or February\or March\or
-  April\or May\or June\or July\or August\or September\or October\or November\or December\fi}
-\newcommand{\todaysdate}{\thismonth, \thisyear}
-
-\providecommand*{\sectfont}{\relax}
-
-\newcommand\addpdfinfo{
+\makeatletter\AtBeginDocument{
     \hypersetup{%
-        pdftitle    = \@title,
-        pdfauthor   = \@author,
+        pdftitle    = {\@title},
+        pdfauthor   = {\@author}
     }
 }
+\makeatother
 
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Redefine maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+  \renewcommand\maketitle{\begin{titlepage}%
+  \let\footnotesize\small
+  \let\footnoterule\relax
+  \let \footnote \thanks
+  \null\vfil
+  \vskip 60\p@
+  \begin{center}%
+    {\LARGE \@title \par}%
+    %\vskip 3em%
+    {\LARGE
+     \lineskip .75em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+      %\vskip 1.5em%
+    %{\large \@date \par}%       % Set date in \large size.
+  \end{center}\par
+  \@thanks
+  \vfil\null
+  \end{titlepage}%
+  \setcounter{footnote}{0}%
+  \global\let\thanks\relax
+  \global\let\maketitle\relax
+  \global\let\@thanks\@empty
+  \global\let\@author\@empty
+  \global\let\@date\@empty
+  \global\let\@title\@empty
+  \global\let\title\relax
+  \global\let\author\relax
+  \global\let\date\relax
+  \global\let\and\relax
+  }
+\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Make LCLS headers, footers, and page size
@@ -280,7 +141,7 @@
 \pagestyle{fancy}
 \headheight 50pt
 \marginparwidth 5pt
-\headsep 20pt
+\headsep 10pt
 
 % Nothing on empty pages
 \clearpage{\pagestyle{empty}\cleardoublepage}
@@ -309,13 +170,8 @@
 \makeatletter 
 \newcommand{\LCLSHeader}{
 \fancyhead{}
-\fancyhead[L]{\includegraphics[width=3in]{lockup}}
-\fancyhead[R]{\includegraphics[height=.35in]{SLAC-simple-lowres}}
-%\ifthenelse{\boolean{@twoside}}{
-%    \fancyhead[LO, RE]{\includegraphics[width=3in]{lockup}}
-%}{
-%    \fancyhead[LO]{\includegraphics[width=3in]{lockup}}
-%}
+\fancyhead[L]{\includegraphics[height=.3in]{lockup}}
+\fancyhead[R]{\includegraphics[height=.3in]{SLAC-simple-lowres}}
 
 \renewcommand{\headrulewidth}{0pt}
 }
@@ -340,62 +196,23 @@
 \LCLSHeaderAndFooter
 }
 
-\textheight=600pt
+\textheight=680pt
 \footskip=20pt
 \footnotesep=0pt
 
 \fancypagestyle{empty}{}
 
-
-
-
+\setcounter{tocdepth}{1}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Update heading text and size
+% Draw Link Node Groups
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzstyle{arrow} = [line width=1pt,->,>=stealth]
+\tikzstyle{linknode} = [rectangle,line width=1pt,minimum width=6.5cm,minimum height=1cm,text centered, draw=black]
 
-
-\titleformat{\chapter}
-	{\bfseries\fontsize{14}{14.28}}
-	{\bfseries\thechapter\enspace} 
-	{8pt} 
-	{\bfseries\fontsize{14}{14.28}\filright} 
-
-\titlespacing{\chapter} 
-	{0pt}
-	{*1}
-	{*0.1}
-
-
-\titleformat{\section}
-	{\bfseries\fontsize{12}{12.24}}
-	{\bfseries\thesection\enspace} 
-	{8pt} 
-	{\bfseries\fontsize{12}{12.24}\filright} 
-
-\titlespacing{\section} 
-	{0pt}
-	{*.1}
-	{*0.1}
-
-
-\titleformat{\subsection}
-	{\bfseries\fontsize{12}{12.24}}
-	{\bfseries\thesubsection\enspace} 
-	{8pt} 
-	{\bfseries\fontsize{12}{12.24}\filright} 
-
-\titlespacing{\subsection} 
-	{0pt}
-	{*.1}
-	{*0.1}
-
-
-
-
-
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define a tab
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand\tab[1][1cm]{\hspace*{#1}}
