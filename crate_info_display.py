@@ -771,7 +771,7 @@ class AlarmColorLabel(QLabel):
         )
         self.channel.connect()
 
-    # Update label color based on alarm severity code from EPICS
+    # Update label color based on alarm severity code from EPICS.
     def alarm_changed(self, severity_code):
         severity_map = {
             0: "NO_ALARM",
