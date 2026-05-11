@@ -38,5 +38,5 @@ class BeamClass(Base):
     else:
       rval = self.name
     if report:
-      rval = rval.replace('_','\_').replace('&','\&').replace('%','\%')
+      rval = rval.replace('_','\\_').replace('&','\\&').replace('%','\\%')
     return rval

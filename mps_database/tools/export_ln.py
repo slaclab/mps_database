@@ -31,7 +31,8 @@ class ExportLinkNode():
                     "SLOT":"{0}".format(card.get_real_slot()),
                     "LOC":card.crate.area,
                     "LOC_IDX":card.location,
-                    "SHM":card.crate.get_nodename()}
+                    "SHM":card.crate.get_nodename(),
+                    "LN":"{0}".format(ln.lnid)}
           self.t.write_template(st_dest,filename=st_name,template='ioc_prop.template',macros=macros,type='link_node')
           if card.slot < 3:
             macros = ln.map_nc_config()

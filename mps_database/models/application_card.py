@@ -115,12 +115,23 @@ class ApplicationCard(Base):
     else:
       return self.slot
 
+  def get_attribute(self):
+    if self.slot == 1:
+      text = 'DIG_'
+    else: 
+      text = ''
+    return text
+
   def get_slot_text(self):
     if self.slot == 1:
       text = 'RTM'
     else: 
-      text = '{0}'.format(self.slot)
+      text = 'S{0}'.format(self.slot)
     return text
+
+  def get_location(self):
+    loc = "{0}-{1}".format(self.crate.get_full_location(),self.get_slot_text())
+    return loc
 
   def get_bays_populated(self):
     chans = len(self.channels)

@@ -1,3 +1,4 @@
+epicsEnvSet("LN","$(LN)")
 epicsEnvSet("MPS_CONFIG_VERSION","$(VER)")
 epicsEnvSet("L2MPS_PREFIX","$(PREFIX)")
 epicsEnvSet("CRATE","$(CRATE)")

@@ -19,3 +19,11 @@ class BeamDestination(Base):
   mask = Column(Integer, nullable=False, unique=True)
   display_order = Column(Integer,nullable=False,unique=True)
   mitigations = relationship("Mitigation",back_populates="beam_destination")
+
+  def get_properties(self):
+    macros = {}
+    macros["DEST"] = self.name
+    macros["ID"] = "{0}".format(self.id)
+    macros["SHIFT"] = "{0}".format(self.id-1)
+    macros["SHIFT1"] = "{0}".format(16+self.id-1)
+    return macros

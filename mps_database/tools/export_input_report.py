@@ -42,7 +42,7 @@ class ExportInputReport(ExportReport):
         macros['AID'] = '{0}'.format(card.number)
         macros['SLOT'] = '{0}'.format(card.get_slot_text())
         macros['CH'] = '{0}'.format(ch.number)
-        macros['NAME'] = ch.name.replace('_','\_').replace('&','\&')
+        macros['NAME'] = ch.name.replace('_','\\_').replace('&','\\&')
         self.t.write_template(path=self.d,filename=self.filename,template="channel.template",macros=macros,type='latex')
     self.t.write_template(path=self.d,filename=self.filename,template="end_device_input_table.template",macros=macros,type='latex')
 

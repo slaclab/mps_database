@@ -72,7 +72,10 @@ class LinkNodeGroup(Base):
     session = object_session(self)
     location = ln.group_link
     next_crate = session.query(Crate).filter(Crate.location==location).one()
-    next_ln = next_crate.link_node[0]
+    if next_crate.has_ln():
+      next_ln = next_crate.link_node[0]
+    else:
+      next_ln = None
     return next_ln
 
 
@@ -89,8 +92,11 @@ class LinkNodeGroup(Base):
     keep_going = True
     previous_ln = first_ln
     while(keep_going):
-      count = count + 1
       ln = self.find_next_ln(previous_ln)
+      if ln == None:
+        keep_going = False
+        continue
+      count = count + 1
       key = "{0}".format(count)
       chain[key] = ln
       previous_ln = ln

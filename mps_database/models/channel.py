@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float,Boolean, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, object_session
 from mps_database.models import Base
 
 class Channel(Base):
@@ -37,7 +37,44 @@ class Channel(Base):
   fault_input = relationship("FaultInput",back_populates='channel')
   __mapper_args__ = {'polymorphic_on': discriminator}
 
+  def get_channel_properties(self):
+    all_macros = []
+    if self.discriminator == "digital_channel":
+      all_macros.append(self._build_macros())
+    else:
+      states = self.get_fault_states()
+      if states is not None:
+        for state in states:
+          all_macros.append(self._build_macros(state))
+      else:
+        all_macros.append(self._build_macros(None))
+    return all_macros
+    
 
+  def _build_macros(self,state=None):
+    macros = {}
+    macros["P"] = self.get_name(state)
+    macros["ZNAM"] = self.get_state_names()[0]
+    macros["ONAM"] = self.get_state_names()[1]
+    macros["LOCA"] = self.card.get_location()
+    macros["CH"] = "{0}".format(self.number)
+    macros["ID"] = "{0}".format(self.id)
+    macros["ZSV"] = self.get_alarm_state()[0]
+    macros["OSV"] = self.get_alarm_state()[1]
+    macros["INT"] = "{0}".format(self.get_integrator())
+    macros["MASK"] = "{0}".format(self.get_mask(state))
+    macros["TYPE"] = self.get_type()
+    macros["CRATE"] = self.card.crate.get_full_location()
+    macros["SLOT"] = self.card.get_slot_text()
+    macros["DEVICE"] = self.get_name(state)
+    macros["CHANNEL"] = "{0}".format(self.number)
+    macros["DEVICE_BYP"] = self.name
+    macros["APPID"] = "{0}".format(self.card.number)
+    macros["IN_CN"] = self.has_fault(state)
+    return macros
+
+  def is_fast_eval(self):
+    return self.evaluation
 
 class DigitalChannel(Channel):
   """
@@ -70,6 +107,31 @@ class DigitalChannel(Channel):
   alarm_state = Column(Integer,nullable=False,default=0)
   ignore_condition = relationship("IgnoreCondition", back_populates='digital_channel')
 
+  def get_alarm_state(self):
+    if int(self.alarm_state) == 0:
+      return ['MAJOR','NO_ALARM']
+    else:
+      return ['NO_ALARM','MAJOR']
+
+  def get_state_names(self):
+    states = [self.z_name,self.o_name]
+    return states
+
+  def get_integrator(self):
+    return 1
+
+  def get_type(self):
+    return "DIGITAL"
+
+  def get_mask(self,state=None):
+    return 1
+
+  def get_name(self,name=None):
+    return self.name
+
+  def has_fault(self,state=None):
+    return True
+
   
 class AnalogChannel(Channel):
   """
@@ -101,6 +163,13 @@ class AnalogChannel(Channel):
   gain_bay = Column(Integer, nullable=True)
   gain_channel = Column(Integer,nullable=True)
 
+  def get_alarm_state(self):
+    return ["NO_ALARM","MAJOR"]
+
+  def get_state_names(self):
+    states = ["IS_OK","IS_EXCEEDED"]
+    return states
+
   def get_device_prefix(self):
     split_name = self.name.split(":")[:-1 or None]
     return ':'.join(split_name)
@@ -108,4 +177,45 @@ class AnalogChannel(Channel):
   def get_device_attribute(self):
     attr = self.name.split(":")[-1 or None]
     return attr
+
+  def get_integrator(self):
+    return self.integrator
+
+  def get_type(self):
+    return "ANALOG"
+
+  def get_mask(self,state):
+    if state is not None:
+      return state.mask
+    else:
+      return 1
+
+  def get_name(self,state):
+    if state is not None:
+      return "{0}_{1}".format(self.name,state.get_pv_name())
+    else:
+      return self.name
+
+  def has_fault(self,state):
+    if state is not None:
+      return True
+    else:
+      return False
+
+  def get_fault_states(self):
+    fis = self.fault_input
+    if len(fis) == 0:
+      return None
+    elif len(fis) > 1:
+      print("ERROR: Too Many Fault Inputs")
+      return None
+    else:
+      fi = fis[0]
+      states = fi.fault.fault_states
+      ss = []
+      for s in states:
+        ss.append(s)
+      return ss
+
+
 

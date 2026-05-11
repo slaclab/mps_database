@@ -5,6 +5,7 @@ import os
 import errno
 import shutil
 import re
+import json
 
 class MpsTools:
   def __init__(self,verbose=False):
@@ -15,6 +16,9 @@ class MpsTools:
     self.soft_areas = ['CLTS','BSYS','LTUS','UNDS','FEES','DMPS']
     self.sc_areas = ['GUNB','L0B','HTR','EMIT2','COL0','COL1','BC1B','BC2B','L2B','L3B','DOG','BPN13','BPN14','BPN15','BPN16','BPN17','BPN18','BPN19','BPN20',
                      'BPN21','BPN22','BPN23','BPN24','BPN25','BPN26','BPN27','BPN28','SPD','SLTD']
+    self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
+    self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
+    self.mbbi_sevr = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
     #self.template_path = 'templates/'
 
   def create_dir(self,path,clean=False):
@@ -96,6 +100,11 @@ class MpsTools:
           text = re.sub(r'\$\(({key}|{key},[^)]*)\)'.format(key=k),v, text)
 
       return text
+
+  def write_json_file(self,filename,macros):
+      self.create_dir(filename)
+      with open(filename,'a') as file:
+        json.dump(macros,file)
 
   def is_lc1(self,area):
     if area in self.lc1_areas:

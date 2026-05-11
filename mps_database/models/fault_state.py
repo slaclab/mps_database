@@ -56,6 +56,20 @@ class FaultState(Base):
       ans[dest] = mit.beam_class
     return ans
 
+  def get_pv_name(self):
+    n = self.name.split(' ')
+    if n[-1].isnumeric():
+      return "T{0}".format(n[-1])
+    else:
+      return "NO_BEAM"
+
+  def get_thr_num(self):
+    n = self.name.split(' ')
+    if n[-1].isnumeric():
+      return n[-1]
+    else:
+      return 7
+
 
 class Mitigation(Base):
   """

@@ -2,17 +2,20 @@
 from mps_database.mps_config import MPSConfig, models
 from sqlalchemy import MetaData
 import yaml
+import subprocess
+import time
 from yaml import MappingNode, ScalarNode
 from sqlalchemy import Column, Integer, Float, String, Boolean
 
 
 class ExportYaml():
 
-  def __init__(self,session,tools,dest,version,verbose=False):
+  def __init__(self,session,tools,dest,version,db_file,verbose=False):
     self.v = verbose
     self.s = session
     self.path = dest
     self.ver = version
+    self.database = db_file
 
   def export(self):
     if self.v:
@@ -21,6 +24,13 @@ class ExportYaml():
       if self.v:
         print("  INFO: Working on CN{0}".format(cn.id))
       yaml_fn = '{0}/mps_config-cn{1}-{2}.yaml'.format(self.path,cn.id,self.ver)
+      cmd = "whoami"
+      process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+      user_name, error = process.communicate()
+      cmd = "md5sum {0}".format(self.database)
+      process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+      md5sum_output, error = process.communicate()
+      md5sum_tokens = md5sum_output.split()
       f = open(yaml_fn,"w")
       yaml.add_multi_representer(models.Base,self.model_representer)
       # Dump db parts to yaml that are common to all central nodes
@@ -106,6 +116,12 @@ class ExportYaml():
       yaml.dump({'Fault': faults}, f, explicit_start=True)
       yaml.dump({models.FaultInput.__name__: fault_inputs}, f, explicit_start=True)
       yaml.dump({'FaultState': fault_states}, f, explicit_start=True)
+      f.write("---\n")
+      f.write("DatabaseInfo:\n")
+      f.write("- source: {0}\n".format(self.database))
+      f.write("  date: {0}\n".format(time.asctime(time.localtime(time.time()))))
+      f.write("  user: {0}\n".format(user_name.strip()))
+      f.write("  md5sum: {0}\n".format(md5sum_tokens[0].strip()))
       f.close()
     if self.v:
       print("INFO: Starting Export Yaml...DONE!")

@@ -34,10 +34,13 @@ class CentralNode(Base):
     return '{0}-S{1}'.format(self.crate.get_full_location(),self.slot)
 
   def get_cn_number(self):
-    return self.id
+    return self.lnid
 
   def get_cn_prefix(self):
     return 'SIOC:{0}:{1}'.format(self.area.upper(),self.location.upper())
+
+  def get_ioc_name(self):
+    return 'sioc-{0}-{1}'.format(self.area.lower(),self.location.lower())
 
   def get_cn_properties(self):
     """

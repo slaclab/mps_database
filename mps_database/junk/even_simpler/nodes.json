@@ -206,7 +206,8 @@
       "slot":"2",
       "crate":"B34-MP01",
       "crate_id":"1",
-      "node":"MP03"
+      "node":"MP03",
+      "number":"3"
     }
   ],
   "link_nodes": [

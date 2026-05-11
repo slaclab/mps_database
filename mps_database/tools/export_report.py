@@ -29,9 +29,9 @@ class ExportReport():
     fname = self.filename
     cwd = os.getcwd()
     os.chdir(self.d)
-    print('.:{0}/:'.format(self.t.get_latex_path()))
     os.environ["TEXINPUTS"] = '.:{0}/:'.format(self.t.get_latex_path())
     cmd = 'pdflatex {0}> {1} 2>&1'.format(fname,self.outname)
+    cmd = 'pdflatex {0}'.format(fname)
     os.system(cmd)
     os.system(cmd)
     os.system(cmd)

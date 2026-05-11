@@ -46,7 +46,7 @@ class ExportLogicReport(ExportReport):
       self.t.write_template(path=self.d,filename=self.filename,template="new_section.template",macros={"TITLE":title},type='latex')
       for f in ig_faults:
         macros = {}
-        macros['TITLE'] = f.name.replace('_','\_').replace('%','\%')
+        macros['TITLE'] = f.name.replace('_','\\_').replace('%','\\%')
         number_of_columns = 8+len(f.fault_inputs)
         format = ''
         for i in range(1,number_of_columns):
@@ -57,11 +57,11 @@ class ExportLogicReport(ExportReport):
         for i in range(0,len(f.fault_inputs)):
           header += self.letters[len(f.fault_inputs)-i-1]
           header += ' & '
-          inputs[self.letters[i]] = f.fault_inputs[i].channel.name.replace('_','\_').replace('&','\&')
+          inputs[self.letters[i]] = f.fault_inputs[i].channel.name.replace('_','\\_').replace('&','\\&')
         macros['HEADER'] = header
         self.t.write_template(path=self.d,filename=self.filename,template="new_fault_table.template",macros=macros,type='latex')
         for s in f.fault_states:
-          row = '{0} & '.format(s.name.replace('_','\_').replace('&','\&'))
+          row = '{0} & '.format(s.name.replace('_','\\_').replace('&','\\&'))
           val = bin(s.value)[2:].zfill(len(f.fault_inputs))
           for i in range(0,len(f.fault_inputs)):
             if val[i] == '1':

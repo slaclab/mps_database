@@ -127,12 +127,15 @@ class AddDbData:
       cn1 = [8,9,10,11,12,13,14,25]
       cn2 = [15,16,17,18,19,20,21,22,23,24,26]
       cn3 = [0,1,2,3,4,5,6,7]
+      cn4 = [99]
       if group in cn1:
-        cn = self.session.query(models.CentralNode).filter(models.CentralNode.location=='MP01').one()
+        cn = self.session.query(models.CentralNode).filter(models.CentralNode.lnid==1).one()
       elif group in cn2:
-        cn = self.session.query(models.CentralNode).filter(models.CentralNode.location=='MP02').one()
+        cn = self.session.query(models.CentralNode).filter(models.CentralNode.lnid==2).one()
       elif group in cn3:
-        cn = self.session.query(models.CentralNode).filter(models.CentralNode.location=='MP03').one()
+        cn = self.session.query(models.CentralNode).filter(models.CentralNode.lnid==3).one()
+      elif group in cn4:
+        cn = self.session.query(models.CentralNode).filter(models.CentralNode.lnid==4).one()
       else:
         print("ERROR: Central Node not found")
         return None
@@ -181,7 +184,7 @@ class AddDbData:
     properties = self._load_json_file(json_file)
     if 'central_nodes' in properties:
       for cn in properties['central_nodes']:
-        existing_central_nodes = self.session.query(models.CentralNode).filter(models.CentralNode.location == cn['location']).all()
+        existing_central_nodes = self.session.query(models.CentralNode).filter(models.CentralNode.lnid == cn['number']).all()
         if len(existing_central_nodes) > 0:
           print("Warning: Central Node {0} already exists!".format(cn['location']))
         else:
@@ -264,7 +267,7 @@ class AddDbData:
             location = ""
           if self.check_slots(slot,crate):
             if self.verbose:
-              print("INFO: Adding application card {0} in crate {1}-{2}".format(c['number'],crate.location,c['slot']))
+              print("INFO: Adding application card {0} in crate {1}-S{2}".format(c['number'],crate.location,c['slot']))
             card = models.ApplicationCard(number=c['number'],
                                               slot=c['slot'],
                                               crate=crate,
@@ -474,10 +477,7 @@ class AddDbData:
              starting with 0
     """
     integrator = channel.integrator
-    if state[0] > 0:
-      return state[0]
-    else:
-      return 1 << ((integrator*8)+state[0])
+    return 1 << ((integrator*8)+state[0])
 
   def find_mitigation(self,dest_name,bc_num):
     """
@@ -561,7 +561,8 @@ class AddDbData:
             name = s[1]
             mask = 4294967295
             if is_analog:
-              value = self.get_analog_value(s,channel) 
+              #value = self.get_analog_value(s,channel)
+              value = s[0] 
               mask = value
             # for beam class values, the first destination is defined at index 2 in the state information list
             index = 2
@@ -596,7 +597,7 @@ class AddDbData:
           print("ERROR: Ignore Condition {0} already exists!".format(ic['name']))
           return
         channel = self.session.query(models.Channel).filter(models.Channel.name==ic['channel']).one()
-        cn = self.session.query(models.CentralNode).filter(models.CentralNode.id==ic['cn']).one()
+        cn = channel.card.get_central_node()
         if self.verbose:
           print("INFO: Adding Ignore Condition: {0}".format(ic['description']))
         ignore_condition = models.IgnoreCondition(name=ic['name'],

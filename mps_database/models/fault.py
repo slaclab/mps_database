@@ -30,7 +30,7 @@ class Fault(Base):
   pv = Column(String, nullable=False)
   name = Column(String,unique=True, nullable=False)
   fault_inputs = relationship("FaultInput",order_by="FaultInput.bit_position", back_populates='fault')
-  fault_states = relationship("FaultState",back_populates='fault')
+  fault_states = relationship("FaultState",order_by="FaultState.value",back_populates='fault')
   ignore_conditions = relationship("IgnoreCondition",secondary=association_ignore,back_populates='faults')
 
   def skip_shutter(self):
@@ -69,6 +69,40 @@ class Fault(Base):
     ignore_group.sort()
     return(ignore_group)
 
+  def get_pv_name(self):
+    if len(self.fault_inputs) <= 0:
+      print(('ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id)))
+      return None
+    for fi in self.fault_inputs:
+      if fi.bit_position == 0:
+        return "{0}:{1}".format(":".join(fi.channel.name.split(":")[:-1]),self.pv)
+
+  def get_central_node(self):
+    return self.fault_inputs[0].channel.card.get_central_node()
+
+  def get_fault_properties(self):
+    macros = {}
+    macros["NAME"] = self.name
+    macros["PV"] = "{0}{1}".format(self.get_pv_name(),"_FLT")
+    macros["DESC"] = "{0}".format(self.name[:15])
+    macros["ID"] = "{0}".format(self.id)
+    return macros
+
+  def get_fault_states(self,bypass=False):
+    """
+    Query the fault states for this fault and return a dictionary of "state db ID":"state name" pairs
+    """
+    ans = {}
+    for state in self.fault_states:
+      id = state.id
+      ans[id] = state.name
+    if bypass:
+      if self.fault_inputs[0].channel.is_fast_eval():
+        ans = {}
+        ans[0] = "IS_OK"
+    return ans
+
+
 
 class IgnoreCondition(Base):
   """
@@ -97,3 +131,10 @@ class IgnoreCondition(Base):
   faults = relationship("Fault",secondary=association_ignore, back_populates='ignore_conditions')
   digital_channel_id = Column(Integer, ForeignKey('digital_channels.id'), nullable=False)
   digital_channel = relationship("DigitalChannel",back_populates="ignore_condition")
+
+  def get_condition_properties(self):
+    macros = {}
+    macros["NAME"] = self.name
+    macros["DESC"] = self.description
+    macros["ID"] = "{0}".format(self.id)
+    return macros
