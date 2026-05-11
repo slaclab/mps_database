@@ -1,9 +1,0 @@
-{
-    "ignore_conditions": [
-    {
-      "name":"TEST_IGNORE",
-      "description":"Test Ignore",
-      "channel":"MPS:B34:1:TEST_DI1"
-    }
-  ]
-}
