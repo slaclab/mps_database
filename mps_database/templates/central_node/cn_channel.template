@@ -1,0 +1,40 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node $(TYPE) Channel                          #
+# Macro description:                                                             #
+#   - P          : Device Input PV Prefix                                        #
+#   - ONAM       : OK state name                                                 #
+#   - ZNAM       : Fault state name.                                             #
+#   - LOCA       : Card location                                                 #
+#   - CH         : Channel Number                                                #
+#   - ID         : Device ID in DB                                               #
+#   - ZSV        : Zero Severity                                                 #
+#   - OSV        : One Severity                                                  #
+#   - MASK       : Bit mask of the channel (digital = 1, analog is thr mask)     #
+#   - TYPE       : DIGITAL or ANALOG                                             #
+#================================================================================#
+record(bi, "$(P)_SCMPSC") {
+  field(DESC, "$(LOCA) CH $(CH)")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "$(ZNAM)")
+  field(ONAM, "$(ONAM)")
+  field(ZSV, "$(ZSV)")
+  field(OSV, "$(OSV)")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) $(MASK) 0)MPS_$(TYPE)_CHANNEL")
+}
+record(bi, "$(P)_SCMPS") {
+  field(DESC, "$(LOCA) CH $(CH) Latched Value")
+  field(DTYP, "asynUInt32Digital")
+  field(SCAN, "1 second")
+  field(ZNAM, "$(ZNAM)")
+  field(ONAM, "$(ONAM)")
+  field(ZSV, "$(ZSV)")
+  field(OSV, "$(OSV)")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) $(MASK) 0)MPS_$(TYPE)_CHANNEL_LATCHED")
+}
+record(bo, "$(P)_SCUNLH") {
+  field(DESC, "$(LOCA) CH $(CH) Unlatch")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(CENTRAL_NODE $(ID) $(MASK) 0)MPS_$(TYPE)_CHANNEL_UNLATCH")
+  field(ASG,  "$(ASG1)")
+}

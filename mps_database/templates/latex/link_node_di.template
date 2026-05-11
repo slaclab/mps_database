@@ -1,0 +1,33 @@
+\newpage
+\begin{paracol}{2}[\section{Link Node $(LNID)}]
+\begin{column}
+\begin{tabularx}{\dimexpr\cratewidth-2\fboxsep-2\fboxrule-20pt}{|c c X|}
+\hline
+\rowcolor{light-gray}
+\multicolumn{2}{|l}{$(LOCATION)} & \multicolumn{1}{r|}{$(SHM)}\\
+\hline
+Slot & AID & Type \\
+\hline
+\rowcolor{very-light-gray}
+RTM & $(S1A) & MPS Digital\\
+\hline
+2 & $(S2A) & $(S2T)\\
+\hline
+\rowcolor{very-light-gray}
+3 & $(S3A) & $(S3T)\\
+\hline
+4 & $(S4A) & $(S4T)\\
+\hline
+\rowcolor{very-light-gray}
+5 & $(S5A) & $(S5T)\\
+\hline
+6 & $(S6A) & $(S6T)\\
+\hline
+\rowcolor{very-light-gray}
+7 & $(S7A) & $(S7T)\\
+\hline
+\rowcolor{light-gray}
+\multicolumn{3}{|l|}{$(MPLN)}\\
+\hline
+\end{tabularx}
+\end{column}

@@ -1,0 +1,2 @@
+epicsEnvSet("APPID","$(AID)")
+epicsEnvSet("BAYS","$(BAYS)")

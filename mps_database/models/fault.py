@@ -1,79 +1,140 @@
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.orm import object_session
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean,Table,func
+from sqlalchemy.orm import relationship, object_session
 from mps_database.models import Base
-from .fault_input import FaultInput
-from .fault_state import FaultState
-from .device import Device
+from .beam_class import BeamClass
+
+# This is used to map many-to-many between faults and ignore conditions
+association_ignore = Table('association_ignore',Base.metadata,
+                          Column('id',Integer,primary_key=True),
+                          Column('fault_id',ForeignKey('faults.id')),
+                          Column('ignore_condition_id',ForeignKey('ignore_conditions.id')),
+                          )
 
 class Fault(Base):
   """
   Fault class (faults table)
 
-  Describe a digital Fault, which is composed of one or more FaultInputs
-  that make up the Fault value. 
+  This is a class that contains properties common to faults (truth tables)
 
   Properties:
-    name: short fault identifier
-    description: short explanation of the fault
+    name: Fault name which will be in the gui
+    pv: String that will be used to build fault PV (e.g. POSITION)
 
   Relationships:
-    states: list of FaultStates that belong to this fault
-    inputs: list of FaultInputs for this fault
+    fault_inputs: channels that feed into this fault (truth table)
+    fault_states: states this fault can be in depending on fault_inputs
+    ignore_condition: Conditions which will cause this fault to be ignored.
   """
   __tablename__ = 'faults'
   id = Column(Integer, primary_key=True)
-  name = Column(String, nullable=False)
-  description = Column(String, nullable=True)
-  states = relationship("FaultState", backref='fault')
-  inputs = relationship("FaultInput", backref='fault')
-  
-  def fault_value(self, device_states):
-    fault_value = 0
-    for fault_input in self.inputs:
-      bit_length = len(fault_input.device.inputs)
-      input_value = device_states[fault_input.device_id]
-      fault_value = fault_value | (input_value << (bit_length*fault_input.bit_position))
-    return fault_value
+  pv = Column(String, nullable=False)
+  name = Column(String,unique=True, nullable=False)
+  fault_inputs = relationship("FaultInput",order_by="FaultInput.bit_position", back_populates='fault')
+  fault_states = relationship("FaultState",order_by="FaultState.value",back_populates='fault')
+  ignore_conditions = relationship("IgnoreCondition",secondary=association_ignore,back_populates='faults')
 
-  def get_integrator_index(self):
+  def skip_shutter(self):
+    """
+    This function will determine if the mechanical shutter and BSYD mitigations are the same for all states.  
+    If they are, the shutter can be skipped in the report
+    """
+    skip = True
+    for s in self.fault_states:
+      mits = s.get_beam_classes()
+      if mits['MECH_SHUTTER'] != mits['SC_BSYD']:
+        skip = False
+    return skip
+
+  def skip_laser(self):
+    """
+    This function will determine if the laser mitigation mitigations is nothing for all states.  
+    If they are, the shutter can be skipped in the report
+    """
     session = object_session(self)
-    fault_states = session.query(FaultState).filter(FaultState.fault_id==self.id).all()
-    for state in fault_states:
-      bit_index=0
-      bitFound=False
-      while not bitFound:
-        b=(state.device_state.mask>>bit_index) & 1
-        if b==1:
-          bitFound=True
-        else:
-          bit_index=bit_index+1
-          if bit_index==32:
-            done=True
-            bit_index=-1
-        if bit_index==-1:
-          print(("ERROR: invalid threshold mask (" + hex(state.device_state.mask)))
-          return None
-        # Convert bit_index to integrator index
-        # BPM: bit 0-7 -> X, bit 8-15 -> Y, bit 16-23 -> CHRG
-        # Non-BPM: bit 0-7 -> INT0, bit 8-15 -> INT1, bit 16-23 -> INT2, bit 24-31 -> INT3
-        int_index=0
-        if (bit_index >= 8 and bit_index <= 15):
-          int_index = 1
-        elif (bit_index >= 16 and bit_index <= 23):
-          int_index = 2
-        elif (bit_index >= 24 and bit_index <= 31):
-          int_index = 3
-      return int_index
+    max_beam_class = session.query(func.max(BeamClass.number)).one()[0]
+    skip = True
+    for s in self.fault_states:
+      mits = s.get_beam_classes()
+      if mits['LASER'] == max_beam_class:
+        skip = False
+    return skip
 
-  def get_shift(self):
-    states = self.states
-    min_value = 1e12
-    for state in states:
-      if state.device_state.value < min_value:
-        min_value = state.device_state.value
-    shift = min_value.bit_length() - 1
-    if shift < 0:
-      shift = 0
-    return shift
+  def get_ignore_group(self):
+    ignore_group = []
+    if len(self.ignore_conditions) > 0:
+      for ic in self.ignore_conditions:
+        ignore_group.append(ic.description)
+    else:
+      ignore_group = ['Always Evaluated']
+    ignore_group.sort()
+    return(ignore_group)
 
+  def get_pv_name(self):
+    if len(self.fault_inputs) <= 0:
+      print(('ERROR: Fault {0} (id={1}) has no inputs, please fix this error!'.format(fault.name, fault.id)))
+      return None
+    for fi in self.fault_inputs:
+      if fi.bit_position == 0:
+        return "{0}:{1}".format(":".join(fi.channel.name.split(":")[:-1]),self.pv)
+
+  def get_central_node(self):
+    return self.fault_inputs[0].channel.card.get_central_node()
+
+  def get_fault_properties(self):
+    macros = {}
+    macros["NAME"] = self.name
+    macros["PV"] = "{0}{1}".format(self.get_pv_name(),"_FLT")
+    macros["DESC"] = "{0}".format(self.name[:15])
+    macros["ID"] = "{0}".format(self.id)
+    return macros
+
+  def get_fault_states(self,bypass=False):
+    """
+    Query the fault states for this fault and return a dictionary of "state db ID":"state name" pairs
+    """
+    ans = {}
+    for state in self.fault_states:
+      id = state.id
+      ans[id] = state.name
+    if bypass:
+      if self.fault_inputs[0].channel.is_fast_eval():
+        ans = {}
+        ans[0] = "IS_OK"
+    return ans
+
+
+
+class IgnoreCondition(Base):
+  """
+  IgnoreCondition class (ignore_conditions table)
+
+  Describe a condition that is composed of current values of one digital channel.
+  When that channel is active, the condition will be true and the collection
+  of faults will be ignored.
+
+  Properties:
+    name: condition identifier (PV attribute)
+    description: short description (text in the gui and the document)
+    value: bit mask used to verify if condition is met or not. 
+
+  Relationships:
+    faults: list of fault that are ignored by this condition
+    digital_channel: The channel that when active will cause this condition to be true
+  """
+  __tablename__ = 'ignore_conditions'
+  id = Column(Integer, primary_key=True)
+  name = Column(String, unique=True, nullable=False)
+  description = Column(String, nullable=False)
+  value = Column(Integer, nullable=False)
+  central_node = relationship("CentralNode",back_populates='ignore_conditions')
+  central_node_id = Column(Integer,ForeignKey('central_nodes.id'),nullable=False)
+  faults = relationship("Fault",secondary=association_ignore, back_populates='ignore_conditions')
+  digital_channel_id = Column(Integer, ForeignKey('digital_channels.id'), nullable=False)
+  digital_channel = relationship("DigitalChannel",back_populates="ignore_condition")
+
+  def get_condition_properties(self):
+    macros = {}
+    macros["NAME"] = self.name
+    macros["DESC"] = self.description
+    macros["ID"] = "{0}".format(self.id)
+    return macros

@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, validates
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm import object_session
-from .groups import LinkNodeGroup
+from .crate import Crate
+import ipaddress
 from mps_database.models import Base
 
 class LinkNode(Base):
@@ -13,198 +14,151 @@ class LinkNode(Base):
   the application cards configured within the crate.
 
   Properties:
-   area: sector where the card is installed (e.g. GUNB, LI30, DMPB,...).
-             This is used for creating the LinkNode PVs (second field)
    location: this is the location field to generate LinkNode PVs (third field, e.g. MP02)
-   cpu: name of the LinuxRT CPU where the SIOC is running
-   group: MPS update network group number (i.e. CN port the chain connects to)
-          group 100 is the CN in LI00, group 200 is the CN in B005
-   group_link: index within the group
-   group_link_destination: specifies to which LN or CN the link node connects to
-   group_drawing: SEDA drawing number showing the nodes in the group
+   group_link: crate this link node connects to
+   rx_pgp: pgp port number this crate connect to
    ln_type: 1=LCLS-I link node, 2=LCLS-II link node, 3=both (for link nodes connected
             to devices that see beam from both injectors)
-   lcls1_id: link node id for LCLS-I. This is used to build the link node IP address,
-             it goes into the NodeID register.
-   slot_number: link nodes connect to only one slots, usually slot 2.
-                In some instances they need to connect to cards in other slots.
+   lnid: link node id. This is used to build the link node IP address,
    
   References:
-   crate_id: specifies the crate that contains this link node
+   crate: specifies the crate that contains this link node
+   group: specifies the group this link node is a member of
   """
   __tablename__ = 'link_nodes'
   id = Column(Integer, primary_key=True)
-  area = Column(String, nullable=False)
   location = Column(String, nullable=False, unique=False)
-  cpu = Column(String, nullable=False, unique=False)
-  group = Column(Integer, unique=False)
-  group_link = Column(Integer, unique=False)
-  group_link_destination = Column(Integer, unique=False)
-  group_drawing = Column(String, unique=False)
+  group_link = Column(String, unique=False)
+  rx_pgp = Column(Integer, unique=False)
   ln_type = Column(Integer, nullable=False, default=2)
-  lcls1_id = Column(Integer, nullable=False, default=0)
-  slot_number = Column(Integer, nullable=False, default=2)
-  crate_id = Column(Integer, ForeignKey('crates.id'))
-  link_node_group_id = Column(Integer, ForeignKey('link_node_groups.id'), nullable=False)
-  cards = relationship("ApplicationCard", order_by="ApplicationCard.slot_number", backref='link_node')
+  lnid = Column(Integer, nullable=False, default=0)
+  crate = relationship("Crate", back_populates='link_node')
+  crate_id = Column(Integer,ForeignKey("crates.id"),nullable=False)
+  group_id = Column(Integer, ForeignKey('link_node_groups.id'), nullable=False)
+  group = relationship('LinkNodeGroup',back_populates='link_nodes')
 
-  def show(self):
-    print(('> Area: {0}'.format(self.area)))
-    print(('> Location: {0}'.format(self.location)))
-    print(('> CPU: {0}'.format(self.cpu)))
-    print(('> Crate: {0}'.format(self.crate.get_name())))
-    print(('> Group: {0}'.format(self.group)))
-    print(('> GroupLink: {0}'.format(self.group_link)))
-    print(('> GroupLinkDestination: {0}'.format(self.group_link_destination)))
-    print(('> GroupDrawing: {0}'.format(self.group_drawing)))
-    print(('> LinkNodeType: {}'.format(self.get_ln_type())))
-    print(('> SlotNumber: {0}'.format(self.slot_number)))
-    if (self.ln_type == 1 or self.ln_type == 3):
-      print(('> LinkNodeType: {}'.format(self.get_type())))
-      print(('> LinkNodeId: {}'.format(self.lcls1_id)))
+  def get_mps_prefix(self):
+    return 'MPLN:{0}:{1}'.format(self.crate.area.upper(),self.location.upper())
 
-  def get_ln_type(self):
-    if (self.ln_type == 1):
-      return 'LCLS-I only'
-    elif (self.ln_type == 2):
-      return 'LCLS-II only'
-    elif (self.ln_type == 3):
-      return 'LCLS-I and LCLS-II'
-    else:
-      return 'Invalid type {}'.format(self.ln_type)
+  def get_app_cards(self):
+    return self.crate.cards
 
-  def get_type(self):
-    """
-    Return the link node type based on the application cards defined.
-    If link node has digital inputs only its type is 'Digital'
-    Only analog inputs -> 'Analog'
-    Both types of inputs -> 'Mixed'
-    """
-    has_digital = False
-    has_analog = False
-    is_slot2 = False
-    for c in self.cards:
-      if c.slot_number < 3:
-        is_slot2 = True
-        if c.type.name == 'MPS Digital':
-          has_digital = True
-        elif c.type.name == 'MPS Analog':
-          has_analog = True
+  def get_app_card(self,slot):
+    card = None
+    for c in self.get_app_cards():
+      if c.slot == slot:
+        card = c
+    return card
 
-    if not is_slot2:
-      for c in self.cards:
-        if c.slot_number == 2:
-          is_slot2 = True
-          if c.type.name == 'MPS Digital':
-            has_digital = True
-          elif c.type.name == 'MPS Analog':
-            has_analog = True
+  def get_group_link(self):
+    session = object_session(self)
+    linked_crate = session.query(Crate).filter(Crate.location==self.group_link).all()
+    if len(linked_crate) > 1:
+      print("ERROR: Too many linked crates in LN{0}".format(self.lnid))
+      return None
+    if len(linked_crate) < 1:
+      print("ERROR: Not enough linked crates in LN{0}".format(self.lnid))
+      return None
+    if len(linked_crate) == 1:
+      return linked_crate[0]
 
-    if has_digital and has_analog:
-      return 'Mixed'
-    elif has_digital:
-      return 'Digital'
-    elif has_analog:
-      return 'Analog'
-    else:
-      return 'Analog'
+  def get_out_path(self):
+    return '{}/{:04}/{:02}'.format(self.crate.get_cpu_nodename(),self.crate.crate_id,2)
 
-  def get_app_number(self):
-    is_slot2 = False
-    for c in self.cards:
-      if c.slot_number == 1:
-        return 1
-      elif c.slot_number == 2:
-        return 1
-      
-    ln_type = self.get_type()
-
-    if not is_slot2:
-      if len(self.cards) > 1:
-        if (ln_type != 'Analog'):
-          raise ValueError("LinkNode '{} [id={}]' in non-slot 2 with multiple cards, please check configuration.".\
-                             format(self.get_name(), self.id))
-        else:
-          # If there are multiple cards and the link node type is analog, then
-          # it is a link node without digital inputs and analog inputs in slot 2
-          # The link node app_number is also 1
-          return 1
-      else:
-        return self.slot_number
-
-  def get_app_prefix(self):
-    """
-    Return the PV name composed by self.get_pv_base() + ":<app_number>",
-    where <app_number> is:
-    1 - if the link node has a card in slot 2; or
-    3 through 7 - if the link node is not in slot 2
-    """
-    return '{}:{}'.format(self.get_pv_base(), self.get_app_number())
-
-  def get_crate_index_number(self):
-    """
-    Return the index number of the link node card in the crate. Usually it is in slot 2
-    (which is index 1), but on crates that have more than 6 analog inputs the additional 
-    channels are handled by separate link node cards on slots 3 through 7 - for non-slot
-    2 cases, the index is the slot number
-    """
-    has_digital = False
-    has_analog = False
-    is_slot2 = False
-    for c in self.cards:
-      if c.slot_number == 2:
-        return 1
-      
-    if len(self.cards) == 1:
-      return self.cards[0].slot_number
-    else:
-      print(("WARN: Link node ({}) has multiple cards, but none in slot 2".\
-              format(self.get_name())))
-#      raise ValueError("Link node ({}) has multiple cards, but none in slot 2".\
-#                         format(self.get_name()))
-      return 1
-
-  def has_inputs(self):
-    has_inputs = False
-    for card in self.cards:
-      if len(card.digital_channels) > 0 or len(card.analog_channels) > 0:
-        has_inputs = True
-    return has_inputs
-
-  def get_name(self):
-    return 'sioc-' + self.area.lower() + '-' + self.location.lower()
-
-  def get_sioc_pv_base(self):
-    return 'SIOC:' + self.area.upper() + ':' + self.location.upper()
-
-  def get_pv_base(self):
-    return 'MPLN:' + self.area.upper() + ':' + self.location.upper()
-
-  def get_cpu_pv_base(self):
-    cpu_base = self.cpu
-    return cpu_base.replace('-',':').upper()
-  def get_ln_group(self):
-    return self.group
-
-  def get_shelf_manager(self):
-    shelf_base = self.cpu.replace('cpu','shm')
-    if self.crate.crate_id == 1:
-      extra = 1
-    elif self.crate.crate_id == 101:
-      extra = 2
-    else:
-      extra = 3
-    value = '{0}-{1}'.format(shelf_base,extra)
-    return value
+  def get_salt(self):
+    return '0x3e'
 
   def get_digital_app_id(self):
-    for card in self.cards:
-      if card.slot_number < 3:
-        if card.type.name == 'MPS Digital':
+    for card in self.get_app_cards():
+      if card.slot < 3:
+        if card.is_mps_digital():
           return card.number
     return 0
 
-  def get_cn_prefix(self):
-    session = object_session(self)
-    group = session.query(LinkNodeGroup).filter(LinkNodeGroup.number==self.group).one()
-    return group.central_node
+  def map_nc_config(self):
+    """
+    Return dictionary of macros to be written to yaml config file
+    """
+    if self.lnid == "0":
+      ip_str = '0.0.168.192'.format(app["app_id"])
+      print('ERROR: Found invalid link node ID (lnid of 0)')
+    else:
+      ip_str = '{}.0.168.192'.format(self.lnid)
+    ip_address = int(ipaddress.ip_address(ip_str))
+    mask = 0
+    remap_dig = self.get_digital_app_id()
+    if remap_dig > 0:
+      mask = 1
+    bpm_index = 0
+    blm_index = 0
+    remap_bpm = [0, 0, 0, 0, 0]
+    remap_blm = [0, 0, 0, 0, 0]
+    for card in self.get_app_cards():
+      if card.type.name == 'BPM':
+        if bpm_index < 5:
+          remap_bpm[bpm_index] = card.number
+          bpm_index +=1
+        else:
+          print(('ERROR: Cannot remap BPM app id {}, all remap slots are used already'.\
+                format(slot_info["app_id"])))
+      elif card.type.name == "MPS Analog":
+        if blm_index < 5:
+          remap_blm[blm_index] = card.number
+          mask |= 1 << (blm_index + 1 + 5) # Skip first bit and 5 BPM bits
+          blm_index += 1
+        else:
+          print(('ERROR: Cannot remap BLM app id {}, all remap slots are used already'.\
+                format(slot_info["app_id"])))
+    macros={"ID":'{0}'.format(self.lnid),
+              "IP_ADDR":str(ip_address),
+              "REMAP_DIG":str(remap_dig),
+              "REMAP_BPM1":str(remap_bpm[0]),
+              "REMAP_BPM2":str(remap_bpm[1]),
+              "REMAP_BPM3":str(remap_bpm[2]),
+              "REMAP_BPM4":str(remap_bpm[3]),
+              "REMAP_BPM5":str(remap_bpm[4]),
+              "REMAP_BLM1":str(remap_blm[0]),
+              "REMAP_BLM2":str(remap_blm[1]),
+              "REMAP_BLM3":str(remap_blm[2]),
+              "REMAP_BLM4":str(remap_blm[3]),
+              "REMAP_BLM5":str(remap_blm[4]),
+              "REMAP_MASK":str(mask),
+              }
+    return macros
+
+  def get_ln_properties(self):
+    """
+    Return a dictionary of properties about link node
+    """
+    macros = {}
+    macros["lnid"] = self.lnid
+    macros["p"] = self.get_mps_prefix()
+    macros["group"] = self.group.number
+    macros["cpu"] = self.crate.get_cpu_nodename()
+    macros["shm"] = self.crate.get_nodename()
+    macros["crate"] = self.crate.location
+    macros["sioc"] = self.get_app_card(1).get_ioc_name()
+    slots = range(1,8)
+    for slot in slots:
+      key = "slot{0}".format(slot)
+      card = self.get_app_card(slot)
+      if card is not None:
+        used = 1
+        type = card.type.name
+        type_short = card.type.get_short_name()
+        app = card.number
+        app_text = "{0}".format(card.number)
+      else:
+        used = 0
+        type = "---"
+        app_text = "---"
+        type_short = "NONE"
+        app = -1
+      slot_prop = {}
+      slot_prop['used'] = used
+      slot_prop['type'] = type
+      slot_prop['short_name'] = type_short
+      slot_prop['app'] = app
+      slot_prop['app_text'] = app_text
+      macros[key] = slot_prop
+    return macros

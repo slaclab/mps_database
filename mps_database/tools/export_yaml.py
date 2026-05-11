@@ -1,177 +1,130 @@
 #!/usr/bin/env python
-from mps_database.mps_config import MPSConfig, models, runtime
+from mps_database.mps_config import MPSConfig, models
 from sqlalchemy import MetaData
-from mps_database.tools.mps_names import MpsName
-from mps_database.tools.mps_reader import MpsReader, MpsDbReader
-from sqlalchemy import Column, Integer, Float, String, Boolean
-import subprocess
-from latex import Latex
-import math
-import argparse
-import time
 import yaml
+import subprocess
+import time
 from yaml import MappingNode, ScalarNode
-import os
-import sys
+from sqlalchemy import Column, Integer, Float, String, Boolean
 
-class ExportYaml(MpsReader):
 
-  def __init__(self, db_file, template_path,dest_path,clean,verbose,session):
-    MpsReader.__init__(self,db_file=db_file,dest_path=dest_path,template_path=template_path,clean=clean,verbose=verbose)
-    self.verbose = verbose
-    self.session = session
+class ExportYaml():
+
+  def __init__(self,session,tools,dest,version,db_file,verbose=False):
+    self.v = verbose
+    self.s = session
+    self.path = dest
+    self.ver = version
+    self.database = db_file
 
   def export(self):
-    if self.verbose:
+    if self.v:
       print("INFO: Starting Export Yaml...")
-    for cn in range(0,3):
-      yaml_filename = yaml_filename = '{0}/mps_config-cn{1}-{2}.yaml'.format(self.dest_path,cn+1,self.config_version)
-      self.dump_yaml(self.session,yaml_filename,cn)
+    for cn in self.s.query(models.CentralNode).all():
+      if self.v:
+        print("  INFO: Working on CN{0}".format(cn.id))
+      yaml_fn = '{0}/mps_config-cn{1}-{2}.yaml'.format(self.path,cn.id,self.ver)
       cmd = "whoami"
       process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
       user_name, error = process.communicate()
       cmd = "md5sum {0}".format(self.database)
       process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
       md5sum_output, error = process.communicate()
-
       md5sum_tokens = md5sum_output.split()
-      file1 = open(yaml_filename,"a")
-      file1.write("---\n")
-      file1.write("DatabaseInfo:\n")
-      file1.write("- source: {0}\n".format(self.database))
-      file1.write("  date: {0}\n".format(time.asctime(time.localtime(time.time()))))
-      file1.write("  user: {0}\n".format(user_name.strip()))
-      file1.write("  md5sum: {0}\n".format(md5sum_tokens[0].strip()))
-      file1.close()     
-    if self.verbose:
-      print('........Done Exporting Yaml')  
+      f = open(yaml_fn,"w")
+      yaml.add_multi_representer(models.Base,self.model_representer)
+      # Dump db parts to yaml that are common to all central nodes
+      common_models = [models.ApplicationType,
+                       models.BeamClass,
+                       models.BeamDestination,
+                       models.Mitigation]
+      for model in common_models:
+        collection = self.s.query(model).order_by(model.id).all()
+        yaml.dump({model.__name__: collection},f,explicit_start=True)
+      link_nodes = []
+      crates = []
+      app_cards = []
+      app_ids = []
+      digital_channels = []
+      analog_channels = []
+      ignore_conditions = []
+      faults = []
+      fault_inputs = []
+      fault_states = []
+      for g in cn.groups:
+        for ln in g.link_nodes:
+          link_nodes.append(ln)
+          crates.append(ln.crate)
+          for c in ln.crate.cards:
+            app_cards.append(c)
+            app_ids.append(c.id)
+            for ch in c.channels:
+              if ch.discriminator == 'analog_channel':
+                analog_channels.append(ch)
+              else:
+                digital_channels.append(ch)
+                if len(ch.ignore_condition) > 0:
+                  if len(ch.ignore_condition) > 1:
+                    print("ERROR: Too many ignore conditions!!!")
+                    raise
+                  ignore_conditions.append(ch.ignore_condition[0])
+      link_nodes.sort(key=self.get_id)
+      crates.sort(key=self.get_id)
+      app_cards.sort(key=self.get_id)
+      digital_channels.sort(key=self.get_id)
+      analog_channels.sort(key=self.get_id)
+      ignore_conditions.sort(key=self.get_id)
 
-  def dump_yaml(self,session,filename,cn):
-    f = open(filename,"w")
-    self.dump_general_to_yaml(session,f)
-    if cn == 0:
-      self.dump_link_nodes_to_yaml(session,f,self.cn1)
-    elif cn == 1:
-      self.dump_link_nodes_to_yaml(session,f,self.cn2)
-    elif cn == 2:
-      self.dump_link_nodes_to_yaml(session,f,self.cn3)
+      fault = self.s.query(models.Fault).join(models.FaultInput,models.FaultInput.fault_id==models.Fault.id).join(models.Channel,models.Channel.id==models.FaultInput.channel_id).join(models.ApplicationCard,models.Channel.card_id==models.ApplicationCard.id).join(models.Crate,models.ApplicationCard.crate_id==models.Crate.id).join(models.LinkNode,models.LinkNode.crate_id==models.Crate.id).join(models.LinkNodeGroup,models.LinkNode.group_id==models.LinkNodeGroup.id).filter(models.LinkNodeGroup.central_node==cn).all()
+      for fa in fault:
+        fau = {}
+        fau['id'] = fa.id
+        fau['pv'] = "{0}".format(fa.pv)
+        fau['name'] = "{0}".format(fa.name)
+        fau['ignore_conditions'] = []
+        for ic in fa.ignore_conditions:
+          fau['ignore_conditions'].append(ic.id)
+        faults.append(fau)
+        if len(fa.fault_inputs) > 0:
+          for fi in fa.fault_inputs:
+            fault_inputs.append(fi)
+        if len(fa.fault_states) > 0:
+          for fs in fa.fault_states:
+            fss = {}
+            fss['id'] = fs.id
+            fss['fault_id'] = fs.fault_id
+            fss['default'] = fs.default
+            fss['name'] = "{0}".format(fs.name)
+            fss['value'] = fs.value
+            fss['mask'] = fs.mask
+            fss['mitigations'] = []
+            if len(fs.mitigations) > 0:
+              for m in fs.mitigations:
+                fss['mitigations'].append(m.id)
+            fss['mitigations'].sort()
+            fault_states.append(fss)
 
-  def dump_general_to_yaml(self,session,f):
-    yaml.add_multi_representer(models.Base, self.model_representer)
-    model_classes = [models.ApplicationType,
-                     models.DeviceType, 
-                     models.DeviceState, 
-                     models.MitigationDevice,
-                     models.BeamDestination,
-                     models.BeamClass]
-    for model_class in model_classes:
-      collection = session.query(model_class).order_by(model_class.id).all()
-      yaml.dump({model_class.__name__: collection}, f, explicit_start=True)
-
-  def dump_link_nodes_to_yaml(self,session,f,groups):
-    yaml.add_multi_representer(models.Base, self.model_representer)
-    #Link Nodes:
-    link_nodes = session.query(models.LinkNode).filter(models.LinkNode.group.in_(groups)).order_by(models.LinkNode.id).all()
-    yaml.dump({models.LinkNode.__name__: link_nodes}, f, explicit_start=True) 
-    #Crates
-    crateIDs = []
-    link_node_ids = []
-    for link_node in link_nodes:
-      crateIDs.append(link_node.crate_id)
-      link_node_ids.append(link_node.id)
-    crates = session.query(models.Crate).filter(models.Crate.id.in_(crateIDs)).order_by(models.Crate.id).all()
-    yaml.dump({models.Crate.__name__: crates}, f, explicit_start=True)
-    #Application Cards
-    app_cards = session.query(models.ApplicationCard).filter(models.ApplicationCard.link_node_id.in_(link_node_ids)).order_by(models.ApplicationCard.id).all()
-    yaml.dump({models.ApplicationCard.__name__: app_cards}, f, explicit_start=True)
-    app_ids = []  
-    for app in app_cards:
-      app_ids.append(app.id)
-    #DigitalChannels
-    digital_channels = session.query(models.DigitalChannel).filter(models.DigitalChannel.card_id.in_(app_ids)).order_by(models.DigitalChannel.id).all()
-    yaml.dump({models.DigitalChannel.__name__: digital_channels}, f, explicit_start=True)
-    digital_channel_ids = []
-    for digital_channel in digital_channels:
-      digital_channel_ids.append(digital_channel.id)
-    #Analog Channels
-    analog_channels = session.query(models.AnalogChannel).filter(models.AnalogChannel.card_id.in_(app_ids)).order_by(models.AnalogChannel.id).all()
-    yaml.dump({models.AnalogChannel.__name__: analog_channels}, f, explicit_start=True)
-
-    #DigitalDevice
-    digital_device = session.query(models.DigitalDevice).filter(models.DigitalDevice.card_id.in_(app_ids)).order_by(models.DigitalDevice.id).all()
-    yaml.dump({models.DigitalDevice.__name__: digital_device}, f, explicit_start=True)
-    device_ids = []
-    for dig in digital_device:
-      device_ids.append(dig.id)
-
-    #AnalogDevice
-    analog_device = session.query(models.AnalogDevice).filter(models.AnalogDevice.card_id.in_(app_ids)).order_by(models.AnalogDevice.id).all()
-    yaml.dump({models.AnalogDevice.__name__: analog_device}, f, explicit_start=True)
-    for ana in analog_device:
-      device_ids.append(ana.id)
-
-    # Ignore Conditions
-    ignore_conditions = session.query(models.IgnoreCondition).filter(models.IgnoreCondition.device_id.in_(device_ids)).all()
-    yaml.dump({models.IgnoreCondition.__name__:ignore_conditions}, f, explicit_start=True)
-
-    #DeviceInput
-    device_inputs = []
-    for digital_channel_id in digital_channel_ids:
-      device_input = session.query(models.DeviceInput).filter(models.DeviceInput.channel_id == digital_channel_id).order_by(models.DeviceInput.id).all()
-      device_inputs.extend(device_input)
-    yaml.dump({models.DeviceInput.__name__: device_inputs}, f, explicit_start=True)
-
-    #FaultInput
-    fault_inputs = []
-    for device_id in device_ids:
-      fault_input = session.query(models.FaultInput).filter(models.FaultInput.device_id == device_id).order_by(models.FaultInput.id).all()
-      fault_inputs.extend(fault_input)
-    yaml.dump({models.FaultInput.__name__: fault_inputs}, f, explicit_start=True)  
-    fault_ids = []
-    for fi in fault_inputs:
-      if fi.fault_id not in fault_ids:
-        fault_ids.append(fi.fault_id)
-    #return fault_ids
-
-    #Fault
-    faults = []
-    for fid in fault_ids:
-      fault = session.query(models.Fault).filter(models.Fault.id == fid).order_by(models.Fault.id).all()
-      faults.extend(fault)
-    yaml.dump({models.Fault.__name__: faults}, f, explicit_start=True) 
-
-
-    #FaultState
-    fault_states = []
-    for fid in fault_ids:
-      fault_state = session.query(models.FaultState).filter(models.FaultState.fault_id == fid).order_by(models.FaultState.id).all()
-      fault_states.extend(fault_state)
-    yaml.dump({models.FaultState.__name__: fault_states}, f, explicit_start=True)
-    fs_ids = []
-    for fs in fault_states:
-      fs_ids.append(fs.id)
-
-    # Condition Inputs
-    c_inputs = []
-    condition_inputs = session.query(models.ConditionInput).filter(models.ConditionInput.fault_state_id.in_(fs_ids)).all()
-    yaml.dump({models.ConditionInput.__name__: condition_inputs}, f, explicit_start=True)
-    for c in condition_inputs:
-      c_inputs.append(c.condition_id)
-
-    # Conditions
-    conditions = session.query(models.Condition).filter(models.Condition.id.in_(c_inputs)).all()
-    yaml.dump({models.Condition.__name__: conditions}, f, explicit_start=True)
-
-    #AllowedClass
-    #allowed_class = session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id.in_(fs_ids)).order_by(models.AllowedClass.id).all()
-    #yaml.dump({models.AllowedClass.__name__: allowed_class}, f, explicit_start=True)
-    #allowed_classes = []
-    #for fs_id in fs_ids:
-    #  allowed_class = session.query(models.AllowedClass).filter(models.AllowedClass.fault_state_id == fs_id).order_by(models.AllowedClass.id).all()
-    #  allowed_classes.extend(allowed_class)
-    allowed_class = session.query(models.AllowedClass).join(models.FaultState, models.AllowedClass.fault_state_id == models.FaultState.id).join(models.Fault, models.FaultState.fault_id == models.Fault.id).join(models.FaultInput, models.FaultInput.fault_id == models.Fault.id).join(models.Device, models.FaultInput.device_id == models.Device.id).join(models.ApplicationCard, models.Device.card_id == models.ApplicationCard.id).join(models.LinkNode, models.ApplicationCard.link_node_id == models.LinkNode.id).filter(models.LinkNode.group.in_(groups)).order_by(models.AllowedClass.id).all()
-    yaml.dump({models.AllowedClass.__name__: allowed_class}, f, explicit_start=True)
-    
+      faults.sort(key=self.get_dict_id)
+      fault_inputs.sort(key=self.get_id)
+      fault_states.sort(key=self.get_dict_id)
+      yaml.dump({models.LinkNode.__name__: link_nodes}, f, explicit_start=True)
+      yaml.dump({models.Crate.__name__: crates}, f, explicit_start=True)
+      yaml.dump({models.ApplicationCard.__name__: app_cards}, f, explicit_start=True)
+      yaml.dump({models.DigitalChannel.__name__: digital_channels}, f, explicit_start=True)
+      yaml.dump({models.AnalogChannel.__name__: analog_channels}, f, explicit_start=True)
+      yaml.dump({models.IgnoreCondition.__name__: ignore_conditions}, f, explicit_start=True)
+      yaml.dump({'Fault': faults}, f, explicit_start=True)
+      yaml.dump({models.FaultInput.__name__: fault_inputs}, f, explicit_start=True)
+      yaml.dump({'FaultState': fault_states}, f, explicit_start=True)
+      f.write("---\n")
+      f.write("DatabaseInfo:\n")
+      f.write("- source: {0}\n".format(self.database))
+      f.write("  date: {0}\n".format(time.asctime(time.localtime(time.time()))))
+      f.write("  user: {0}\n".format(user_name.strip()))
+      f.write("  md5sum: {0}\n".format(md5sum_tokens[0].strip()))
+      f.close()
+    if self.v:
+      print("INFO: Starting Export Yaml...DONE!")
 
   #This is a pyyaml representer for any object that inherits from SQLAlchemy's declarative base class.  
   def model_representer(self,dumper, obj):
@@ -191,12 +144,11 @@ class ExportYaml(MpsReader):
                            dumper.represent_scalar(tag='tag:yaml.org,2002:bool', value=str(getattr(obj, column.name)), style='')))
       else:
         raise TypeError("No scalar representation is implemented for SQLAlchemy column type {col_type}".format(column.type))
-
     # This code is to print out the attributes inherited from the class Device by the AnalogDevice and DigitalDevice
     if (hasattr(obj.__class__.__bases__[0],'__tablename__')):
-      if (obj.__class__.__bases__[0].__tablename__ == "devices"):
+      if (obj.__class__.__bases__[0].__tablename__ == "channels"):
         for column in obj.__class__.__bases__[0].__table__.columns:
-          if (column.name != "type"):
+          if (column.name != 'type' and column.name != 'id'):
             if isinstance(column.type, String):
               node.value.append((ScalarNode(tag='tag:yaml.org,2002:str', value=column.name), 
                                  dumper.represent_scalar(tag='tag:yaml.org,2002:str', value=str(getattr(obj, column.name)), style='"')))
@@ -211,5 +163,12 @@ class ExportYaml(MpsReader):
                                  dumper.represent_scalar(tag='tag:yaml.org,2002:bool', value=str(getattr(obj, column.name)), style='')))
             else:
               raise TypeError("No scalar representation is implemented for SQLAlchemy column type {col_type}".format(column.type))
-   
     return node
+
+  def get_id(self,obj):
+    # Return the sqlite id of the item so lists can be sorted by id
+    return obj.id
+  
+  def get_dict_id(self,obj):
+    # Return the sqlite id of the item so lists can be sorted by id
+    return obj['id']

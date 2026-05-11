@@ -1,11 +1,19 @@
 *.db
 *.pyc
+.__*
 venv/
 *~
 *SAVE
 mps_database/temporary_testing*
 mps_database/temp
 output/*
+build/*
+errno
+json
+argparse
+os
+re
+shutil
 
 
 

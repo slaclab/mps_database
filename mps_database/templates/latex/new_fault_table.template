@@ -1,0 +1,6 @@
+\subsection{$(TITLE)}
+\begin{center}
+\begin{tabular}{@{}l$(FORMAT)@{}}
+\toprule
+Name & $(HEADER) MS & AOM & SC\_DIAG0 & SC\_HXR & SC\_SXR & SC\_LESA & LH Shut \\
+\midrule

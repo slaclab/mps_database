@@ -1,0 +1,3 @@
+epicsEnvSet("CH$(CH)_P","$(P)")
+epicsEnvSet("CH$(CH)_R","$(R)")
+epicsEnvSet("CH$(CH)_EGU","$(EGU)")

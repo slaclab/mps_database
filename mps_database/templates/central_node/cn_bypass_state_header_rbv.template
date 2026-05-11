@@ -1,0 +1,14 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node Faults                                   #
+# Macro description:                                                             #
+#   - PV         : Device Input PV Prefix                                        #
+#   - ID         : Fault  ID                                                     #
+#   - DESC       : Fault Description                                             #
+#================================================================================#
+record(mbbi, "$(PV)_SCBYPV_RBV") {
+  field(DESC, "$(DESC)")
+  field(DTYP, "asynInt32")
+  field(INP,  "@asyn(CENTRAL_NODE $(ID) 1)MPS_FAULT_BYPV")
+  field(PINI, "YES")
+  field(VAL,  "0")
+  field(SCAN, "1 second")

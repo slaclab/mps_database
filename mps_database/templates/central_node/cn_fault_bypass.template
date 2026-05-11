@@ -1,0 +1,42 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node $(TYPE) bypass                           #
+# Macro description:                                                             #
+#   - PV         : Device Input PV Prefix                                        #
+#   - ID         : Device ID in DB                                               #
+#================================================================================#
+record(bi, "$(PV)_SCBYPS") {
+  field(DESC, "Bypass Status")
+  field(SCAN, "1 second")
+  field(DTYP, "asynUInt32Digital")
+  field(ZNAM, "Not Bypassed")
+  field(ONAM, "Bypassed")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 1)MPS_FAULT_BYPS")
+}
+record(longout, "$(PV)_SCBYPD") {
+  field(DESC, "Bypass duration in seconds")
+  field(DTYP, "asynInt32")
+  field(EGU, "Seconds")
+  field(VAL, "0")
+  field(PINI, "YES")
+  field(OUT, "@asyn(CENTRAL_NODE $(ID) 1)MPS_FAULT_BYPEXPDATE")
+  field(ASG,  "$(ASG2)")
+}
+record(longin, "$(PV)_SCBYPT") {
+  field(DESC, "Remaining bypass duration in seconds")
+  field(DTYP, "asynInt32")
+  field(EGU, "Seconds")
+  field(SCAN, "1 second")
+  field(VAL, "0")
+  field(PINI, "YES")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) 1)MPS_FAULT_REMAINING_BYPTIME")
+}
+record(stringin, "$(PV)_SCBYP_END") {
+  field(DESC, "Bypass Expiration Date/Time String")
+  field(DTYP, "asynOctetRead")
+  field(SCAN, "1 second")
+  field(VAL, "Invalid")
+  field(PINI, "YES")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) 1)MPS_FAULT_BYPEXPDATE_STRING")
+}

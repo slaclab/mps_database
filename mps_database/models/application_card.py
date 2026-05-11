@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship, backref, validates
+from sqlalchemy.orm import relationship
 from mps_database.models import Base
 
 class ApplicationCard(Base):
@@ -10,136 +10,151 @@ class ApplicationCard(Base):
   crate and slot).
 
   Properties:
-   number: serial/property numbe
-   area: sector where the card is installed (e.g. GUNB, LI30, DMPB,...).
-             This is used for creating the LinkNode PVs (second field)
-   location: this is the location field to generate LinkNode PVs (third field)
-   slot_number: number of slot within the ATCA crate where it is installed
-   amc: defines whether this card is a carrier (0), an AMC (1) card or RTM (2)
+   number: global ID
+   slot: number of slot within the ATCA crate where it is installed
+   location: this is the location field to generate ioc PVs (third field, e.g. MP02)
    
   References:
    crate_id: specifies the crate that contains this card
    type_id: specifies the type of this card (e.g. Mixed Mode Link Node type)
 
   Relationships:
-   digital_channels: there are zero or more entries in the
-                     digital_channels table pointing to an application_card
-                     entry.
-   digital_out_channels: 
-   analog_channels: there are zero or more entries in the
-                    digital_channels table pointing to an application_card
-                    entry.
-   devices:
-   link_node:
+   channels: collection of channels assigned to this card
   """
   __tablename__ = 'application_cards'
   id = Column(Integer, primary_key=True)
-  number = Column(Integer, nullable=False)
-  area = Column(String, nullable=False)
-  location = Column(String, nullable=False, unique=False)
-  slot_number = Column(Integer, nullable=False)
-  amc = Column(Integer, nullable=False, default=0)
+  number = Column(Integer, nullable=False,unique=True)
   crate_id = Column(Integer, ForeignKey('crates.id'), nullable=False)
+  crate = relationship('Crate',back_populates='cards')
+  type = relationship('ApplicationType',back_populates='cards')
   type_id = Column(Integer, ForeignKey('application_card_types.id'), nullable=False)
-  digital_channels = relationship("DigitalChannel", order_by="asc(DigitalChannel.number)", backref='card')
-  digital_out_channels = relationship("DigitalOutChannel", backref='card')
-  analog_channels = relationship("AnalogChannel",order_by="AnalogChannel.number", backref='card')
-  global_id = Column(Integer, nullable=False, unique=True)
-  name = Column(String, unique=False, nullable=False)
-  description = Column(String, nullable=True)
-  devices = relationship("Device", backref='card')
-  link_node_id = Column(Integer, ForeignKey('link_nodes.id'), nullable=False)
+  channels = relationship("Channel",order_by="Channel.number",back_populates='card')
+  slot = Column(Integer, nullable=False)
+  location = Column(String, nullable=True, unique=False)  
 
-  def show(self):
-    print(('> Name: {0}'.format(self.name)))
-    print(('> Number: {0}'.format(self.number)))
-    print(('> Digital: {0}'.format(len(self.digital_channels))))
-    print(('> Analog: {0}'.format(len(self.analog_channels))))
-    print(('> Digital Out: {0}'.format(len(self.digital_out_channels))))
-
-  def has_virtual_channels(self):
-    """
-    If there are channels defined between 32 and 47 this card has virtual
-    channels. Channels 0 through 31 are for hardwired inputs, while from 32
-    to 47 are software settable inputs.
-    """
-    for c in self.digital_channels:
-      if (c.is_virtual()):
-        return True
-
-    return False
-
-  @validates('digital_channels')
-  def validate_digital_channel(self, key, new_channel):
-    """
-    When a digital_channel is added to the card, make sure the number
-    of digital channels as specified in the application_card_type table
-    is not exceeded.
-    """
-    channel_list = self.digital_channels
-    channel_count = self.type.digital_channel_count
-    return self.validate_generic_channel(new_channel, channel_list, channel_count)
-    
-  @validates('analog_channels')
-  def validate_analog_channel(self, key, new_channel):
-    """
-    When a digital_channel is added to the card, make sure the number
-    of analog channels as specified in the application_card_type table
-    is not exceeded.
-    """
-    channel_count = self.type.analog_channel_count
-    channel_list = self.analog_channels
-
-    return self.validate_generic_channel(new_channel, channel_list, channel_count)
-   
-  def validate_generic_channel(self, new_channel, channel_list, channel_count):
-    """
-    Invoked by the digital_channel and analog_channel validators.
-    """
-    if self.type and len(channel_list)+1 > channel_count:
-      raise ValueError("Number of channels on this card cannot exceed the card type's channel count ({count})".format(count=channel_count))
-    
-    if self.type and new_channel.number >= channel_count:
-      raise ValueError("For this card's type, channel number must be < {count}".format(count=channel_count))
-    
-    if new_channel.number < 0:
-      raise ValueError("Channel number must be positive.")
-    
-    #Ensure the channel isn't taken
-    if new_channel.number in [c.number for c in channel_list]:
-      raise ValueError("Channel number {num} is already taken by an existing channel ({name}).".format(num=new_channel.number, name=new_channel.name))
-
-    return new_channel
-  
-  @validates('slot_number')
-  def validate_slot_number(self, key, new_slot):
-    if self.crate and new_slot > self.crate.num_slots:
-      raise ValueError("Slot number must be <= the number of slots in the crate ({count})".format(count=self.crate.num_slots))
-
-    if self.crate and new_slot in [c.slot_number for c in self.crate.cards]: 
-        raise ValueError("This slot is already taken by another card in the crate.")
-
-    return new_slot
-
-  def get_card_id(self):
-    """
-    Return the card ID based on the application
-    slot number and application type id.
-    
-    If the application is a Link Nodes (slot # 2) then
-    the card number will be 1
-
-    For other applications, the card number will be
-    the slot number + 1.
-    """
-    if self.slot_number == 2:
-      return 1
+  def validate_channels(self,num):
+    not_in_use = True
+    if self.type.name == 'BPM':
+      if len(self.channels) > (2*self.type.num_integrators)-1:
+        not_in_use=False
     else:
-      return self.slot_number
-  def get_ln_prefix(self):
-    return 'MPLN:{}:{}'.format(self.link_node.area, self.link_node.location)
+      for ch in self.channels:
+        if ch.number == int(num):
+          not_in_use=False
+    return not_in_use
 
-  def get_pv_name(self):
-    return 'MPLN:{}:{}:{}'.format(self.link_node.area, self.link_node.location, self.get_card_id())
-  def get_app_description(self):
-    return self.description
+  def is_mps_digital(self):
+    if self.type.name == 'RTM Digital':
+      return True
+    elif self.type.name == 'MPS Digital':
+      return True
+    else:
+      return False
+
+  def is_mps_analog(self):
+    if self.can_have_analog():
+      if self.type.name == 'MPS Analog':
+        return True
+      else:
+        return False
+
+  def get_mps_prefix(self):
+    if self.slot < 3:
+      return '{0}:1'.format(self.crate.get_ln().get_mps_prefix())
+    else:
+      return '{0}:{1}'.format(self.crate.get_ln().get_mps_prefix(),self.slot)
+
+  def can_have_analog(self):
+    if self.type.analog_channel_count > 0:
+      return True
+    else:
+      return False
+
+  def can_have_digital(self):
+    if self.type.digital_channel_count > 0:
+      return True
+    else:
+      return False
+
+  def can_have_software(self):
+    if self.type.software_channel_count > 0:
+      return True
+    else:
+      return False
+
+  def get_num_integrators(self):
+    return self.type.num_integrators
+
+  def has_mps_ioc(self):
+    has_mps_ioc = False
+    if self.is_mps_digital():
+      has_mps_ioc = True
+    if self.slot > 2 and self.is_mps_analog():
+      has_mps_ioc = True
+    return has_mps_ioc
+
+  def get_ioc_name(self):
+    return 'sioc-{0}-{1}'.format(self.crate.area.lower(),self.location.lower())
+
+  def get_central_node(self):
+    lns = self.crate.link_node
+    if len(lns) < 1:
+      print("ERROR: No link node for card {0}".format(self.number))
+      return Null
+    if len(lns) > 1:
+      print("ERROR: Too many link node for card {0}".format(self.number))
+      return Null
+    if len(lns) == 1:
+      ln = lns[0]
+      cn = ln.group.central_node
+      return cn
+
+  def get_real_slot(self):
+    if self.slot < 2:
+      return 2
+    else:
+      return self.slot
+
+  def get_attribute(self):
+    if self.slot == 1:
+      text = 'DIG_'
+    else: 
+      text = ''
+    return text
+
+  def get_slot_text(self):
+    if self.slot == 1:
+      text = 'RTM'
+    else: 
+      text = 'S{0}'.format(self.slot)
+    return text
+
+  def get_location(self):
+    loc = "{0}-{1}".format(self.crate.get_full_location(),self.get_slot_text())
+    return loc
+
+  def get_bays_populated(self):
+    chans = len(self.channels)
+    if self.is_mps_digital():
+      return 0
+    elif self.type.name == "BCM" or self.type.name == "BLEN":
+      return 1
+    elif self.type.name == "LLRF" or self.type.name == "Wire Scanner":
+      return 1
+    elif self.type.name == "BPMS":
+      if chans > 1:
+        return 2
+      else:
+        return 1
+    elif self.is_mps_analog():
+      if chans > 2:
+        return 2
+      else:
+        return 1
+    else:
+      print("ERROR: ard.get_bays_populated --> no card type found")
+      return None
+
+  def get_tpr(self):
+    return "TPR:{0}:{1}:0".format(self.crate.area,self.location)
+

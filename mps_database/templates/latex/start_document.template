@@ -1,0 +1,11 @@
+\documentclass[10pt, twoside]{article}
+\usepackage{lcls-article}
+\newcommand\code{\begingroup \urlstyle{tt}\Url}
+\renewcommand\revnum{$(VER)}
+\title{$(TITLE)}
+\author{\revnum}
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\columnratio{0.35}

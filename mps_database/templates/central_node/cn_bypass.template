@@ -1,0 +1,71 @@
+#================================================================================#
+# LCLS MPS PV template for Central Node $(TYPE) bypass                           #
+# Macro description:                                                             #
+#   - DEVICE_BYP : Device Input PV Prefix                                        #
+#   - ONAM       : OK state name                                                 #
+#   - ZNAM       : Fault state name.                                             #
+#   - LOCA       : Card location                                                 #
+#   - CH         : Channel Number                                                #
+#   - ID         : Device ID in DB                                               #
+#   - ZSV        : Zero Severity                                                 #
+#   - OSV        : One Severity                                                  #
+#   - INT        : Integrator (digital = 1)                                      #
+#   - TYPE       : DIGITAL or ANALOG of FAULT                                    #
+#================================================================================#
+record(bo, "$(DEVICE_BYP)_SCBYPV") {
+  field(DESC, "$(LOCA) CH $(CH) Bypass Value")
+  field(DTYP, "asynUInt32Digital")
+  field(ZNAM, "$(ZNAM)")
+  field(ONAM, "$(ONAM)")
+  field(ZSV,  "NO_ALARM")
+  field(OSV,  "NO_ALARM")
+  field(PINI, "YES")
+  field(OUT, "@asynMask(CENTRAL_NODE $(ID) 1 $(INT))MPS_$(TYPE)_CHANNEL_BYPV")
+}
+record(bi, "$(DEVICE_BYP)_SCBYPV_RBV") {
+  field(DESC, "$(LOCA) CH $(CH) Bypass Value")
+  field(DTYP, "asynUInt32Digital")
+  field(ZNAM, "$(ZNAM)")
+  field(ONAM, "$(ONAM)")
+  field(ZSV,  "NO_ALARM")
+  field(OSV,  "NO_ALARM")
+  field(PINI, "YES")
+  field(INP,  "@asynMask(CENTRAL_NODE $(ID) 1 $(INT))MPS_$(TYPE)_CHANNEL_BYPV")
+  field(SCAN, "1 second")
+}
+record(bi, "$(DEVICE_BYP)_SCBYPS") {
+  field(DESC, "$(LOCA) CH $(CH) Bypass Status")
+  field(SCAN, "1 second")
+  field(DTYP, "asynUInt32Digital")
+  field(ZNAM, "Not Bypassed")
+  field(ONAM, "Bypassed")
+  field(ZSV, "NO_ALARM")
+  field(OSV, "MAJOR")
+  field(INP, "@asynMask(CENTRAL_NODE $(ID) 1 $(INT))MPS_$(TYPE)_CHANNEL_BYPS")
+}
+record(longout, "$(DEVICE_BYP)_SCBYPD") {
+  field(DESC, "Bypass duration in seconds")
+  field(DTYP, "asynInt32")
+  field(EGU, "Seconds")
+  field(VAL, "0")
+  field(PINI, "YES")
+  field(OUT, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_$(TYPE)_CHANNEL_BYPEXPDATE")
+  field(ASG,  "$(ASG2)")
+}
+record(longin, "$(DEVICE_BYP)_SCBYPT") {
+  field(DESC, "Remaining bypass duration in seconds")
+  field(DTYP, "asynInt32")
+  field(EGU, "Seconds")
+  field(SCAN, "1 second")
+  field(VAL, "0")
+  field(PINI, "YES")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_$(TYPE)_CHANNEL_REMAINING_BYPTIME")
+}
+record(stringin, "$(DEVICE_BYP)_SCBYP_END") {
+  field(DESC, "Bypass Expiration Date/Time String")
+  field(DTYP, "asynOctetRead")
+  field(SCAN, "1 second")
+  field(VAL, "Invalid")
+  field(PINI, "YES")
+  field(INP, "@asyn(CENTRAL_NODE $(ID) $(INT))MPS_$(TYPE)_CHANNEL_BYPEXPDATE_STRING")
+}

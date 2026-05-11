@@ -1,0 +1,17 @@
+\begin{column}
+\tablefirsthead{
+\toprule
+\multicolumn{1}{@{}c}{App ID} & \multicolumn{1}{c}{Slot}  & \multicolumn{1}{c}{Channel} & \multicolumn{1}{c@{}}{Input Name}\\
+\midrule
+}
+\tablehead{
+\multicolumn{4}{c}{\ldots continued from previous page} \\
+\midrule
+\multicolumn{1}{@{}c}{App ID} & \multicolumn{1}{c}{Slot}  & \multicolumn{1}{c}{Channel} & \multicolumn{1}{c@{}}{Input Name}\\
+\midrule
+}
+\tabletail{ \midrule
+\multicolumn{4}{c}{continued on next page\ldots} \\
+}
+\tablelasttail{\bottomrule}
+\begin{supertabular}{@{}cccl@{}}

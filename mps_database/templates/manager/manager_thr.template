@@ -1,0 +1,1 @@
+dbLoadRecords("${TOP}/db/thr_channel.db","INP=$(INP)")
