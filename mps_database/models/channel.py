@@ -184,19 +184,19 @@ class AnalogChannel(Channel):
   def get_type(self):
     return "ANALOG"
 
-  def get_mask(self,state):
+  def get_mask(self,state=None):
     if state is not None:
       return state.mask
     else:
       return 1
 
-  def get_name(self,state):
+  def get_name(self,state=None):
     if state is not None:
       return "{0}_{1}".format(self.name,state.get_pv_name())
     else:
       return self.name
 
-  def has_fault(self,state):
+  def has_fault(self,state=None):
     if state is not None:
       return True
     else:

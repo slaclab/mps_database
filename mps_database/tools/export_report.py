@@ -49,6 +49,7 @@ class ExportReport():
     macros["LOCATION"] = props["crate"]
     macros["SHM"] = props["shm"]
     macros["MPLN"] = props["p"]
+    macros["S1T"] = "{0}".format(props['slot1']['type'])
     macros["S1A"] = "{0}".format(props['slot1']['app_text'])
     macros["S2T"] = "{0}".format(props['slot2']['type'])
     macros["S2A"] = "{0}".format(props['slot2']['app_text'])

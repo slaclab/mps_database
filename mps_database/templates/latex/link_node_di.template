@@ -9,7 +9,7 @@
 Slot & AID & Type \\
 \hline
 \rowcolor{very-light-gray}
-RTM & $(S1A) & MPS Digital\\
+RTM & $(S1A) & $(S1T)\\
 \hline
 2 & $(S2A) & $(S2T)\\
 \hline

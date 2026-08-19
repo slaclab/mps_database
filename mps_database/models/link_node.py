@@ -32,6 +32,7 @@ class LinkNode(Base):
   rx_pgp = Column(Integer, unique=False)
   ln_type = Column(Integer, nullable=False, default=2)
   lnid = Column(Integer, nullable=False, default=0)
+  slot = Column(Integer, nullable=False, default=1)
   crate = relationship("Crate", back_populates='link_node')
   crate_id = Column(Integer,ForeignKey("crates.id"),nullable=False)
   group_id = Column(Integer, ForeignKey('link_node_groups.id'), nullable=False)
@@ -137,7 +138,7 @@ class LinkNode(Base):
     macros["cpu"] = self.crate.get_cpu_nodename()
     macros["shm"] = self.crate.get_nodename()
     macros["crate"] = self.crate.location
-    macros["sioc"] = self.get_app_card(1).get_ioc_name()
+    macros["sioc"] = self.get_app_card(self.slot).get_ioc_name()
     slots = range(1,8)
     for slot in slots:
       key = "slot{0}".format(slot)
