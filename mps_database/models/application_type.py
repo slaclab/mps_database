@@ -58,3 +58,43 @@ class ApplicationType(Base):
       return "WIRE"
     else:
       return self.name
+
+  def get_display_filename(self):
+    if self.name == "MPS Analog":
+      return 'mps_analog_core.ui'
+    elif self.name == "RTM Digital":
+      return 'mps_digital_core.ui'
+    elif self.name == "BPM":
+      return 'mps_bpm_core.ui'
+    elif self.name == "BCM":
+      return 'mps_bpm_core.ui'
+    elif self.name == "BLEN":
+      return 'mps_bpm_core.ui'
+    elif self.name == "MPS Digital":
+      return 'mps_rtm_digital_core.ui'
+    elif self.name == "LLRF":
+      return 'mps_rtm_digital_core.ui'
+    elif self.name == "Wire Scanner":
+      return 'mps_rtm_digital_core.ui'
+    else:
+      return self.name
+
+  def get_input_filename(self):
+    if self.name == "MPS Analog":
+      return '_chan'
+    elif self.name == "RTM Digital":
+      return '_rtm'
+    elif self.name == "BPM":
+      return '_chan'
+    elif self.name == "BCM":
+      return '_chan'
+    elif self.name == "BLEN":
+      return '_chan'
+    elif self.name == "MPS Digital":
+      return '_rtm'
+    elif self.name == "LLRF":
+      return '_chan'
+    elif self.name == "Wire Scanner":
+      return '_chan'
+    else:
+      return self.name
