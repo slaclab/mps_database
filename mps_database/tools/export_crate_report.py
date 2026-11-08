@@ -50,6 +50,12 @@ class ExportCrateReport(ExportReport):
       else:
         len0 = g.build_ln_chain(first_link_nodes[0])['length']
         len1 = g.build_ln_chain(first_link_nodes[1])['length']-1
+        if len0 < len1:
+          tFln = first_link_nodes[0]
+          first_link_nodes[0] = first_link_nodes[1]
+          first_link_nodes[1] = tFln
+          len0 = g.build_ln_chain(first_link_nodes[0])['length']
+          len1 = g.build_ln_chain(first_link_nodes[1])['length']-1
         if len0 > self.max_height:
           self.split_key = "{0}".format(self.max_height-len1)
           self.split_arrow = True
