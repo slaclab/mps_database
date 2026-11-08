@@ -41,6 +41,9 @@ class LinkNode(Base):
   def get_mps_prefix(self):
     return 'MPLN:{0}:{1}'.format(self.crate.area.upper(),self.location.upper())
 
+  def get_ln_prefix(self):
+    return '{0}:{1}'.format(self.get_mps_prefix(),self.slot)
+
   def get_app_cards(self):
     return self.crate.cards
 
@@ -50,6 +53,9 @@ class LinkNode(Base):
       if c.slot == slot:
         card = c
     return card
+
+  def get_central_node(self):
+    return self.group.get_central_node()
 
   def get_group_link(self):
     session = object_session(self)
@@ -62,6 +68,21 @@ class LinkNode(Base):
       return None
     if len(linked_crate) == 1:
       return linked_crate[0]
+
+  def get_next_prefix(self):
+    n = self.get_group_link()
+    if n.has_cn():
+      return self.group.get_central_node().get_cn_prefix()
+    else:
+      return n.link_node[0].get_ln_prefix()
+
+  def get_disp_text(self):
+    n = self.get_group_link()
+    if n.has_cn():
+      return self.group.get_central_node().get_short_location()
+    else:
+      return "LN Rx"
+
 
   def get_out_path(self):
     return '{}/{:04}/{:02}'.format(self.crate.get_cpu_nodename(),self.crate.crate_id,2)
@@ -134,11 +155,19 @@ class LinkNode(Base):
     macros = {}
     macros["lnid"] = self.lnid
     macros["p"] = self.get_mps_prefix()
+    macros["ln_p"] = self.get_ln_prefix()
+    macros["p_next"] = self.get_next_prefix()
     macros["group"] = self.group.number
+    macros["CN"] = self.get_central_node().get_cn_prefix()
     macros["cpu"] = self.crate.get_cpu_nodename()
     macros["shm"] = self.crate.get_nodename()
     macros["crate"] = self.crate.location
     macros["sioc"] = self.get_app_card(self.slot).get_ioc_name()
+    macros["area"] = self.crate.area
+    macros["location"] = self.location
+    macros["daid"] = self.get_digital_app_id()
+    macros["rx_pgp"] = self.rx_pgp
+    macros['disp_text'] = self.get_disp_text()
     slots = range(1,8)
     for slot in slots:
       key = "slot{0}".format(slot)
@@ -149,17 +178,43 @@ class LinkNode(Base):
         type_short = card.type.get_short_name()
         app = card.number
         app_text = "{0}".format(card.number)
+        pv_text = card.get_attribute_ln()
+        display_fn = card.get_display_filename()
+        input_fn = card.get_input_filename()
+        slot_ioc = card.get_ioc_pv()
+        slot_alarm = card.get_disp_alarm_pv()
+        slot_inst = "{0}".format(card.get_inst())
+        slot_text = card.get_slot_text()
+        slot_prefix = card.get_mps_prefix()
       else:
         used = 0
         type = "---"
         app_text = "---"
         type_short = "NONE"
         app = -1
+        pv_text = ""
+        display_fn = ""
+        input_fn = ""
+        slot_ioc = ""
+        slot_alarm = ""
+        slot_loca = ""
+        slot_inst = ""
+        slot_text = ""
+        slot_prefix = ""
       slot_prop = {}
       slot_prop['used'] = used
       slot_prop['type'] = type
       slot_prop['short_name'] = type_short
+      slot_prop['p'] = slot_prefix
       slot_prop['app'] = app
       slot_prop['app_text'] = app_text
+      slot_prop['postfix'] = pv_text
+      slot_prop['display_fn'] = display_fn
+      slot_prop['input_fn'] = input_fn
+      slot_prop['ioc'] = slot_ioc
+      slot_prop['alarm'] = slot_alarm
+      slot_prop['inst'] = slot_inst
+      slot_prop['slot_text'] = slot_text
+      slot_prop["card"] = card
       macros[key] = slot_prop
     return macros
