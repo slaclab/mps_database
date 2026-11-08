@@ -42,6 +42,16 @@ class CentralNode(Base):
   def get_ioc_name(self):
     return 'sioc-{0}-{1}'.format(self.area.lower(),self.location.lower())
 
+  def get_short_location(self):
+    if self.lnid == 1:
+      return "CN B005-S2"
+    elif self.lnid == 2:
+      return "CN B005-S3"
+    elif self.lnid == 3:
+      return "CN LI00-S2"
+    else:
+      return ""
+
   def get_cn_properties(self):
     """
     Return a dictionary of properties about central node
