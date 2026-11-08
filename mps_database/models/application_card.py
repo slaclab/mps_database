@@ -96,7 +96,13 @@ class ApplicationCard(Base):
   def get_ioc_name(self):
     return 'sioc-{0}-{1}'.format(self.crate.area.lower(),self.location.lower())
 
-  def get_central_node(self):
+  def get_ioc_pv(self):
+    if self.is_mps_digital() or self.is_mps_analog():
+      return 'SIOC:{0}:{1}'.format(self.crate.area.upper(),self.location.upper())
+    else:
+      return ""
+
+  def get_link_node(self):
     lns = self.crate.link_node
     if len(lns) < 1:
       print("ERROR: No link node for card {0}".format(self.number))
@@ -106,12 +112,30 @@ class ApplicationCard(Base):
       return Null
     if len(lns) == 1:
       ln = lns[0]
-      cn = ln.group.central_node
-      return cn
+    return ln
+
+  def get_disp_alarm_pv(self):
+    ln = self.get_link_node()
+    if self.is_mps_digital():
+      return "MPLN_DIG:{0}:{1}:1:STATSUMY".format(self.crate.area,ln.location)
+    elif self.is_mps_analog():
+      return "MPLN_AN:{0}:{1}:{2}:STATSUMY".format(self.crate.area,ln.location,self.get_inst())
+    else:
+      return ""
+
+  def get_central_node(self):
+    ln = self.get_link_node()
+    return ln.group.central_node
 
   def get_real_slot(self):
     if self.slot < 2:
       return 2
+    else:
+      return self.slot
+
+  def get_inst(self):
+    if self.slot < 3:
+      return 1
     else:
       return self.slot
 
@@ -122,15 +146,28 @@ class ApplicationCard(Base):
       text = ''
     return text
 
+  def get_attribute_ln(self):
+    if self.slot == 1:
+      text = 'DIG_APPID_RBV'
+    else: 
+      text = 'APP_ID'
+    return text
+
+  def get_display_filename(self):
+    return self.type.get_display_filename()
+
+  def get_input_filename(self):
+    return self.type.get_input_filename()
+
   def get_slot_text(self):
     if self.slot == 1:
       text = 'RTM'
     else: 
-      text = 'S{0}'.format(self.slot)
+      text = '{0}'.format(self.slot)
     return text
 
   def get_location(self):
-    loc = "{0}-{1}".format(self.crate.get_full_location(),self.get_slot_text())
+    loc = "{0}-S{1}".format(self.crate.get_full_location(),self.get_slot_text())
     return loc
 
   def get_bays_populated(self):
@@ -152,9 +189,10 @@ class ApplicationCard(Base):
       else:
         return 1
     else:
-      print("ERROR: ard.get_bays_populated --> no card type found")
+      print("ERROR: card.get_bays_populated --> no card type found")
       return None
 
   def get_tpr(self):
     return "TPR:{0}:{1}:0".format(self.crate.area,self.location)
+
 
