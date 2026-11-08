@@ -20,6 +20,7 @@ class ExportManager():
       print("Begin ExportManager")
     manager_dest = '{0}/manager/'.format(self.d)
     filename = "manager.cmd"
+    thr_filename = "manager_thr.cmd"
     lns = self.s.query(models.LinkNode).all()
     for ln in lns:
       props = ln.get_ln_properties()
@@ -50,14 +51,16 @@ class ExportManager():
       macros["S7T"] = "{0}".format(props['slot7']['short_name'])
       macros["S7A"] = "{0}".format(props['slot7']['app'])
       self.t.write_template(manager_dest,filename=filename,template='ln_prop.template',macros=macros,type='manager')
+      if props["area"] in ["L4B","DOG"]:
+        self.t.write_template(manager_dest,filename="lcls2-he.cmd",template='ln_prop.template',macros=macros,type='manager')
     channels = self.s.query(models.AnalogChannel).all()
     for chan in channels:
       macros = {'INP':chan.name}
-      self.t.write_template(manager_dest,filename=filename,template='manager_thr.template',macros=macros,type='manager')
+      self.t.write_template(manager_dest,filename=thr_filename,template='manager_thr.template',macros=macros,type='manager')
       if "I0_" in chan.name:
         inp1 = chan.name.replace("I0_","I1_")
         macros = {'INP':inp1}
-        self.t.write_template(manager_dest,filename=filename,template='manager_thr.template',macros=macros,type='manager')
+        self.t.write_template(manager_dest,filename=thr_filename,template='manager_thr.template',macros=macros,type='manager')
       if chan.name.find('CBLM') > -1:
         macros = {}
         macros['P'] = chan.card.get_mps_prefix()
@@ -65,6 +68,6 @@ class ExportManager():
         macros['CH'] = '{0}'.format(chan.number)
         macros['TRG'] = '{0}'.format(chan.number+10)
         macros['TPR'] = chan.card.get_tpr()
-        self.t.write_template(manager_dest,filename=filename,template='manager_time_window.template',macros=macros,type='manager')
+        self.t.write_template(manager_dest,filename=thr_filename,template='manager_time_window.template',macros=macros,type='manager')
     if self.v:
       print("End ExportManager")
