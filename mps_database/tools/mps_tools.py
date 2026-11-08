@@ -19,6 +19,11 @@ class MpsTools:
     self.mbbi_strings = ['ZRST','ONST','TWST','THST','FRST','FVST','SXST','SVST','EIST','NIST','TEST','ELST','TVST','TTST','FTST','FFST']
     self.mbbi_vals = ['ZRVL','ONVL','TWVL','THVL','FRVL','FVVL','SXVL','SVVL','EIVL','NIVL','TEVL','ELVL','TVVL','TTVL','FTVL','FFVL']
     self.mbbi_sevr = ['ZRSV','ONSV','TWSV','THSV','FRSV','FVSV','SXSV','SVSV','EISV','NISV','TESV','ELSV','TVSV','TTSV','FTSV','FFSV']
+    self.lclshome_areas = { "B34":["B34"],"GUNB":["GUNB"],"L0B":['L0B','COL0','HTR'],"L1B":['L1B','BC1B'],"L2B":['L2B','BC2B'],"L3B":["L3B"],
+                            "L4B":["L4B"],"DOG":["DOG"],
+                            "BYP":['BPN13','BPN14','BPN15','BPN16','BPN17','BPN18','BPN19','BPN20','BPN21','BPN22','BPN23','BPN24','BPN25','BPN26','BPN27','BPN28'],
+                            "SPD":["SPD","SLTD"],"SPH":["SPH"],"SPS":["SPS"],"BSYH":["BSYH"],"BSYS":["BSYS"],"CLTS":["CLTS"],"LTUH":["LTUH"],"LTUS":["LTUS"],
+                            "UNDH":["UNDH"],"UNDS":["UNDS"],"FEEH":["FEEH"],"FEES":["FEES"],"DIAG0":["DIAG0"] }
     #self.template_path = 'templates/'
 
   def create_dir(self,path,clean=False):
