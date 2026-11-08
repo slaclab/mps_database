@@ -49,6 +49,9 @@ class Channel(Base):
       else:
         all_macros.append(self._build_macros(None))
     return all_macros
+
+  def get_area(self):
+    return self.card.crate.area
     
 
   def _build_macros(self,state=None):
@@ -71,6 +74,8 @@ class Channel(Base):
     macros["DEVICE_BYP"] = self.name
     macros["APPID"] = "{0}".format(self.card.number)
     macros["IN_CN"] = self.has_fault(state)
+    macros["NAME"] = self.name
+    macros["AREA"] = self.get_area()
     return macros
 
   def is_fast_eval(self):
