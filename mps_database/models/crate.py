@@ -76,7 +76,4 @@ class Crate(Base):
     elif self.crate_id == 101:
       return 1
     else:
-      return None
-
-    
-    
+      return None    
