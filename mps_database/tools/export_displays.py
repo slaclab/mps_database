@@ -142,7 +142,7 @@ class ExportDisplays():
         macros["SLOT_FILE"] = 'LinkNode{0}_slot.ui'.format(props["lnid"])
         macros["LOCA"] = props["area"]
         macros["IOC_UNIT"] = props["location"]
-        macros["INST"] = '{0}'.format(0)
+        macros["INST"] = '{0}'.format(1)
         self.__write_area_embed(path=area_path,name=filename,macros=macros)
         if ln.group not in groups:
           groups.append(ln.group)
@@ -246,7 +246,7 @@ class ExportDisplays():
                'TYPE':'LOC',
                'LOCA':'{0}'.format(ln['area']),
                'IOC_UNIT':'{0}'.format(ln['location']),
-               'INST':'{0}'.format(0),
+               'INST':'{0}'.format(1),
                'TEXT':'{0}'.format(ln['disp_text'])}
     self.__write_group_embed(path=path,name=filename,macros=macros)
 
