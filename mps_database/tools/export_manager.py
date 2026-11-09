@@ -26,6 +26,7 @@ class ExportManager():
       props = ln.get_ln_properties()
       macros = {}
       macros["P"] = "{0}".format(props['p'])
+      macros["LNID"] = "{0}".format(props['lnid'])
       macros["GROUP"] = "{0}".format(props['group'])
       macros["CPU"] = "{0}".format(props['cpu'])
       macros["SHM"] = "{0}".format(props['shm'])
