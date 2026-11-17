@@ -14,4 +14,4 @@ where = ["."]
 include = ["mps_database*"]
 
 [tool.setuptools.package-data]
-mps_config = ["templates/**/.template", "templates/**/.tmpl]
+mps_config = ["templates/**/.template", "templates/**/.tmpl"]
