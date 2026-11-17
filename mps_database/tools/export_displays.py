@@ -15,7 +15,7 @@ class ExportDisplays():
     self.ver = version
     self.t = tools
     self.d = st_dest
-    self.display_path = '{}/display/'.format(st_dest)
+    self.display_path = '{}display/'.format(st_dest)
 
   def export(self):
     link_nodes = self.s.query(models.LinkNode).all()
