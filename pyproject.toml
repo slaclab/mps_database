@@ -2,9 +2,6 @@
 requires = ["setuptools>=83.0.0", "setuptools-scm>=10.2.1", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
-tag_regex = "^(?:R|v)?(?P<version>\\d+(?:\\.\\d+)*)"
-
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["mps_database*"]
