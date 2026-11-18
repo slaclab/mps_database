@@ -17,6 +17,7 @@ setup(
     package_data={
         "mps_database": [
             "templates/**/*.template",
+            "templates/*/*/*.template",
             "templates/**/*.tmpl",
             "templates/latex/*.sty",
             "templates/latex/*.png",
