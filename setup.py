@@ -14,5 +14,13 @@ setup(
     description="Various tools and scripts for the mps database.",
     long_description=open("README.md").read(),
     install_requires=requirements,
-    package_data={"mps_database": ["templates/**/*.template", "templates/**/*.tmpl"]},
+    package_data={
+        "mps_database": [
+            "templates/**/*.template",
+            "templates/**/*.tmpl",
+            "templates/latex/*.sty",
+            "templates/latex/*.png",
+            "templates/latex/*.jpg",
+        ]
+    },
 )
